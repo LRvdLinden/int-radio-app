@@ -1,0 +1,477 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0386BEE23C644575C4E9444D /* RadioBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45393CE316E484A40205B1C /* RadioBrowser.swift */; };
+		131AA85F2146817043769AC5 /* tunr_tune.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F1450CAB126A6ADD8DCE086E /* tunr_tune.m4a */; };
+		191DA6BD98B206C1846BB96D /* ArtworkLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B478945886F5F7771730D9 /* ArtworkLookup.swift */; };
+		1CE2FDD7299E040DF2450D6D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12C2BB7D4B1328705F8EC9 /* Models.swift */; };
+		2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2531CF5372B484EEEA39F550 /* RadioPlayer.swift */; };
+		3E1CC6E67A72766170E1300D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DB967363971F3909749AC /* Theme.swift */; };
+		4C5AB8858CDDBCA6B87B48BD /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */; };
+		540B5380D90F3AE40A9CEA04 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6633117DC4DABCDCCE1A0EB9 /* Library.swift */; };
+		CF5DF131EF37E06DB474F303 /* PlatformSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */; };
+		E27D4F085335BAB37B66B2D7 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */; };
+		FF720463E58BEC2FD315BC0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformSupport.swift; sourceTree = "<group>"; };
+		2531CF5372B484EEEA39F550 /* RadioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlayer.swift; sourceTree = "<group>"; };
+		3C12C2BB7D4B1328705F8EC9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		548DB967363971F3909749AC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		6633117DC4DABCDCCE1A0EB9 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		A4B478945886F5F7771730D9 /* ArtworkLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLookup.swift; sourceTree = "<group>"; };
+		B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
+		E412B5FCD06FF41EFC8F350A /* Tunr.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tunr.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1450CAB126A6ADD8DCE086E /* tunr_tune.m4a */ = {isa = PBXFileReference; path = tunr_tune.m4a; sourceTree = "<group>"; };
+		F45393CE316E484A40205B1C /* RadioBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioBrowser.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2C69CF74D48D1ADEB455123E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		3704D99B4D72A1DE36807D18 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3C12C2BB7D4B1328705F8EC9 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4B0A9CE57280A3D9E4391EFB = {
+			isa = PBXGroup;
+			children = (
+				F90FB031777B004EF9152AAA /* Shared */,
+				B2E8863E7754954AA433E324 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4D3366B692FE2ED0C67BAA38 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				2531CF5372B484EEEA39F550 /* RadioPlayer.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		4E49A4A75A66284385480C74 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		53F6F80CB5E5703756675ABA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F1450CAB126A6ADD8DCE086E /* tunr_tune.m4a */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7897DF021FFE5C7CB138EAC9 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				6633117DC4DABCDCCE1A0EB9 /* Library.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		7E133B484DC5A120CD8DA593 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				548DB967363971F3909749AC /* Theme.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		B2E8863E7754954AA433E324 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E412B5FCD06FF41EFC8F350A /* Tunr.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BDEF7268650F481464558689 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				A4B478945886F5F7771730D9 /* ArtworkLookup.swift */,
+				F45393CE316E484A40205B1C /* RadioBrowser.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		BDFD8941F6CDB9DC6B5D7639 /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */,
+			);
+			path = Platform;
+			sourceTree = "<group>";
+		};
+		F90FB031777B004EF9152AAA /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */,
+				BDEF7268650F481464558689 /* API */,
+				2C69CF74D48D1ADEB455123E /* App */,
+				4E49A4A75A66284385480C74 /* Localization */,
+				3704D99B4D72A1DE36807D18 /* Models */,
+				BDFD8941F6CDB9DC6B5D7639 /* Platform */,
+				4D3366B692FE2ED0C67BAA38 /* Player */,
+				53F6F80CB5E5703756675ABA /* Resources */,
+				7897DF021FFE5C7CB138EAC9 /* Storage */,
+				7E133B484DC5A120CD8DA593 /* UI */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		248D730FC33D46BA32335F18 /* Tunr */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 158B0FE4B383891F998C7C7B /* Build configuration list for PBXNativeTarget "Tunr" */;
+			buildPhases = (
+				78A88ECF9473543783CAC584 /* Sources */,
+				05BD0151F5808234995FFC82 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tunr;
+			packageProductDependencies = (
+			);
+			productName = Tunr;
+			productReference = E412B5FCD06FF41EFC8F350A /* Tunr.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B9597902C8D9D7549E300F5A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					248D730FC33D46BA32335F18 = {
+						DevelopmentTeam = EU3UY476T6;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 04C15D5110B3DC0655557B5E /* Build configuration list for PBXProject "Tunr" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 4B0A9CE57280A3D9E4391EFB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B2E8863E7754954AA433E324 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				248D730FC33D46BA32335F18 /* Tunr */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		05BD0151F5808234995FFC82 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF720463E58BEC2FD315BC0F /* Assets.xcassets in Resources */,
+				131AA85F2146817043769AC5 /* tunr_tune.m4a in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		78A88ECF9473543783CAC584 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				191DA6BD98B206C1846BB96D /* ArtworkLookup.swift in Sources */,
+				4C5AB8858CDDBCA6B87B48BD /* Brand.swift in Sources */,
+				E27D4F085335BAB37B66B2D7 /* L10n.swift in Sources */,
+				540B5380D90F3AE40A9CEA04 /* Library.swift in Sources */,
+				1CE2FDD7299E040DF2450D6D /* Models.swift in Sources */,
+				CF5DF131EF37E06DB474F303 /* PlatformSupport.swift in Sources */,
+				0386BEE23C644575C4E9444D /* RadioBrowser.swift in Sources */,
+				2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */,
+				3E1CC6E67A72766170E1300D /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2148D7F5AA60365096D7C578 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Config/Tunr-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "Config/Tunr-tvOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "Config/Tunr-tvOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "$(TUNR_IOS_ENTITLEMENTS)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Tunr-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Tunr-macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=appletvos*]" = "Config/Info-tvOS.plist";
+				"INFOPLIST_FILE[sdk=appletvsimulator*]" = "Config/Info-tvOS.plist";
+				"INFOPLIST_FILE[sdk=iphoneos*]" = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=iphonesimulator*]" = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=macosx*]" = "Config/Info-macOS.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nl.lrvdlinden.tunr;
+				PRODUCT_NAME = Tunr;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				"TARGETED_DEVICE_FAMILY[sdk=appletv*]" = 3;
+				"TARGETED_DEVICE_FAMILY[sdk=iphone*]" = "1,2";
+				TUNR_CARPLAY = NO;
+				TUNR_IOS_ENTITLEMENTS = "Config/Tunr-iOS.entitlements";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Release;
+		};
+		77BD342CDCBBB1F25D2D8DA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		9F5F8282D0983EF52C40D3ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Release;
+		};
+		DE68F692EFC2B491586C25FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Config/Tunr-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "Config/Tunr-tvOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "Config/Tunr-tvOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "$(TUNR_IOS_ENTITLEMENTS)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Tunr-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Tunr-macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=appletvos*]" = "Config/Info-tvOS.plist";
+				"INFOPLIST_FILE[sdk=appletvsimulator*]" = "Config/Info-tvOS.plist";
+				"INFOPLIST_FILE[sdk=iphoneos*]" = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=iphonesimulator*]" = "Config/Info-iOS.plist";
+				"INFOPLIST_FILE[sdk=macosx*]" = "Config/Info-macOS.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nl.lrvdlinden.tunr;
+				PRODUCT_NAME = Tunr;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				"TARGETED_DEVICE_FAMILY[sdk=appletv*]" = 3;
+				"TARGETED_DEVICE_FAMILY[sdk=iphone*]" = "1,2";
+				TUNR_CARPLAY = NO;
+				TUNR_IOS_ENTITLEMENTS = "Config/Tunr-iOS.entitlements";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04C15D5110B3DC0655557B5E /* Build configuration list for PBXProject "Tunr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				77BD342CDCBBB1F25D2D8DA7 /* Debug */,
+				9F5F8282D0983EF52C40D3ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		158B0FE4B383891F998C7C7B /* Build configuration list for PBXNativeTarget "Tunr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE68F692EFC2B491586C25FE /* Debug */,
+				2148D7F5AA60365096D7C578 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B9597902C8D9D7549E300F5A /* Project object */;
+}
