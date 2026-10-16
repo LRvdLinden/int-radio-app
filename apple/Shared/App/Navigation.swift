@@ -135,3 +135,9 @@ enum LoadState<Value> {
         return false
     }
 }
+
+/// `.loaded(v)` of `.failed` als er niets is
+func loadState<T>(_ value: T?) -> LoadState<T> {
+    if let value { return .loaded(value) }
+    return .failed
+}

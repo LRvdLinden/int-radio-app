@@ -209,7 +209,8 @@ struct StationDetailView: View {
             (L("info.hls"), station.hls ? L("common.yes") : L("common.no")),
         ]
         return LazyVGrid(columns: [GridItem(.adaptive(minimum: tvScaled(140)), spacing: tvScaled(10))], spacing: tvScaled(10)) {
-            ForEach(items, id: \.0) { item in
+            ForEach(items.indices, id: \.self) { i in
+                let item = items[i]
                 VStack(alignment: .leading, spacing: tvScaled(4)) {
                     Text(item.0.uppercased())
                         .font(.system(size: tvScaled(10), weight: .heavy, design: .rounded))

@@ -160,10 +160,10 @@ extension EnvironmentValues {
 struct AccentButtonStyle: ButtonStyle {
     var cornerRadius: CGFloat = Theme.buttonRadius
     func makeBody(configuration: Configuration) -> some View {
-        Body(configuration: configuration, cornerRadius: cornerRadius)
+        StyledBody(configuration: configuration, cornerRadius: cornerRadius)
     }
 
-    private struct Body: View {
+    private struct StyledBody: View {
         let configuration: ButtonStyleConfiguration
         let cornerRadius: CGFloat
         @Environment(\.isFocused) private var focused
@@ -200,10 +200,10 @@ struct AccentButtonStyle: ButtonStyle {
 struct SecondaryButtonStyle: ButtonStyle {
     var cornerRadius: CGFloat = Theme.buttonRadius
     func makeBody(configuration: Configuration) -> some View {
-        Body(configuration: configuration, cornerRadius: cornerRadius)
+        StyledBody(configuration: configuration, cornerRadius: cornerRadius)
     }
 
-    private struct Body: View {
+    private struct StyledBody: View {
         let configuration: ButtonStyleConfiguration
         let cornerRadius: CGFloat
         @Environment(\.isFocused) private var focused
@@ -252,6 +252,24 @@ extension View {
     /// Witte 3px rand als de omringende knop geselecteerd is (Apple TV)
     func focusRing(cornerRadius: CGFloat = Theme.cardRadius) -> some View {
         modifier(FocusRing(cornerRadius: cornerRadius))
+    }
+
+    /// Kleine bedieningselementen (controlSize bestaat niet op Apple TV)
+    @ViewBuilder func smallControl() -> some View {
+        #if os(tvOS)
+        self
+        #else
+        self.controlSize(.small)
+        #endif
+    }
+
+    /// Lijst zonder systeemachtergrond
+    @ViewBuilder func hiddenListBackground() -> some View {
+        #if os(tvOS)
+        self
+        #else
+        self.scrollContentBackground(.hidden)
+        #endif
     }
 
     /// Standaard schermachtergrond

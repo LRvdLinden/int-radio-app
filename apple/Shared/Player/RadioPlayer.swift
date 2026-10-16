@@ -246,10 +246,8 @@ final class RadioPlayer: ObservableObject {
         watchdog = Task { [weak self] in
             try? await Task.sleep(nanoseconds: 15_000_000_000)
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                guard let self, self.state == .loading else { return }
-                self.handleFailure()
-            }
+            guard let self, self.state == .loading else { return }
+            self.handleFailure()
         }
     }
 
@@ -271,12 +269,18 @@ final class RadioPlayer: ObservableObject {
         artworkTask = Task { [weak self] in
             let url = await ArtworkLookup.shared.artwork(for: cleaned)
             guard !Task.isCancelled else { return }
-            var img: PlatformImage?
-            if let url { img = await ImageLoader.shared.load(url) }
-            await MainActor.run {
-                guard let self, self.nowPlaying == cleaned else { return }
-                self.artworkURL = url
-                if let img { self.nowPlayingImage = img; self.updateNowPlaying() } else { self.loadStationImage() }
+            var loaded: PlatformImage?
+            if let url {
+                loaded = await ImageLoader.shared.load(url)
+            }
+            let img = loaded
+            guard let self, self.nowPlaying == cleaned else { return }
+            self.artworkURL = url
+            if let img {
+                self.nowPlayingImage = img
+                self.updateNowPlaying()
+            } else {
+                self.loadStationImage()
             }
         }
     }
@@ -285,11 +289,9 @@ final class RadioPlayer: ObservableObject {
         guard let s = station, let url = s.logoURL else { return }
         Task { [weak self] in
             let img = await ImageLoader.shared.load(url)
-            await MainActor.run {
-                guard let self, self.station?.id == s.id, self.artworkURL == nil, let img else { return }
-                self.nowPlayingImage = img
-                self.updateNowPlaying()
-            }
+            guard let self, self.station?.id == s.id, self.artworkURL == nil, let img else { return }
+            self.nowPlayingImage = img
+            self.updateNowPlaying()
         }
     }
 
@@ -307,11 +309,9 @@ final class RadioPlayer: ObservableObject {
         sleepTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(minutes) * 60 * 1_000_000_000)
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                guard let self else { return }
-                self.sleepEnd = nil
-                self.pause()
-            }
+            guard let self else { return }
+            self.sleepEnd = nil
+            self.pause()
         }
     }
 
@@ -325,7 +325,7 @@ final class RadioPlayer: ObservableObject {
     private func configureSession() {
         #if os(iOS) || os(tvOS)
         let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .default, policy: .longFormAudio, options: [])
+        try? session.setCategory(.playback, mode: .default, options: [])
         let nc = NotificationCenter.default
         observers.append(nc.addObserver(forName: AVAudioSession.interruptionNotification, object: session, queue: .main) { [weak self] note in
             let typeRaw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt ?? 0
@@ -348,7 +348,7 @@ final class RadioPlayer: ObservableObject {
         #if os(iOS) || os(tvOS)
         let session = AVAudioSession.sharedInstance()
         // de intro-tune zet .mixWithOthers; voor de radio weer gewoon .playback
-        try? session.setCategory(.playback, mode: .default, policy: .longFormAudio, options: [])
+        try? session.setCategory(.playback, mode: .default, options: [])
         try? session.setActive(true)
         #endif
     }

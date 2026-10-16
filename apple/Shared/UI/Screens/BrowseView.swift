@@ -152,8 +152,8 @@ struct NewsTalkView: View {
         async let t = try? RadioBrowser.shared.byTag("talk", country: c)
         let (nl, tl) = await (n, t)
         withAnimation {
-            news = nl.map { .loaded($0) } ?? .failed
-            talk = tl.map { .loaded($0) } ?? .failed
+            news = loadState(nl)
+            talk = loadState(tl)
         }
     }
 }
@@ -169,7 +169,7 @@ struct LocalRegionsView: View {
             switch state {
             case .idle, .loading:
                 List { ForEach(0..<12, id: \.self) { _ in RowSkeleton().listRowBackground(Color.clear) } }
-                    .scrollContentBackground(.hidden)
+                    .hiddenListBackground()
             case .failed:
                 ErrorRetryView { Task { await load() } }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -185,7 +185,7 @@ struct LocalRegionsView: View {
                             Text(L("local.footer")).foregroundStyle(Theme.secondary)
                         }
                     }
-                    .scrollContentBackground(.hidden)
+                    .hiddenListBackground()
                 }
             }
         }
@@ -245,7 +245,7 @@ struct LanguagesView: View {
             switch state {
             case .idle, .loading:
                 List { ForEach(0..<12, id: \.self) { _ in RowSkeleton().listRowBackground(Color.clear) } }
-                    .scrollContentBackground(.hidden)
+                    .hiddenListBackground()
             case .failed:
                 ErrorRetryView { Task { await load() } }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -269,7 +269,7 @@ struct LanguagesView: View {
                     .listRowBackground(Theme.surface)
                     .accessibilityLabel(lang.displayName + ", " + L("stations.count", formattedNumber(lang.stationCount)))
                 }
-                .scrollContentBackground(.hidden)
+                .hiddenListBackground()
             }
         }
         .screenBackground()

@@ -32,7 +32,7 @@ final class RadioBrowser: @unchecked Sendable {
 
     private let fallbackServers = ["de1", "de2", "fi1"].compactMap { URL(string: "https://\($0).api.radio-browser.info") }
 
-    private lazy var cacheDir: URL? = {
+    private let cacheDir: URL? = {
         guard let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
         let dir = base.appendingPathComponent("RadioBrowser", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -77,13 +77,13 @@ final class RadioBrowser: @unchecked Sendable {
         return list
     }
 
-    private func currentServer(_ list: [URL], attempt: Int) -> URL {
+    private func currentServer(_ list: [URL]) -> URL {
         let i = lock.withLock { serverIndex }
-        return list[(i + attempt) % list.count]
+        return list[i % list.count]
     }
 
-    private func markFailed(_ list: [URL], attempt: Int) {
-        lock.withLock { serverIndex = (serverIndex + attempt + 1) % max(1, list.count) }
+    private func markFailed(_ list: [URL]) {
+        lock.withLock { serverIndex = (serverIndex + 1) % max(1, list.count) }
     }
 
     // MARK: - Verzoeken
@@ -98,8 +98,9 @@ final class RadioBrowser: @unchecked Sendable {
         let list = await serverList()
         guard !list.isEmpty else { throw RadioBrowserError.noServer }
         var lastError: Error = RadioBrowserError.noServer
-        for attempt in 0..<min(3, list.count) {
-            let base = currentServer(list, attempt: attempt)
+        for _ in 0..<min(3, list.count) {
+            // na een fout schuift markFailed de server op; dus steeds de huidige nemen
+            let base = currentServer(list)
             var comps = URLComponents(url: base, resolvingAgainstBaseURL: false)
             comps?.path = path
             comps?.queryItems = sortedQuery.isEmpty ? nil : sortedQuery
@@ -111,13 +112,12 @@ final class RadioBrowser: @unchecked Sendable {
                 let (data, response) = try await session.data(for: req)
                 let code = (response as? HTTPURLResponse)?.statusCode ?? 200
                 guard (200..<300).contains(code) else { throw RadioBrowserError.badResponse(code) }
-                if attempt > 0 { lock.withLock { serverIndex = (serverIndex + attempt) % list.count } }
                 if ttl > 0 { store(key, data) }
                 return data
             } catch {
                 if (error as? URLError)?.code == .cancelled || Task.isCancelled { throw error }
                 lastError = error
-                markFailed(list, attempt: 0)
+                markFailed(list)
             }
         }
         // offline: dan maar een verlopen kopie

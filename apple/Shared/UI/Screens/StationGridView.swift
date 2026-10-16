@@ -31,24 +31,38 @@ struct StationGridView: View {
         return list.filter { $0.name.localizedCaseInsensitiveContains(q) || $0.tags.localizedCaseInsensitiveContains(q) }
     }
 
+    /// Regionaam als dit een regiolijst is
+    private var regionName: String? {
+        if case .region(_, let name) = source { return name }
+        return nil
+    }
+
+    private var canMakeRegion: Bool {
+        guard let name = regionName else { return false }
+        return library.currentRegion?.name != name
+    }
+
+    private var isMyRegion: Bool {
+        guard let name = regionName else { return false }
+        return library.currentRegion?.name == name
+    }
+
     var body: some View {
         content
             .screenBackground()
             .navigationTitle(source.title)
             .inlineTitle()
             .toolbar {
-                if case .region(_, let name) = source, library.currentRegion?.name != name {
-                    ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if canMakeRegion {
                         Button {
-                            library.setLocalRegion(name)
+                            if let name = regionName { library.setLocalRegion(name) }
                             Haptics.success()
                         } label: {
                             Label(L("local.makeMine"), systemImage: "location.fill")
                         }
                     }
-                }
-                if !stations.isEmpty {
-                    ToolbarItem(placement: .primaryAction) {
+                    if !stations.isEmpty {
                         Button {
                             if let first = stations.first { player.play(first, queue: stations) }
                         } label: {
@@ -77,7 +91,7 @@ struct StationGridView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: tvScaled(14)) {
-                    if case .region(_, let name) = source, library.currentRegion?.name == name {
+                    if isMyRegion {
                         Label(L("local.isMine"), systemImage: "location.fill")
                             .font(Theme.caption)
                             .foregroundStyle(Theme.accent)

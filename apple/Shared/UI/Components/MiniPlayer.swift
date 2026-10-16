@@ -67,7 +67,7 @@ struct MiniPlayer: View {
                 } label: {
                     ZStack {
                         if player.state == .loading {
-                            ProgressView().controlSize(.small).tint(.white)
+                            ProgressView().smallControl().tint(.white)
                         } else {
                             Image(systemName: player.state == .playing ? "pause.fill" : (player.state == .failed ? "arrow.clockwise" : "play.fill"))
                                 .font(.system(size: 18, weight: .bold))
@@ -109,7 +109,7 @@ struct MiniPlayer: View {
             .shadow(color: .black.opacity(0.45), radius: 18, y: 8)
             .padding(.horizontal, 10)
             .padding(.bottom, 6)
-            .frame(maxWidth: DeviceKind.isPhone ? .infinity : 720)
+            .frame(maxWidth: DeviceKind.isPhone ? CGFloat.infinity : 720)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }

@@ -106,7 +106,7 @@ struct CountryPickerView: View {
                 }
             }
         }
-        .scrollContentBackground(.hidden)
+        .hiddenListBackground()
     }
 
     private func row(_ c: Country) -> some View {

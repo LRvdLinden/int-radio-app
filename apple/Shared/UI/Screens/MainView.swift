@@ -44,7 +44,7 @@ struct MainView: View {
 }
 
 /// Inhoud per tabblad (elk met een eigen navigatiestapel)
-struct TabContent: View {
+struct TabRoot: View {
     let tab: AppTab
 
     var body: some View {
@@ -68,7 +68,7 @@ struct PhoneTabs: View {
     var body: some View {
         TabView(selection: $app.tab) {
             ForEach(AppTab.main) { tab in
-                TabContent(tab: tab)
+                TabRoot(tab: tab)
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         // ruimte zodat de miniplayer geen inhoud afdekt
                         if player.station != nil { Color.clear.frame(height: 68) }
@@ -99,7 +99,7 @@ struct SidebarLayout: View {
         NavigationSplitView(columnVisibility: $columns) {
             sidebar
         } detail: {
-            TabContent(tab: app.tab == .settings ? .discover : app.tab)
+            TabRoot(tab: app.tab == .settings ? .discover : app.tab)
                 .id(app.tab)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     if player.station != nil {
@@ -117,7 +117,7 @@ struct SidebarLayout: View {
             Section {
                 ForEach(AppTab.main) { tab in
                     Label(tab.title, systemImage: tab.symbol)
-                        .tag(tab)
+                        .tag(AppTab?.some(tab))
                 }
             } header: {
                 TunrLogo(size: 20)
@@ -151,7 +151,7 @@ struct TVTabs: View {
     var body: some View {
         TabView(selection: $app.tab) {
             ForEach(AppTab.allCases) { tab in
-                TabContent(tab: tab)
+                TabRoot(tab: tab)
                     .tabItem { Label(tab.title, systemImage: tab.symbol) }
                     .tag(tab)
             }

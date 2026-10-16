@@ -24,20 +24,16 @@ extension Image {
     }
 }
 
+/// Soort apparaat. Wordt één keer bij het starten op de hoofdthread bepaald (`configure()` in TunrApp.init),
+/// zodat het overal (ook buiten de main actor) gelezen kan worden.
 enum DeviceKind {
-    static var isPhone: Bool {
-        #if os(iOS)
-        return UIDevice.current.userInterfaceIdiom == .phone
-        #else
-        return false
-        #endif
-    }
+    private(set) static var isPhone = false
+    private(set) static var isPad = false
 
-    static var isPad: Bool {
+    @MainActor static func configure() {
         #if os(iOS)
-        return UIDevice.current.userInterfaceIdiom == .pad
-        #else
-        return false
+        isPhone = UIDevice.current.userInterfaceIdiom == .phone
+        isPad = UIDevice.current.userInterfaceIdiom == .pad
         #endif
     }
 
@@ -83,11 +79,6 @@ enum Haptics {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         #endif
     }
-}
-
-extension PlatformImage {
-    /// Maakt een platformafbeelding van ruwe data
-    static func fromData(_ data: Data) -> PlatformImage? { PlatformImage(data: data) }
 }
 
 /// Afbeeldingen voor Now Playing / CarPlay (logo of hoes), met een eenvoudige geheugencache.

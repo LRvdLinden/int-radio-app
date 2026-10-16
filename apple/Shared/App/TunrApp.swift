@@ -12,6 +12,8 @@ struct TunrApp: App {
 
     init() {
         URLCache.shared = URLCache(memoryCapacity: 32 * 1024 * 1024, diskCapacity: 200 * 1024 * 1024)
+        DeviceKind.configure()
+        Brand.configurePlatform()
     }
 
     var body: some Scene {
@@ -26,7 +28,6 @@ struct TunrApp: App {
                 .environment(\.locale, localizer.locale)
                 .preferredColorScheme(.dark)
                 .tint(Theme.accent)
-                .onAppear { Brand.configurePlatform() }
                 #if os(macOS)
                 .frame(minWidth: 900, minHeight: 600)
                 #endif

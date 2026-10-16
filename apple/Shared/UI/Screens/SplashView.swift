@@ -112,14 +112,11 @@ struct SplashView: View {
 
                 // maatstreepjes: 41 op de grote schaal, 9 als balk
                 HStack(alignment: .bottom, spacing: 0) {
-                    let count = collapse ? 9 : 41
-                    ForEach(0..<count, id: \.self) { i in
-                        let major = collapse ? (i == 4) : (i % 8 == 0)
+                    ForEach(0..<tickCount, id: \.self) { i in
                         Capsule()
-                            .fill(Color.white.opacity(major ? 0.85 : 0.45))
-                            .frame(width: collapse ? max(1, h * 0.12) : tvScaled(1.5),
-                                   height: collapse ? h * (i % 2 == 0 ? 0.5 : 0.32) : (major ? h * 0.42 : h * (i % 2 == 0 ? 0.28 : 0.18)))
-                        if i < count - 1 { Spacer(minLength: 0) }
+                            .fill(Color.white.opacity(isMajorTick(i) ? 0.85 : 0.45))
+                            .frame(width: tickWidth(h), height: tickHeight(i, h))
+                        if i < tickCount - 1 { Spacer(minLength: 0) }
                     }
                 }
                 .frame(width: w, height: h * 0.62, alignment: .bottom)
@@ -133,13 +130,30 @@ struct SplashView: View {
                 // naald
                 Capsule()
                     .fill(Theme.accent2)
-                    .frame(width: max(2, tvScaled(collapse ? 2.5 : 3)), height: collapse ? h : h * 0.9)
+                    .frame(width: needleWidth, height: collapse ? h : h * 0.9)
                     .shadow(color: Theme.accent2.opacity(0.9), radius: tvScaled(locked ? 8 : 4))
                     .offset(x: w * needle - tvScaled(1.5))
             }
             .frame(width: w, height: h, alignment: .bottomLeading)
         }
         .opacity(scaleIn ? 1 : 0)
+    }
+
+    private var needleWidth: CGFloat { max(2, tvScaled(collapse ? 2.5 : 3)) }
+
+    private var tickCount: Int { collapse ? 9 : 41 }
+
+    private func isMajorTick(_ i: Int) -> Bool { collapse ? (i == 4) : (i % 8 == 0) }
+
+    private func tickWidth(_ h: CGFloat) -> CGFloat {
+        collapse ? max(1, h * 0.12) : tvScaled(1.5)
+    }
+
+    private func tickHeight(_ i: Int, _ h: CGFloat) -> CGFloat {
+        let even = i % 2 == 0
+        if collapse { return h * (even ? 0.5 : 0.32) }
+        if isMajorTick(i) { return h * 0.42 }
+        return h * (even ? 0.28 : 0.18)
     }
 
     /// Volledig scherm = één knop: tikken (iPhone/iPad/Mac) of Select/Play-Pause (Apple TV) slaat over
