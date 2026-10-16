@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 3
+_2026-10-16_
+
+**Opgelost**
+
+- Xcode-project: gedeeld scheme Tunr toegevoegd, zodat je bovenin Xcode iPhone, iPad, Apple TV en Mac (en hun simulators) kunt kiezen in plaats van alleen de Mac. _(iPhone, iPad, Mac, Apple TV, CarPlay)_  
+  <sub>Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac.</sub>
+
 ## Build 2
 _2026-10-16_
 

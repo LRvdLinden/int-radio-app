@@ -223,6 +223,24 @@
           "en": "Small improvements to the player and navigation."
         }
       ]
+    },
+    {
+      "build": 3,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay"
+          ],
+          "nl": "Xcode-project: gedeeld scheme Tunr toegevoegd, zodat je bovenin Xcode iPhone, iPad, Apple TV en Mac (en hun simulators) kunt kiezen in plaats van alleen de Mac.",
+          "en": "Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac."
+        }
+      ]
     }
   ]
 }
