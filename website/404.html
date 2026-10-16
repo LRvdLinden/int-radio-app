@@ -3,29 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Niet gevonden · Tunr</title>
-<meta name="tunr-title-en" content="Not found · Tunr">
+<title>Pagina niet gevonden · Tunr</title>
+<meta name="tunr-title-en" content="Page not found · Tunr">
+<!-- 404-pagina van tunr.app. Alle paden absoluut: hij wordt getoond op elke onbekende URL (ErrorDocument 404 /404.html). -->
 <meta name="robots" content="noindex">
-<meta name="description" content="Deze pagina bestaat niet.">
-<link rel="canonical" href="https://tunr.app/404.html">
-<meta property="og:title" content="Niet gevonden · Tunr">
-<meta property="og:image" content="https://tunr.app/assets/img/og-image.png">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/css/site.css?v=1">
-<style>.nf{text-align:center;padding-top:40px}.nf .big{font-family:var(--font-head);font-weight:900;font-size:clamp(90px,20vw,180px);line-height:1;letter-spacing:-.05em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}.nf .dial{max-width:520px;margin:10px auto 26px}.nf .dial i{left:30%;animation:seek 3s ease-in-out infinite}@keyframes seek{0%,100%{left:20%}40%{left:72%}60%{left:64%}}.nf p{color:var(--sec);font-size:18px;max-width:46ch;margin:0 auto}.nf .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}</style>
+<link rel="stylesheet" href="/assets/css/site.css?v=2">
+<style>
+.nf{text-align:center}
+.nf .big{font-family:var(--font-head);font-size:clamp(72px,14vw,140px);font-weight:900;line-height:1;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nf .dial{max-width:520px;margin:6px auto 4px}
+.nf .dial i{animation:seek 3s ease-in-out infinite}
+@keyframes seek{0%,100%{left:20%}40%{left:72%}60%{left:64%}}
+.nf .ttl{margin-top:8px}
+.nf .ttl::after{margin-left:auto;margin-right:auto}
+.nf .sub{margin:12px auto 0}
+.nf .acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.nf .more{list-style:none;display:flex;gap:10px 22px;justify-content:center;flex-wrap:wrap;margin-top:30px;padding:0}
+.nf .more a{color:#fff;font-weight:600}
+</style>
 </head>
 <body class="sub-page">
 <a class="skip" href="#main" data-i18n="skip">Naar de inhoud</a>
-<nav class="top scrolled" aria-label="Hoofdmenu">
+<nav class="top" aria-label="Hoofdmenu" data-i18n-attr="aria-label:nav.label">
   <div class="wrap">
     <a href="/" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tl-g" x1="0" x2="1"><stop offset="0" stop-color="#FF5A1F"/><stop offset="1" stop-color="#FFB020"/></linearGradient></defs><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
     <div class="links" id="navlinks">
       <a href="/#features" data-i18n="nav.features">Functies</a>
+      <a href="/#podcasts" data-i18n="nav.podcasts">Podcasts</a>
       <a href="/#kaart" data-i18n="nav.map">Wereldkaart</a>
-      <a href="/#apparaten" data-i18n="nav.devices">Apparaten</a>
-      <a href="/#faq" data-i18n="nav.faq">Veelgestelde vragen</a>
+      <a href="/#download" data-i18n="nav.download">Download</a>
+      <a href="/#faq" data-i18n="nav.faq">FAQ</a>
     </div>
     <div class="right">
       <a class="btn sm navweb" href="/web/" data-i18n="nav.web">Luister nu</a>
@@ -34,38 +44,37 @@
     </div>
   </div>
 </nav>
-<main id="main">
-<div class="wrap nf">
-  <div class="big" aria-hidden="true">404</div>
-  <div class="dial" aria-hidden="true"><i></i></div>
-  <h1 class="h2" data-i18n="nf.t">Hier is alleen ruis</h1>
-  <p data-i18n="nf.p">Deze pagina bestaat niet (meer). Stem af op iets anders.</p>
-  <div class="cta"><a class="btn" href="/web/" data-i18n="nf.web">Luister nu in je browser</a><a class="btn ghost" href="/" data-i18n="nf.home">Naar de homepage</a></div>
+<main id="main"><div class="wrap narrow nf">
+<div class="big" aria-hidden="true">404</div>
+<div class="dial" aria-hidden="true"><i></i></div>
+<div data-l="nl">
+<h1 class="ttl">Pagina niet gevonden</h1>
+<p class="sub">Hier is alleen ruis: deze pagina bestaat niet (meer). Misschien vind je hier wat je zoekt.</p>
+<div class="acts"><a class="btn" href="/">Naar de homepage</a><a class="btn ghost" href="/web/">Luister in je browser</a></div>
+<ul class="more"><li><a href="/#faq">Veelgestelde vragen</a></li><li><a href="/web/#/podcasts">Podcasts</a></li><li><a href="/changelog/">Changelog</a></li><li><a href="/privacy/">Privacy</a></li></ul>
 </div>
-</main>
+<div data-l="en" hidden>
+<h1 class="ttl">Page not found</h1>
+<p class="sub">Nothing but static: this page doesn't exist (anymore). Maybe you'll find what you're looking for here.</p>
+<div class="acts"><a class="btn" href="/">Go to the homepage</a><a class="btn ghost" href="/web/">Listen in your browser</a></div>
+<ul class="more"><li><a href="/#faq">FAQ</a></li><li><a href="/web/#/podcasts">Podcasts</a></li><li><a href="/changelog/">Changelog</a></li><li><a href="/privacy/">Privacy</a></li></ul>
+</div>
+</div></main>
 <footer class="foot">
   <div class="wrap">
     <div class="top">
-      <div>
-        <a href="/" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
-        <p class="tag" data-i18n="foot.tag">Alle radio van de wereld. Op elk scherm.</p>
-      </div>
-      <div class="flinks">
-        <a href="/web/" data-i18n="foot.web">Webspeler</a>
-        <a href="/changelog/" data-i18n="foot.changelog">Changelog</a>
-        <a href="/#faq" data-i18n="foot.faq">Veelgestelde vragen</a>
-        <a href="/privacy/" data-i18n="foot.privacy">Privacy</a>
-        <a href="/voorwaarden/" data-i18n="foot.terms">Voorwaarden</a>
-        <a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener" data-i18n="foot.github">GitHub</a>
+      <div><a href="/" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a><p class="tag" data-i18n="foot.tag">Alle radio en podcasts van de wereld. Op elk scherm.</p></div>
+      <div class="fcols">
+        <div class="fcol"><h3>Tunr</h3><a href="/web/" data-i18n="foot.web">Webspeler</a><a href="/changelog/" data-i18n="foot.changelog">Changelog</a></div>
+        <div class="fcol"><h3 data-i18n="foot.info">Info</h3><a href="/privacy/" data-i18n="foot.privacy">Privacy</a><a href="/voorwaarden/" data-i18n="foot.terms">Voorwaarden</a></div>
+        <div class="fcol"><h3 data-i18n="foot.more">Meer</h3><a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener">GitHub</a><a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a></div>
       </div>
     </div>
-    <p class="disc" data-i18n="foot.data">Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database). Tunr host geen streams; elke zender speelt rechtstreeks vanaf de omroep.</p>
-    <p class="disc" style="margin-top:8px" data-i18n="foot.tm">Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto en Google Play zijn handelsmerken van Google LLC.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr · <span data-i18n="foot.version">versie</span> <span data-version>1.0.0</span></p>
+    <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 7</span></p>
   </div>
 </footer>
-<script>window.TUNR_I18N={en:{"nf.t":"Nothing but static here","nf.p":"This page doesn't exist (anymore). Tune in to something else.","nf.web":"Listen now in your browser","nf.home":"Go to the homepage"}};</script>
-<script src="/assets/js/brand.js?v=1"></script>
-<script src="/assets/js/i18n.js?v=1"></script>
+<script src="/assets/js/brand.js?v=2"></script>
+<script src="/assets/js/i18n.js?v=2"></script>
 </body>
 </html>

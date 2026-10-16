@@ -2,7 +2,7 @@
 // met platformlabels, typekoppen (Nieuw / Verbeterd / Opgelost) en een platformfilter. NL/EN volgt i18n.js.
 (function () {
   var list = document.getElementById('list'), bar = document.getElementById('fbar');
-  var data = null, filter = 'all';
+  var data = null, filter = 'all', open_ = {};
   var PL = {
     ios: ['iPhone', 'apple'], ipados: ['iPad', 'apple'], macos: ['Mac', 'apple'], tvos: ['Apple TV', 'apple'], carplay: ['CarPlay', 'car'],
     android: ['Android', 'and'], androidtv: ['Android TV', 'and'], web: ['Web', 'web']
@@ -40,22 +40,25 @@
     builds.forEach(function (b) {
       var items = b.items.filter(function (i) { return filter === 'all' || i.platforms.indexOf(filter) >= 0; });
       if (!items.length) return;
-      html += '<article class="build" id="build-' + b.build + '"><div class="bh"><h2>Build ' + b.build + '</h2><span class="v">1.0.0</span>' + (first ? '<span class="latest">' + esc(L('Nieuwste', 'Latest')) + '</span>' : '') + '<time datetime="' + esc(b.date) + '">' + esc(date(b.date)) + '</time></div>';
+      var groups = '', counts = '';
       [['new', L('Nieuw', 'New')], ['improved', L('Verbeterd', 'Improved')], ['fixed', L('Opgelost', 'Fixed')]].forEach(function (k) {
         var g = items.filter(function (i) { return i.type === k[0]; });
         if (!g.length) return;
-        html += '<section class="grp ' + k[0] + '"><h3>' + esc(k[1]) + '</h3><ul>' + g.map(function (i) {
-          return '<li>' + esc(lang() === 'en' ? i.en : i.nl) + '<div class="pls">' + badges(i.platforms) + '</div></li>';
+        counts += '<span class="tc ' + k[0] + '">' + esc(k[1]) + ' <span class="n">' + g.length + '</span></span>';
+        groups += '<section class="grp ' + k[0] + '"><h3>' + esc(k[1]) + '</h3><ul>' + g.map(function (i) {
+          return '<li>' + esc(lang() === 'en' ? i.en : i.nl) + '<span class="pls">' + badges(i.platforms) + '</span></li>';
         }).join('') + '</ul></section>';
       });
-      html += '</article>';
+      var open = open_[b.build] != null ? open_[b.build] : first;
+      html += '<article class="build' + (open ? ' open' : '') + '" id="build-' + b.build + '"><button class="bh" type="button" aria-expanded="' + open + '" data-b="' + b.build + '"><h2>Build ' + b.build + '</h2><span class="v">1.0.0</span>' + (first ? '<span class="latest">' + esc(L('Nieuwste', 'Latest')) + '</span>' : '') + '<time datetime="' + esc(b.date) + '">' + esc(date(b.date)) + '</time><span class="rsum">' + counts + '</span></button><div class="rbody">' + groups + '</div></article>';
       first = false;
     });
     list.innerHTML = html || '<p class="empty">' + esc(L('Geen wijzigingen voor dit platform.', 'No changes for this platform.')) + '</p>';
   }
+  list.addEventListener('click', function (e) { var h = e.target.closest('[data-b]'); if (!h) return; var a = h.parentNode, o = !a.classList.contains('open'); a.classList.toggle('open', o); h.setAttribute('aria-expanded', o); open_[h.getAttribute('data-b')] = o; });
   bar.addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (!b) return; filter = b.getAttribute('data-f'); render(); });
   document.addEventListener('tunr:lang', render);
   fetch('../assets/changelog.json', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (d) { data = d; render(); if (location.hash) { var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); } })
+    .then(function (d) { data = d; render(); if (location.hash) { var m = location.hash.match(/^#build-(\d+)$/); if (m) { open_[m[1]] = true; render(); } var el = document.querySelector(location.hash); if (el) el.scrollIntoView(); } })
     .catch(function () { list.innerHTML = '<p class="empty">' + esc(L('De changelog kan nu niet worden geladen.', 'The changelog can\'t be loaded right now.')) + '</p>'; });
 })();

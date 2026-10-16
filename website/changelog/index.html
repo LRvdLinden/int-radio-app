@@ -4,53 +4,72 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Changelog · Tunr</title>
-<meta name="tunr-title-en" content="Changelog · Tunr">
 <meta name="description" content="Alle wijzigingen in Tunr per build, voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en de webspeler.">
-<link rel="canonical" href="https://tunr.app/changelog/">
+<meta name="tunr-title-en" content="Changelog · Tunr">
+<link rel="alternate" hreflang="nl" href="https://tunr.app/changelog/?lang=nl">
+<link rel="alternate" hreflang="en" href="https://tunr.app/changelog/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://tunr.app/changelog/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tunr">
+<meta property="og:url" content="https://tunr.app/changelog/">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:title" content="Changelog · Tunr">
 <meta property="og:image" content="https://tunr.app/assets/img/og-image.png">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="../favicon.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/css/site.css?v=1">
+<link rel="stylesheet" href="../assets/css/site.css?v=2">
 <style>
-.fbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}
-.fbar button{height:38px;padding:0 14px;border-radius:999px;background:var(--surface);border:1px solid var(--stroke2);font-weight:700;font-size:14px;color:#d6d6dc;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+/* filters: chips per platform */
+.fbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.fbar button{height:36px;padding:0 14px;border-radius:999px;background:var(--surface);border:1px solid var(--stroke2);font-weight:700;font-size:14px;color:#d6d6dc;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .fbar button:hover{background:var(--elevated)}
 .fbar button[aria-pressed="true"]{background:#fff;color:#0A0A0C;border-color:#fff}
 .fbar svg{width:16px;height:16px}
-.build{position:relative;background:var(--surface);border:1px solid var(--stroke);border-radius:18px;padding:26px 26px 22px;margin-bottom:16px;overflow:hidden}
-.build::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
-.bh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.bh h2{font-family:var(--font-head);font-weight:900;font-size:26px;letter-spacing:-.02em}
-.bh .v{color:var(--sec);font-weight:700}
-.bh time{color:var(--dim);font-size:14px;margin-left:auto}
-.latest{background:var(--grad);color:#1a0800;font-size:11.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 10px;align-self:center}
-.grp{margin-top:20px}
-.grp h3{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-.grp h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
-.grp.new h3{color:var(--ok)}.grp.improved h3{color:var(--info)}.grp.fixed h3{color:var(--warn)}
+/* builds: uitklapbaar, zoals de FAQ van de homepage (als bingr.online) */
+.build{position:relative;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;margin-bottom:8px;scroll-margin-top:96px}
+.build.open{border-color:#ffffff33}
+.bh{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:20px 64px 20px 22px;border-radius:12px}
+.bh:hover{background:#ffffff08}
+.bh:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.bh h2{font-weight:800;font-size:21px;letter-spacing:-.015em}
+.bh .v{color:#e5e5e5;font-weight:700;font-size:16px}
+.bh time{color:var(--sec);font-size:14px}
+.bh::after{content:"";position:absolute;right:22px;top:24px;width:20px;height:20px;background:linear-gradient(#fff,#fff) center/20px 2px no-repeat,linear-gradient(#fff,#fff) center/2px 20px no-repeat;transition:transform .2s}
+.build.open .bh::after{transform:rotate(45deg)}
+.latest{background:var(--grad);color:#fff;font-size:12px;font-weight:700;border-radius:4px;padding:2px 8px;align-self:center}
+.rsum{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tc{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;border-radius:5px;padding:3px 8px;background:#ffffff0d}
+.tc.new{color:#6ee68a}.tc.improved{color:#8fb8ff}.tc.fixed{color:var(--warn)}.tc .n{color:#fff;opacity:.75}
+.build.open .rsum{display:none}
+.rbody{display:none;padding:18px 22px 24px;border-top:1px solid var(--bg)}
+.build.open .rbody{display:block}
+.grp{margin-top:16px}.grp:first-child{margin-top:0}
+.grp h3{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin:0 0 4px}
+.grp h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.grp.new h3{color:#6ee68a}.grp.improved h3{color:#8fb8ff}.grp.fixed h3{color:var(--warn)}
 .grp ul{list-style:none}
-.grp li{padding:12px 0;border-top:1px solid var(--stroke);color:#e2e2e8;font-size:16px;line-height:1.55}
-.grp li:first-child{border-top:0}
-.pls{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.pi{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border-radius:7px;padding:3px 8px 3px 6px;background:#ffffff0f;color:#cfcfd6;white-space:nowrap}
+.grp li{position:relative;padding:6px 0 6px 16px;color:#e2e2e8;font-size:15.5px;line-height:1.55}
+.grp li::before{content:"";position:absolute;left:3px;top:15px;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.3}
+.pls{display:inline}.pls .pi{margin-left:6px;vertical-align:2px}
+.pi{display:inline-flex;white-space:nowrap;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:5px;padding:2px 6px 2px 4px;background:#ffffff12;color:#d0d0d0}
 .pi svg{width:14px;height:14px}
-.pi.apple{background:#ffffff12;color:#e8e8ee}.pi.and{background:#3ddc841c;color:#8ef0bd}.pi.web{background:#ff5a1f1f;color:#ffb38f}.pi.car{background:#8fb8ff1c;color:#b8d0ff}.pi.all{background:var(--grad);color:#1a0800}
+.pi.apple{background:#ffffff12;color:#e8e8ee}.pi.and{background:#3ddc841f;color:#8ef0bd}.pi.web{background:#ff5a1f1f;color:#ffb38f}.pi.car{background:#8fb8ff1c;color:#b8d0ff}.pi.all{background:#ffffff0d;color:#a9a9a9}
 .empty{color:var(--sec);padding:30px 0}
-@media (max-width:640px){.build{padding:20px 18px 16px}.bh time{margin-left:0;width:100%}}
+@media (max-width:600px){.bh{padding:16px 52px 16px 16px}.bh::after{right:16px;top:21px}}
 </style>
 </head>
 <body class="sub-page">
 <a class="skip" href="#main" data-i18n="skip">Naar de inhoud</a>
-<nav class="top scrolled" aria-label="Hoofdmenu">
+<nav class="top" aria-label="Hoofdmenu" data-i18n-attr="aria-label:nav.label">
   <div class="wrap">
     <a href="../" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tl-g" x1="0" x2="1"><stop offset="0" stop-color="#FF5A1F"/><stop offset="1" stop-color="#FFB020"/></linearGradient></defs><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
     <div class="links" id="navlinks">
       <a href="../#features" data-i18n="nav.features">Functies</a>
+      <a href="../#podcasts" data-i18n="nav.podcasts">Podcasts</a>
       <a href="../#kaart" data-i18n="nav.map">Wereldkaart</a>
-      <a href="../#apparaten" data-i18n="nav.devices">Apparaten</a>
-      <a href="../#faq" data-i18n="nav.faq">Veelgestelde vragen</a>
+      <a href="../#download" data-i18n="nav.download">Download</a>
+      <a href="../#faq" data-i18n="nav.faq">FAQ</a>
     </div>
     <div class="right">
       <a class="btn sm navweb" href="../web/" data-i18n="nav.web">Luister nu</a>
@@ -61,7 +80,7 @@
 </nav>
 <main id="main">
 <div class="wrap narrow">
-  <header class="phead"><h1 class="ttl">Changelog</h1><p class="lead2" data-i18n="c.lead">Wat er nieuw, beter en opgelost is, per build. De versie blijft 1.0.0; elk platform telt zijn eigen builds.</p></header>
+  <header class="phead"><h1 class="ttl">Changelog</h1><p class="sub" data-i18n="c.lead">Wat er nieuw, beter en opgelost is, per build. De versie blijft 1.0.0; elk platform telt zijn eigen builds.</p></header>
   <div class="fbar" id="fbar" role="group" aria-label="Platform"></div>
   <div id="list" aria-live="polite"><p class="empty" data-i18n="c.loading">Laden…</p></div>
 </div>
@@ -69,27 +88,20 @@
 <footer class="foot">
   <div class="wrap">
     <div class="top">
-      <div>
-        <a href="../" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
-        <p class="tag" data-i18n="foot.tag">Alle radio van de wereld. Op elk scherm.</p>
-      </div>
-      <div class="flinks">
-        <a href="../web/" data-i18n="foot.web">Webspeler</a>
-        <a href="../changelog/" data-i18n="foot.changelog" aria-current="page">Changelog</a>
-        <a href="../#faq" data-i18n="foot.faq">Veelgestelde vragen</a>
-        <a href="../privacy/" data-i18n="foot.privacy">Privacy</a>
-        <a href="../voorwaarden/" data-i18n="foot.terms">Voorwaarden</a>
-        <a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener" data-i18n="foot.github">GitHub</a>
+      <div><a href="../" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a><p class="tag" data-i18n="foot.tag">Alle radio en podcasts van de wereld. Op elk scherm.</p></div>
+      <div class="fcols">
+        <div class="fcol"><h3>Tunr</h3><a href="../web/" data-i18n="foot.web">Webspeler</a><a href="../changelog/" data-i18n="foot.changelog" aria-current="page">Changelog</a></div>
+        <div class="fcol"><h3 data-i18n="foot.info">Info</h3><a href="../privacy/" data-i18n="foot.privacy">Privacy</a><a href="../voorwaarden/" data-i18n="foot.terms">Voorwaarden</a></div>
+        <div class="fcol"><h3 data-i18n="foot.more">Meer</h3><a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener">GitHub</a><a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a></div>
       </div>
     </div>
-    <p class="disc" data-i18n="foot.data">Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database). Tunr host geen streams; elke zender speelt rechtstreeks vanaf de omroep.</p>
-    <p class="disc" style="margin-top:8px" data-i18n="foot.tm">Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto en Google Play zijn handelsmerken van Google LLC.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr · <span data-i18n="foot.version">versie</span> <span data-version>1.0.0</span></p>
+    <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 7</span></p>
   </div>
 </footer>
 <script>window.TUNR_I18N={en:{"c.lead":"What's new, better and fixed, per build. The version stays 1.0.0; each platform counts its own builds.","c.loading":"Loading…"}};</script>
-<script src="../assets/js/brand.js?v=1"></script>
-<script src="../assets/js/i18n.js?v=1"></script>
-<script src="../assets/js/changelog.js?v=1"></script>
+<script src="../assets/js/brand.js?v=2"></script>
+<script src="../assets/js/i18n.js?v=2"></script>
+<script src="../assets/js/changelog.js?v=2"></script>
 </body>
 </html>

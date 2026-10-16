@@ -29,9 +29,9 @@ final class RadioPlayer: ObservableObject {
     static let shared = RadioPlayer()
 
     /// Snelheden voor afleveringen
-    static let rates: [Float] = [0.8, 1, 1.25, 1.5, 1.75, 2]
-    static let skipBack: Double = 15
-    static let skipForward: Double = 30
+    nonisolated static let rates: [Float] = [0.8, 1, 1.25, 1.5, 1.75, 2]
+    nonisolated static let skipBack: Double = 15
+    nonisolated static let skipForward: Double = 30
 
     @Published private(set) var station: Station?
     @Published private(set) var state: PlaybackState = .idle

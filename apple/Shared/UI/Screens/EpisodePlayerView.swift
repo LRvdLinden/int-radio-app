@@ -8,7 +8,6 @@ struct EpisodePlayerContent: View {
     let episode: Episode
 
     @EnvironmentObject private var player: RadioPlayer
-    @Environment(\.dismiss) private var dismiss
     @State private var showInfo = false
 
     var body: some View {
