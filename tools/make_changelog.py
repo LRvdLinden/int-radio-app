@@ -10,8 +10,8 @@ root = pathlib.Path(__file__).resolve().parent.parent
 src = root / "docs/changelog.json"
 data = json.loads(src.read_text())
 
-NAMES = {"ios": "iPhone", "ipados": "iPad", "tvos": "Apple TV", "android": "Android",
-         "androidtv": "Android TV", "web": "Website"}
+NAMES = {"ios": "iPhone", "ipados": "iPad", "macos": "Mac", "tvos": "Apple TV", "carplay": "CarPlay",
+         "android": "Android", "androidtv": "Android TV", "web": "Website"}
 ALL = set(NAMES)
 TYPES = {"new": "Nieuw", "improved": "Verbeterd", "fixed": "Opgelost"}
 
