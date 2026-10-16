@@ -15,17 +15,25 @@
 
   var EN = {
     'skip': 'Skip to content',
-    'nav.features': 'Features', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.faq': 'FAQ', 'nav.web': 'Listen now',
+    'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Listen now',
     'nav.menu': 'Menu',
-    'foot.tag': 'Every radio station in the world. On every screen.',
-    'foot.web': 'Web player', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms',
-    'foot.faq': 'FAQ', 'foot.home': 'Home', 'foot.github': 'GitHub', 'foot.issues': 'Report a problem',
-    'foot.data': 'Station data: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community database). Tunr does not host streams; every station plays directly from the broadcaster.',
-    'foot.tm': 'Apple, iPhone, iPad, Mac, Apple TV and CarPlay are trademarks of Apple Inc. Android, Android TV, Android Auto and Google Play are trademarks of Google LLC.',
+    'foot.tag': 'All the world\'s radio and podcasts. On every screen.',
+    'foot.web': 'Web player', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.info': 'Info', 'foot.more': 'More',
+    'foot.disc': 'Tunr doesn\'t host any radio streams or podcasts: every station and episode plays directly from the broadcaster\'s or creator\'s server. Station data: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community database); podcast data: Apple\'s public podcast directory. Apple, iPhone, iPad, Mac, Apple TV and CarPlay are trademarks of Apple Inc. Android, Android TV, Android Auto, Google TV and Google Play are trademarks of Google LLC, Fire TV of Amazon.com, Inc.',
     'foot.version': 'version'
   };
   var extra = (window.TUNR_I18N && window.TUNR_I18N.en) || {};
   for (var k in extra) EN[k] = extra[k];
+
+  // canonical (zoals bingr.online): de x-default-URL, plus ?lang= als die nl of en is. Alleen op pagina's met een
+  // x-default en zonder eigen canonical.
+  (function () {
+    var xd = document.querySelector('link[rel="alternate"][hreflang="x-default"]');
+    if (!xd || document.querySelector('link[rel="canonical"]')) return;
+    var c = document.createElement('link'); c.rel = 'canonical';
+    c.href = xd.href + (q === 'nl' || q === 'en' ? '?lang=' + q : '');
+    document.head.appendChild(c);
+  })();
 
   var originals = new WeakMap();
   function setHTML(el, key) {
@@ -53,6 +61,10 @@
     document.querySelectorAll('[data-i18n-attr]').forEach(setAttrs);
     document.querySelectorAll('[data-l]').forEach(function (el) { el.hidden = el.getAttribute('data-l') !== lang; });
     // gelokaliseerde afbeeldingen: assets/img/nl/... ↔ assets/img/en/...
+    document.querySelectorAll('source[data-loc]').forEach(function (so) {
+      var next = so.getAttribute('srcset').replace(/\/(nl|en)\//, '/' + lang + '/');
+      if (so.getAttribute('srcset') !== next) so.setAttribute('srcset', next);
+    });
     document.querySelectorAll('img[data-loc]').forEach(function (img) {
       var src = img.getAttribute('data-src') || img.getAttribute('src');
       var next = src.replace(/\/(nl|en)\//, '/' + lang + '/');
@@ -61,6 +73,12 @@
         img.setAttribute('src', next);
       }
     });
+    // meta's met een Engelse versie (description, og:…): de NL-tekst staat in de HTML
+    document.querySelectorAll('meta[data-en]').forEach(function (m) { if (m.dataset.nl == null) m.dataset.nl = m.content; m.content = lang === 'en' ? m.dataset.en : m.dataset.nl; });
+    // FAQPage (JSON-LD) gelijk aan de zichtbare vragen in de gekozen taal
+    var ld = document.getElementById('ld-faq');
+    if (ld) ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', '@id': (window.TUNR ? window.TUNR.domain : '') + '/#faq', inLanguage: lang,
+      mainEntity: Array.prototype.map.call(document.querySelectorAll('#faq details'), function (d) { return { '@type': 'Question', name: d.querySelector('summary').textContent.trim(), acceptedAnswer: { '@type': 'Answer', text: d.querySelector('.a').textContent.trim() } }; }) });
     var t = document.querySelector('meta[name="tunr-title-en"]');
     if (t) {
       if (!document.documentElement.dataset.titleNl) document.documentElement.dataset.titleNl = document.title;

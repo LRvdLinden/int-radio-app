@@ -3,26 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tunr: alle radio van de wereld, op elk scherm</title>
-<meta name="tunr-title-en" content="Tunr: every radio station in the world, on every screen">
-<meta name="description" content="Tunr is een gratis radio-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto en je browser. Tienduizenden zenders uit meer dan 200 landen, met een wereldkaart, lokale zenders en favorieten op al je apparaten.">
-<link rel="canonical" href="https://tunr.app/">
+<title>Tunr: alle radio en podcasts van de wereld, op elk scherm</title>
+<meta name="tunr-title-en" content="Tunr: every radio station and podcast in the world, on every screen">
+<meta name="description" content="Gratis radio- en podcast-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto en je browser. Tienduizenden zenders uit meer dan 200 landen en de populairste podcasts, met een wereldkaart, lokale zenders en favorieten." data-en="Free radio and podcast app for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto and your browser. Tens of thousands of stations from more than 200 countries and the most popular podcasts, with a world map, local stations and favourites.">
+<!-- NL en EN delen één pagina: ?lang=nl en ?lang=en zijn de taalversies, zonder ?lang= volgt hij de browsertaal (x-default).
+     De canonical zet assets/js/i18n.js (x-default-URL plus ?lang=), zodat elke taalversie naar zichzelf wijst. -->
+<link rel="alternate" hreflang="nl" href="https://tunr.app/?lang=nl">
+<link rel="alternate" hreflang="en" href="https://tunr.app/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://tunr.app/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tunr">
-<meta property="og:title" content="Tunr: alle radio van de wereld, op elk scherm">
-<meta property="og:description" content="Gratis radio-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto en de browser.">
+<meta property="og:title" content="Tunr: alle radio en podcasts van de wereld, op elk scherm" data-en="Tunr: every radio station and podcast in the world, on every screen">
+<meta property="og:description" content="Gratis radio- en podcast-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto en de browser. Tienduizenden zenders en de populairste podcasts." data-en="Free radio and podcast app for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV, Android Auto and the browser. Tens of thousands of stations and the most popular podcasts.">
 <meta property="og:locale" content="nl_NL">
 <meta property="og:locale:alternate" content="en_GB">
 <meta property="og:image" content="https://tunr.app/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tunr: alle radio en podcasts van de wereld" data-en="Tunr: every radio station and podcast in the world">
 <meta property="og:url" content="https://tunr.app/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="assets/css/site.css?v=1">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <style>
 /* homepage: alleen wat hier hoort; gedeelde stijl in assets/css/site.css */
 
@@ -73,18 +77,12 @@
 .plats svg{width:24px;height:24px;color:var(--accent2);flex:none}
 .plats b{display:block;font-size:14.5px;font-weight:700;line-height:1.2}
 .plats small{display:block;font-size:12px;color:var(--sec);line-height:1.25;white-space:nowrap}
-/* downloads per platform met OS-versies */
-.dls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
-.dl{display:flex;flex-direction:column;padding:26px;border-radius:16px;background:var(--s1,#16161a);border:1px solid #ffffff1a}
-.dl.now{background:linear-gradient(150deg,#2a140b 0%,#16161a 60%);border-color:#ff5a1f66}
-.dl .devs{display:flex;gap:8px;color:#fff;margin-bottom:14px}
-.dl .devs svg{width:30px;height:30px}
-.dl h3{font-size:22px;font-weight:800;letter-spacing:-.015em}
-.dl .os{color:var(--sec);font-size:15px;margin-top:6px}
-.dl .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:20px}
-.dl .badge-soon{display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;border:1px dashed #ffffff33;color:var(--sec);font-size:15px;font-weight:700}
-@media (max-width:900px){.dls{grid-template-columns:1fr}}
-
+.need{display:flex;gap:16px;align-items:flex-start;max-width:760px;margin:26px auto 0;padding:18px 22px;border-radius:12px;background:#16161aeb;border:1px solid #ff5a1f80;text-align:left}
+.need .ic{flex:none;width:42px;height:42px;border-radius:10px;background:var(--grad);display:grid;place-items:center}
+.need .ic svg{width:24px;height:24px;color:#fff}
+.need b{display:block;font-size:17px}
+.need p{color:#dcdce2;font-size:15px;margin-top:3px}
+.need a{color:#fff;font-weight:600}
 /* ===== kaart-sectie ===== */
 .mapsec{position:relative;overflow:hidden}
 .mapgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:center}
@@ -118,74 +116,15 @@
 .dice{position:absolute;right:4%;top:6%;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:#16161Aee;border:1px solid #ffffff1f;font-size:13.5px;font-weight:800}
 .dice svg{width:18px;height:18px;color:var(--accent2)}
 
-/* ===== features ===== */
-.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px}
-.feat{position:relative;min-height:250px;padding:26px 26px 90px;border-radius:20px;background:linear-gradient(155deg,#1b1b21 0%,#141418 55%,#1b0f0a 100%);border:1px solid var(--stroke);overflow:hidden;transition:border-color .2s,transform .2s}
-.feat:hover{border-color:#ff5a1f55;transform:translateY(-2px)}
-.feat h3{font-family:var(--font-head);font-size:22px;font-weight:900;letter-spacing:-.015em;line-height:1.2}
-.feat p{color:#c4c4cc;font-size:15.5px;margin-top:10px}
-.feat .ic{position:absolute;left:26px;bottom:24px;width:50px;height:50px;border-radius:14px;display:grid;place-items:center;background:var(--grad);box-shadow:0 10px 26px -10px #ff5a1f}
-.feat .ic svg{width:26px;height:26px;color:#fff}
-.feat .deco{position:absolute;right:-30px;bottom:-30px;width:150px;height:150px;border-radius:50%;border:1px solid #ff5a1f22;box-shadow:0 0 0 22px #ff5a1f08,0 0 0 46px #ff5a1f05}
-.feat.wide{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding-bottom:26px}
-.feat.wide .copy{padding-bottom:64px;position:relative}
-.feat.wide .ic{left:0;bottom:0}
-
-/* nu-speelt-illustratie */
-.np{align-self:center;border-radius:18px;background:#0e0e12;border:1px solid #ffffff14;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px -20px #000}
-.np .row{display:flex;align-items:center;gap:12px}
-.np .cover{width:64px;height:64px;border-radius:12px;background:conic-gradient(from 210deg at 40% 40%,#0EA5E9,#22D3EE,#6366F1,#0EA5E9);position:relative;flex:none;box-shadow:0 8px 20px -8px #0EA5E9}
-.np .cover::after{content:"";position:absolute;inset:34%;border-radius:50%;background:#0e0e12;box-shadow:0 0 0 3px #ffffff33}
-.np b{display:block;font-size:15px}
-.np small{display:block;color:var(--sec);font-size:13px}
-.np .prog{height:4px;border-radius:4px;background:#ffffff14;position:relative;overflow:hidden}
-.np .prog::after{content:"";position:absolute;inset:0;width:100%;background:var(--grad);transform-origin:left;animation:fill 8s linear infinite}
-@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.np .ctl{display:flex;justify-content:center;gap:22px;align-items:center;color:#fff}
-.np .ctl svg{width:20px;height:20px}
-.np .ctl .pp{width:42px;height:42px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center}
-
-/* ===== screenshots ===== */
-.shots{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:30px var(--g) 16px;margin:0 calc(var(--g) * -1);scrollbar-width:thin;scrollbar-color:#3a3a44 transparent}
-.shots figure{flex:none;scroll-snap-align:start}
-.shots figure.missing{display:none}
-.shots img{height:440px;width:auto;border-radius:30px;box-shadow:0 0 0 1px #ffffff1a,0 30px 60px -30px #000;background:var(--surface)}
-.shots .tv img,.shots .mac img{border-radius:14px;height:320px}
-.shots figcaption{font-size:14px;color:var(--sec);margin-top:12px;font-weight:600}
-.shots-empty .shots{display:none}
-
-/* ===== stappen ===== */
-.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px;counter-reset:s}
-.steps li{counter-increment:s;position:relative;padding:26px;border-radius:20px;background:var(--surface);border:1px solid var(--stroke)}
-.steps li::before{content:counter(s);display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--grad);font-family:var(--font-head);font-weight:900;font-size:19px;color:#1a0800;margin-bottom:18px;box-shadow:0 0 0 6px #ff5a1f1a}
-.steps h3{font-family:var(--font-head);font-size:20px;font-weight:900;letter-spacing:-.01em}
-.steps p{color:#c4c4cc;font-size:15.5px;margin-top:8px}
-.steps a{color:#fff;font-weight:700}
-
-/* ===== slot ===== */
-.final{position:relative;text-align:center;padding:30px 0 100px}
-.final .card{position:relative;overflow:hidden;border-radius:28px;padding:64px 24px;background:radial-gradient(ellipse 70% 90% at 50% 120%,#ff5a1f55,transparent 60%),linear-gradient(180deg,#16161a,#111114);border:1px solid #ffffff1a}
-.final .card::before{content:"";position:absolute;left:50%;top:100%;width:900px;height:900px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid #ff5a1f30;box-shadow:0 0 0 80px #ff5a1f08,0 0 0 160px #ff5a1f05,0 0 0 240px #ff5a1f04}
-.final .h2{max-width:20ch;margin:0 auto;position:relative}
-.final p{color:#d0d0d6;margin:14px auto 30px;font-size:18px;max-width:56ch;position:relative}
-.final .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
-
 /* één georkestreerd moment: de hero komt binnen */
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .hero .wrap>*{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
 .hero .wrap>:nth-child(2){animation-delay:.07s}.hero .wrap>:nth-child(3){animation-delay:.14s}
 .hero .wrap>:nth-child(4){animation-delay:.21s}.hero .wrap>:nth-child(5){animation-delay:.28s}
 .hero .wrap>:nth-child(6){animation-delay:.35s}.hero .wrap>:nth-child(7){animation-delay:.42s}
-
-@media (max-width:1060px){
-  .mapgrid{grid-template-columns:1fr;gap:36px}
-  .feats{grid-template-columns:1fr 1fr}
-  .feat.wide{grid-column:span 2}
-}
 @media (max-width:980px){
   .wall{grid-template-columns:repeat(5,1fr);inset:-30% -50%}
   .wall .col:nth-child(n+6){display:none}
-  .steps{grid-template-columns:1fr}
 }
 @media (max-width:640px){
   .hero{padding:104px 0 56px;min-height:0}
@@ -197,11 +136,6 @@
   .plats b{font-size:13.5px}
   .plats small{font-size:11.5px}
   .plats svg{width:19px;height:19px}
-  .feats{grid-template-columns:1fr}
-  .feat.wide{grid-column:auto;grid-template-columns:1fr}
-  .feat{min-height:0}
-  .shots img{height:360px;border-radius:24px}
-  .shots .tv img,.shots .mac img{height:200px}
   .mapcard{transform:translateX(-50%);min-width:0;width:88%;bottom:3%;padding:8px 10px 8px 8px;gap:10px}
   .mapcard .art{width:40px;height:40px;font-size:15px}
   .mapcard .play{width:36px;height:36px}
@@ -209,62 +143,163 @@
   .worldmap{padding:12% 2% 24%}
   .dice{font-size:12px;padding:6px 10px}
   .cluster{min-width:26px;height:26px;font-size:11px}
-  .final .card{padding:48px 18px}
 }
+@media (max-width:900px){.need{padding:16px;gap:12px}.need .ic{width:36px;height:36px}}
 @media (prefers-reduced-motion:reduce){
   .wall,.hero .wrap>*,.hero .bar::after{animation:none}
 }
+/* ===== onder de hero: opbouw, maten en kaarten als bingr.online, in Tunr-kleuren ===== */
+/* schermen */
+.shots{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:26px var(--g) 14px;margin:0 calc(var(--g) * -1);scrollbar-width:thin;scrollbar-color:#3a3a44 transparent}
+.shots figure{flex:none;scroll-snap-align:start}
+.shots figure.missing{display:none}
+.shots picture{display:block}
+.shots img{height:330px;width:auto;border-radius:10px;box-shadow:0 0 0 1px #ffffff1a;background:var(--surface)}
+.shots .p img{border-radius:22px}
+.shots figcaption{font-size:14px;color:var(--sec);margin-top:10px}
+.shots figcaption b{color:#fff;font-weight:600}
 
-/* ===== opbouw zoals bingr.online ===== */
-.need{display:flex;gap:16px;align-items:flex-start;max-width:760px;margin:26px auto 0;padding:18px 22px;border-radius:12px;background:#16161aeb;border:1px solid #ff5a1f80;text-align:left}
-.need .ic{flex:none;width:42px;height:42px;border-radius:10px;background:var(--grad);display:grid;place-items:center}
-.need .ic svg{width:24px;height:24px;color:#fff}
-.need b{display:block;font-size:17px}
-.need p{color:#dcdce2;font-size:15px;margin-top:3px}
-.need a{color:#fff;font-weight:600}
+/* redenen */
+.reasons{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.reason{position:relative;min-height:230px;padding:24px 24px 76px;border-radius:16px;background:linear-gradient(150deg,#1d1d24 0%,#151518 55%,#1f0e07 100%);border:1px solid #ffffff14;overflow:hidden}
+.reason h3{font-size:22px;font-weight:800;letter-spacing:-.015em;line-height:1.2}
+.reason p{color:#c8c8d0;font-size:15.5px;margin-top:10px}
+.reason .ic{position:absolute;right:20px;bottom:18px;width:52px;height:52px;color:var(--accent)}
+.reason:nth-child(2) .ic,.reason:nth-child(5) .ic{color:var(--accent2)}
+
+/* podcasts */
+.podgrid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:56px;align-items:center}
+.podcopy .ticks{list-style:none;margin-top:24px;display:grid;gap:14px}
+.podcopy .ticks li{display:flex;gap:14px;align-items:flex-start;color:#d6d6dc;font-size:16.5px}
+.podcopy .ticks svg{width:22px;height:22px;flex:none;color:var(--accent);margin-top:2px}
+.podcopy .ticks b{color:#fff}
+.podcopy .btn{margin-top:30px}
+.podviz{position:relative;padding:26px 0 70px}
+.pv-card{position:relative;border-radius:20px;background:linear-gradient(150deg,#1d1d24 0%,#151518 60%,#1f0e07 100%);border:1px solid #ffffff14;padding:20px 20px 12px;box-shadow:0 40px 100px -40px #000;width:88%}
+.pv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pv-head b{font-size:16px;font-weight:800}
+.pv-flag{font-size:20px}
+.pv-list{list-style:none}
+.pv-list li{display:flex;align-items:center;gap:14px;padding:10px 0;border-top:1px solid #ffffff10}
+.pv-list li:first-child{border-top:0}
+.pv-list .rk{width:18px;font-weight:900;font-size:17px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;text-align:center}
+.cv{width:52px;height:52px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:var(--font-head);font-weight:900;font-size:18px;color:#fff;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:inset 0 0 0 1px #ffffff26}
+.pv-list .t{flex:1;min-width:0}
+.pv-list .t b{display:block;font-size:15px}
+.pv-list .t small{display:block;color:var(--sec);font-size:13px}
+.pv-list .fol{font-size:12.5px;font-weight:800;padding:6px 12px;border-radius:999px;background:#ffffff14;color:#fff;white-space:nowrap}
+.pv-list .fol.off{background:transparent;box-shadow:inset 0 0 0 1px #ffffff33;color:#d6d6dc}
+.pv-player{position:absolute;right:0;bottom:0;width:min(400px,78%);display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;background:#202026f2;border:1px solid #ffffff1f;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 30px 70px -20px #000}
+.cv.big{width:84px;height:84px;border-radius:14px;font-size:26px}
+.pv-np{flex:1;min-width:0}
+.pv-np small{display:block;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
+.pv-np b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.pv-bar{height:4px;border-radius:4px;background:#ffffff26;margin-top:10px;position:relative}
+.pv-bar i{position:absolute;left:0;top:0;bottom:0;width:44%;border-radius:4px;background:var(--grad)}
+.pv-bar i::after{content:"";position:absolute;right:-5px;top:-4px;width:12px;height:12px;border-radius:50%;background:#fff}
+.pv-times{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sec);font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.pv-ctl{display:flex;align-items:center;gap:14px;margin-top:6px}
+.pv-ctl .sk{position:relative;width:26px;height:26px;color:#fff}
+.pv-ctl .sk svg{width:26px;height:26px}
+.pv-ctl .sk em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:8.5px;font-weight:900;padding-top:2px}
+.pv-ctl .pp{width:38px;height:38px;border-radius:50%;background:#fff;color:#0A0A0C;display:grid;place-items:center}
+.pv-ctl .pp svg{width:18px;height:18px}
+.pv-ctl .rate{margin-left:auto;font-size:13px;font-weight:800;padding:4px 9px;border-radius:8px;background:#ffffff14}
+
+/* stappen */
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px;counter-reset:s}
+.steps li{counter-increment:s;padding:24px;border-radius:16px;background:var(--surface);border:1px solid var(--stroke)}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--grad);color:#fff;font-weight:800;font-size:18px;margin-bottom:16px}
+.steps h3{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.steps p{color:#c8c8d0;font-size:15.5px;margin-top:8px}
+.steps a{color:#fff;font-weight:600}
+
+/* downloads */
+.dls{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:30px}
+.dl{display:flex;flex-direction:column;padding:26px;border-radius:16px;background:var(--surface);border:1px solid var(--stroke)}
+.dl .devs{display:flex;gap:8px;color:#fff;margin-bottom:14px}
+.dl .devs svg{width:30px;height:30px}
+.dl h3{font-size:22px;font-weight:800;letter-spacing:-.015em}
+.dl .os{color:var(--sec);font-size:15px;margin-top:4px}
+.dl .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:20px}
 .soon-tag{display:inline-block;vertical-align:middle;margin-left:12px;padding:5px 12px;border-radius:999px;background:var(--grad);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.dls{grid-template-columns:repeat(2,1fr) !important;margin-top:30px !important}
-.dl.now{border-color:var(--accent) !important;background:linear-gradient(150deg,#2a140b 0%,#16161a 60%) !important}
 .dl.soon h3,.dl.soon .os,.dl.soon .devs{opacity:.55}
-.dlnote{color:var(--sec);font-size:15px;margin-top:18px}
-.dlnote a{color:#fff;font-weight:600}
-#faq .h2{text-align:center}
-.shots .mac img{height:440px !important;border-radius:14px}
-.shots figcaption b{color:#fff;font-weight:700;margin-right:4px}
-@media (max-width:900px){.dls{grid-template-columns:1fr !important}.need{padding:16px;gap:12px}.need .ic{width:36px;height:36px}.shots .mac img{height:220px !important}}
+.dl .badge-soon{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px dashed #ffffff33;color:var(--sec);font-size:15px;font-weight:700;cursor:default}
+.dl.live{border-color:var(--accent)}
+.pair{margin-top:18px;color:var(--sec);font-size:15px}
+.pair a{color:#fff;font-weight:600}
+
+/* slot */
+.final{text-align:center;padding:40px 0 90px}
+.final .h2{max-width:22ch;margin:0 auto}
+.final p{color:var(--sec);margin:12px auto 26px;font-size:18px;max-width:60ch}
+.final .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+@media (max-width:1060px){.mapgrid,.podgrid{grid-template-columns:1fr;gap:36px}.podviz{max-width:620px}}
+@media (max-width:980px){
+  .reasons{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .reasons,.dls{grid-template-columns:1fr}
+  .reason{min-height:0}
+  .shots img{height:190px}
+  .shots .p img{border-radius:16px}
+  .podviz{padding:0 0 110px}
+  .pv-card{width:100%;padding:16px 16px 8px}
+  .cv{width:44px;height:44px;font-size:15px}
+  .pv-player{width:92%;right:4%}
+  .cv.big{width:64px;height:64px;font-size:20px}
+  .final .cta .btn{width:100%}
+}
 </style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "WebSite",
+      "@id": "https://tunr.app/#website",
+      "name": "Tunr",
+      "url": "https://tunr.app/",
+      "inLanguage": ["nl", "en"]
+    },
+    {
       "@type": "SoftwareApplication",
+      "@id": "https://tunr.app/#app-apple",
       "name": "Tunr voor iPhone, iPad, Mac, Apple TV en CarPlay",
-      "description": "Wereldwijde radio-app: tienduizenden zenders uit meer dan 200 landen, met een wereldkaart, logo's en albumhoezen.",
+      "description": "Wereldwijde radio- en podcast-app: tienduizenden zenders uit meer dan 200 landen en de populairste podcasts, met een wereldkaart, logo's en albumhoezen.",
       "applicationCategory": "MusicApplication",
       "operatingSystem": "iOS 17, iPadOS 17, macOS 14, tvOS 17",
+      "url": "https://tunr.app/#download",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
       "inLanguage": ["nl", "en"]
     },
     {
       "@type": "SoftwareApplication",
+      "@id": "https://tunr.app/#app-android",
       "name": "Tunr voor Android, Android TV en Android Auto",
-      "description": "Wereldwijde radio-app: tienduizenden zenders uit meer dan 200 landen, met een wereldkaart, logo's en albumhoezen.",
+      "description": "Wereldwijde radio- en podcast-app: tienduizenden zenders uit meer dan 200 landen en de populairste podcasts, met een wereldkaart, logo's en albumhoezen.",
       "applicationCategory": "MusicApplication",
       "operatingSystem": "Android 7.0",
+      "url": "https://tunr.app/#download",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
       "inLanguage": ["nl", "en"]
     },
     {
       "@type": "WebApplication",
+      "@id": "https://tunr.app/#app-web",
       "name": "Tunr webspeler",
+      "description": "Luister naar radiozenders uit de hele wereld en naar podcasts, direct in je browser.",
       "applicationCategory": "MusicApplication",
       "operatingSystem": "Elke moderne browser",
+      "url": "https://tunr.app/web/",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
     }
   ]
 }
 </script>
+<script type="application/ld+json" id="ld-faq">{"@context":"https://schema.org","@type":"FAQPage","@id":"https://tunr.app/#faq","inLanguage":"nl","mainEntity":[]}</script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Naar de inhoud</a>
@@ -274,8 +309,8 @@
     <a href="./" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="tl-g" x1="0" x2="1"><stop offset="0" stop-color="#FF5A1F"/><stop offset="1" stop-color="#FFB020"/></linearGradient></defs><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
     <div class="links" id="navlinks">
       <a href="#features" data-i18n="nav.features">Functies</a>
+      <a href="#podcasts" data-i18n="nav.podcasts">Podcasts</a>
       <a href="#kaart" data-i18n="nav.map">Wereldkaart</a>
-      <a href="#apparaten" data-i18n="nav.devices">Apparaten</a>
       <a href="#download" data-i18n="nav.download">Download</a>
       <a href="#faq" data-i18n="nav.faq">FAQ</a>
     </div>
@@ -294,7 +329,7 @@
     <div><span class="onair"><span class="live">On Air</span><span class="sep"></span><span data-i18n="hero.badge">Gratis · zonder account · zonder reclame</span></span></div>
     <h1 data-i18n="hero.title">Alle radio van de wereld. <em>Op elk scherm.</em></h1>
     <div class="bar" aria-hidden="true"></div>
-    <p class="lead" data-i18n="hero.lead">Tunr brengt tienduizenden radiozenders uit meer dan 200 landen naar je iPhone, iPad, Mac, Apple TV, auto, Android-toestel, tv en browser. Lokaal, wereldwijd, op genre of gewoon ergens op de kaart.</p>
+    <p class="lead" data-i18n="hero.lead">Tunr brengt tienduizenden radiozenders uit meer dan 200 landen én de populairste podcasts naar je iPhone, iPad, Mac, Apple TV, auto, Android-toestel, tv en browser. Lokaal, wereldwijd, op genre of gewoon ergens op de kaart.</p>
     <div class="cta">
       <a class="btn" href="web/"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="hero.web">Luister nu in je browser</span></a>
       <a class="btn ghost" href="web/#/map"><span data-i18n="map.cta">Open de kaart</span></a>
@@ -318,83 +353,111 @@
   </div>
 </header>
 
-<div class="dial" aria-hidden="true"><i></i></div>
-
-
-
-
-
-<!-- FAQ -->
-
+<div class="lightbar" aria-hidden="true"></div>
 
 <!-- Schermen -->
 <section class="block" id="schermen" aria-labelledby="shots-h">
   <div class="wrap">
     <h2 class="h2" id="shots-h" data-i18n="shots.title">Zo ziet Tunr eruit</h2>
-    <p class="lead2" data-i18n="shots.lead">Alle radio van de wereld in één overzichtelijke app: kies je land, ontdek zenders en luister met logo's en albumhoezen.</p>
-    <div class="shots" id="shots">
-      <figure class="mac"><img data-loc src="assets/img/nl/mac_discover.jpg" loading="lazy" alt="Ontdek op de Mac" data-i18n-attr="alt:alt.mac"><figcaption><b>Mac</b> <span data-i18n="cap.mac">Ontdek</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_discover.jpg" loading="lazy" alt="Ontdek met populaire zenders" data-i18n-attr="alt:alt.discover"><figcaption><b>iPhone</b> <span data-i18n="cap.discover">Ontdek</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_browse.jpg" loading="lazy" alt="Bladeren met grote tegels" data-i18n-attr="alt:alt.browse"><figcaption><b>iPhone</b> <span data-i18n="cap.browse">Bladeren</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_player.jpg" loading="lazy" alt="Speler met LIVE en equalizer" data-i18n-attr="alt:alt.player"><figcaption><b>iPhone</b> <span data-i18n="cap.player">Speler</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_detail.jpg" loading="lazy" alt="Zenderpagina" data-i18n-attr="alt:alt.detail"><figcaption><b>iPhone</b> <span data-i18n="cap.detail">Zender</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_library.jpg" loading="lazy" alt="Bibliotheek met favorieten" data-i18n-attr="alt:alt.library"><figcaption><b>iPhone</b> <span data-i18n="cap.library">Bibliotheek</span></figcaption></figure>
-      <figure><img data-loc src="assets/img/nl/ios_country.jpg" loading="lazy" alt="Kies je land" data-i18n-attr="alt:alt.country"><figcaption><b>iPhone</b> <span data-i18n="cap.country">Kies je land</span></figcaption></figure>
+    <p class="sub" data-i18n="shots.sub">Alle radio van de wereld in één overzichtelijke app: kies je land, ontdek zenders en luister met logo's en albumhoezen.</p>
+    <div class="shots" id="shots" tabindex="0" aria-label="Screenshots">
+      <figure><picture><source data-loc type="image/webp" srcset="assets/img/nl/mac_discover.webp"><img data-loc src="assets/img/nl/mac_discover.jpg" width="1400" height="875" loading="lazy" decoding="async" alt="Ontdek op de Mac" data-i18n-attr="alt:alt.mac"></picture><figcaption><b>Mac</b> <span data-i18n="cap.mac">Een echte Mac-app</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_discover.webp"><img data-loc src="assets/img/nl/ios_discover.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Ontdek met populaire zenders" data-i18n-attr="alt:alt.discover"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.discover">Ontdek</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_browse.webp"><img data-loc src="assets/img/nl/ios_browse.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Bladeren met grote tegels" data-i18n-attr="alt:alt.browse"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.browse">Bladeren</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_player.webp"><img data-loc src="assets/img/nl/ios_player.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Speler met LIVE en equalizer" data-i18n-attr="alt:alt.player"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.player">Speler</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_detail.webp"><img data-loc src="assets/img/nl/ios_detail.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Zenderpagina" data-i18n-attr="alt:alt.detail"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.detail">Zenderpagina</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_library.webp"><img data-loc src="assets/img/nl/ios_library.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Bibliotheek met favorieten" data-i18n-attr="alt:alt.library"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.library">Bibliotheek</span></figcaption></figure>
+      <figure class="p"><picture><source data-loc type="image/webp" srcset="assets/img/nl/ios_country.webp"><img data-loc src="assets/img/nl/ios_country.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Kies je land" data-i18n-attr="alt:alt.country"></picture><figcaption><b>iPhone</b> <span data-i18n="cap.country">Kies je land</span></figcaption></figure>
     </div>
   </div>
 </section>
 
-<!-- Functies -->
+<!-- Waarom Tunr -->
 <section class="block" id="features" aria-labelledby="feat-h">
   <div class="wrap">
-        <h2 class="h2" id="feat-h" data-i18n="feat.title">Waarom Tunr</h2>
-    <p class="lead2" data-i18n="feat.lead">Eén app met dezelfde schermen op al je apparaten: Ontdek, Bladeren, Kaart, Zoeken en Bibliotheek.</p>
-    <div class="feats">
-      <article class="feat">
-        <h3 data-i18n="f1.t">Bladeren en lokaal</h3>
-        <p data-i18n="f1.p">Grote tegels voor Lokaal, Muziek, Nieuws &amp; Talk, Sport, Op taal en de Top 100 wereldwijd. Kies je provincie of staat en je regionale zenders staan voortaan op Ontdek.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></span>
-        <span class="deco"></span>
-      </article>
-      <article class="feat">
-        <h3 data-i18n="f2.t">Logo's en albumhoezen</h3>
-        <p data-i18n="f2.p">Elke zender heeft een herkenbare cover: het eigen logo, of een kleurrijk monogram. In de apps zie je bij Nu speelt de artiest, de titel en de albumhoes van het nummer dat op dat moment draait.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/></svg></span>
-        <span class="deco"></span>
-      </article>
-      <article class="feat">
-        <h3 data-i18n="f3.t">Favorieten op al je apparaten</h3>
-        <p data-i18n="f3.p">Tik op het hartje en je zender staat in je Bibliotheek. Op iPhone, iPad, Mac en Apple TV gaan je favorieten mee via iCloud, zonder account.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.6s-7.6-4.6-9.3-9.3C1.5 8 3.5 4.6 7 4.6c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.5 0 5.5 3.4 4.3 6.7-1.7 4.7-9.3 9.3-9.3 9.3z"/></svg></span>
-        <span class="deco"></span>
-      </article>
-      <article class="feat">
-        <h3 data-i18n="f4.t">Apple TV en Android TV</h3>
-        <p data-i18n="f4.p">Een echte tv-app met grote covers, focus op afstand en de wereldkaart op het grote scherm. De radio op de achtergrond van je avond.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8"/></svg></span>
-        <span class="deco"></span>
-      </article>
-      <article class="feat">
-        <h3 data-i18n="f5.t">CarPlay en Android Auto</h3>
-        <p data-i18n="f5.p">Favorieten, Recent, Populair en Genres op het scherm van je auto. Kiezen, luisteren, ogen op de weg.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M5.5 17.5v2M18.5 17.5v2"/></svg></span>
-        <span class="deco"></span>
-      </article>
-      <article class="feat">
-        <h3 data-i18n="f6.t">Slaaptimer en achtergrondaudio</h3>
-        <p data-i18n="f6.p">Luister verder met je scherm uit of in een andere app, met bediening op het vergrendelscherm. De slaaptimer zet de radio na 15 tot 90 minuten zacht uit.</p>
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span>
-        <span class="deco"></span>
-      </article>
+    <h2 class="h2" id="feat-h" data-i18n="feat.title">Waarom Tunr</h2>
+    <div class="reasons">
+      <div class="reason">
+        <h3 data-i18n="r1.t">Alle radio van de wereld</h3>
+        <p data-i18n="r1.p">Tienduizenden zenders uit meer dan 200 landen. Populair en trending in je eigen land, je regionale omroep, of radio op genre en in elke taal.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="19"/><path d="M5 24h38M24 5c5.2 5.3 7.6 11.6 7.6 19S29.2 37.7 24 43M24 5c-5.2 5.3-7.6 11.6-7.6 19S18.8 37.7 24 43"/></svg>
+      </div>
+      <div class="reason">
+        <h3 data-i18n="r2.t">Radio én podcasts</h3>
+        <p data-i18n="r2.p">Naast radio de populairste podcasts van je land. Volg je favorieten, zie nieuwe afleveringen meteen en luister verder waar je was.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="17" y="5" width="14" height="22" rx="7"/><path d="M10 22a14 14 0 0 0 28 0M24 36v7M16 43h16"/></svg>
+      </div>
+      <div class="reason">
+        <h3 data-i18n="r3.t">Logo's en albumhoezen</h3>
+        <p data-i18n="r3.p">Elke zender heeft een herkenbare cover: het eigen logo of een kleurrijk monogram. In de apps zie je ook artiest, titel en hoes van het nummer dat nu draait.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="5"/><path d="M24 11a13 13 0 0 1 13 13"/></svg>
+      </div>
+      <div class="reason">
+        <h3 data-i18n="r4.t">Favorieten op al je apparaten</h3>
+        <p data-i18n="r4.p">Tik op het hartje of volg een podcast en hij staat in je Bibliotheek. Op iPhone, iPad, Mac en Apple TV gaat alles mee via iCloud, zonder account.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 41S9 32 5.6 22.8C3.2 16.2 7.2 9.6 14 9.6c4.2 0 7.2 2.3 10 5.9 2.8-3.6 5.8-5.9 10-5.9 6.8 0 10.8 6.6 8.4 13.2C39 32 24 41 24 41z"/></svg>
+      </div>
+      <div class="reason">
+        <h3 data-i18n="r5.t">In de auto en op je tv</h3>
+        <p data-i18n="r5.p">CarPlay en Android Auto met je favorieten en podcasts op het scherm van je auto. En een echte tv-app voor Apple TV, Android TV, Google TV en Fire TV.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 25l3.6-10.2A4 4 0 0 1 15.4 12h17.2a4 4 0 0 1 3.8 2.8L40 25"/><rect x="5" y="25" width="38" height="11" rx="3"/><path d="M10 36v4M38 36v4"/><circle cx="13" cy="30.5" r="1.4" fill="currentColor"/><circle cx="35" cy="30.5" r="1.4" fill="currentColor"/></svg>
+      </div>
+      <div class="reason">
+        <h3 data-i18n="r6.t">Slaaptimer en achtergrondaudio</h3>
+        <p data-i18n="r6.p">Luister verder met je scherm uit, met bediening op het vergrendelscherm. De slaaptimer zet de radio na 15 tot 90 minuten zacht uit, of stopt aan het einde van een aflevering.</p>
+        <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M40 29A16 16 0 1 1 19 8a13 13 0 0 0 21 21z"/></svg>
+      </div>
     </div>
   </div>
 </section>
-<!-- Wereldkaart -->
+
+<!-- Podcasts -->
+<section class="block podsec" id="podcasts" aria-labelledby="pod-h">
+  <div class="wrap podgrid">
+    <div class="podviz" aria-hidden="true">
+      <div class="pv-card">
+        <div class="pv-head"><b data-i18n="pv.top">Top podcasts in Nederland</b><span class="pv-flag">🇳🇱</span></div>
+        <ol class="pv-list">
+          <li><span class="rk">1</span><span class="cv" style="--a:#7C3AED;--b:#DB2777">DN</span><span class="t"><b>De Nieuwsdag</b><small data-i18n="pv.g1">Nieuws · dagelijks</small></span><span class="fol" data-i18n="pv.following">Volgend</span></li>
+          <li><span class="rk">2</span><span class="cv" style="--a:#0EA5E9;--b:#22D3EE">WL</span><span class="t"><b>Weten is Leuk</b><small data-i18n="pv.g2">Wetenschap</small></span><span class="fol off" data-i18n="pv.follow">Volgen</span></li>
+          <li><span class="rk">3</span><span class="cv" style="--a:#F43F5E;--b:#FB923C">MZ</span><span class="t"><b>Moordzaken</b><small>True crime</small></span><span class="fol off" data-i18n="pv.follow">Volgen</span></li>
+        </ol>
+      </div>
+      <div class="pv-player">
+        <span class="cv big" style="--a:#7C3AED;--b:#DB2777">DN</span>
+        <div class="pv-np">
+          <small data-i18n="pv.cont">Verder luisteren</small>
+          <b data-i18n="pv.ep">#212 · Het weekoverzicht</b>
+          <div class="pv-bar"><i></i></div>
+          <div class="pv-times"><span>18:42</span><span>-24:10</span></div>
+          <div class="pv-ctl">
+            <span class="sk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5"/><path d="M4 3.5v4h4" stroke-linejoin="round"/></svg><em>15</em></span>
+            <span class="pp"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg></span>
+            <span class="sk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5"/><path d="M20 3.5v4h-4" stroke-linejoin="round"/></svg><em>30</em></span>
+            <span class="rate">1,25×</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="podcopy">
+      <h2 class="h2" id="pod-h" data-i18n="pod.title">Radio en podcasts in één app</h2>
+      <p class="sub" data-i18n="pod.sub">Van het ochtendnieuws op de radio naar je favoriete podcast, zonder van app te wisselen. Gratis, zonder account.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l1"><b>Toplijsten per land</b> en per genre: nieuws, comedy, true crime, sport, geschiedenis en meer.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l2"><b>Volgen</b>: nieuwe afleveringen van je podcasts staan meteen op Ontdek.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l3"><b>Verder luisteren</b> waar je was, met een vinkje bij wat je al hebt gehoord.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l4"><b>Snelheid</b> van 0,8× tot 2×, 15 seconden terug en 30 vooruit, en een slaaptimer tot het einde van de aflevering.</span></li>
+      </ul>
+      <a class="btn ghost" href="web/#/podcasts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg><span data-i18n="pod.cta">Ontdek podcasts</span></a>
+    </div>
+  </div>
+</section>
+
 <section class="block mapsec" id="kaart" aria-labelledby="map-h">
   <div class="wrap mapgrid">
     <div class="mapcopy">
       <h2 class="h2" id="map-h" data-i18n="map.title">Ontdek de wereld op de kaart</h2>
-      <p class="lead2" data-i18n="map.lead">Draai de wereldbol rond en luister waar je maar wilt: een jazzzender in New Orleans, ochtendradio in Tokio of het nieuws uit je geboortedorp. Elke stip is een zender.</p>
+      <p class="sub" data-i18n="map.lead">Draai de wereldbol rond en luister waar je maar wilt: een jazzzender in New Orleans, ochtendradio in Tokio of het nieuws uit je geboortedorp. Elke stip is een zender.</p>
       <ul>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span data-i18n="map.l1"><b>Gloeiende stippen</b> voor duizenden zenders, gegroepeerd als je uitzoomt.</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span data-i18n="map.l2"><b>Willekeurig</b>: de dobbelsteen vliegt naar een onverwachte plek en zet de zender meteen aan.</span></li>
@@ -428,178 +491,156 @@
     </div>
   </div>
 </section>
+
 <!-- Zo werkt het -->
-<section class="block" id="hoe" aria-labelledby="how-h" style="padding-top:20px">
+<section class="block" id="start" aria-labelledby="how-h">
   <div class="wrap">
-    <h2 class="h2" id="how-h" data-i18n="how.title">In drie tikken op de radio</h2>
+    <h2 class="h2" id="how-h" data-i18n="how.title">Zo werkt het</h2>
+    <p class="sub" data-i18n="how.sub">Geen account, geen abonnement: in drie tikken luister je naar de radio of een podcast.</p>
     <ol class="steps">
-      <li><h3 data-i18n="s1.t">Kies je land</h3><p data-i18n="s1.p">Tunr stelt het land van je toestel voor. Meteen zie je wat daar populair is, trending en lokaal.</p></li>
-      <li><h3 data-i18n="s2.t">Ontdek of zoek</h3><p data-i18n="s2.p">Blader door genres en regio's, draai aan de wereldkaart of zoek op naam, wereldwijd of in je eigen land.</p></li>
-      <li><h3 data-i18n="s3.t">Luister en bewaar</h3><p data-i18n="s3.p">Eén tik en je luistert. Bewaar je favorieten met het hartje. Probeer het nu: <a href="web/">open de webspeler</a>.</p></li>
+      <li><h3 data-i18n="s1.t">Kies je land</h3><p data-i18n="s1.p">Tunr stelt het land van je toestel voor. Meteen zie je wat daar populair is: zenders, trending, lokaal en de podcast-toplijst.</p></li>
+      <li><h3 data-i18n="s2.t">Ontdek, zoek of volg</h3><p data-i18n="s2.p">Blader door genres en regio's, draai aan de wereldkaart, zoek een zender of podcast, en volg de podcasts die je niet wilt missen.</p></li>
+      <li><h3 data-i18n="s3.t">Luister en bewaar</h3><p data-i18n="s3.p">Eén tik en je luistert. Bewaar zenders met het hartje en luister afleveringen verder waar je was. <a href="web/">Open de webspeler</a></p></li>
     </ol>
   </div>
 </section>
-<section class="block" id="download" aria-labelledby="dl-h" style="padding-top:20px">
+
+<!-- Download -->
+<section class="block" id="download" aria-labelledby="dl-h">
   <div class="wrap">
     <h2 class="h2" id="dl-h"><span data-i18n="dl.title">Download Tunr</span><span class="soon-tag">Coming Soon</span></h2>
-    <p class="lead2" data-i18n="dl.sub">De apps komen binnenkort in de App Store en op Google Play. Tot die tijd luister je meteen in je browser.</p>
+    <p class="sub" data-i18n="dl.sub">De apps komen binnenkort in de App Store en op Google Play. Tot die tijd luister je meteen in je browser naar radio en podcasts. <a href="#faq">Veelgestelde vragen</a></p>
     <div class="dls">
-      <div class="dl now">
-        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M10 12.5v5l4.2-2.5z"/></svg></div>
+      <div class="dl live">
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="40" height="34" rx="3"/><path d="M4 16h40"/><path d="M21 23v10l8-5z"/></svg></div>
         <h3 data-i18n="dl.web.t">In je browser, nu beschikbaar</h3>
-        <p class="os" data-i18n="dl.web.os">Op je computer, tablet of telefoon, zonder iets te installeren</p>
+        <p class="os" data-i18n="dl.web.os">Radio en podcasts op je computer, tablet of telefoon, zonder iets te installeren</p>
         <div class="acts"><a class="btn sm" href="web/" data-i18n="hero.web">Luister nu in je browser</a></div>
       </div>
       <div class="dl soon">
-        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><path d="M10.5 5h3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="11" rx="1.6"/><path d="M2 19.5h20l-1.6-4H3.6z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg></div>
-        <h3 data-i18n="dl.apple.t">iPhone, iPad, Mac, Apple TV en CarPlay</h3>
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="20" height="40" rx="5"/><path d="M21 8h6"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="5" width="32" height="38" rx="4"/><circle cx="24" cy="37.5" r="1.2" fill="currentColor"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="9" width="32" height="22" rx="2.5"/><path d="M3 37h42l-3-6H6z"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="26" rx="3"/><path d="M17 41h14"/><path d="M21 16v10l8-5z" fill="currentColor"/></svg></div>
+        <h3 data-i18n="dl.apple.t">iPhone, iPad, Mac en Apple TV</h3>
         <p class="os">iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+</p>
         <div class="acts"><span class="badge-soon" data-i18n="dl.soon.apple">Binnenkort in de App Store</span></div>
       </div>
       <div class="dl soon">
-        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.22a11.4 11.4 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg></div>
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.22a11.4 11.4 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="26" rx="3"/><path d="M17 41h14M24 34v7"/></svg></div>
         <h3 data-i18n="dl.android.t">Android, Android TV, Google TV en Fire TV</h3>
         <p class="os" data-i18n="dl.android.os">Telefoons, tablets en tv's met Android 7 of nieuwer</p>
         <div class="acts"><span class="badge-soon" data-i18n="dl.soon.android">Binnenkort op Google Play</span></div>
       </div>
       <div class="dl soon">
-        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="2"/><path d="M6 17.5V20M18 17.5V20"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></svg></div>
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 25l3.6-10.2A4 4 0 0 1 15.4 12h17.2a4 4 0 0 1 3.8 2.8L40 25"/><rect x="5" y="25" width="38" height="11" rx="3"/><path d="M10 36v4M38 36v4"/></svg></div>
         <h3 data-i18n="dl.car.t">CarPlay en Android Auto</h3>
-        <p class="os" data-i18n="dl.car.os">In de auto via je iPhone (iOS 17+) of Android-telefoon (Android 7+)</p>
+        <p class="os" data-i18n="dl.car.os">Radio en je podcasts in de auto, via je iPhone (iOS 17+) of Android-telefoon (Android 7+)</p>
         <div class="acts"><span class="badge-soon" data-i18n="dl.soon.car">Binnenkort, samen met de apps</span></div>
       </div>
     </div>
-    <p class="dlnote" data-i18n="dl.note">Wat er nieuw is in elke build lees je in de <a href="changelog/">changelog</a>.</p>
+    <p class="pair" data-i18n="dl.more">Wat er nieuw is in elke build lees je in de <a href="changelog/">changelog</a>.</p>
   </div>
 </section>
-<section class="block" id="faq" aria-labelledby="faq-h" style="padding-top:20px">
-  <div class="wrap">
-    <div class="center"><h2 class="h2" id="faq-h" data-i18n="faq.title">Veelgestelde vragen</h2></div>
-    <div class="faq">
-      <details><summary data-i18n="q1">Is Tunr gratis?</summary><div class="a" data-i18n="a1">Ja. Tunr is gratis, zonder account, zonder reclame van ons en zonder abonnement. Sommige zenders laten zelf reclame horen in hun uitzending; daar hebben wij geen invloed op.</div></details>
-      <details><summary data-i18n="q2">Waar komen de zenders vandaan?</summary><div class="a" data-i18n="a2">Uit <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a>, een open community-database met tienduizenden radiozenders van over de hele wereld. Tunr host zelf geen streams: elke zender speelt rechtstreeks vanaf de server van de omroep.</div></details>
-      <details><summary data-i18n="q3">Mijn zender ontbreekt of werkt niet. Wat nu?</summary><div class="a" data-i18n="a3">Voeg hem toe of verbeter hem op <a href="https://www.radio-browser.info" rel="noopener">radio-browser.info</a>. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten. Werkt een zender alleen niet in de browser? Veel zenders gebruiken nog een onbeveiligde verbinding die browsers blokkeren; in de apps speelt hij wel.</div></details>
-      <details><summary data-i18n="q4">Op welke apparaten werkt Tunr?</summary><div class="a" data-i18n="a4">Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. En direct in je browser met de <a href="web/">webspeler</a>. De apps verschijnen binnenkort in de App Store en Google Play.</div></details>
-      <details><summary data-i18n="q5">Zie ik welk nummer er speelt?</summary><div class="a" data-i18n="a5">In de apps wel, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Browsers kunnen die gegevens van andere servers niet uitlezen, dus de webspeler toont de zender zelf.</div></details>
-      <details><summary data-i18n="q6">Wat doet Tunr met mijn gegevens?</summary><div class="a" data-i18n="a6">Zo weinig mogelijk: geen account, geen tracking, geen analytics. Je favorieten en recente zenders staan alleen op je eigen apparaat. Lees meer in de <a href="privacy/">privacyverklaring</a>.</div></details>
-    </div>
+
+<!-- FAQ -->
+<section class="block" id="faq" aria-labelledby="faq-h">
+  <div class="wrap faq">
+    <h2 class="h2" id="faq-h" data-i18n="faq.title">Veelgestelde vragen</h2>
+    <details><summary data-i18n="q1">Is Tunr gratis?</summary><div class="a" data-i18n="a1">Ja. Tunr is gratis, zonder account, zonder reclame van ons en zonder abonnement. Sommige zenders en podcasts laten zelf reclame horen; daar hebben wij geen invloed op.</div></details>
+    <details><summary data-i18n="q7">Kan ik ook podcasts luisteren?</summary><div class="a" data-i18n="a7">Ja. In Tunr vind je de populairste podcasts van je land, toplijsten per genre en een zoekfunctie. Volg een podcast en nieuwe afleveringen staan op Ontdek; je luistert verder waar je was, op de snelheid die je wilt (0,8× tot 2×). De podcastgegevens komen uit de openbare podcastgids van Apple; de afleveringen spelen rechtstreeks vanaf de server van de maker. Probeer het in de <a href="web/#/podcasts">webspeler</a>.</div></details>
+    <details><summary data-i18n="q2">Waar komen de zenders vandaan?</summary><div class="a" data-i18n="a2">Uit <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a>, een open community-database met tienduizenden radiozenders van over de hele wereld. Tunr host zelf geen streams: elke zender speelt rechtstreeks vanaf de server van de omroep.</div></details>
+    <details><summary data-i18n="q3">Mijn zender ontbreekt of werkt niet. Wat nu?</summary><div class="a" data-i18n="a3">Voeg hem toe of verbeter hem op <a href="https://www.radio-browser.info" rel="noopener">radio-browser.info</a>. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten. Werkt een zender alleen niet in de browser? Veel zenders gebruiken nog een onbeveiligde verbinding die browsers blokkeren; in de apps speelt hij wel.</div></details>
+    <details><summary data-i18n="q4">Op welke apparaten werkt Tunr?</summary><div class="a" data-i18n="a4">Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. En direct in je browser met de <a href="web/">webspeler</a>. De apps verschijnen binnenkort in de App Store en Google Play.</div></details>
+    <details><summary data-i18n="q5">Zie ik welk nummer er speelt?</summary><div class="a" data-i18n="a5">In de apps wel, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Browsers kunnen die gegevens van andere servers niet uitlezen, dus de webspeler toont de zender zelf.</div></details>
+    <details><summary data-i18n="q6">Wat doet Tunr met mijn gegevens?</summary><div class="a" data-i18n="a6">Zo weinig mogelijk: geen account, geen tracking, geen analytics. Je favorieten, gevolgde podcasts, luisterposities en recente zenders staan alleen op je eigen apparaat. Lees meer in de <a href="privacy/">privacyverklaring</a>.</div></details>
   </div>
 </section>
+
 <section class="final" aria-labelledby="final-h">
   <div class="wrap">
-    <div class="card">
-      <h2 class="h2" id="final-h" data-i18n="final.title">Zet de radio aan. Waar ook ter wereld.</h2>
-      <p data-i18n="final.p">Geen download nodig: de webspeler werkt meteen, op je computer, tablet of telefoon.</p>
-      <div class="cta"><a class="btn" href="web/"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="hero.web">Luister nu in je browser</span></a><a class="btn ghost" href="web/#/map" data-i18n="map.cta">Open de kaart</a></div>
-    </div>
+    <h2 class="h2" id="final-h" data-i18n="final.title">Zet de radio aan. Waar ook ter wereld.</h2>
+    <p data-i18n="final.p">Geen download nodig: de webspeler werkt meteen, met radio en podcasts, op je computer, tablet of telefoon.</p>
+    <div class="cta"><a class="btn" href="web/"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="hero.web">Luister nu in je browser</span></a><a class="btn ghost" href="web/#/podcasts" data-i18n="pod.cta">Ontdek podcasts</a></div>
   </div>
 </section>
 </main>
 
+
 <footer class="foot">
   <div class="wrap">
     <div class="top">
-      <div>
-        <a href="./" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a>
-        <p class="tag" data-i18n="foot.tag">Alle radio van de wereld. Op elk scherm.</p>
-      </div>
-      <div class="flinks">
-        <a href="web/" data-i18n="foot.web">Webspeler</a>
-        <a href="changelog/" data-i18n="foot.changelog">Changelog</a>
-        <a href="#faq" data-i18n="foot.faq">Veelgestelde vragen</a>
-        <a href="privacy/" data-i18n="foot.privacy">Privacy</a>
-        <a href="voorwaarden/" data-i18n="foot.terms">Voorwaarden</a>
-        <a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener" data-i18n="foot.github">GitHub</a>
+      <div><a href="./" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a><p class="tag" data-i18n="foot.tag">Alle radio en podcasts van de wereld. Op elk scherm.</p></div>
+      <div class="fcols">
+        <div class="fcol"><h3>Tunr</h3><a href="web/" data-i18n="foot.web">Webspeler</a><a href="changelog/" data-i18n="foot.changelog">Changelog</a></div>
+        <div class="fcol"><h3 data-i18n="foot.info">Info</h3><a href="privacy/" data-i18n="foot.privacy">Privacy</a><a href="voorwaarden/" data-i18n="foot.terms">Voorwaarden</a></div>
+        <div class="fcol"><h3 data-i18n="foot.more">Meer</h3><a href="https://github.com/LRvdLinden/int-radio-app" data-repo="" rel="noopener">GitHub</a><a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a></div>
       </div>
     </div>
-    <p class="disc" data-i18n="foot.data">Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database). Tunr host geen streams; elke zender speelt rechtstreeks vanaf de omroep.</p>
-    <p class="disc" style="margin-top:8px" data-i18n="foot.tm">Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto en Google Play zijn handelsmerken van Google LLC.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr · <span data-i18n="foot.version">versie</span> <span data-version>1.0.0</span></p>
+    <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 7</span></p>
   </div>
 </footer>
 
 <script>
 window.TUNR_I18N = { en: {
-  "nav.label": "Main menu",
   "hero.badge": "Free · no account · no ads",
   "hero.title": "Every radio station in the world. <em>On every screen.</em>",
-  "hero.lead": "Tunr brings tens of thousands of radio stations from more than 200 countries to your iPhone, iPad, Mac, Apple TV, car, Android device, TV and browser. Local, worldwide, by genre or simply somewhere on the map.",
+  "hero.lead": "Tunr brings tens of thousands of radio stations from more than 200 countries and the most popular podcasts to your iPhone, iPad, Mac, Apple TV, car, Android device, TV and browser. Local, worldwide, by genre or simply somewhere on the map.",
   "hero.web": "Listen now in your browser",
-  "store.dl": "Coming soon to the", "store.gp": "Coming soon on",
-  "store.apple": "App Store: coming soon", "store.google": "Google Play: coming soon",
   "count.fallback": "<b>50,000+</b> stations · <b>200+</b> countries",
   "chip.web": "Web",
-  "shots.title": "See Tunr in action",
-  "shots.lead": "All the world's radio in one clear app: pick your country, discover stations and listen with logos and album art.",
-  "cap.mac": "Discover",
-  "cap.discover": "Discover",
-  "cap.browse": "Browse",
-  "cap.player": "Player",
-  "cap.detail": "Station",
-  "cap.library": "Library",
-  "cap.country": "Choose your country",
-  "alt.detail": "Station page",
-  "feat.title": "Why Tunr",
-  "dl.title": "Download Tunr",
-  "dl.car.t": "CarPlay and Android Auto",
-  "dl.car.os": "In the car via your iPhone (iOS 17+) or Android phone (Android 7+)",
-  "dl.soon.car": "Coming soon, together with the apps",
-  "dl.note": "See what's new in every build in the <a href=\"changelog/\">changelog</a>.",
+  "chipos.ios": "iOS 17+", "chipos.ipad": "iPadOS 17+", "chipos.mac": "macOS 14+", "chipos.tvos": "tvOS 17+",
+  "chipos.carplay": "iPhone with iOS 17+", "chipos.android": "Phone and tablet, 7+", "chipos.androidtv": "Google TV, Fire TV",
+  "chipos.auto": "Android 7+", "chipos.web": "Any modern browser",
   "need.t": "Free, no account and no ads",
   "need.p": "Tunr plays the stations' own streams, from the open station list of <a href=\"https://www.radio-browser.info\" target=\"_blank\" rel=\"noopener\">Radio Browser</a>. Missing a station? Add it there.",
-  "nav.faq": "FAQ",
-  "chipos.ios": "iOS 17+",
-  "chipos.ipad": "iPadOS 17+",
-  "chipos.mac": "macOS 14+",
-  "chipos.tvos": "tvOS 17+",
-  "chipos.carplay": "iPhone with iOS 17+",
-  "chipos.android": "Phone and tablet, 7+",
-  "chipos.androidtv": "Google TV, Fire TV",
-  "chipos.auto": "Android 7+",
-  "chipos.web": "Any modern browser",
-  "nav.download": "Download",
-  "dl.sub": "The apps are coming soon to the App Store and Google Play. Until then, listen right away in your browser.",
-  "dl.web.t": "In your browser, available now",
-  "dl.web.os": "On your computer, tablet or phone, nothing to install",
-  "dl.apple.t": "iPhone, iPad, Mac, Apple TV and CarPlay",
-  "dl.soon.apple": "Coming soon to the App Store",
-  "dl.android.t": "Android, Android TV, Google TV and Fire TV",
-  "dl.android.os": "Phones, tablets and TVs with Android 7 or later",
-  "dl.soon.android": "Coming soon on Google Play",
-  "map.eyebrow": "Map", "map.title": "Discover the world on the map",
+  "shots.title": "This is what Tunr looks like",
+  "shots.sub": "All the world's radio in one clear app: pick your country, discover stations and listen with logos and album art.",
+  "cap.mac": "A real Mac app", "cap.discover": "Discover", "cap.browse": "Browse", "cap.player": "Player", "cap.detail": "Station page", "cap.library": "Library", "cap.country": "Choose your country",
+  "alt.mac": "Discover on the Mac", "alt.discover": "Discover with popular stations", "alt.browse": "Browse with big tiles", "alt.player": "Player with LIVE and equalizer", "alt.detail": "Station page", "alt.library": "Library with favourites", "alt.country": "Choose your country",
+  "feat.title": "Why Tunr",
+  "r1.t": "All the world's radio", "r1.p": "Tens of thousands of stations from more than 200 countries. Popular and trending in your own country, your regional broadcaster, or radio by genre and in every language.",
+  "r2.t": "Radio and podcasts", "r2.p": "Next to radio, the most popular podcasts in your country. Follow your favourites, see new episodes right away and pick up where you left off.",
+  "r3.t": "Logos and album art", "r3.p": "Every station has a recognisable cover: its own logo or a colourful monogram. In the apps you also see the artist, title and cover of the song playing now.",
+  "r4.t": "Favourites on all your devices", "r4.p": "Tap the heart or follow a podcast and it's in your Library. On iPhone, iPad, Mac and Apple TV everything syncs through iCloud, no account needed.",
+  "r5.t": "In the car and on your TV", "r5.p": "CarPlay and Android Auto with your favourites and podcasts on your car's screen. And a real TV app for Apple TV, Android TV, Google TV and Fire TV.",
+  "r6.t": "Sleep timer and background audio", "r6.p": "Keep listening with the screen off, with controls on the lock screen. The sleep timer fades the radio out after 15 to 90 minutes, or stops at the end of an episode.",
+  "pv.top": "Top podcasts in the Netherlands", "pv.g1": "News · daily", "pv.g2": "Science", "pv.following": "Following", "pv.follow": "Follow", "pv.cont": "Continue listening", "pv.ep": "#212 · The week in review",
+  "pod.title": "Radio and podcasts in one app",
+  "pod.sub": "From the morning news on the radio to your favourite podcast, without switching apps. Free, no account.",
+  "pod.l1": "<b>Top charts per country</b> and per genre: news, comedy, true crime, sports, history and more.",
+  "pod.l2": "<b>Follow</b>: new episodes of your podcasts show up on Discover right away.",
+  "pod.l3": "<b>Continue listening</b> where you left off, with a checkmark on what you've already heard.",
+  "pod.l4": "<b>Speed</b> from 0.8× to 2×, 15 seconds back and 30 forward, and a sleep timer until the end of the episode.",
+  "pod.cta": "Discover podcasts",
+  "map.title": "Discover the world on the map",
   "map.lead": "Spin the globe and listen wherever you like: a jazz station in New Orleans, morning radio in Tokyo or the news from your home town. Every dot is a station.",
   "map.l1": "<b>Glowing dots</b> for thousands of stations, grouped when you zoom out.",
   "map.l2": "<b>Random</b>: the dice flies to an unexpected place and starts the station right away.",
   "map.l3": "<b>Tap and listen</b>: a card with logo, place and genres, and one button to play.",
   "map.cta": "Open the map", "map.dice": "Random", "map.card": "Amsterdam · Netherlands 🇳🇱 · jazz, soul",
-  "feat.eyebrow": "Features", "feat.title": "Radio, done right",
-  "feat.lead": "One app with the same screens on all your devices: Discover, Browse, Map, Search and Library.",
-  "f1.t": "Browse and local", "f1.p": "Big tiles for Local, Music, News &amp; Talk, Sports, By language and the worldwide Top 100. Pick your province or state and your regional stations show up on Discover.",
-  "f2.t": "Logos and album art", "f2.p": "Every station has a recognisable cover: its own logo, or a colourful monogram. In the apps, Now Playing shows the artist, title and album art of the song on air right now.",
-  "np.live": "Live", "np.sub": "Nova Lights · on Radio Azul",
-  "f3.t": "Favourites on all your devices", "f3.p": "Tap the heart and the station is in your Library. On iPhone, iPad, Mac and Apple TV your favourites sync through iCloud, no account needed.",
-  "f4.t": "Apple TV and Android TV", "f4.p": "A real TV app with big covers, remote-friendly focus and the world map on the big screen. Radio in the background of your evening.",
-  "f5.t": "CarPlay and Android Auto", "f5.p": "Favourites, Recent, Popular and Genres on your car's screen. Pick, listen, eyes on the road.",
-  "f6.t": "Sleep timer and background audio", "f6.p": "Keep listening with the screen off or in another app, with controls on the lock screen. The sleep timer fades the radio out after 15 to 90 minutes.",
-  "shots.eyebrow": "Screens", "shots.title": "This is what Tunr looks like",
-  "cap.splash": "Tuning in", "cap.discover": "Discover", "cap.browse": "Browse", "cap.map": "Map", "cap.player": "Player", "cap.detail": "Station", "cap.library": "Library", "cap.country": "Choose your country", "cap.tvmap": "Map on TV", "cap.mac": "A real Mac app",
-  "alt.splash": "Splash screen with the frequency scale", "alt.discover": "Discover with popular stations", "alt.browse": "Browse with big tiles", "alt.map": "World map with stations", "alt.player": "Player with LIVE and equalizer", "alt.detail": "Station detail", "alt.library": "Library with favourites", "alt.country": "Choose your country", "alt.tvdiscover": "Discover on Apple TV", "alt.tvmap": "World map on Apple TV", "alt.mac": "Tunr on the Mac",
-  "how.eyebrow": "How it works", "how.title": "On the radio in three taps",
-  "s1.t": "Choose your country", "s1.p": "Tunr suggests your device's country. You immediately see what's popular there, trending and local.",
-  "s2.t": "Discover or search", "s2.p": "Browse genres and regions, spin the world map or search by name, worldwide or in your own country.",
-  "s3.t": "Listen and save", "s3.p": "One tap and you're listening. Save favourites with the heart. Try it now: <a href=\"web/\">open the web player</a>.",
-  "faq.eyebrow": "Questions", "faq.title": "Frequently asked questions",
-  "q1": "Is Tunr free?", "a1": "Yes. Tunr is free, with no account, no ads from us and no subscription. Some stations play their own ads in their broadcast; we have no control over that.",
+  "how.title": "How it works", "how.sub": "No account, no subscription: three taps and you're listening to the radio or a podcast.",
+  "s1.t": "Choose your country", "s1.p": "Tunr suggests your device's country. You immediately see what's popular there: stations, trending, local and the podcast chart.",
+  "s2.t": "Discover, search or follow", "s2.p": "Browse genres and regions, spin the world map, search for a station or podcast, and follow the podcasts you don't want to miss.",
+  "s3.t": "Listen and save", "s3.p": "One tap and you're listening. Save stations with the heart and resume episodes where you left off. <a href=\"web/\">Open the web player</a>",
+  "dl.title": "Download Tunr",
+  "dl.sub": "The apps are coming soon to the App Store and Google Play. Until then, listen to radio and podcasts right away in your browser. <a href=\"#faq\">Frequently asked questions</a>",
+  "dl.web.t": "In your browser, available now", "dl.web.os": "Radio and podcasts on your computer, tablet or phone, nothing to install",
+  "dl.apple.t": "iPhone, iPad, Mac and Apple TV", "dl.soon.apple": "Coming soon to the App Store",
+  "dl.android.t": "Android, Android TV, Google TV and Fire TV", "dl.android.os": "Phones, tablets and TVs with Android 7 or later", "dl.soon.android": "Coming soon on Google Play",
+  "dl.car.t": "CarPlay and Android Auto", "dl.car.os": "Radio and your podcasts in the car, via your iPhone (iOS 17+) or Android phone (Android 7+)", "dl.soon.car": "Coming soon, together with the apps",
+  "dl.more": "See what's new in every build in the <a href=\"changelog/\">changelog</a>.",
+  "faq.title": "Frequently asked questions",
+  "q1": "Is Tunr free?", "a1": "Yes. Tunr is free, with no account, no ads from us and no subscription. Some stations and podcasts play their own ads; we have no control over that.",
+  "q7": "Can I listen to podcasts too?", "a7": "Yes. Tunr has the most popular podcasts in your country, charts per genre and search. Follow a podcast and new episodes appear on Discover; you resume where you left off, at the speed you like (0.8× to 2×). Podcast data comes from Apple's public podcast directory; episodes play directly from the creator's server. Try it in the <a href=\"web/#/podcasts\">web player</a>.",
   "q2": "Where do the stations come from?", "a2": "From <a href=\"https://www.radio-browser.info\" rel=\"noopener\">Radio Browser</a>, an open community database with tens of thousands of radio stations from all over the world. Tunr doesn't host any streams: every station plays directly from the broadcaster's server.",
   "q3": "My station is missing or doesn't work. What now?", "a3": "Add or fix it at <a href=\"https://www.radio-browser.info\" rel=\"noopener\">radio-browser.info</a>. Once checked, it appears in Tunr automatically, on all your devices. Does a station only fail in the browser? Many stations still use an unencrypted connection that browsers block; it will play in the apps.",
   "q4": "Which devices does Tunr work on?", "a4": "iPhone and iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) and CarPlay, Android phones and tablets (Android 7+), Android TV, Google TV and Fire TV, and Android Auto. And right in your browser with the <a href=\"web/\">web player</a>. The apps are coming soon to the App Store and Google Play.",
   "q5": "Can I see which song is playing?", "a5": "In the apps, yes, when the station sends that information: you'll see artist, title and album art. Browsers can't read that data from other servers, so the web player shows the station itself.",
-  "q6": "What does Tunr do with my data?", "a6": "As little as possible: no account, no tracking, no analytics. Your favourites and recent stations only live on your own device. Read more in the <a href=\"privacy/\">privacy statement</a>.",
-  "final.title": "Turn on the radio. Anywhere in the world.", "final.p": "No download needed: the web player works right away, on your computer, tablet or phone."
+  "q6": "What does Tunr do with my data?", "a6": "As little as possible: no account, no tracking, no analytics. Your favourites, followed podcasts, listening positions and recent stations only live on your own device. Read more in the <a href=\"privacy/\">privacy statement</a>.",
+  "final.title": "Turn on the radio. Anywhere in the world.", "final.p": "No download needed: the web player works right away, with radio and podcasts, on your computer, tablet or phone."
 }};
 </script>
-<script src="assets/js/brand.js?v=1"></script>
-<script src="assets/js/i18n.js?v=1"></script>
-<script src="assets/js/home.js?v=1"></script>
+<script src="assets/js/brand.js?v=2"></script>
+<script src="assets/js/i18n.js?v=2"></script>
+<script src="assets/js/home.js?v=2"></script>
 </body>
 </html>

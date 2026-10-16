@@ -71,7 +71,7 @@ struct PhoneTabs: View {
                 TabRoot(tab: tab)
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         // ruimte zodat de miniplayer geen inhoud afdekt
-                        if player.station != nil { Color.clear.frame(height: 68) }
+                        if player.hasMedia { Color.clear.frame(height: 68) }
                     }
                     .tabItem { Label(tab.title, systemImage: tab.symbol) }
                     .tag(tab)
@@ -82,9 +82,11 @@ struct PhoneTabs: View {
         .overlay(alignment: .bottom) {
             MiniPlayer()
                 .padding(.bottom, 49)   // hoogte van de tabbalk (boven het thuisbalkje)
-                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: player.station?.id)
+                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: miniKey)
         }
     }
+
+    private var miniKey: String { player.episode?.id ?? player.station?.id ?? "" }
 }
 #endif
 
@@ -102,10 +104,10 @@ struct SidebarLayout: View {
             TabRoot(tab: app.tab == .settings ? .discover : app.tab)
                 .id(app.tab)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if player.station != nil {
+                    if player.hasMedia {
                         MiniPlayer()
                             .padding(.top, 4)
-                            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: player.station?.id)
+                            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: player.episode?.id ?? player.station?.id ?? "")
                     }
                 }
         }

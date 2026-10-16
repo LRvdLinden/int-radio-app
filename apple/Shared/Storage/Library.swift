@@ -390,6 +390,7 @@ extension Library {
         list.insert(e.compact, at: 0)
         recentEpisodes = Array(list.prefix(Self.maxRecentEpisodes))
         save(K.episodes, try? JSONEncoder().encode(recentEpisodes))
+        changed.send()
     }
 
     func removeRecentEpisode(_ e: Episode) {
@@ -405,7 +406,7 @@ extension Library {
                 return (e, p.updated)
             }
             .sorted { $0.1 > $1.1 }
-            .map(\.0)
+            .map { $0.0 }
     }
 
     /// Laatste aflevering van elke gevolgde podcast, nieuwste eerst

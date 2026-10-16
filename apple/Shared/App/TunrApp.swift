@@ -59,7 +59,8 @@ struct TunrApp: App {
 }
 
 #if os(macOS)
-/// Menu "Afspelen": Spatie = afspelen/pauze, ⌘→/⌘← = volgende/vorige zender, ⌘L = favoriet
+/// Menu "Afspelen": Spatie = afspelen/pauze, ⌘→/⌘← = volgende/vorige zender, ⌘L = favoriet.
+/// Aflevering: ⌘→/⌘← = 30 s vooruit / 15 s terug, ⇧⌘→/⇧⌘← = volgende/vorige aflevering, plus snelheid.
 struct PlaybackCommands: Commands {
     @ObservedObject var player: RadioPlayer
     @ObservedObject var library: Library
@@ -68,26 +69,49 @@ struct PlaybackCommands: Commands {
         CommandMenu(L("menu.playback")) {
             Button(player.state == .playing ? L("player.pause") : L("player.play")) { player.toggle() }
                 .keyboardShortcut(.space, modifiers: [])
-                .disabled(player.station == nil)
+                .disabled(!player.hasMedia)
             Divider()
-            Button(L("player.next")) { player.next() }
-                .keyboardShortcut(.rightArrow, modifiers: .command)
-                .disabled(!player.hasNext)
-            Button(L("player.previous")) { player.previous() }
-                .keyboardShortcut(.leftArrow, modifiers: .command)
-                .disabled(!player.hasNext)
-            Divider()
-            Button(isFavorite ? L("action.unfavorite") : L("action.favorite")) { player.toggleFavoriteCurrent() }
-                .keyboardShortcut("l", modifiers: .command)
-                .disabled(player.station == nil)
+            if player.isEpisode {
+                Button(L("player.forward30")) { player.skip(RadioPlayer.skipForward) }
+                    .keyboardShortcut(.rightArrow, modifiers: .command)
+                Button(L("player.back15")) { player.skip(-RadioPlayer.skipBack) }
+                    .keyboardShortcut(.leftArrow, modifiers: .command)
+                Divider()
+                Button(L("player.nextEpisode")) { player.next() }
+                    .keyboardShortcut(.rightArrow, modifiers: [.command, .shift])
+                    .disabled(!player.hasNext)
+                Button(L("player.previousEpisode")) { player.previous() }
+                    .keyboardShortcut(.leftArrow, modifiers: [.command, .shift])
+                    .disabled(!player.hasPrevious)
+                Divider()
+                Menu(L("player.speed")) {
+                    ForEach(RadioPlayer.rates, id: \.self) { r in
+                        Button((r == player.rate ? "✓ " : "") + PodcastFormat.rate(r)) { player.setRate(r) }
+                    }
+                }
+            } else {
+                Button(L("player.next")) { player.next() }
+                    .keyboardShortcut(.rightArrow, modifiers: .command)
+                    .disabled(!player.hasNext)
+                Button(L("player.previous")) { player.previous() }
+                    .keyboardShortcut(.leftArrow, modifiers: .command)
+                    .disabled(!player.hasNext)
+                Divider()
+                Button(isFavorite ? L("action.unfavorite") : L("action.favorite")) { player.toggleFavoriteCurrent() }
+                    .keyboardShortcut("l", modifiers: .command)
+                    .disabled(player.station == nil)
+            }
             Divider()
             Menu(L("player.sleepTimer")) {
+                if player.isEpisode {
+                    Button(L("sleep.endOfEpisode")) { player.setSleepAtEpisodeEnd() }
+                }
                 ForEach([15, 30, 45, 60, 90], id: \.self) { m in
                     Button(L("sleep.minutes", m)) { player.setSleepTimer(minutes: m) }
                 }
                 Button(L("sleep.off")) { player.setSleepTimer(minutes: 0) }
             }
-            .disabled(player.station == nil)
+            .disabled(!player.hasMedia)
         }
     }
 

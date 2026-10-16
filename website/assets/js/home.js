@@ -73,6 +73,15 @@
     })
     .catch(function () { /* terugval blijft staan */ });
 
+  // ---- versie en build in de footer (zoals bingr.online): de HTML heeft al een vaste waarde; hier de nieuwste uit de changelog
+  var builds = document.querySelectorAll('[data-build]');
+  if (builds.length && window.fetch) {
+    fetch('assets/changelog.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      var n = d && d.builds && d.builds.reduce(function (m, b) { return Math.max(m, +b.build || 0); }, 0);
+      if (n) builds.forEach(function (el) { var cur = +((el.textContent.match(/build\s*(\d+)/) || [])[1] || 0); if (n > cur) el.textContent = ((window.TUNR && TUNR.version) || '1.0.0') + ' · build ' + n; });
+    }).catch(function () {});
+  }
+
   // ---- schermen: de sectie staat standaard verborgen en verschijnt pas als er echt een screenshot laadt;
   //      ontbrekende screenshots verdwijnen per stuk (ook bij taalwissel)
   var shots = document.getElementById('shots'), sec = document.getElementById('schermen');

@@ -3,7 +3,8 @@ import UIKit
 import CarPlay
 import Combine
 
-/// CarPlay (audio-app): tabbladen Favorieten, Recent, Populair ({land}) en Genres.
+/// CarPlay (audio-app): tabbladen Favorieten, Recent, Populair ({land}), Podcasts (gevolgde podcasts →
+/// afleveringen) en Genres.
 /// Kiezen speelt af via RadioPlayer en toont CPNowPlayingTemplate.shared (knoppen via remote commands:
 /// favoriet, vorige/volgende zender). Werkt pas op een echt toestel als Apple de entitlement
 /// com.apple.developer.carplay-audio toekent (zie project.yml); de app bouwt en draait ook zonder.
@@ -15,6 +16,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private var recentsTemplate: CPListTemplate?
     private var popularTemplate: CPListTemplate?
     private var genresTemplate: CPListTemplate?
+    private var podcastsTemplate: CPListTemplate?
+    private var rateButton: CPNowPlayingPlaybackRateButton?
     private var popular: [Station] = []
     private var bag = Set<AnyCancellable>()
 
@@ -55,12 +58,22 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         genres.tabTitle = L("row.genres")
         genres.tabImage = UIImage(systemName: "square.grid.2x2.fill")
 
+        let podcasts = CPListTemplate(title: L("library.podcasts"), sections: [])
+        podcasts.tabTitle = L("library.podcasts")
+        podcasts.tabImage = UIImage(systemName: "mic.fill")
+        podcasts.emptyViewTitleVariants = [L("library.emptyPodcasts")]
+        podcasts.emptyViewSubtitleVariants = [L("carplay.podcastsHint")]
+
         favoritesTemplate = favorites
         recentsTemplate = recents
         popularTemplate = popularList
         genresTemplate = genres
+        podcastsTemplate = podcasts
 
-        let tabBar = CPTabBarTemplate(templates: [favorites, recents, popularList, genres])
+        // het aantal tabbladen is begrensd (maximumTabCount); Podcasts vóór Genres, zodat bij een limiet van 4
+        // Genres afvalt en niet de podcasts
+        let all: [CPTemplate] = [favorites, recents, popularList, podcasts, genres]
+        let tabBar = CPTabBarTemplate(templates: Array(all.prefix(max(1, CPTabBarTemplate.maximumTabCount))))
         interfaceController?.setRootTemplate(tabBar, animated: false, completion: nil)
 
         refreshLibraryLists()
@@ -81,6 +94,80 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let lib = Library.shared
         favoritesTemplate?.updateSections([CPListSection(items: items(for: lib.favorites))])
         recentsTemplate?.updateSections([CPListSection(items: items(for: lib.recents))])
+        podcastsTemplate?.updateSections(podcastSections())
+    }
+
+    // MARK: Podcasts
+
+    @MainActor private func podcastSections() -> [CPListSection] {
+        let lib = Library.shared
+        var sections: [CPListSection] = []
+        let continuing = Array(lib.continueListening.prefix(8))
+        if !continuing.isEmpty {
+            sections.append(CPListSection(items: episodeItems(continuing, showPodcast: true),
+                                          header: L("row.continueEpisodes"), sectionIndexTitle: nil))
+        }
+        let max = min(lib.followedPodcasts.count, CPListTemplate.maximumItemCount)
+        let podcastItems: [CPListItem] = lib.followedPodcasts.prefix(max).map { p in
+            let item = CPListItem(text: p.displayName, detailText: p.artist, image: placeholder(name: p.displayName, monogram: p.monogram))
+            item.accessoryType = .disclosureIndicator
+            item.handler = { [weak self] _, completion in
+                MainActor.assumeIsolated { self?.openPodcast(p) }
+                completion()
+            }
+            if let url = p.artworkURL {
+                Task { @MainActor in
+                    if let img = await ImageLoader.shared.load(url) { item.setImage(img) }
+                }
+            }
+            return item
+        }
+        if !podcastItems.isEmpty {
+            sections.append(CPListSection(items: podcastItems, header: L("podcasts.following"), sectionIndexTitle: nil))
+        }
+        return sections
+    }
+
+    @MainActor private func openPodcast(_ p: Podcast) {
+        let template = CPListTemplate(title: p.displayName, sections: [])
+        template.emptyViewTitleVariants = [L("carplay.loading")]
+        interfaceController?.pushTemplate(template, animated: true, completion: nil)
+        Task { @MainActor in
+            let country = Library.shared.countryCode ?? "NL"
+            let list = (try? await PodcastAPI.shared.lookup(p.id, country: country))?.episodes ?? []
+            if list.isEmpty { template.emptyViewTitleVariants = [L("podcast.noEpisodes")] }
+            template.updateSections([CPListSection(items: self.episodeItems(list, showPodcast: false))])
+        }
+    }
+
+    @MainActor private func episodeItems(_ episodes: [Episode], showPodcast: Bool) -> [CPListItem] {
+        let max = min(episodes.count, CPListTemplate.maximumItemCount)
+        let list = Array(episodes.prefix(max))
+        let lib = Library.shared
+        return list.map { e in
+            var detail = [showPodcast ? e.podcastName : PodcastFormat.date(e.date), PodcastFormat.duration(e.duration)]
+                .filter { !$0.isEmpty }.joined(separator: " · ")
+            if lib.position(for: e.id)?.finished == true { detail = "✓ " + detail }
+            let item = CPListItem(text: e.displayTitle, detailText: detail,
+                                  image: placeholder(name: e.podcastName, monogram: PodcastFormat.initials(e.podcastName)))
+            item.isPlaying = RadioPlayer.shared.episode?.id == e.id
+            if let p = lib.position(for: e.id), !p.finished, p.seconds > 0 {
+                item.playbackProgress = CGFloat(p.fraction)
+            }
+            item.handler = { [weak self] _, completion in
+                MainActor.assumeIsolated {
+                    RadioPlayer.shared.play(episode: e, queue: list)
+                    self?.showNowPlaying()
+                }
+                completion()
+            }
+            if let url = e.artworkURL {
+                Task { @MainActor in
+                    if let img = await ImageLoader.shared.load(url) { item.setImage(img) }
+                }
+            }
+            return item
+        }
     }
 
     @MainActor private func loadPopular() async {
@@ -145,6 +232,16 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let np = CPNowPlayingTemplate.shared
         np.isUpNextButtonEnabled = false
         np.isAlbumArtistButtonEnabled = false
+        // aflevering: snelheidsknop (0,8× … 2×); radio: geen extra knoppen
+        if RadioPlayer.shared.isEpisode {
+            let button = rateButton ?? CPNowPlayingPlaybackRateButton { _ in
+                MainActor.assumeIsolated { RadioPlayer.shared.cycleRate() }
+            }
+            rateButton = button
+            np.updateNowPlayingButtons([button])
+        } else {
+            np.updateNowPlayingButtons([])
+        }
         guard let ic = interfaceController else { return }
         if ic.topTemplate === np { return }
         ic.pushTemplate(np, animated: true, completion: nil)
@@ -152,8 +249,12 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     /// Monogram-tegel in de zenderkleuren zolang het logo laadt
     @MainActor private func placeholder(for s: Station) -> UIImage {
+        placeholder(name: s.displayName, monogram: s.monogram)
+    }
+
+    @MainActor private func placeholder(name: String, monogram: String) -> UIImage {
         let size = CGSize(width: 88, height: 88)
-        let colors = Self.paletteColors(for: s.displayName)
+        let colors = Self.paletteColors(for: name)
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { ctx in
             let rect = CGRect(origin: .zero, size: size)
@@ -164,7 +265,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                                          colors: [colors.0.cgColor, colors.1.cgColor] as CFArray, locations: [0, 1]) {
                 cg.drawLinearGradient(gradient, start: .zero, end: CGPoint(x: size.width, y: size.height), options: [])
             }
-            let text = s.monogram as NSString
+            let text = monogram as NSString
             let attrs: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 32, weight: .heavy),
                 .foregroundColor: UIColor.white,

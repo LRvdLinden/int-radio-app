@@ -167,7 +167,7 @@ struct MapExplorerView: View {
             }
             if let s = model.selected {
                 bottomCards(s)
-                    .padding(.bottom, player.station == nil ? 12 : 4)
+                    .padding(.bottom, player.hasMedia ? 4 : 12)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }

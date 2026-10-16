@@ -48,3 +48,7 @@ APK's en sleutels nooit in de repo of als openbare release: de repo is openbaar.
 - **Android TV**: emulator met een TV-image; de app staat in de leanback-launcher met de banner.
 - **Android Auto**: Desktop Head Unit (DHU) uit de SDK Manager; zet in de Android Auto-app de ontwikkelaarsopties aan en "Onbekende bronnen".
 - **Kaart**: tegels van CARTO (`basemaps.cartocdn.com`), attributie staat altijd zichtbaar.
+
+## Podcasts
+
+Podcasts komen uit de openbare Apple-podcastgegevens (toplijsten per land, zoeken en afleveringen; zonder sleutel), zie `data/PodcastApi.kt`. Afleveringen spelen via dezelfde Media3-sessie (mediaId `ep:<id>`), met posities in `Library`.

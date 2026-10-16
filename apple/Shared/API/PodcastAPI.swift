@@ -223,7 +223,7 @@ private struct ChartsResponse: Decodable {
             results = (try? c.decode(LossyArray<Item>.self, forKey: .results)) ?? LossyArray(items: [])
         }
     }
-    struct Genre: Decodable { var name: String? }
+    struct GenreItem: Decodable { var name: String? }
     struct Item: Decodable {
         var id: String
         var name: String
@@ -240,7 +240,7 @@ private struct ChartsResponse: Decodable {
             artistName = c.flexString(.artistName)
             artworkUrl100 = c.flexString(.artworkUrl100)
             url = c.flexString(.url)
-            let genres = (try? c.decode([Genre].self, forKey: .genres)) ?? []
+            let genres = (try? c.decode([GenreItem].self, forKey: .genres)) ?? []
             genre = genres.compactMap(\.name).first { $0 != "Podcasts" } ?? ""
         }
 
@@ -406,7 +406,7 @@ private final class ChannelDescriptionParser: NSObject, XMLParserDelegate {
     private var current = ""
     private var element = ""
     private var summary = ""
-    private var description = ""
+    private var channelDescription = ""
 
     static func parse(_ data: Data) -> String {
         let p = ChannelDescriptionParser()
@@ -415,7 +415,7 @@ private final class ChannelDescriptionParser: NSObject, XMLParserDelegate {
         parser.shouldProcessNamespaces = false
         _ = parser.parse()
         let s = p.summary.trimmingCharacters(in: .whitespacesAndNewlines)
-        let d = p.description.trimmingCharacters(in: .whitespacesAndNewlines)
+        let d = p.channelDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         // de langste van de twee is meestal de volledige tekst
         return d.count >= s.count ? d : s
     }
@@ -443,7 +443,7 @@ private final class ChannelDescriptionParser: NSObject, XMLParserDelegate {
 
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         guard !depthInItem else { return }
-        if elementName == "description", description.isEmpty { description = current }
+        if elementName == "description", channelDescription.isEmpty { channelDescription = current }
         if elementName == "itunes:summary", summary.isEmpty { summary = current }
         element = ""
         current = ""

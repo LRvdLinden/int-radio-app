@@ -20,7 +20,7 @@ struct PodcastDetailView: View {
 
     private var sortedEpisodes: [Episode] {
         let list = episodes.value ?? []
-        return sort == .newest ? list : list.reversed()
+        return sort == .newest ? list : Array(list.reversed())
     }
 
     var body: some View {
