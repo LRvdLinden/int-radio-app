@@ -1,16 +1,18 @@
 name: Website
 
-# Publiceert website/ (homepage, webspeler op /web/, changelog, privacy, voorwaarden) via FTP.
-# Secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, optioneel FTP_DIR (standaard ./).
-# Zonder FTP_SERVER wordt de upload overgeslagen met een waarschuwing.
+# Zet website/ via FTPS op de webserver, bij elke push naar main die website/ raakt, of met de hand.
+# Opzet zoals bingr-website (deploy.yml): alleen FTPS met een geverifieerd certificaat, doelmap automatisch,
+# beveiligingsheaders + http → https via .htaccess, en daarna controleren of de site live de nieuwe build toont.
+#
+# Benodigde repository-secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# Optioneel: FTP_USERNAME_ALT (tweede gebruikersnaam) en FTP_DIR (doelmap, anders automatisch).
+# Het domein staat op één plek: website/assets/js/brand.js (window.TUNR.domain).
+
 on:
   push:
     branches: [main]
     paths: ['website/**', '.github/workflows/website.yml']
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 concurrency:
   group: website-deploy
@@ -19,38 +21,174 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: website
     steps:
       - uses: actions/checkout@v4
 
-      - name: Controleer JSON
-        run: |
-          python3 -c "import json; json.load(open('website/assets/changelog.json')); json.load(open('website/manifest.webmanifest'))"
+      - name: lftp en Pillow installeren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp python3-pil
 
-      - name: FTP-gegevens aanwezig?
-        id: cfg
+      # De homepage laadt de screenshots als WebP (<picture> met JPG als terugval); hier opnieuw gemaakt zodat ze kloppen.
+      - name: WebP van de screenshots maken
+        run: |
+          python3 - <<'PY'
+          import glob
+          from PIL import Image
+          n = 0
+          for f in sorted(glob.glob("assets/img/nl/*.jpg") + glob.glob("assets/img/en/*.jpg")):
+              Image.open(f).save(f[:-4] + ".webp", "WEBP", quality=80, method=6)
+              n += 1
+          print(f"{n} WebP-bestanden gemaakt")
+          PY
+
+      - name: Domein bepalen
+        id: dom
+        run: |
+          D=$(grep -oE "domain:\s*'https?://[^']+'" assets/js/brand.js | sed -E "s/.*'https?:\/\/([^'/]+).*/\1/" | head -1)
+          echo "domain=${D}" >> "$GITHUB_OUTPUT"
+          echo "::notice::Domein uit brand.js: ${D:-onbekend}"
+
+      - name: Uploaden via FTPS
+        id: upload
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_USERNAME_ALT: ${{ secrets.FTP_USERNAME_ALT }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_DIR: ${{ secrets.FTP_DIR }}
+          DOMAIN: ${{ steps.dom.outputs.domain }}
         run: |
-          if [ -z "$FTP_SERVER" ]; then
-            echo "::warning::FTP_SERVER is niet ingesteld: de upload van de website wordt overgeslagen."
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          if [ -z "${FTP_SERVER:-}" ] || [ -z "${FTP_PASSWORD:-}" ]; then
+            echo "::warning::FTP-secrets ontbreken (FTP_SERVER, FTP_USERNAME, FTP_PASSWORD) — website niet geüpload."
+            echo "skipped=1" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          echo "dir=${FTP_DIR:-./}" >> "$GITHUB_OUTPUT"
+          trim(){ printf '%s' "$1" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+          FTP_SERVER=$(trim "$FTP_SERVER" | sed -E 's#^[a-zA-Z]+://##; s#/.*$##; s#:[0-9]+$##')
+          FTP_USERNAME=$(trim "${FTP_USERNAME:-}"); FTP_USERNAME_ALT=$(trim "${FTP_USERNAME_ALT:-}")
+          export LFTP_PASSWORD="$(trim "$FTP_PASSWORD")"
+          common="set cmd:fail-exit true; set net:max-retries 3; set net:timeout 30; set net:reconnect-interval-base 5; set ftp:passive-mode true; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate yes; set ssl:check-hostname yes; set ssl:ca-file /tmp/ftp-ca.pem"
+          CA=/tmp/ftp-ca.pem; cp /etc/ssl/certs/ca-certificates.crt "$CA"
+          ip_of(){ (getent ahostsv4 "$1" || true) | awk 'NR==1{print $1}'; }
+          # onvolledige certificaatketen: tussencertificaat via het AIA-adres ophalen (controle blijft tegen een vertrouwde root)
+          add_chain(){
+            local h="$1" aia
+            aia=$(timeout 30 openssl s_client -connect "$h:21" -starttls ftp -servername "$h" </dev/null 2>/dev/null \
+              | openssl x509 -noout -text 2>/dev/null | grep -oE 'CA Issuers - URI:[^ ]+' | sed 's/CA Issuers - URI://' | head -1 || true)
+            [ -n "$aia" ] || return 0
+            curl -fsSL --max-time 20 "$aia" -o /tmp/inter.bin 2>/dev/null || return 0
+            openssl x509 -inform DER -in /tmp/inter.bin -out /tmp/inter.pem 2>/dev/null || openssl x509 -in /tmp/inter.bin -out /tmp/inter.pem 2>/dev/null || return 0
+            grep -q "$(sed -n 2p /tmp/inter.pem)" "$CA" || cat /tmp/inter.pem >> "$CA"
+          }
+          cert_ok(){ timeout 40 openssl s_client -connect "$1:21" -starttls ftp -servername "$1" -verify_hostname "$1" -verify_return_error -CAfile "$CA" </dev/null 2>/dev/null | grep -q 'Verify return code: 0 (ok)'; }
+          # host met een geldig certificaat: FTP_SERVER, ftp.<domein>, <domein>, of een naam uit het certificaat (zelfde IP)
+          HOST=""
+          for attempt in 1 2 3; do
+            [ "$attempt" -gt 1 ] && { echo "Certificaatcontrole opnieuw over 30 s…"; sleep 30; }
+            for base in "$FTP_SERVER" ${DOMAIN:+ftp.$DOMAIN} ${DOMAIN:+$DOMAIN}; do
+              base_ip=$(ip_of "$base"); [ -n "$base_ip" ] || continue
+              [ "$attempt" = 1 ] && add_chain "$base"
+              if cert_ok "$base"; then HOST="$base"; break 2; fi
+              names=$(timeout 40 openssl s_client -connect "$base:21" -starttls ftp -servername "$base" </dev/null 2>/dev/null \
+                | openssl x509 -noout -ext subjectAltName -subject 2>/dev/null \
+                | grep -oE '(DNS:|CN ?= ?)(\*\.)?[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+' | sed -E 's/^(DNS:|CN ?= ?)//' | sort -u || true)
+              ptr=$(getent hosts "$base_ip" 2>/dev/null | awk '{print $2}' | sed 's/\.$//' || true)
+              cands="$ptr"; first="${base%%.*}"
+              for n in $names; do case "$n" in \*.*) cands="$cands $first.${n#\*.} ftp.${n#\*.}";; *) cands="$cands $n";; esac; done
+              for n in $(echo $cands | tr ' ' '\n' | sort -u); do
+                [ "$(ip_of "$n")" = "$base_ip" ] || continue
+                if cert_ok "$n"; then HOST="$n"; break 3; fi
+              done
+            done
+          done
+          [ -n "$HOST" ] || { echo "::error::Geen FTP-server met een geldig FTPS-certificaat gevonden. Zet FTP_SERVER op de hostnaam uit het certificaat van de hoster."; exit 1; }
+          USER_OK=""
+          for attempt in 1 2 3 4; do
+            [ "$attempt" -gt 1 ] && { echo "Nieuwe poging $attempt over 45 s…"; sleep 45; }
+            for u in "$FTP_USERNAME" "${FTP_USERNAME_ALT:-}"; do
+              [ -z "$u" ] && continue
+              if lftp -e "$common; open --env-password -u \"$u\" \"$HOST\"; cls -1 > /tmp/root.txt; bye" 2>/tmp/err.txt; then USER_OK="$u"; break 2; fi
+              msg=$(grep -viE 'user|pass' /tmp/err.txt | tr '\n' ' ' | tail -c 200 || true)
+              echo "::warning::Inloggen mislukt (poging $attempt): ${msg:-geen melding}"
+            done
+          done
+          [ -n "$USER_OK" ] || { echo "::error::Inloggen op de FTP-server mislukt."; exit 1; }
+          echo "::notice::Ingelogd via FTPS op ${HOST} (certificaat geverifieerd)"
+          # doelmap: FTP_DIR, anders de map waar index.html al staat of de gebruikelijke webmappen
+          TARGET="${FTP_DIR:-}"
+          if [ -z "$TARGET" ] && grep -qx "/\?index.html" /tmp/root.txt; then TARGET="."; fi
+          if [ -z "$TARGET" ]; then
+            for d in public_html httpdocs www htdocs ${DOMAIN:+domains/$DOMAIN/public_html}; do
+              top="${d%%/*}"
+              if grep -qx "/\?$top/\?" /tmp/root.txt; then
+                if [ "$d" = "$top" ] || lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; cls -1 $d/ ; bye" >/dev/null 2>&1; then TARGET="$d"; break; fi
+              fi
+            done
+          fi
+          TARGET="${TARGET:-.}"
+          echo "::notice::Doelmap: $([ -n "${FTP_DIR:-}" ] && echo 'FTP_DIR' || echo 'automatisch bepaald')"
+          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md ./ \"$TARGET\"; bye"
+          # .htaccess: alleen het blok tussen de markeringen (opnieuw) zetten; inhoud van de hoster blijft staan
+          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; cls -1 -a \"$TARGET/\"; bye" > /tmp/ls-all.txt 2>/dev/null || true
+          rm -f /tmp/htaccess.txt; ht_ok=1
+          if grep -qE '(^|/)\.htaccess$' /tmp/ls-all.txt; then
+            lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; get \"$TARGET/.htaccess\" -o /tmp/htaccess.txt; bye" >/dev/null 2>&1 || ht_ok=0
+          else : > /tmp/htaccess.txt; fi
+          if [ "$ht_ok" = 1 ]; then
+            python3 - <<'PY'
+          import re, os
+          p = "/tmp/htaccess.txt"
+          dom = re.escape(os.environ.get("DOMAIN") or "")
+          s = open(p, encoding="utf-8", errors="surrogateescape").read()
+          s = re.sub(r"\n?# BEGIN tunr-security.*?# END tunr-security\n?", "\n", s, flags=re.S).strip("\n")
+          redirect = ("<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteCond %{HTTPS} !=on\nRewriteCond %{HTTP:X-Forwarded-Proto} !=https\n"
+                      + (f"RewriteCond %{{HTTP_HOST}} ^(www\\.)?{dom}$ [NC]\n" if dom else "")
+                      + "RewriteCond %{THE_REQUEST} ^[A-Z]+\\s(/[^\\s?]*)\nRewriteRule ^ https://%{HTTP_HOST}%1 [R=301,L,NE]\n</IfModule>\n")
+          headers = ("<IfModule mod_headers.c>\n"
+                     "Header always set Strict-Transport-Security \"max-age=31536000\"\n"
+                     "Header always set X-Content-Type-Options \"nosniff\"\n"
+                     "Header always set Referrer-Policy \"strict-origin-when-cross-origin\"\n"
+                     "Header always set Permissions-Policy \"camera=(), microphone=(), geolocation=()\"\n"
+                     "Header always set X-Frame-Options \"DENY\"\n"
+                     "Header always set Content-Security-Policy \"frame-ancestors 'none'; base-uri 'self'; object-src 'none'\"\n"
+                     "</IfModule>\n")
+          def block(with_redirect):
+              return ("# BEGIN tunr-security (gezet door de workflow Website; niet met de hand wijzigen)\n"
+                      + (redirect if with_redirect else "") + headers + "ErrorDocument 404 /404.html\n# END tunr-security\n")
+          rest = ("\n" + s + "\n") if s else ""
+          open(p + ".new", "w", encoding="utf-8", errors="surrogateescape").write(block(True) + rest)
+          open(p + ".nossl", "w", encoding="utf-8", errors="surrogateescape").write(block(False) + rest)
+          PY
+            if lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; put /tmp/htaccess.txt.new -o \"$TARGET/.htaccess\"; chmod 644 \"$TARGET/.htaccess\"; bye" >/dev/null 2>&1; then
+              echo "::notice::.htaccess bijgewerkt (beveiligingsheaders, http → https, 404-pagina)"
+              if [ -n "${DOMAIN:-}" ]; then
+                sleep 3
+                loc=$(curl -s -o /dev/null --max-time 20 -w '%{http_code} %{redirect_url}' "https://$DOMAIN/" || true)
+                case "$loc" in 30[1278]\ https://$DOMAIN/|30[1278]\ https://www.$DOMAIN/)
+                  lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; put /tmp/htaccess.txt.nossl -o \"$TARGET/.htaccess\"; chmod 644 \"$TARGET/.htaccess\"; bye" >/dev/null 2>&1 || true
+                  echo "::warning::https://$DOMAIN/ stuurde naar zichzelf door; .htaccess zonder http → https-regel gezet." ;;
+                esac
+              fi
+            else echo "::warning::.htaccess kon niet worden geüpload"; fi
+          fi
+          echo "::notice::Website geüpload"
 
-      - name: Upload via FTP
-        if: steps.cfg.outputs.deploy == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./website/
-          server-dir: ${{ steps.cfg.outputs.dir }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.DS_Store
+      - name: Controleren of de site online staat
+        if: success() && steps.upload.outputs.skipped != '1' && steps.dom.outputs.domain != ''
+        env:
+          DOMAIN: ${{ steps.dom.outputs.domain }}
+        run: |
+          sleep 5
+          want=$(grep -o '<span data-build>[^<]*' index.html | sed 's/<span data-build>//' | head -1)
+          live=$(curl -sL --max-time 20 "https://$DOMAIN/" | grep -o '<span data-build>[^<]*' | sed 's/<span data-build>//' | head -1 || true)
+          if [ -n "$want" ] && [ "$live" != "$want" ]; then
+            echo "::error::$DOMAIN toont '${live:-niets}', verwacht '$want': de upload is niet op de juiste plek aangekomen (klopt FTP_DIR en het domein in brand.js?)."; exit 1
+          fi
+          echo "::notice::https://$DOMAIN/ is live (${live:-zonder buildnummer})"
+          curl -s -o /dev/null -D /tmp/h.txt --max-time 20 "https://$DOMAIN/" || true
+          for h in 'strict-transport-security' 'x-content-type-options: nosniff' 'x-frame-options: deny'; do
+            tr -d '\r' < /tmp/h.txt | grep -qiF "$h" || echo "::warning::Header ontbreekt op https://$DOMAIN/: $h"
+          done
