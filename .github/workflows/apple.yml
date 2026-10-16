@@ -1,7 +1,8 @@
 name: Apple
 
-# Bouwt de iOS/iPadOS-app (Tunr) en de Apple TV-app (TunrTV) bij elke push die apple/ raakt.
-# Alleen een controle-build voor de simulator, zonder ondertekening; er komt geen pakket op GitHub (de repo is openbaar).
+# Eén multiplatform-target Tunr (iPhone, iPad, Mac, Apple TV; CarPlay zit in de iOS-build).
+# 1. maakt apple/Tunr.xcodeproj opnieuw uit apple/project.yml (XcodeGen) en commit hem, zodat klonen + openen werkt;
+# 2. controle-build per platform zonder ondertekening. Er komt geen pakket op GitHub (de repo is openbaar).
 on:
   push:
     branches: [main]
@@ -9,6 +10,9 @@ on:
   pull_request:
     paths: ['apple/**']
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 concurrency:
   group: apple-${{ github.ref }}
@@ -32,9 +36,24 @@ jobs:
       - name: Project genereren (XcodeGen)
         run: |
           brew install xcodegen
+          xcodegen --version
           xcodegen generate
 
-      - name: Build iOS + iPadOS (simulator)
+      - name: Xcode-project in de repo bijwerken
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A Tunr.xcodeproj
+          if git diff --cached --quiet; then echo "Xcode-project ongewijzigd"; exit 0; fi
+          git commit -m "Xcode-project bijgewerkt (XcodeGen) [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
+          echo "::warning::Xcode-project niet gepusht"
+
+      - name: Packages ophalen
+        run: xcodebuild -resolvePackageDependencies -project Tunr.xcodeproj -scheme Tunr || true
+
+      - name: Build iOS + iPadOS + CarPlay (simulator)
         id: ios
         continue-on-error: true
         run: |
@@ -49,10 +68,20 @@ jobs:
         continue-on-error: true
         run: |
           set +e
-          xcodebuild build -project Tunr.xcodeproj -scheme TunrTV \
+          xcodebuild build -project Tunr.xcodeproj -scheme Tunr \
             -destination 'generic/platform=tvOS Simulator' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > tvos.log 2>&1; rc=$?
           tail -n 30 tvos.log; exit $rc
+
+      - name: Build macOS
+        id: macos
+        continue-on-error: true
+        run: |
+          set +e
+          xcodebuild build -project Tunr.xcodeproj -scheme Tunr \
+            -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > macos.log 2>&1; rc=$?
+          tail -n 30 macos.log; exit $rc
 
       - name: Foutenoverzicht
         if: always()
@@ -60,11 +89,12 @@ jobs:
           echo "## Apple-build" >> $GITHUB_STEP_SUMMARY
           echo "- iOS/iPadOS: ${{ steps.ios.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- tvOS: ${{ steps.tvos.outcome }}" >> $GITHUB_STEP_SUMMARY
-          for f in ios tvos; do
+          echo "- macOS: ${{ steps.macos.outcome }}" >> $GITHUB_STEP_SUMMARY
+          for f in ios tvos macos; do
             echo "=== $f errors ==="
             grep -E "error:" $f.log | sort -u | head -200 || true
           done
 
       - name: Status
-        if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success'
+        if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success' || steps.macos.outcome != 'success'
         run: exit 1

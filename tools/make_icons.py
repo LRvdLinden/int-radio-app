@@ -7,8 +7,7 @@ Het icoon: oranje→amber verloop (accent → accent2), wit symbool = zendmast-g
 met eronder de frequentieschaal met naald (zelfde motief als het woordmerk en de splash).
 
 Uitvoer:
-- apple/iOS/Assets.xcassets      AppIcon (1024), AccentColor
-- apple/tvOS/Assets.xcassets     App Icon & Top Shelf Image (gelaagd icoon + top shelf), AccentColor
+- apple/Shared/Assets.xcassets   AppIcon (iOS 1024 + macOS), App Icon & Top Shelf Image (tvOS), AccentColor
 - android/app/src/main/res       adaptief icoon (voorgrond + verloop-achtergrond), mipmaps, tv_banner
 - website/                       favicon, apple-touch-icon, PWA-iconen, og-image
 - docs/brand/                    icon.png, wordmark.png (README)
@@ -156,22 +155,40 @@ def accent_color(catalog):
     write_json(catalog / "Contents.json", {"info": INFO})
 
 
-def apple():
-    ios = root / "apple/iOS/Assets.xcassets"
-    accent_color(ios)
-    icon = app_icon(1024).convert("RGB")  # App Store: geen transparantie
-    save(icon, ios / "AppIcon.appiconset/icon-1024.png")
-    write_json(ios / "AppIcon.appiconset/Contents.json", {
-        "images": [{"filename": "icon-1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"}], "info": INFO})
-    # logo in de app (o.a. Over-scherm)
-    save(app_icon(512, rounded=True), ios / "TunrIcon.imageset/icon.png")
-    write_json(ios / "TunrIcon.imageset/Contents.json", {"images": [{"filename": "icon.png", "idiom": "universal"}], "info": INFO})
+def mac_icon(size):
+    """macOS-stijl: afgeronde tegel op 824/1024 met marge en zachte schaduw."""
+    canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    inner = int(size * 824 / 1024)
+    tile = app_icon(inner, rounded=True)
+    shadow = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    off = (size - inner) // 2
+    ImageDraw.Draw(shadow).rounded_rectangle([off, off + size * 0.012, off + inner, off + inner + size * 0.012],
+                                            radius=inner * 0.2237, fill=(0, 0, 0, 90))
+    canvas.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(max(1, size * 0.01))))
+    canvas.alpha_composite(tile, (off, off))
+    return canvas
 
-    tv = root / "apple/tvOS/Assets.xcassets"
-    accent_color(tv)
-    save(app_icon(512, rounded=True), tv / "TunrIcon.imageset/icon.png")
-    write_json(tv / "TunrIcon.imageset/Contents.json", {"images": [{"filename": "icon.png", "idiom": "universal"}], "info": INFO})
-    brand = tv / "App Icon & Top Shelf Image.brandassets"
+
+def apple():
+    # één asset-catalogus voor het multiplatform-target (iPhone, iPad, Mac, Apple TV)
+    cat = root / "apple/Shared/Assets.xcassets"
+    accent_color(cat)
+    images = [{"filename": "icon-1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"}]
+    save(app_icon(1024).convert("RGB"), cat / "AppIcon.appiconset/icon-1024.png")  # App Store: geen transparantie
+    for pt in (16, 32, 128, 256, 512):
+        for sc in (1, 2):
+            fn = f"mac-{pt}@{sc}x.png"
+            save(mac_icon(pt * sc), cat / "AppIcon.appiconset" / fn)
+            images.append({"filename": fn, "idiom": "mac", "scale": f"{sc}x", "size": f"{pt}x{pt}"})
+    write_json(cat / "AppIcon.appiconset/Contents.json", {"images": images, "info": INFO})
+    # logo in de app (o.a. Over-scherm)
+    save(app_icon(512, rounded=True), cat / "TunrIcon.imageset/icon.png")
+    write_json(cat / "TunrIcon.imageset/Contents.json", {"images": [{"filename": "icon.png", "idiom": "universal"}], "info": INFO})
+    # CarPlay-icoon in lijsten zonder logo
+    save(symbol(180, scale_bar=False), cat / "TunrSymbol.imageset/symbol.png")
+    write_json(cat / "TunrSymbol.imageset/Contents.json", {"images": [{"filename": "symbol.png", "idiom": "universal"}], "info": INFO})
+
+    brand = cat / "App Icon & Top Shelf Image.brandassets"
     write_json(brand / "Contents.json", {"assets": [
         {"filename": "App Icon - App Store.imagestack", "idiom": "tv", "role": "primary-app-icon", "size": "1280x768"},
         {"filename": "App Icon.imagestack", "idiom": "tv", "role": "primary-app-icon", "size": "400x240"},

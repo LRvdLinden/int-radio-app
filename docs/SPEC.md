@@ -1,6 +1,6 @@
 # Tunr — functionele spec en huisstijl
 
-Eén product op zes schermen: **iPhone, iPad, Apple TV, Android (telefoon/tablet), Android TV** en de **webspeler**. Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
+Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (telefoon/tablet), Android TV, Android Auto** en de **webspeler**. Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
 
 ---
 
@@ -160,3 +160,11 @@ Tegels (verloop uit het StationArt-palet, groot icoon, titel):
 - Onder de knoppen een rij **"Meer van deze zender"**-acties: Delen, Slaaptimer, **Zenderinfo**.
 - Boven de art een **LIVE**-pil.
 - Android: **Android Auto** ondersteunen via Media3 `MediaLibraryService` met een bladerboom: Favorieten, Recent, Populair in {land}, Genres (zie platform-details); CarPlay later (vereist Apple-toestemming).
+
+## 7. Apple: één multiplatform-target + Mac + CarPlay — HEEFT VOORRANG op §5 (Apple)
+
+- **Eén Xcode-project, één app-target `Tunr`** met `supportedDestinations: [iOS, tvOS, macOS]` (XcodeGen ≥ 2.40). Geen aparte TV-target meer. Platformverschillen met `#if os(iOS)` / `os(tvOS)` / `os(macOS)`. Deployment: iOS 17, tvOS 17, macOS 14.
+- Eén asset-catalogus `apple/Shared/Assets.xcassets` met `AppIcon` (iOS 1024 + macOS-maten), `App Icon & Top Shelf Image` (tvOS) en `AccentColor`. Icoonnaam per SDK: `ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]`.
+- Info.plist en entitlements per SDK via `INFOPLIST_FILE[sdk=…]` / `CODE_SIGN_ENTITLEMENTS[sdk=…]`.
+- **Mac**: `NavigationSplitView` met zijbalk (Ontdek, Bladeren, Kaart, Zoeken, Bibliotheek, Instellingen via ⌘,-`Settings`-scene), miniplayer onderaan het venster, menu **Afspelen** (Spatie = afspelen/pauze, ⌘→/⌘← = volgende/vorige zender, ⌘L = favoriet), Now Playing in het Bedieningscentrum via MPNowPlayingInfoCenter, venster min. 900×600. Sandbox met netwerk-client.
+- **CarPlay** (audio-app): `CPTemplateApplicationSceneDelegate` in een eigen scene (`UIApplicationSceneManifest` → `CPTemplateApplicationSceneSessionRoleApplication`). Root = `CPTabBarTemplate` met tabs **Favorieten**, **Recent**, **Populair** ({land}) en **Genres** (lijst → zenders) als `CPListTemplate`'s met zenderlogo's; kiezen speelt af en toont `CPNowPlayingTemplate.shared` (knoppen: favoriet, volgende/vorige zender via remote commands). Alleen code onder `#if os(iOS)` + `canImport(CarPlay)`. De entitlement komt pas mee als Apple hem toekent (zie CLAUDE.md), dus de app moet bouwen en draaien zonder.
