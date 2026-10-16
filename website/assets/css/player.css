@@ -412,6 +412,7 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 .maptop>*{pointer-events:auto}
 .maptop .seg{background:#16161aeb;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:#ffffff22;box-shadow:0 10px 30px -10px #000}
 .maptop .sp{flex:1}
+.maptop .cnt:empty{display:none}
 .maptop .cnt{font-size:12.5px;font-weight:700;color:var(--sec);background:#16161ad9;padding:7px 12px;border-radius:999px;border:1px solid var(--stroke);backdrop-filter:blur(10px);white-space:nowrap}
 .dicebtn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px 0 12px;border-radius:999px;background:var(--btn);font-weight:800;font-size:14.5px;box-shadow:0 12px 30px -10px #ff5a1fc0;white-space:nowrap}
 .dicebtn svg{width:22px;height:22px;transition:transform .5s}

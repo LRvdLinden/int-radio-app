@@ -259,13 +259,13 @@
       : st === 'playing' ? EQ + esc(t('player.playing')) : st === 'paused' ? esc(t('player.paused')) : '';
     var err = '';
     if (st === 'error') err = '<div class="err" role="alert"><b>' + esc(t('player.err')) + '</b><button class="btn sm white" type="button" data-act="retry">' + esc(t('retry')) + '</button></div>';
-    if (st === 'blocked') err = '<div class="err" role="alert"><b>' + esc(t('player.blocked')) + '</b><p>' + esc(t('player.blocked.p')) + '</p><p style="margin-top:8px;color:#fff;font-weight:700">' + esc(t('player.apps')) + '</p></div>';
+    if (st === 'blocked') err = '<div class="err" role="alert"><b>' + esc(t('player.blocked')) + '</b><p>' + esc(t('player.blocked.p')) + '</p><p style="margin-top:8px;color:#fff;font-weight:700">' + esc(t('player.apps')) + '</p><a class="btn sm white" style="margin-top:10px" href="../#apparaten">' + esc(t('home')) + '</a></div>';
     var vol = T.player.volume;
     full.innerHTML = '<div class="bd">' + (logo ? '<img src="' + esc(logo) + '" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</div>' +
       '<div class="fin"><div class="fbar"><button class="iconbtn" type="button" data-act="closefull" aria-label="' + esc(t('close')) + '">' + I('down') + '</button>' +
       '<span class="ttl">' + esc(T.countryName(s.cc, s.country)) + ' ' + T.flag(s.cc) + '</span>' +
       '<a class="iconbtn" href="#/station/' + encodeURIComponent(s.id) + '" data-act="closefull-nav" aria-label="' + esc(t('player.info')) + '">' + I('info') + '</a></div>' +
-      '<div class="fart"><span class="livepill">' + esc(t('player.live')) + '</span>' + T.art(s, 'lg') + '</div>' +
+      '<div class="fart">' + (st === 'playing' || st === 'loading' ? '<span class="livepill">' + esc(t('player.live')) + '</span>' : '') + T.art(s, 'lg') + '</div>' +
       '<div class="fmeta"><div class="tx"><h2>' + esc(s.name) + '</h2><p>' + esc([T.tagsLine(s, 3), s.state].filter(Boolean).join(' · ') || T.place(s)) + '</p></div>' +
       '<button class="rbtn" type="button" data-act="fav" aria-pressed="' + fav + '" aria-label="' + esc(t('detail.fav')) + '">' + I(fav ? 'heartf' : 'heart') + '</button></div>' +
       '<div class="line"></div><div class="status">' + status + '</div>' + err +

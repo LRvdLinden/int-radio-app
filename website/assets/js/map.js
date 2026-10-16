@@ -32,6 +32,7 @@
   function fail() {
     if (!wrap) return;
     wrap.querySelector('.mapload') && wrap.querySelector('.mapload').remove();
+    var mt = wrap.querySelector('.maptop'); if (mt) mt.hidden = true;
     var m = document.createElement('div'); m.className = 'mapmsg';
     m.innerHTML = '<div class="in"><img class="world" src="../assets/img/world-dots.svg" alt=""><b>' + esc(t('map.fail.t')) + '</b><p>' + esc(t('map.fail.p')) + '</p><button class="btn" type="button">' + esc(t('retry')) + '</button></div>';
     m.querySelector('button').onclick = function () { m.remove(); T.views.map(document.getElementById('view')); };
