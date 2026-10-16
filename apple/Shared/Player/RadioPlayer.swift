@@ -10,8 +10,7 @@ enum PlaybackState: Equatable {
 }
 
 /// Tijd van de aflevering die speelt. Los object, zodat alleen de tijdbalk en de voortgangslijn elke halve
-/// seconde opnieuw tekenen (en niet elk scherm dat de speler volgt).
-@MainActor
+/// seconde opnieuw tekenen (en niet elk scherm dat de speler volgt). Wordt alleen op de hoofdthread gewijzigd.
 final class PlaybackProgress: ObservableObject {
     @Published var currentTime: Double = 0
     @Published var duration: Double = 0
