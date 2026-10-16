@@ -27,8 +27,9 @@ final class Localizer: ObservableObject {
     private init() {
         let o = UserDefaults.standard.string(forKey: Self.key) ?? ""
         let lang = Self.resolve(o)
-        override = o
-        language = lang
+        // via de opslag zelf: `self` mag hier nog niet gebruikt worden (en didSet hoeft niet te lopen)
+        _override = Published(initialValue: o)
+        _language = Published(initialValue: lang)
         bundle = Self.bundle(for: lang)
     }
 

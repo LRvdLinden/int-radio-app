@@ -1,6 +1,9 @@
 import SwiftUI
 import AVKit
 import MediaPlayer
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Volledige speler: vervaagde art als achtergrond, LIVE-pil, grote art (hoes of zender), titel,
 /// vorige · play/pauze · volgende, favoriet, AirPlay (iOS/Mac), volume (iOS), en een rij
@@ -245,7 +248,6 @@ struct PlayerView: View {
                 .tint(Theme.accent)
                 .accessibilityLabel(L("player.volume"))
             Image(systemName: "speaker.wave.3.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
-            RoutePicker().frame(width: 28, height: 28).accessibilityLabel(L("player.airplay"))
         }
         #else
         EmptyView()
@@ -281,7 +283,8 @@ struct PlayerView: View {
                             tint: player.sleepEnd == nil ? .white : Theme.accent2)
             }
             #if os(macOS)
-            .menuStyle(.borderlessButton)
+            .menuStyle(.button)
+            .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
             #endif

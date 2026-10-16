@@ -4,42 +4,224 @@
       "build": 1,
       "date": "2026-10-16",
       "items": [
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Eerste versie van Tunr: tienduizenden radiozenders uit meer dan 200 landen via de open community-database Radio Browser.",
-         "en": "First release of Tunr: tens of thousands of radio stations from more than 200 countries via the open community database Radio Browser."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Openingsscherm met frequentieschaal, zoekende naald en de Tunr-tune (uit te zetten in Instellingen → Intromuziek).",
-         "en": "Splash screen with a frequency scale, a seeking needle and the Tunr tune (turn off in Settings → Intro music)."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Landkeuze bij de eerste start, met het land van je toestel als voorstel, vlaggen en het aantal zenders per land.",
-         "en": "Country picker on first launch, suggesting your device's country, with flags and the number of stations per country."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Ontdek: begroeting, carrousel met de top 6, en rijen Verder luisteren, Lokaal, Populair, Trending, Jouw favorieten en genres.",
-         "en": "Discover: greeting, a top 6 carousel, and rows for Continue listening, Local, Popular, Trending, Your favourites and genres."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Bladeren met grote tegels: Lokaal (kies je provincie of staat), Muziek, Nieuws & Talk, Sport, Op taal, Wereldkaart en Top 100 wereldwijd.",
-         "en": "Browse with big tiles: Local (pick your province or state), Music, News & Talk, Sports, By language, World map and the worldwide Top 100."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Kaart: een donkere wereldkaart met gloeiende stippen per zender, clusters, een kaartje met zenders in de buurt en de knop Willekeurig.",
-         "en": "Map: a dark world map with a glowing dot per station, clusters, a card with nearby stations and a Random button."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Speler met LIVE-pil, equalizer, vorige/volgende zender, favoriet, delen, zenderinfo en een slaaptimer (15 tot 90 minuten).",
-         "en": "Player with a LIVE pill, equalizer, previous/next station, favourite, share, station info and a sleep timer (15 to 90 minutes)."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv"],
-         "nl": "Nu speelt: artiest, titel en albumhoes van het nummer dat draait, als de zender die informatie meestuurt.",
-         "en": "Now Playing: artist, title and album art of the current song when the station sends that information."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos", "android", "androidtv", "web"],
-         "nl": "Zoeken op naam in je eigen land of wereldwijd, met recente zoekopdrachten, en een Bibliotheek met Favorieten en Recent.",
-         "en": "Search by name in your own country or worldwide, with recent searches, plus a Library with Favourites and Recent."},
-        {"type": "new", "platforms": ["ios", "ipados", "macos", "tvos"],
-         "nl": "Favorieten gaan via iCloud mee tussen iPhone, iPad, Mac en Apple TV; de Mac-app heeft een zijbalk en een menu Afspelen met sneltoetsen.",
-         "en": "Favourites sync through iCloud between iPhone, iPad, Mac and Apple TV; the Mac app has a sidebar and a Playback menu with shortcuts."},
-        {"type": "new", "platforms": ["carplay", "android"],
-         "nl": "CarPlay en Android Auto: Favorieten, Recent, Populair en Genres op het scherm van je auto (CarPlay zodra Apple de toestemming geeft).",
-         "en": "CarPlay and Android Auto: Favourites, Recent, Popular and Genres on your car's screen (CarPlay once Apple grants the entitlement)."},
-        {"type": "new", "platforms": ["web"],
-         "nl": "Webspeler op de website: alle schermen van de apps in je browser, met HLS-ondersteuning, mediabediening en installeerbaar als app.",
-         "en": "Web player on the website: every screen of the apps in your browser, with HLS support, media controls and installable as an app."}
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Eerste versie van Tunr: tienduizenden radiozenders uit meer dan 200 landen via de open community-database Radio Browser.",
+          "en": "First release of Tunr: tens of thousands of radio stations from more than 200 countries via the open community database Radio Browser."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Openingsscherm met frequentieschaal, zoekende naald en de Tunr-tune (uit te zetten in Instellingen → Intromuziek).",
+          "en": "Splash screen with a frequency scale, a seeking needle and the Tunr tune (turn off in Settings → Intro music)."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Landkeuze bij de eerste start, met het land van je toestel als voorstel, vlaggen en het aantal zenders per land.",
+          "en": "Country picker on first launch, suggesting your device's country, with flags and the number of stations per country."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Ontdek: begroeting, carrousel met de top 6, en rijen Verder luisteren, Lokaal, Populair, Trending, Jouw favorieten en genres.",
+          "en": "Discover: greeting, a top 6 carousel, and rows for Continue listening, Local, Popular, Trending, Your favourites and genres."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Bladeren met grote tegels: Lokaal (kies je provincie of staat), Muziek, Nieuws & Talk, Sport, Op taal, Wereldkaart en Top 100 wereldwijd.",
+          "en": "Browse with big tiles: Local (pick your province or state), Music, News & Talk, Sports, By language, World map and the worldwide Top 100."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Kaart: een donkere wereldkaart met gloeiende stippen per zender, clusters, een kaartje met zenders in de buurt en de knop Willekeurig.",
+          "en": "Map: a dark world map with a glowing dot per station, clusters, a card with nearby stations and a Random button."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Speler met LIVE-pil, equalizer, vorige/volgende zender, favoriet, delen, zenderinfo en een slaaptimer (15 tot 90 minuten).",
+          "en": "Player with a LIVE pill, equalizer, previous/next station, favourite, share, station info and a sleep timer (15 to 90 minutes)."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv"
+          ],
+          "nl": "Nu speelt: artiest, titel en albumhoes van het nummer dat draait, als de zender die informatie meestuurt.",
+          "en": "Now Playing: artist, title and album art of the current song when the station sends that information."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Zoeken op naam in je eigen land of wereldwijd, met recente zoekopdrachten, en een Bibliotheek met Favorieten en Recent.",
+          "en": "Search by name in your own country or worldwide, with recent searches, plus a Library with Favourites and Recent."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Favorieten gaan via iCloud mee tussen iPhone, iPad, Mac en Apple TV; de Mac-app heeft een zijbalk en een menu Afspelen met sneltoetsen.",
+          "en": "Favourites sync through iCloud between iPhone, iPad, Mac and Apple TV; the Mac app has a sidebar and a Playback menu with shortcuts."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "carplay",
+            "android"
+          ],
+          "nl": "CarPlay en Android Auto: Favorieten, Recent, Populair en Genres op het scherm van je auto (CarPlay zodra Apple de toestemming geeft).",
+          "en": "CarPlay and Android Auto: Favourites, Recent, Popular and Genres on your car's screen (CarPlay once Apple grants the entitlement)."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Webspeler op de website: alle schermen van de apps in je browser, met HLS-ondersteuning, mediabediening en installeerbaar als app.",
+          "en": "Web player on the website: every screen of the apps in your browser, with HLS support, media controls and installable as an app."
+        }
+      ]
+    },
+    {
+      "build": 2,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "ios",
+            "ipados"
+          ],
+          "nl": "Meerdere favorieten tegelijk verwijderen in Bibliotheek → Bewerken haalt nu precies de gekozen zenders weg.",
+          "en": "Deleting several favourites at once in Library → Edit now removes exactly the selected stations."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Ontdek en Bladeren laden populair, trending en nieuws & talk betrouwbaarder tegelijk; valt één lijst weg, dan blijven de andere staan.",
+          "en": "Discover and Browse load popular, trending and news & talk more reliably in parallel; if one list fails, the others still show."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Splash: de cirkelgolven verschijnen precies op de klik van de tune.",
+          "en": "Splash: the expanding rings now appear exactly on the click in the tune."
+        },
+        {
+          "type": "fixed",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Kaart: wisselen tussen je land en Wereld laadt de stippen niet meer dubbel; Apple TV houdt de focus op de lijst.",
+          "en": "Map: switching between your country and World no longer loads the dots twice; Apple TV keeps focus on the list."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "macos"
+          ],
+          "nl": "Mac: AirPlay-knop en menu's in de speler passen beter bij macOS.",
+          "en": "Mac: the AirPlay button and menus in the player fit macOS better."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "android",
+            "androidtv"
+          ],
+          "nl": "Kleine verbeteringen in de speler en de navigatie.",
+          "en": "Small improvements to the player and navigation."
+        }
       ]
     }
   ]

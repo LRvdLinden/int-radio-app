@@ -23,9 +23,10 @@ final class DiscoverModel: ObservableObject {
         if popular.value == nil || force { popular = .loading }
         if trending.value == nil || force { trending = .loading }
 
-        async let p = try? RadioBrowser.shared.popular(country: country)
-        async let t = try? RadioBrowser.shared.trending(country: country)
-        let (pop, trend) = await (p, t)
+        async let p = RadioBrowser.shared.popular(country: country)
+        async let t = RadioBrowser.shared.trending(country: country)
+        let pop = try? await p
+        let trend = try? await t
         withAnimation(.easeOut(duration: 0.3)) {
             popular = loadState(pop)
             trending = loadState(trend)

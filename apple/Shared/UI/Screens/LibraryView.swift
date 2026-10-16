@@ -128,7 +128,8 @@ struct LibraryView: View {
                 }
                 .onMove { library.moveFavorites(from: $0, to: $1) }
                 .onDelete { idx in
-                    for i in idx { library.removeFavorite(library.favorites[i]) }
+                    let doomed = idx.map { library.favorites[$0] }
+                    for s in doomed { library.removeFavorite(s) }
                 }
             }
             .hiddenListBackground()

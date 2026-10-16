@@ -4,6 +4,27 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 2
+_2026-10-16_
+
+**Verbeterd**
+
+- Ontdek en Bladeren laden populair, trending en nieuws & talk betrouwbaarder tegelijk; valt één lijst weg, dan blijven de andere staan. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Discover and Browse load popular, trending and news & talk more reliably in parallel; if one list fails, the others still show.</sub>
+- Splash: de cirkelgolven verschijnen precies op de klik van de tune. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Splash: the expanding rings now appear exactly on the click in the tune.</sub>
+- Mac: AirPlay-knop en menu's in de speler passen beter bij macOS. _(Mac)_  
+  <sub>Mac: the AirPlay button and menus in the player fit macOS better.</sub>
+- Kleine verbeteringen in de speler en de navigatie. _(Android, Android TV)_  
+  <sub>Small improvements to the player and navigation.</sub>
+
+**Opgelost**
+
+- Meerdere favorieten tegelijk verwijderen in Bibliotheek → Bewerken haalt nu precies de gekozen zenders weg. _(iPhone, iPad)_  
+  <sub>Deleting several favourites at once in Library → Edit now removes exactly the selected stations.</sub>
+- Kaart: wisselen tussen je land en Wereld laadt de stippen niet meer dubbel; Apple TV houdt de focus op de lijst. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Map: switching between your country and World no longer loads the dots twice; Apple TV keeps focus on the list.</sub>
+
 ## Build 1
 _2026-10-16_
 

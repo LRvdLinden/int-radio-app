@@ -195,12 +195,14 @@ struct SplashView: View {
         // ≈1,38 s → klik/lock op 1,45 s
         await sleep(0.07)
         guard !finished else { return }
-        withAnimation(.spring(response: 0.18, dampingFraction: 0.5)) { needle = 0.58; locked = true }
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.5)) { needle = 0.58 }
+        locked = true          // golven direct zichtbaar (klein), daarna uitdijen en vervagen
         Haptics.rigid()
+        await sleep(0.04)
         waves = true
 
         // letters één voor één (90 ms), schaal krimpt tot de balk
-        await sleep(0.15)
+        await sleep(0.11)
         withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) { collapse = true }
         for i in 1...letters.count {
             guard !finished else { return }

@@ -125,10 +125,11 @@ struct MapExplorerView: View {
             #elseif os(macOS)
             .navigationTitle(L("tab.map"))
             #endif
-            .task(id: country + (model.world ? "|w" : "")) {
+            .task(id: country) {
                 if app.mapWantsWorld {
                     app.mapWantsWorld = false
                     model.world = true
+                    didFocus = false
                 }
                 await model.load(country: country, world: model.world)
                 if !didFocus {

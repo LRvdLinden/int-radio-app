@@ -148,9 +148,10 @@ struct NewsTalkView: View {
         let c = library.countryCode
         news = .loading
         talk = .loading
-        async let n = try? RadioBrowser.shared.byTag("news", country: c)
-        async let t = try? RadioBrowser.shared.byTag("talk", country: c)
-        let (nl, tl) = await (n, t)
+        async let n = RadioBrowser.shared.byTag("news", country: c)
+        async let t = RadioBrowser.shared.byTag("talk", country: c)
+        let nl = try? await n
+        let tl = try? await t
         withAnimation {
             news = loadState(nl)
             talk = loadState(tl)
