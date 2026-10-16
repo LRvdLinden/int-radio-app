@@ -78,6 +78,9 @@ fun TunrRoot() {
 
         BackHandler(enabled = AppState.showPlayer) { AppState.showPlayer = false }
         BackHandler(enabled = !AppState.showPlayer && Nav.stack.isNotEmpty()) { Nav.pop() }
+        // Hoofdscherm: terug gaat eerst naar Ontdek, pas daarna uit de app
+        BackHandler(enabled = !AppState.showPlayer && Nav.stack.isEmpty() && AppState.stage == AppState.Stage.MAIN &&
+            AppState.tab != Tab.DISCOVER) { AppState.tab = Tab.DISCOVER }
     }
 
     LaunchedEffect(AppState.stage) {

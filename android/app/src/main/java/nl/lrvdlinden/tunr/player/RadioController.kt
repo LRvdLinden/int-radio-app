@@ -1,3 +1,5 @@
+@file:OptIn(androidx.media3.common.util.UnstableApi::class)
+
 package nl.lrvdlinden.tunr.player
 
 import android.content.ComponentName

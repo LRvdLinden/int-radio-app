@@ -185,7 +185,7 @@ object RadioBrowser {
         if (uuids.isEmpty()) return emptyList()
         return uuids.chunked(50).flatMap { chunk ->
             list("json/stations/byuuid", listOf("uuids" to chunk.joinToString(",")), TTL_SHORT, Station.serializer())
-        }
+        }.distinctBy { it.uuid }
     }
 
     /** Klik tellen bij afspelen (fire-and-forget, geen cache) */

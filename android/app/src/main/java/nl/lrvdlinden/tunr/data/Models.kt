@@ -128,8 +128,10 @@ fun localizedCountryName(code: String, fallback: String = ""): String {
 /** Dubbele zenders (zelfde naam + zelfde stream) samenvoegen, kapotte eruit (SPEC §2). */
 fun List<Station>.cleaned(): List<Station> {
     val seen = HashSet<String>()
+    val ids = HashSet<String>()
+    // ook op uuid ontdubbelen: lazy lijsten gebruiken de uuid als sleutel
     return filter { s ->
-        s.uuid.isNotEmpty() && s.streamUrl.isNotEmpty() &&
+        s.uuid.isNotEmpty() && s.streamUrl.isNotEmpty() && ids.add(s.uuid) &&
             seen.add(s.displayName.lowercase() + "|" + s.streamUrl.lowercase())
     }
 }
