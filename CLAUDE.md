@@ -25,7 +25,8 @@ Tunr is een wereldwijde radio-app (werknaam) voor **iPhone, iPad, Mac, Apple TV,
   - een item in `docs/changelog.json` (per punt `type` = `new`/`improved`/`fixed`, `platforms` uit `ios`, `ipados`, `macos`, `tvos`, `carplay`, `android`, `androidtv`, `web`, en tekst in `nl` en `en`);
   - `python3 tools/make_changelog.py` (maakt `CHANGELOG.md` en `website/assets/changelog.json`);
   - README en screenshots bijwerken als schermen veranderen (`python3 tools/make_screenshots.py`).
-- Buildpakketten (Xcode-zip, APK) nooit openbaar in de repo of als release: de repo is openbaar.
+- **Xcode-zip bij elke Apple-build**: het complete Xcode-project (map `apple/` met `Tunr.xcodeproj`) als `versions/apple/<versie>/build-<N>/Tunr-<versie>-build<N>-Xcode.zip` in de repo. De workflow *Apple* maakt en commit hem automatisch zodra iOS, tvOS en macOS slagen (alleen als die build nog niet bestaat). Lever de zip daarnaast ook in de chat.
+- APK's niet openbaar in de repo of als release.
 - Geen geheime sleutels in de repo. De app gebruikt alleen openbare, sleutelloze bronnen:
   - zenders: **Radio Browser** (community-database, `api.radio-browser.info`), altijd met een eigen User-Agent `Tunr/1.0.0`;
   - albumhoezen bij "nu speelt": **iTunes Search API** (zonder sleutel).

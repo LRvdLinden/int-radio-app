@@ -2,7 +2,8 @@ name: Apple
 
 # Eén multiplatform-target Tunr (iPhone, iPad, Mac, Apple TV; CarPlay zit in de iOS-build).
 # 1. maakt apple/Tunr.xcodeproj opnieuw uit apple/project.yml (XcodeGen) en commit hem, zodat klonen + openen werkt;
-# 2. controle-build per platform zonder ondertekening. Er komt geen pakket op GitHub (de repo is openbaar).
+# 2. controle-build per platform zonder ondertekening;
+# 3. als alles slaagt: het complete Xcode-project als zip in versions/apple/<versie>/build-<N>/ (zie CLAUDE.md).
 on:
   push:
     branches: [main]
@@ -82,6 +83,27 @@ jobs:
             -destination 'generic/platform=macOS' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > macos.log 2>&1; rc=$?
           tail -n 30 macos.log; exit $rc
+
+      # Complete Xcode-project als zip in de repo: versions/apple/<versie>/build-<N>/ (alleen als alles slaagt en hij nog niet bestaat)
+      - name: Xcode-zip in de repo zetten
+        if: github.event_name != 'pull_request' && steps.ios.outcome == 'success' && steps.tvos.outcome == 'success' && steps.macos.outcome == 'success'
+        working-directory: .
+        run: |
+          V=$(grep -m1 'MARKETING_VERSION' apple/project.yml | grep -o '[0-9][0-9.]*')
+          B=$(grep -m1 'CURRENT_PROJECT_VERSION' apple/project.yml | grep -o '[0-9]\+')
+          DIR="versions/apple/$V/build-$B"; ZIP="$DIR/Tunr-$V-build$B-Xcode.zip"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+          if [ -f "$ZIP" ]; then echo "$ZIP bestaat al"; exit 0; fi
+          mkdir -p "$DIR"
+          rm -f apple/*.log
+          zip -qr "$ZIP" apple -x 'apple/build/*' '*/xcuserdata/*' '*.DS_Store'
+          ls -lh "$ZIP"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add "$ZIP"
+          git commit -m "Xcode-project $V build $B als zip [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
+          echo "::error::Xcode-zip niet gepusht"; exit 1
 
       - name: Foutenoverzicht
         if: always()
