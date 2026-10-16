@@ -234,11 +234,12 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         np.isAlbumArtistButtonEnabled = false
         // aflevering: snelheidsknop (0,8× … 2×); radio: geen extra knoppen
         if RadioPlayer.shared.isEpisode {
-            let button = rateButton ?? CPNowPlayingPlaybackRateButton { _ in
-                MainActor.assumeIsolated { RadioPlayer.shared.cycleRate() }
+            if rateButton == nil {
+                rateButton = CPNowPlayingPlaybackRateButton(handler: { _ in
+                    MainActor.assumeIsolated { RadioPlayer.shared.cycleRate() }
+                })
             }
-            rateButton = button
-            np.updateNowPlayingButtons([button])
+            if let button = rateButton { np.updateNowPlayingButtons([button]) }
         } else {
             np.updateNowPlayingButtons([])
         }

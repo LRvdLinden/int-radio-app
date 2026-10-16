@@ -75,7 +75,7 @@ nav.menu-open .navtoggle .l1{transform:translateY(5px) rotate(45deg)}
 nav.menu-open .navtoggle .l2{opacity:0}
 nav.menu-open .navtoggle .l3{transform:translateY(-5px) rotate(-45deg)}
 
-/* ===== kopjes en blokken (schaal en gewichten als bingr.online: .h2 800, .sub 18px) ===== */
+/* ===== kopjes en blokken ===== */
 .h2{font-size:clamp(28px,3.6vw,44px);font-weight:800;letter-spacing:-.025em;line-height:1.1;text-wrap:balance}
 .sub{color:var(--sec);font-size:18px;margin-top:10px;max-width:62ch;text-wrap:pretty}
 .sub a{color:#fff;font-weight:600}
@@ -84,7 +84,7 @@ nav.menu-open .navtoggle .l3{transform:translateY(-5px) rotate(-45deg)}
 .center{text-align:center}
 .center .lead2,.center .sub{margin-left:auto;margin-right:auto}
 
-/* lichtbalk onder de hero (als op bingr.online, in het Tunr-verloop) */
+/* lichtbalk onder de hero */
 .lightbar{position:relative;height:90px;margin-top:-45px;z-index:2;pointer-events:none}
 .lightbar::before{content:"";position:absolute;left:8%;right:8%;top:50%;height:6px;margin-top:-3px;border-radius:6px;background:linear-gradient(90deg,transparent,var(--accent) 18%,var(--accent2) 82%,transparent)}
 .lightbar::after{content:"";position:absolute;left:15%;right:15%;top:50%;height:90px;margin-top:-45px;background:radial-gradient(ellipse 50% 50% at 50% 50%,#ff5a1f55,transparent 70%)}
@@ -94,7 +94,7 @@ nav.menu-open .navtoggle .l3{transform:translateY(-5px) rotate(-45deg)}
 .dial::after{content:"";position:absolute;left:10%;right:10%;top:14px;height:16px;background:repeating-linear-gradient(90deg,#ffffff40 0 1.5px,transparent 1.5px 2.5%);-webkit-mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
 .dial i{position:absolute;left:58%;top:8px;width:3px;height:44px;border-radius:3px;background:var(--accent2);box-shadow:0 0 18px var(--accent2),0 0 40px #ffb02066}
 
-/* ===== faq (lijst als op bingr.online) ===== */
+/* ===== faq ===== */
 .faq{max-width:900px}
 .faq .h2{text-align:center;margin-bottom:28px}
 .faq details{background:#222228;margin-bottom:8px}
@@ -107,7 +107,7 @@ nav.menu-open .navtoggle .l3{transform:translateY(-5px) rotate(-45deg)}
 .faq .a{padding:22px 24px 26px;border-top:1px solid var(--bg);color:#e2e2e8;font-size:17px;line-height:1.6}
 .faq .a a{color:#fff}
 
-/* ===== footer (kolommen + kleine lettertjes, als op bingr.online) ===== */
+/* ===== footer (kolommen + kleine lettertjes) ===== */
 footer.foot{border-top:1px solid var(--stroke);padding:50px 0 60px;color:var(--dim);font-size:14px}
 footer.foot .top{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;flex-wrap:wrap}
 footer.foot .logo{font-size:26px}
@@ -144,7 +144,7 @@ footer.foot .copy{margin-top:14px;font-size:13px}
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
 
-/* ================= Subpagina's (als bingr.online) ================= */
+/* ================= Subpagina's ================= */
 .sub-page main{display:block;padding:132px 0 90px;min-height:70vh}
 .sub-page .narrow{max-width:868px}
 .ttl{font-family:var(--font-head);font-size:clamp(36px,5.4vw,60px);font-weight:900;line-height:1.04;letter-spacing:-.035em;text-wrap:balance}

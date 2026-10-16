@@ -25,7 +25,7 @@
   var extra = (window.TUNR_I18N && window.TUNR_I18N.en) || {};
   for (var k in extra) EN[k] = extra[k];
 
-  // canonical (zoals bingr.online): de x-default-URL, plus ?lang= als die nl of en is. Alleen op pagina's met een
+  // canonical: de x-default-URL, plus ?lang= als die nl of en is. Alleen op pagina's met een
   // x-default en zonder eigen canonical.
   (function () {
     var xd = document.querySelector('link[rel="alternate"][hreflang="x-default"]');

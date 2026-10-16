@@ -17,8 +17,8 @@ _2026-10-16_
 
 **Verbeterd**
 
-- Website opnieuw opgebouwd in dezelfde opzet als bingr.online, met eigen Tunr-stijl: Zo ziet Tunr eruit (echte schermen), Waarom Tunr, Wereldkaart, In drie tikken, Download Tunr (Coming Soon) en FAQ. _(Website)_  
-  <sub>Website rebuilt in the same layout as bingr.online, in Tunr's own style: See Tunr in action (real screens), Why Tunr, World map, Three taps, Download Tunr (Coming Soon) and FAQ.</sub>
+- Website opnieuw opgebouwd in de Tunr-stijl: Zo ziet Tunr eruit (echte schermen), Waarom Tunr, Wereldkaart, In drie tikken, Download Tunr (Coming Soon) en FAQ. _(Website)_  
+  <sub>Website rebuilt in Tunr's style: See Tunr in action (real screens), Why Tunr, World map, Three taps, Download Tunr (Coming Soon) and FAQ.</sub>
 - Apps nog niet te downloaden: App Store, Google Play en de auto staan op Binnenkort; luisteren kan nu al in de browser. _(Website)_  
   <sub>Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser.</sub>
 

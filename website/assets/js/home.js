@@ -73,7 +73,7 @@
     })
     .catch(function () { /* terugval blijft staan */ });
 
-  // ---- versie en build in de footer (zoals bingr.online): de HTML heeft al een vaste waarde; hier de nieuwste uit de changelog
+  // ---- versie en build in de footer: de HTML heeft al een vaste waarde; hier de nieuwste uit de changelog
   var builds = document.querySelectorAll('[data-build]');
   if (builds.length && window.fetch) {
     fetch('assets/changelog.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
