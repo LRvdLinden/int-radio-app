@@ -231,10 +231,10 @@ struct SecondaryButtonStyle: ButtonStyle {
 }
 
 extension View {
-    /// Kaart-knoppen: tv = lift met witte rand; elders licht indrukken
-    @ViewBuilder func cardButton(cornerRadius: CGFloat = Theme.cardRadius) -> some View {
+    /// Kaart-knoppen: tv = lift (de witte rand tekent de kaart zelf met `focusRing`); elders licht indrukken
+    @ViewBuilder func cardButton() -> some View {
         #if os(tvOS)
-        self.buttonStyle(TVLiftStyle(scale: 1.08, cornerRadius: cornerRadius))
+        self.buttonStyle(TVLiftStyle(scale: 1.08, border: false))
         #else
         self.buttonStyle(PressableStyle())
         #endif
@@ -247,6 +247,11 @@ extension View {
         #else
         self.buttonStyle(PressableStyle())
         #endif
+    }
+
+    /// Witte 3px rand als de omringende knop geselecteerd is (Apple TV)
+    func focusRing(cornerRadius: CGFloat = Theme.cardRadius) -> some View {
+        modifier(FocusRing(cornerRadius: cornerRadius))
     }
 
     /// Standaard schermachtergrond
@@ -276,5 +281,18 @@ extension View {
 extension Font {
     static func rounded(_ size: CGFloat, _ weight: Font.Weight = .heavy) -> Font {
         .system(size: tvScaled(size), weight: weight, design: .rounded)
+    }
+}
+
+/// Zie `focusRing(cornerRadius:)`
+struct FocusRing: ViewModifier {
+    let cornerRadius: CGFloat
+    @Environment(\.tvFocused) private var focused
+    func body(content: Content) -> some View {
+        content.overlay {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .strokeBorder(Color.white, lineWidth: focused ? 3 : 0)
+                .animation(.easeOut(duration: 0.15), value: focused)
+        }
     }
 }
