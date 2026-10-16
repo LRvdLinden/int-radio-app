@@ -74,6 +74,17 @@ android {
     }
 }
 
+// Release-APK heet Tunr-<versie>-build<N>.apk (legacy variant-API, werkt nog in AGP 8.x; CI hernoemt ook zelf)
+android.applicationVariants.configureEach {
+    val variant = this
+    outputs.configureEach {
+        if (variant.buildType.name == "release") {
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
+                "Tunr-${variant.versionName}-build${variant.versionCode}.apk"
+        }
+    }
+}
+
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     implementation(composeBom)

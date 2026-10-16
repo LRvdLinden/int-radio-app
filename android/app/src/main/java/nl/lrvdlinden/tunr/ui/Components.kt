@@ -404,7 +404,7 @@ fun StationRowSection(
                         focusRequester = if (i == 0) firstFocus else null)
                 }
             }
-            load?.failed == true -> ErrorRetry(onRetry = load.retry, compact = true)
+            load != null && load.failed -> ErrorRetry(onRetry = load.retry, compact = true)
             else -> SkeletonRow()
         }
     }

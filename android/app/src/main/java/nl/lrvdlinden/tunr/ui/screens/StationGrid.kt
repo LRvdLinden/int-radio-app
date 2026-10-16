@@ -92,10 +92,13 @@ fun StationGridScreen(source: GridSource, onClose: () -> Unit) {
 
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TopBar(title, onBack = onClose)
-        val list = stations
+        if (stations == null) {
+            if (load.failed) ErrorRetry(onRetry = load.retry, focusRequester = first)
+            else Column { repeat(3) { SkeletonRow(); Spacer(Modifier.padding(8.dp)) } }
+            return@Column
+        }
+        val list: List<Station> = stations
         when {
-            list == null && load.failed -> ErrorRetry(onRetry = load.retry, focusRequester = first)
-            list == null -> Column { repeat(3) { SkeletonRow(); Spacer(Modifier.padding(8.dp)) } }
             list.isEmpty() -> Text(stringResource(R.string.no_stations), color = T.secondary, textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().padding(32.dp))
             numbered -> LazyColumn(contentPadding = PaddingValues(start = Dims.edge - 8.dp, end = Dims.edge - 8.dp, bottom = bottomContentPadding)) {

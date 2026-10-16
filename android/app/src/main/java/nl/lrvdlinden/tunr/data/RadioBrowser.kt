@@ -35,7 +35,7 @@ object Http {
     }
 
     /** Tolerant: onbekende velden, null in niet-null velden (→ standaard) en rommelige JSON. */
-    val json = Json { ignoreUnknownKeys = true; coerceInputValues = true; isLenient = true; explicitNulls = false }
+    val json = Json { ignoreUnknownKeys = true; coerceInputValues = true; isLenient = true }
 
     fun getString(url: HttpUrl): String {
         val req = Request.Builder().url(url).header("Accept", "application/json").build()

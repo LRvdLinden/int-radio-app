@@ -87,8 +87,16 @@
 
   audio.addEventListener('playing', function () {
     clearTimeout(attemptTimer);
+    setTimeout(function () { if (state === 'playing') endedRetry = 0; }, 5000);
     if (cur && !counted[cur.id]) { counted[cur.id] = 1; T.api.click(cur.id); }
     set('playing');
+  });
+  // live stream ended (server dropped the connection): reconnect once, otherwise show the error
+  var endedRetry = 0;
+  audio.addEventListener('ended', function () {
+    if (!cur) return;
+    if (endedRetry++ < 1) { var s = cur; cur = null; play(s, queue); }
+    else { teardown(); set('error'); }
   });
   audio.addEventListener('waiting', function () { if (state === 'playing') set('loading'); });
   audio.addEventListener('pause', function () { if (state === 'playing' || state === 'loading') { if (!audio.src && !hls) return; set('paused'); } });

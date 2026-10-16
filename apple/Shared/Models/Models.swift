@@ -235,10 +235,7 @@ struct Country: Codable, Identifiable, Hashable, Sendable {
 
     /// Het land van het toestel ("NL")
     static var deviceCode: String {
-        if #available(iOS 16, tvOS 16, macOS 13, *) {
-            return Locale.current.region?.identifier.uppercased() ?? "NL"
-        }
-        return "NL"
+        Locale.current.region?.identifier.uppercased() ?? "NL"
     }
 }
 
@@ -368,7 +365,10 @@ extension KeyedDecodingContainer {
 /// Lijst die kapotte elementen overslaat in plaats van alles te laten mislukken
 struct LossyArray<Element: Decodable>: Decodable {
     var items: [Element]
-    private struct Skip: Decodable {}
+    /// Slaat één element over, wat het ook is (zodat de lijst altijd verder kan)
+    private struct Skip: Decodable {
+        init(from decoder: Decoder) throws {}
+    }
     init(from decoder: Decoder) throws {
         var c = try decoder.unkeyedContainer()
         var out: [Element] = []

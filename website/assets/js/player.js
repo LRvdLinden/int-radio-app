@@ -26,28 +26,6 @@
     window.addEventListener('hashchange', route);
     route();
   }
-  // Na de eerste keer in deze sessie: geen poort en geen splash (geen geluid zonder tik nodig).
-  if (seen) { gate.remove(); boot(); }
-  else {
-    var started = false;
-    var start = function () {
-      if (started) return; started = true;
-      try { sessionStorage.setItem('tunr.splash', '1'); } catch (e) {}
-      gate.classList.add('out');
-      setTimeout(function () { gate.remove(); }, 400);
-      splash(boot);
-    };
-    document.getElementById('gate-go').addEventListener('click', start);
-    gate.addEventListener('click', function (e) { if (e.target === gate || e.target.closest('.in')) start(); });
-    document.addEventListener('keydown', function onk(e) { if (!started && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); start(); document.removeEventListener('keydown', onk); } });
-    setTimeout(function () { var g = document.getElementById('gate-go'); if (g && !started) g.focus(); }, 50);
-    // routing alvast klaarzetten achter de poort, zodat de eerste view meteen kan laden
-    T.ui.renderNav();
-    window.addEventListener('hashchange', route);
-    route();
-    boot = function () {};
-  }
-
   function splash(done) {
     var el = document.getElementById('splash');
     var tune = null;
@@ -278,4 +256,29 @@
     if (e.key === 'tunr.lang') { applyStatic(); T.ui.renderNav(); rerender(); }
     if (e.key === 'tunr.favorites' && T.ui.libRender) T.ui.libRender();
   });
+  function startApp() {
+  // Na de eerste keer in deze sessie: geen poort en geen splash (geen geluid zonder tik nodig).
+  if (seen) { gate.remove(); boot(); }
+  else {
+    var started = false;
+    var start = function () {
+      if (started) return; started = true;
+      try { sessionStorage.setItem('tunr.splash', '1'); } catch (e) {}
+      gate.classList.add('out');
+      setTimeout(function () { gate.remove(); }, 400);
+      splash(boot);
+    };
+    document.getElementById('gate-go').addEventListener('click', start);
+    gate.addEventListener('click', function (e) { if (e.target === gate || e.target.closest('.in')) start(); });
+    document.addEventListener('keydown', function onk(e) { if (!started && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); start(); document.removeEventListener('keydown', onk); } });
+    setTimeout(function () { var g = document.getElementById('gate-go'); if (g && !started) g.focus(); }, 50);
+    // routing alvast klaarzetten achter de poort, zodat de eerste view meteen kan laden
+    T.ui.renderNav();
+    window.addEventListener('hashchange', route);
+    route();
+    boot = function () {};
+  }
+
+  }
+  startApp();
 })();
