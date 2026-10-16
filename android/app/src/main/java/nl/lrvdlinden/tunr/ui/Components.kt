@@ -125,8 +125,8 @@ fun FrequencyBar(modifier: Modifier = Modifier, needleAt: Float = 0.58f) {
 // MARK: zendercover
 
 /**
- * Vierkante zendercover: verloop uit het palet (hash van de naam), daarop het logo op een witte afgeronde tegel
- * (62%); geen logo of mislukt → monogram.
+ * Vierkante zendercover: het logo vult de hele tegel (geen witte tegel eromheen); tijdens laden, zonder logo
+ * of als laden mislukt: verloop uit het palet (hash van de naam) met monogram.
  */
 @Composable
 fun StationArt(
@@ -138,6 +138,7 @@ fun StationArt(
     val name = station?.displayName ?: "Tunr"
     val (c1, c2) = T.palette(name)
     var failed by remember(station?.uuid, overrideUrl) { mutableStateOf(false) }
+    var loaded by remember(station?.uuid, overrideUrl) { mutableStateOf(false) }
     val logo = overrideUrl ?: station?.favicon?.trim()?.takeIf { it.startsWith("http") }
     Box(
         modifier
@@ -148,24 +149,18 @@ fun StationArt(
     ) {
         if (logo == null || failed) {
             Monogram(name)
-        } else if (overrideUrl != null) {
-            // albumhoes: vult het hele vlak
-            AsyncImage(
-                model = overrideUrl, contentDescription = null, contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                onState = { if (it is AsyncImagePainter.State.Error) failed = true }
-            )
         } else {
-            Box(
-                Modifier.fillMaxSize(0.62f).clip(RoundedCornerShape(radius * 0.7f)).background(Color.White),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = logo, contentDescription = null, contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize().padding(8.dp * 0.9f).aspectRatio(1f),
-                    onState = { if (it is AsyncImagePainter.State.Error) failed = true }
-                )
-            }
+            // logo of albumhoes vult het hele vlak, zonder extra witte tegel eromheen;
+            // tot het geladen is staat het monogram op het verloop
+            if (!loaded) Monogram(name)
+            AsyncImage(
+                model = logo, contentDescription = null, contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onState = {
+                    if (it is AsyncImagePainter.State.Success) loaded = true
+                    if (it is AsyncImagePainter.State.Error) failed = true
+                }
+            )
         }
     }
 }

@@ -97,10 +97,11 @@ body.has-mini main#view{padding-bottom:calc(var(--tabh) + var(--minih) + 32px)}
 .art{position:relative;display:block;aspect-ratio:1;width:100%;border-radius:var(--r);overflow:hidden;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:inset 0 0 0 1px #ffffff1a;isolation:isolate;container-type:inline-size}
 .art::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 26% 16%,#ffffff38,transparent 55%);z-index:0}
 .art .mono{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--head);font-weight:900;color:#fff;font-size:36cqi;letter-spacing:-.02em;text-shadow:0 2px 14px #0000003d;z-index:1}
-.art .lt{position:absolute;left:19%;top:19%;width:62%;height:62%;border-radius:18%;background:#fff;padding:8%;display:grid;place-items:center;z-index:2;opacity:0;transition:opacity .25s;box-shadow:0 6px 18px -6px #00000080}
+/* het logo vult de hele tegel, zonder witte tegel eromheen; tot het geladen is: verloop met monogram */
+.art .lt{position:absolute;inset:0;display:block;z-index:2;opacity:0;transition:opacity .25s}
 .art.has-logo .lt{opacity:1}
 .art.has-logo .mono{opacity:0}
-.art .logo{width:100%;height:100%;object-fit:contain}
+.art .logo{width:100%;height:100%;object-fit:cover;display:block}
 .art .eq{position:absolute;left:8%;bottom:8%;z-index:3;display:none;align-items:flex-end;gap:2px;height:16px;padding:5px 6px;border-radius:7px;background:#000000a6;box-sizing:content-box}
 .is-playing .art .eq,.art.is-playing .eq{display:inline-flex}
 .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
@@ -111,7 +112,7 @@ body.has-mini main#view{padding-bottom:calc(var(--tabh) + var(--minih) + 32px)}
 .eq.paused i,html:not(.is-live) .eq i{animation-play-state:paused;transform:scaleY(.3)}
 @keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
 .art.sm{border-radius:10px}.art.sm .eq{display:none!important}
-.art.sm .lt{left:12%;top:12%;width:76%;height:76%;padding:6%}
+
 
 /* ================= rijen en kaarten ================= */
 .sec{margin-top:30px}
@@ -565,3 +566,5 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .eq i{animation:none!important;transform:scaleY(.7)}
 }
+
+.art.has-logo::before{opacity:0}

@@ -277,6 +277,26 @@
           "en": "Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser."
         }
       ]
+    },
+    {
+      "build": 6,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Zenderlogo's vullen nu de hele tegel, zonder extra witte tegel of rand eromheen. Zonder logo blijft het gekleurde vlak met de letters.",
+          "en": "Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials."
+        }
+      ]
     }
   ]
 }

@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 6
+_2026-10-16_
+
+**Verbeterd**
+
+- Zenderlogo's vullen nu de hele tegel, zonder extra witte tegel of rand eromheen. Zonder logo blijft het gekleurde vlak met de letters. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials.</sub>
+
 ## Build 5
 _2026-10-16_
 

@@ -77,13 +77,8 @@ struct StationArt: View {
                 if let overrideURL {
                     RemoteImage(url: overrideURL, contentMode: .fill) { monogram(side) }
                 } else if let logo = station.logoURL {
-                    RemoteImage(url: logo, contentMode: .fit) { monogram(side) } decorate: { image in
-                        image
-                            .padding(side * 0.62 * 0.08)
-                            .frame(width: side * 0.62, height: side * 0.62)
-                            .background(Color.white, in: RoundedRectangle(cornerRadius: side * 0.12, style: .continuous))
-                            .shadow(color: .black.opacity(0.25), radius: side * 0.04, y: side * 0.02)
-                    }
+                    // build 4: het logo vult de hele tegel, zonder extra witte tegel of rand eromheen
+                    RemoteImage(url: logo, contentMode: .fill) { monogram(side) }
                 } else {
                     monogram(side)
                 }
