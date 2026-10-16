@@ -168,3 +168,38 @@ Tegels (verloop uit het StationArt-palet, groot icoon, titel):
 - Info.plist en entitlements per SDK via `INFOPLIST_FILE[sdk=…]` / `CODE_SIGN_ENTITLEMENTS[sdk=…]`.
 - **Mac**: `NavigationSplitView` met zijbalk (Ontdek, Bladeren, Kaart, Zoeken, Bibliotheek, Instellingen via ⌘,-`Settings`-scene), miniplayer onderaan het venster, menu **Afspelen** (Spatie = afspelen/pauze, ⌘→/⌘← = volgende/vorige zender, ⌘L = favoriet), Now Playing in het Bedieningscentrum via MPNowPlayingInfoCenter, venster min. 900×600. Sandbox met netwerk-client.
 - **CarPlay** (audio-app): `CPTemplateApplicationSceneDelegate` in een eigen scene (`UIApplicationSceneManifest` → `CPTemplateApplicationSceneSessionRoleApplication`). Root = `CPTabBarTemplate` met tabs **Favorieten**, **Recent**, **Populair** ({land}) en **Genres** (lijst → zenders) als `CPListTemplate`'s met zenderlogo's; kiezen speelt af en toont `CPNowPlayingTemplate.shared` (knoppen: favoriet, volgende/vorige zender via remote commands). Alleen code onder `#if os(iOS)` + `canImport(CarPlay)`. De entitlement komt pas mee als Apple hem toekent (zie CLAUDE.md), dus de app moet bouwen en draaien zonder.
+
+---
+
+## 8. Podcasts (alle apps en de webspeler) — nieuw
+
+Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account, geen sleutels.
+
+### Bronnen (sleutelloos)
+- **Toplijst per land**: `GET https://rss.applemarketingtools.com/api/v2/{cc}/podcasts/top/50/podcasts.json` (cc = landcode in kleine letters, bv. `nl`) → `feed.results[] {id, name, artistName, artworkUrl100, genres[]}`. Valt terug op `us` als het land geen lijst heeft.
+- **Zoeken**: `GET https://itunes.apple.com/search?media=podcast&entity=podcast&term=<q>&country=<cc>&limit=50` → `results[] {collectionId, collectionName, artistName, artworkUrl600, primaryGenreName, trackCount, feedUrl, releaseDate}`.
+- **Podcast + afleveringen**: `GET https://itunes.apple.com/lookup?id=<collectionId>&entity=podcastEpisode&limit=100&country=<cc>` → eerste resultaat = de podcast (`wrapperType: "track"`, `kind: "podcast"`), de rest = afleveringen (`wrapperType: "podcastEpisode"`) met `trackId, trackName, description/shortDescription, releaseDate, trackTimeMillis, episodeUrl, artworkUrl600, episodeFileExtension`.
+- **Genres** (tegels): zoeken met `&genreId=` via de toplijst per genre: `https://itunes.apple.com/{cc}/rss/toppodcasts/limit=50/genre=<id>/json` (oud formaat, `feed.entry[]`: `im:name.label`, `im:artist.label`, `im:image[2].label`, `id.attributes["im:id"]`). Genres: Nieuws 1489, Comedy 1303, Sport 1545, True crime 1488, Maatschappij & cultuur 1324, Zakelijk 1321, Gezondheid 1512, Geschiedenis 1487, Wetenschap 1533, Technologie 1318, Kinderen & gezin 1305, Muziek 1310.
+- Artwork: vervang `100x100bb`/`600x600bb` door `600x600bb`.
+- **Web**: als `fetch` door CORS faalt, gebruik voor `itunes.apple.com` de JSONP-variant (`&callback=cb`); de toplijst-JSON van rss.applemarketingtools.com via fetch (valt die weg, dan de oude iTunes-RSS met JSONP niet mogelijk → toon "Populair" uit een zoekopdracht `term=podcast`).
+- Cache: toplijsten 6 uur, afleveringen 30 min.
+
+### Plek in de app
+- **Bladeren**: nieuwe grote tegel **Podcasts** (bovenaan, naast Lokaal) → podcastoverzicht.
+- **Ontdek**: rij **Populaire podcasts in {land}** (na Trending) en, als je podcasts volgt, **Nieuwe afleveringen** (laatste aflevering van elke gevolgde podcast, nieuwste eerst) en **Verder luisteren** voor half beluisterde afleveringen.
+- **Podcastoverzicht** (vanuit Bladeren): toplijst van je land (genummerd 1–50), genre-tegels, zoeken.
+- **Zoeken**: segment **Zenders · Podcasts** bovenaan; bij Podcasts zoekt het in iTunes.
+- **Bibliotheek**: segmenten **Favorieten · Podcasts · Recent**. Podcasts = gevolgde podcasts (raster) + gedownloade/half beluisterde afleveringen bovenaan als "Verder luisteren".
+- **Podcastpagina**: grote art, titel, maker, genre, aantal afleveringen, knop **Volgen/Volgend**, beschrijving (uitklapbaar), **Speel nieuwste**, lijst afleveringen (datum, duur, titel, korte omschrijving, voortgangsbalkje als je al luisterde, ✓ als beluisterd) met sorteren Nieuwste/Oudste.
+- **Afleveringspagina** (tik op aflevering): titel, podcast, datum, duur, volledige omschrijving, Afspelen.
+
+### Speler voor afleveringen (zelfde speler, andere modus)
+- Geen LIVE-pil maar een **tijdbalk** (sleepbaar) met verstreken/resterende tijd; knoppen **15 s terug · afspelen/pauze · 30 s vooruit**; **snelheid** (0,8×, 1×, 1,25×, 1,5×, 1,75×, 2×); slaaptimer incl. "Einde van aflevering"; volgende/vorige = volgende/vorige aflevering in de lijst.
+- **Positie onthouden** per aflevering (elke 10 s en bij pauze), hervatten waar je was; ≥ 95% = beluisterd.
+- Vergrendelscherm / Bedieningspaneel / mediamelding met scrubben (`changePlaybackPositionCommand`, skipForward 30 / skipBackward 15; Android Media3 seekBack/seekForward).
+- Mini-player toont titel van de aflevering en een dunne voortgangslijn.
+- CarPlay en Android Auto: extra tab/map **Podcasts** met gevolgde podcasts → afleveringen.
+- tvOS en Android TV: podcasts in Bladeren en Bibliotheek; speler met tijdbalk (op tvOS met swipe/klik-links/rechts = 15/30 s).
+
+### Opslag
+- Gevolgde podcasts (id, naam, maker, art, feedUrl) en afspeelposities (episodeId → seconden, duur, beluisterd) lokaal; Apple ook via iCloud KV (zoals favorieten). Max 500 posities (oudste eruit).
