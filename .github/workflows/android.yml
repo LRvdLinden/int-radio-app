@@ -70,6 +70,18 @@ jobs:
         run: |
           grep -E "^e: |error:|FAILURE|What went wrong" -A3 build.log | head -200 || true
 
+      # Rapport op de branch ci-logs-android (latest.txt), zodat fouten ook buiten GitHub te lezen zijn
+      - name: Build-rapport op branch ci-logs-android
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          mkdir -p "$RUNNER_TEMP/rep"
+          { echo "commit: $GITHUB_SHA"; echo "status: ${{ job.status }}"; echo
+            grep -E "^e: |^w: .*(deprecated|unused).{0,0}|error:|FAILURE|What went wrong" -A3 build.log 2>/dev/null | grep -v "^w: " | head -300 || true
+          } > "$RUNNER_TEMP/rep/latest.txt"
+          cd "$RUNNER_TEMP/rep" && git init -q && git checkout -q -b ci-logs-android && git add latest.txt
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "android $GITHUB_SHA [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" ci-logs-android
+
       - name: APK in de repo en als GitHub-release
         if: github.event_name != 'pull_request'
         working-directory: .
