@@ -69,8 +69,21 @@
 
 /* platform chips */
 .plats{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:34px auto 0;max-width:1220px}
-.plats li{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;background:#16161acc;border:1px solid #ffffff1f;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:14.5px;font-weight:700}
-.plats svg{width:22px;height:22px;color:var(--accent2)}
+.plats li{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;border-radius:12px;background:#16161acc;border:1px solid #ffffff1f;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);text-align:left}
+.plats svg{width:24px;height:24px;color:var(--accent2);flex:none}
+.plats b{display:block;font-size:14.5px;font-weight:700;line-height:1.2}
+.plats small{display:block;font-size:12px;color:var(--sec);line-height:1.25;white-space:nowrap}
+/* downloads per platform met OS-versies */
+.dls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.dl{display:flex;flex-direction:column;padding:26px;border-radius:16px;background:var(--s1,#16161a);border:1px solid #ffffff1a}
+.dl.now{background:linear-gradient(150deg,#2a140b 0%,#16161a 60%);border-color:#ff5a1f66}
+.dl .devs{display:flex;gap:8px;color:#fff;margin-bottom:14px}
+.dl .devs svg{width:30px;height:30px}
+.dl h3{font-size:22px;font-weight:800;letter-spacing:-.015em}
+.dl .os{color:var(--sec);font-size:15px;margin-top:6px}
+.dl .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:20px}
+.dl .badge-soon{display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;border:1px dashed #ffffff33;color:var(--sec);font-size:15px;font-weight:700}
+@media (max-width:900px){.dls{grid-template-columns:1fr}}
 
 /* ===== kaart-sectie ===== */
 .mapsec{position:relative;overflow:hidden}
@@ -180,7 +193,9 @@
   .onair{font-size:12px;gap:8px;padding:6px 12px 6px 10px}
   .onair .live{font-size:10.5px}
   .plats{gap:8px}
-  .plats li{padding:7px 12px 7px 9px;font-size:13.5px}
+  .plats li{padding:7px 11px 7px 9px}
+  .plats b{font-size:13.5px}
+  .plats small{font-size:11.5px}
   .plats svg{width:19px;height:19px}
   .feats{grid-template-columns:1fr}
   .feat.wide{grid-column:auto;grid-template-columns:1fr}
@@ -200,6 +215,38 @@
   .wall,.hero .wrap>*,.hero .bar::after{animation:none}
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Tunr voor iPhone, iPad, Mac, Apple TV en CarPlay",
+      "description": "Wereldwijde radio-app: tienduizenden zenders uit meer dan 200 landen, met een wereldkaart, logo's en albumhoezen.",
+      "applicationCategory": "MusicApplication",
+      "operatingSystem": "iOS 17, iPadOS 17, macOS 14, tvOS 17",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "inLanguage": ["nl", "en"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Tunr voor Android, Android TV en Android Auto",
+      "description": "Wereldwijde radio-app: tienduizenden zenders uit meer dan 200 landen, met een wereldkaart, logo's en albumhoezen.",
+      "applicationCategory": "MusicApplication",
+      "operatingSystem": "Android 7.0",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "inLanguage": ["nl", "en"]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Tunr webspeler",
+      "applicationCategory": "MusicApplication",
+      "operatingSystem": "Elke moderne browser",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Naar de inhoud</a>
@@ -211,6 +258,7 @@
       <a href="#features" data-i18n="nav.features">Functies</a>
       <a href="#kaart" data-i18n="nav.map">Wereldkaart</a>
       <a href="#apparaten" data-i18n="nav.devices">Apparaten</a>
+      <a href="#download" data-i18n="nav.download">Download</a>
       <a href="#faq" data-i18n="nav.faq">Veelgestelde vragen</a>
     </div>
     <div class="right">
@@ -238,15 +286,15 @@
     </div>
     <p class="counter" id="counter" aria-live="polite"><span data-i18n="count.fallback"><b>50.000+</b> zenders · <b>200+</b> landen</span></p>
     <ul class="plats" id="apparaten" aria-label="Apparaten" data-i18n-attr="aria-label:nav.devices">
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="11" height="20" rx="2.8"/><path d="M10.5 4.6h3"/></svg>iPhone</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="2.5" width="17" height="19" rx="2.4"/><circle cx="12" cy="18.6" r=".6" fill="currentColor"/></svg>iPad</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.6"/><path d="M1.8 19h20.4l-1.6-3.5H3.4z"/></svg>Mac</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8"/><path d="M10.3 7.8v4.4l3.8-2.2z" fill="currentColor"/></svg>Apple TV</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="2.4"/><path d="M3.2 10.4C6 9.4 8.6 9.6 9.8 11M20.8 10.4c-2.8-1-5.4-.8-6.6.6M12 14.4v6.8"/></svg>CarPlay</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5a7.5 7.5 0 0 1 15 0z"/><path d="M7 7.6 5.4 5M17 7.6 18.6 5"/><circle cx="9" cy="13" r=".7" fill="currentColor"/><circle cx="15" cy="13" r=".7" fill="currentColor"/></svg>Android</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="m8 2.8 4 4.2 4-4.2"/></svg>Android TV</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M5.5 17.5v2M18.5 17.5v2"/><circle cx="7.3" cy="14.5" r=".8" fill="currentColor"/><circle cx="16.7" cy="14.5" r=".8" fill="currentColor"/></svg>Android Auto</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2M12 2.8C9.4 5.4 8.2 8.4 8.2 12s1.2 6.6 3.8 9.2"/></svg><span data-i18n="chip.web">Web</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2" width="11" height="20" rx="2.8"/><path d="M10.5 4.6h3"/></svg><span><b>iPhone</b><small data-i18n="chipos.ios">iOS 17+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="2.5" width="17" height="19" rx="2.4"/><circle cx="12" cy="18.6" r=".6" fill="currentColor"/></svg><span><b>iPad</b><small data-i18n="chipos.ipad">iPadOS 17+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="11" rx="1.6"/><path d="M1.8 19h20.4l-1.6-3.5H3.4z"/></svg><span><b>Mac</b><small data-i18n="chipos.mac">macOS 14+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8"/><path d="M10.3 7.8v4.4l3.8-2.2z" fill="currentColor"/></svg><span><b>Apple TV</b><small data-i18n="chipos.tvos">tvOS 17+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="2.4"/><path d="M3.2 10.4C6 9.4 8.6 9.6 9.8 11M20.8 10.4c-2.8-1-5.4-.8-6.6.6M12 14.4v6.8"/></svg><span><b>CarPlay</b><small data-i18n="chipos.carplay">iPhone met iOS 17+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5a7.5 7.5 0 0 1 15 0z"/><path d="M7 7.6 5.4 5M17 7.6 18.6 5"/><circle cx="9" cy="13" r=".7" fill="currentColor"/><circle cx="15" cy="13" r=".7" fill="currentColor"/></svg><span><b>Android</b><small data-i18n="chipos.android">Telefoon en tablet, 7+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="m8 2.8 4 4.2 4-4.2"/></svg><span><b>Android TV</b><small data-i18n="chipos.androidtv">Google TV, Fire TV</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M5.5 17.5v2M18.5 17.5v2"/><circle cx="7.3" cy="14.5" r=".8" fill="currentColor"/><circle cx="16.7" cy="14.5" r=".8" fill="currentColor"/></svg><span><b>Android Auto</b><small data-i18n="chipos.auto">Android 7+</small></span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2M12 2.8C9.4 5.4 8.2 8.4 8.2 12s1.2 6.6 3.8 9.2"/></svg><span><b data-i18n="chip.web">Web</b><small data-i18n="chipos.web">Elke moderne browser</small></span></li>
     </ul>
   </div>
 </header>
@@ -397,6 +445,34 @@
   </div>
 </section>
 
+<section class="block" id="download" aria-labelledby="dl-h" style="padding-top:20px">
+  <div class="wrap">
+    <span class="eyebrow" data-i18n="dl.eyebrow">Download</span>
+    <h2 class="h2" id="dl-h" data-i18n="dl.title">Tunr op al je apparaten</h2>
+    <p class="lead2" data-i18n="dl.sub">De apps komen binnenkort in de App Store en op Google Play. Tot die tijd luister je meteen in je browser.</p>
+    <div class="dls">
+      <div class="dl now">
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M10 12.5v5l4.2-2.5z"/></svg></div>
+        <h3 data-i18n="dl.web.t">In je browser, nu beschikbaar</h3>
+        <p class="os" data-i18n="dl.web.os">Op je computer, tablet of telefoon, zonder iets te installeren</p>
+        <div class="acts"><a class="btn sm" href="web/" data-i18n="hero.web">Luister nu in je browser</a></div>
+      </div>
+      <div class="dl soon">
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><path d="M10.5 5h3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="11" rx="1.6"/><path d="M2 19.5h20l-1.6-4H3.6z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg></div>
+        <h3 data-i18n="dl.apple.t">iPhone, iPad, Mac, Apple TV en CarPlay</h3>
+        <p class="os">iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+</p>
+        <div class="acts"><span class="badge-soon" data-i18n="dl.soon.apple">Binnenkort in de App Store</span></div>
+      </div>
+      <div class="dl soon">
+        <div class="devs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18a.38.38 0 0 0-.66-.38l-1.86 3.22a11.4 11.4 0 0 0-9.84 0L5.22 5.92a.38.38 0 0 0-.66.38L6.4 9.48A10.8 10.8 0 0 0 1 18h22a10.8 10.8 0 0 0-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg></div>
+        <h3 data-i18n="dl.android.t">Android, Android TV en Android Auto</h3>
+        <p class="os" data-i18n="dl.android.os">Telefoons, tablets en tv's met Android 7 of nieuwer, ook Google TV en Fire TV</p>
+        <div class="acts"><span class="badge-soon" data-i18n="dl.soon.android">Binnenkort op Google Play</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="final" aria-labelledby="final-h">
   <div class="wrap">
     <div class="card">
@@ -441,6 +517,26 @@ window.TUNR_I18N = { en: {
   "store.apple": "App Store: coming soon", "store.google": "Google Play: coming soon",
   "count.fallback": "<b>50,000+</b> stations · <b>200+</b> countries",
   "chip.web": "Web",
+  "chipos.ios": "iOS 17+",
+  "chipos.ipad": "iPadOS 17+",
+  "chipos.mac": "macOS 14+",
+  "chipos.tvos": "tvOS 17+",
+  "chipos.carplay": "iPhone with iOS 17+",
+  "chipos.android": "Phone and tablet, 7+",
+  "chipos.androidtv": "Google TV, Fire TV",
+  "chipos.auto": "Android 7+",
+  "chipos.web": "Any modern browser",
+  "nav.download": "Download",
+  "dl.eyebrow": "Download",
+  "dl.title": "Tunr on all your devices",
+  "dl.sub": "The apps are coming soon to the App Store and Google Play. Until then, listen right away in your browser.",
+  "dl.web.t": "In your browser, available now",
+  "dl.web.os": "On your computer, tablet or phone, nothing to install",
+  "dl.apple.t": "iPhone, iPad, Mac, Apple TV and CarPlay",
+  "dl.soon.apple": "Coming soon to the App Store",
+  "dl.android.t": "Android, Android TV and Android Auto",
+  "dl.android.os": "Phones, tablets and TVs with Android 7 or later, including Google TV and Fire TV",
+  "dl.soon.android": "Coming soon on Google Play",
   "map.eyebrow": "Map", "map.title": "Discover the world on the map",
   "map.lead": "Spin the globe and listen wherever you like: a jazz station in New Orleans, morning radio in Tokyo or the news from your home town. Every dot is a station.",
   "map.l1": "<b>Glowing dots</b> for thousands of stations, grouped when you zoom out.",

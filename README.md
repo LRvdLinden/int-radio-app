@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  iOS 17+ · iPadOS 17+ · macOS 14+ · tvOS 17+ · Android 7+ (ook Google TV en Fire TV) · elke moderne browser
+</p>
+
+<p align="center">
   <a href="https://github.com/LRvdLinden/int-radio-app/actions/workflows/apple.yml"><img src="https://github.com/LRvdLinden/int-radio-app/actions/workflows/apple.yml/badge.svg" alt="Apple"></a>
   <a href="https://github.com/LRvdLinden/int-radio-app/actions/workflows/android.yml"><img src="https://github.com/LRvdLinden/int-radio-app/actions/workflows/android.yml/badge.svg" alt="Android"></a>
   <a href="https://github.com/LRvdLinden/int-radio-app/actions/workflows/website.yml"><img src="https://github.com/LRvdLinden/int-radio-app/actions/workflows/website.yml/badge.svg" alt="Website"></a>
@@ -22,8 +26,8 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 
 | | |
 |---|---|
-| **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Apple … — Xcode-project* → zip uitpakken → `Tunr/Tunr.xcodeproj` openen. Ook in [`versions/apple/`](versions/apple) |
-| **Android-APK** (telefoon, tablet, Android TV, Android Auto) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Android …* → `Tunr-1.0.0-build<N>.apk`. Ook in [`versions/android/`](versions/android) |
+| **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Apple … — Xcode-project* → zip uitpakken → `Tunr/Tunr.xcodeproj` openen. Ook in [`versions/apple/`](versions/apple) |
+| **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Android …* → `Tunr-1.0.0-build<N>.apk`. Ook in [`versions/android/`](versions/android) |
 | **Webspeler** | `website/web/` (wordt via FTP gepubliceerd) |
 
 ## Screenshots

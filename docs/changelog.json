@@ -241,6 +241,20 @@
           "en": "Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac."
         }
       ]
+    },
+    {
+      "build": 4,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Website: de apparaten tonen nu per platform de minimale versie (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus een nieuwe sectie Download per platform.",
+          "en": "Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform."
+        }
+      ]
     }
   ]
 }

@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 4
+_2026-10-16_
+
+**Verbeterd**
+
+- Website: de apparaten tonen nu per platform de minimale versie (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus een nieuwe sectie Download per platform. _(Website)_  
+  <sub>Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform.</sub>
+
 ## Build 3
 _2026-10-16_
 
