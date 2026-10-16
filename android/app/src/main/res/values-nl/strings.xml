@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tabs -->
+    <string name="tab_discover">Ontdek</string>
+    <string name="tab_browse">Bladeren</string>
+    <string name="tab_map">Kaart</string>
+    <string name="tab_search">Zoeken</string>
+    <string name="tab_library">Bibliotheek</string>
+    <string name="tab_favorites">Favorieten</string>
+    <string name="recent">Recent</string>
+    <string name="settings">Instellingen</string>
+
+    <!-- Algemeen -->
+    <string name="back">Terug</string>
+    <string name="close">Sluiten</string>
+    <string name="cancel">Annuleren</string>
+    <string name="clear">Wissen</string>
+    <string name="retry">Opnieuw</string>
+    <string name="see_all">Alles</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="off">Uit</string>
+    <string name="error_loading">Zenders laden lukt niet. Controleer je verbinding.</string>
+    <string name="no_results">Geen resultaten</string>
+    <string name="no_stations">Geen zenders gevonden</string>
+    <string name="live">LIVE</string>
+    <string name="kbps">%1$d kbps</string>
+    <string name="minutes_n">%1$d min</string>
+    <plurals name="station_count">
+        <item quantity="one">%1$s zender</item>
+        <item quantity="other">%1$s zenders</item>
+    </plurals>
+
+    <!-- Landkeuze -->
+    <string name="choose_country">Kies je land</string>
+    <string name="choose_country_subtitle">Je kunt dit later altijd wijzigen</string>
+    <string name="search_country">Zoek een land</string>
+    <string name="suggested">Voorgesteld</string>
+    <string name="all_countries">Alle landen</string>
+
+    <!-- Ontdek -->
+    <string name="greeting_morning">Goedemorgen</string>
+    <string name="greeting_afternoon">Goedemiddag</string>
+    <string name="greeting_evening">Goedenavond</string>
+    <string name="greeting_night">Goedenacht</string>
+    <string name="continue_listening">Verder luisteren</string>
+    <string name="local">Lokaal</string>
+    <string name="local_in">Lokaal · %1$s</string>
+    <string name="pick_region">Kies je regio</string>
+    <string name="pick_region_hint">Zenders uit jouw provincie of staat</string>
+    <string name="popular_in">Populair in %1$s</string>
+    <string name="trending">Trending</string>
+    <string name="your_favorites">Jouw favorieten</string>
+    <string name="genres">Genres</string>
+    <string name="listen">Luister</string>
+    <string name="info">Info</string>
+    <string name="now_playing_tv">Nu aan het spelen</string>
+
+    <!-- Genres -->
+    <string name="genre_pop">Pop</string>
+    <string name="genre_news">Nieuws</string>
+    <string name="genre_rock">Rock</string>
+    <string name="genre_dance">Dance</string>
+    <string name="genre_jazz">Jazz</string>
+    <string name="genre_classical">Klassiek</string>
+    <string name="genre_hits">Hits</string>
+    <string name="genre_talk">Talk</string>
+    <string name="genre_sports">Sport</string>
+    <string name="genre_oldies">Oldies</string>
+    <string name="genre_hiphop">Hiphop</string>
+    <string name="genre_country">Country</string>
+    <string name="genre_ambient">Ambient</string>
+    <string name="genre_christian">Christelijk</string>
+    <string name="genre_other">Overig</string>
+
+    <!-- Bladeren -->
+    <string name="browse_local">Lokaal</string>
+    <string name="browse_music">Muziek</string>
+    <string name="browse_news_talk">Nieuws &amp; Talk</string>
+    <string name="browse_sports">Sport</string>
+    <string name="browse_language">Op taal</string>
+    <string name="browse_world_map">Wereldkaart</string>
+    <string name="browse_top100">Top 100 wereldwijd</string>
+    <string name="regions_in">Regio\'s in %1$s</string>
+    <string name="no_regions">Geen regio\'s gevonden voor dit land</string>
+    <string name="make_my_region">Maak dit mijn regio</string>
+    <string name="my_region">Mijn regio</string>
+    <string name="news_worldwide">Nieuws wereldwijd</string>
+    <string name="worldwide">Wereldwijd</string>
+    <string name="play">Afspelen</string>
+    <string name="pause">Pauze</string>
+    <string name="shuffle">Willekeurig</string>
+
+    <!-- Kaart -->
+    <string name="map_world">Wereld</string>
+    <string name="map_random">Willekeurig</string>
+    <string name="map_attribution" translatable="false">© OpenStreetMap-bijdragers © CARTO</string>
+    <string name="show_on_map">Op de kaart</string>
+
+    <!-- Zenderdetail -->
+    <string name="add_favorite">Aan favorieten toevoegen</string>
+    <string name="remove_favorite">Uit favorieten verwijderen</string>
+    <string name="favorite">Favoriet</string>
+    <string name="share">Delen</string>
+    <string name="share_text">Ik luister naar %1$s via Tunr: %2$s</string>
+    <string name="website">Website</string>
+    <string name="similar_stations">Vergelijkbare zenders</string>
+    <string name="station_info">Zenderinfo</string>
+    <string name="info_codec">Codec</string>
+    <string name="info_bitrate">Bitrate</string>
+    <string name="info_language">Taal</string>
+    <string name="info_votes">Stemmen</string>
+    <string name="info_listeners">Luisteraars</string>
+    <string name="info_hls">HLS</string>
+
+    <!-- Speler -->
+    <string name="now_playing">Nu speelt</string>
+    <string name="previous_station">Vorige zender</string>
+    <string name="next_station">Volgende zender</string>
+    <string name="station_unreachable">Deze zender is nu niet bereikbaar</string>
+    <string name="sleep_timer">Slaaptimer</string>
+    <string name="sleep_off">Timer uitzetten</string>
+
+    <!-- Zoeken -->
+    <string name="search_placeholder">Zenders, genres, steden…</string>
+    <string name="popular_genres">Populaire genres</string>
+    <string name="recent_searches">Recent gezocht</string>
+
+    <!-- Bibliotheek -->
+    <string name="no_favorites_title">Nog geen favorieten</string>
+    <string name="no_favorites_message">Tik op het hartje bij een zender om hem hier te bewaren</string>
+    <string name="no_recents_title">Nog niets beluisterd</string>
+    <string name="no_recents_message">Zenders waar je naar luistert verschijnen hier</string>
+    <string name="long_press_hint">Houd een zender ingedrukt om hem te verwijderen</string>
+    <string name="remove_from_recent">Verwijderen uit Recent</string>
+
+    <!-- Instellingen -->
+    <string name="settings_general">Algemeen</string>
+    <string name="settings_library">Bibliotheek</string>
+    <string name="country">Land</string>
+    <string name="language">Taal</string>
+    <string name="language_system">Systeem</string>
+    <string name="intro_music">Intromuziek</string>
+    <string name="default_sleep_timer">Slaaptimer standaard</string>
+    <string name="autoplay_last">Automatisch verder spelen bij opstarten</string>
+    <string name="clear_recents">Recent wissen</string>
+    <string name="clear_recents_confirm">Alle recent beluisterde zenders verwijderen?</string>
+    <string name="clear_favorites">Favorieten wissen</string>
+    <string name="clear_favorites_confirm">Al je favoriete zenders verwijderen? Dit kan niet ongedaan worden gemaakt.</string>
+    <string name="about">Over</string>
+    <string name="version">Versie</string>
+    <string name="version_value">%1$s (build %2$d)</string>
+    <string name="privacy">Privacy</string>
+    <string name="terms">Voorwaarden</string>
+    <string name="station_data_credit">Zendergegevens: Radio Browser (community)</string>
+    <string name="made_with">Radio van over de hele wereld</string>
+</resources>

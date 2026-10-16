@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Tunr</string>
+
+    <!-- Tabs -->
+    <string name="tab_discover">Discover</string>
+    <string name="tab_browse">Browse</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_library">Library</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="recent">Recent</string>
+    <string name="settings">Settings</string>
+
+    <!-- Algemeen -->
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="retry">Retry</string>
+    <string name="see_all">See all</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="off">Off</string>
+    <string name="error_loading">Couldn\'t load stations. Check your connection.</string>
+    <string name="no_results">No results</string>
+    <string name="no_stations">No stations found</string>
+    <string name="live">LIVE</string>
+    <string name="kbps">%1$d kbps</string>
+    <string name="minutes_n">%1$d min</string>
+    <plurals name="station_count">
+        <item quantity="one">%1$s station</item>
+        <item quantity="other">%1$s stations</item>
+    </plurals>
+
+    <!-- Landkeuze -->
+    <string name="choose_country">Choose your country</string>
+    <string name="choose_country_subtitle">You can always change this later</string>
+    <string name="search_country">Search countries</string>
+    <string name="suggested">Suggested</string>
+    <string name="all_countries">All countries</string>
+
+    <!-- Ontdek -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="greeting_night">Good night</string>
+    <string name="continue_listening">Continue listening</string>
+    <string name="local">Local</string>
+    <string name="local_in">Local · %1$s</string>
+    <string name="pick_region">Choose your region</string>
+    <string name="pick_region_hint">See stations from your province or state</string>
+    <string name="popular_in">Popular in %1$s</string>
+    <string name="trending">Trending</string>
+    <string name="your_favorites">Your favorites</string>
+    <string name="genres">Genres</string>
+    <string name="listen">Listen</string>
+    <string name="info">Info</string>
+    <string name="now_playing_tv">Now playing</string>
+
+    <!-- Genres -->
+    <string name="genre_pop">Pop</string>
+    <string name="genre_news">News</string>
+    <string name="genre_rock">Rock</string>
+    <string name="genre_dance">Dance</string>
+    <string name="genre_jazz">Jazz</string>
+    <string name="genre_classical">Classical</string>
+    <string name="genre_hits">Hits</string>
+    <string name="genre_talk">Talk</string>
+    <string name="genre_sports">Sports</string>
+    <string name="genre_oldies">Oldies</string>
+    <string name="genre_hiphop">Hip-hop</string>
+    <string name="genre_country">Country</string>
+    <string name="genre_ambient">Ambient</string>
+    <string name="genre_christian">Christian</string>
+    <string name="genre_other">Other</string>
+
+    <!-- Bladeren -->
+    <string name="browse_local">Local</string>
+    <string name="browse_music">Music</string>
+    <string name="browse_news_talk">News &amp; Talk</string>
+    <string name="browse_sports">Sports</string>
+    <string name="browse_language">By language</string>
+    <string name="browse_world_map">World map</string>
+    <string name="browse_top100">Top 100 worldwide</string>
+    <string name="regions_in">Regions in %1$s</string>
+    <string name="no_regions">No regions found for this country</string>
+    <string name="make_my_region">Make this my region</string>
+    <string name="my_region">My region</string>
+    <string name="news_worldwide">News worldwide</string>
+    <string name="worldwide">Worldwide</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="shuffle">Shuffle</string>
+
+    <!-- Kaart -->
+    <string name="map_world">World</string>
+    <string name="map_random">Random</string>
+    <string name="map_attribution" translatable="false">© OpenStreetMap contributors © CARTO</string>
+    <string name="show_on_map">Show on map</string>
+
+    <!-- Zenderdetail -->
+    <string name="add_favorite">Add to favorites</string>
+    <string name="remove_favorite">Remove from favorites</string>
+    <string name="favorite">Favorite</string>
+    <string name="share">Share</string>
+    <string name="share_text">Listening to %1$s on Tunr: %2$s</string>
+    <string name="website">Website</string>
+    <string name="similar_stations">Similar stations</string>
+    <string name="station_info">Station info</string>
+    <string name="info_codec">Codec</string>
+    <string name="info_bitrate">Bitrate</string>
+    <string name="info_language">Language</string>
+    <string name="info_votes">Votes</string>
+    <string name="info_listeners">Listeners</string>
+    <string name="info_hls">HLS</string>
+
+    <!-- Speler -->
+    <string name="now_playing">Now playing</string>
+    <string name="previous_station">Previous station</string>
+    <string name="next_station">Next station</string>
+    <string name="station_unreachable">This station can\'t be reached right now</string>
+    <string name="sleep_timer">Sleep timer</string>
+    <string name="sleep_off">Turn off timer</string>
+
+    <!-- Zoeken -->
+    <string name="search_placeholder">Stations, genres, cities…</string>
+    <string name="popular_genres">Popular genres</string>
+    <string name="recent_searches">Recent searches</string>
+
+    <!-- Bibliotheek -->
+    <string name="no_favorites_title">No favorites yet</string>
+    <string name="no_favorites_message">Tap the heart on a station to keep it here</string>
+    <string name="no_recents_title">Nothing played yet</string>
+    <string name="no_recents_message">Stations you listen to appear here</string>
+    <string name="long_press_hint">Long-press a station to remove it</string>
+    <string name="remove_from_recent">Remove from Recent</string>
+
+    <!-- Instellingen -->
+    <string name="settings_general">General</string>
+    <string name="settings_library">Library</string>
+    <string name="country">Country</string>
+    <string name="language">Language</string>
+    <string name="language_system">System</string>
+    <string name="intro_music">Intro music</string>
+    <string name="default_sleep_timer">Default sleep timer</string>
+    <string name="autoplay_last">Resume last station on launch</string>
+    <string name="clear_recents">Clear recent</string>
+    <string name="clear_recents_confirm">Remove all recently played stations?</string>
+    <string name="clear_favorites">Clear favorites</string>
+    <string name="clear_favorites_confirm">Remove all your favorite stations? This can\'t be undone.</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="version_value">%1$s (build %2$d)</string>
+    <string name="privacy">Privacy</string>
+    <string name="terms">Terms</string>
+    <string name="station_data_credit">Station data: Radio Browser (community)</string>
+    <string name="made_with">Radio from all over the world</string>
+</resources>
