@@ -1,11 +1,17 @@
 import SwiftUI
 
-/// Bibliotheek: segmenten Favorieten · Recent
+/// Bibliotheek: segmenten Favorieten · Podcasts · Recent
 struct LibraryView: View {
     enum Segment: String, CaseIterable, Identifiable {
-        case favorites, recent
+        case favorites, podcasts, recent
         var id: String { rawValue }
-        var title: String { self == .favorites ? L("library.favorites") : L("library.recent") }
+        var title: String {
+            switch self {
+            case .favorites: return L("library.favorites")
+            case .podcasts: return L("library.podcasts")
+            case .recent: return L("library.recent")
+            }
+        }
     }
 
     @EnvironmentObject private var app: AppState
@@ -13,6 +19,7 @@ struct LibraryView: View {
     @EnvironmentObject private var player: RadioPlayer
     @AppStorage("ui.librarySegment") private var segment: Segment = .favorites
     @State private var confirmClear = false
+    @Environment(\.navigate) private var navigate
     #if os(iOS)
     @State private var editMode: EditMode = .inactive
     #endif
@@ -34,7 +41,7 @@ struct LibraryView: View {
                 ForEach(Segment.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
-            .frame(maxWidth: tvScaled(420))
+            .frame(maxWidth: tvScaled(520))
             .padding(.horizontal, Theme.edge)
             #if os(macOS)
             .labelsHidden()
@@ -43,6 +50,7 @@ struct LibraryView: View {
             Group {
                 switch segment {
                 case .favorites: favorites
+                case .podcasts: podcasts
                 case .recent: recents
                 }
             }
@@ -168,6 +176,52 @@ struct LibraryView: View {
         #else
         return false
         #endif
+    }
+
+    // MARK: Podcasts
+
+    /// Verder luisteren (half beluisterde afleveringen) bovenaan, daaronder de gevolgde podcasts als raster
+    @ViewBuilder private var podcasts: some View {
+        let continuing = library.continueListening
+        if library.followedPodcasts.isEmpty && continuing.isEmpty {
+            VStack(spacing: tvScaled(14)) {
+                EmptyStateView(symbol: "mic.fill", title: L("library.emptyPodcasts"), message: L("library.emptyPodcastsHint"))
+                Button { navigate(.podcasts) } label: {
+                    Label(L("library.discoverPodcasts"), systemImage: "sparkles")
+                        .font(.system(size: tvScaled(14), weight: .bold))
+                        .padding(.horizontal, tvScaled(16)).padding(.vertical, tvScaled(9))
+                }
+                .buttonStyle(AccentButtonStyle())
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.rowSpacing) {
+                    if !continuing.isEmpty {
+                        EpisodeShelf(title: L("row.continueEpisodes"), episodes: continuing)
+                    }
+                    if !library.followedPodcasts.isEmpty {
+                        VStack(alignment: .leading, spacing: tvScaled(10)) {
+                            SectionHeader(title: L("podcasts.following"),
+                                          actionTitle: L("library.discoverPodcasts"),
+                                          action: { navigate(.podcasts) })
+                            LazyVGrid(columns: columns, alignment: .leading, spacing: tvScaled(20)) {
+                                ForEach(library.followedPodcasts) { p in
+                                    PodcastCardButton(podcast: p, width: nil)
+                                        .transition(.scale.combined(with: .opacity))
+                                }
+                            }
+                            .padding(.horizontal, Theme.edge)
+                            #if os(tvOS)
+                            .padding(.vertical, 20)
+                            .focusSection()
+                            #endif
+                        }
+                    }
+                }
+                .padding(.vertical, tvScaled(10))
+            }
+        }
     }
 
     // MARK: Recent

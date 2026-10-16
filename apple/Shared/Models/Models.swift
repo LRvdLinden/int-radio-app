@@ -369,6 +369,7 @@ struct LossyArray<Element: Decodable>: Decodable {
     private struct Skip: Decodable {
         init(from decoder: Decoder) throws {}
     }
+    init(items: [Element]) { self.items = items }
     init(from decoder: Decoder) throws {
         var c = try decoder.unkeyedContainer()
         var out: [Element] = []

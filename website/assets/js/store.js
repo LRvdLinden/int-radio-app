@@ -66,6 +66,43 @@
     },
     clearSearches: function () { write('searches', []); emit('searches'); },
     get searchWorld() { return read('searchWorld', false); },
-    set searchWorld(v) { write('searchWorld', !!v); }
+    set searchWorld(v) { write('searchWorld', !!v); },
+
+    // ---------- podcasts (SPEC §8) ----------
+    // gevolgde podcasts (nieuwste eerst): id, naam, maker, art, genre, feedUrl
+    follows: function () { return read('follows', []); },
+    isFollowing: function (id) { id = String(id); return read('follows', []).some(function (p) { return p.id === id; }); },
+    toggleFollow: function (p) {
+      var f = read('follows', []), id = String(p.id);
+      var i = f.findIndex(function (x) { return x.id === id; });
+      if (i >= 0) f.splice(i, 1); else f.unshift({ id: id, name: p.name, artist: p.artist || '', art: p.art || '', genre: p.genre || '', feedUrl: p.feedUrl || '' });
+      write('follows', f); emit('follows');
+      return i < 0;
+    },
+    // afspeelposities: episodeId → { t, d, done, u, ep } (max 500, oudste eruit); ≥ 95% = beluisterd
+    pos: function (id) { return read('pos', {})[String(id)] || null; },
+    savePos: function (ep, t, d) {
+      if (!ep || !ep.id || !(d > 0)) return;
+      var all = read('pos', {});
+      var done = t / d >= 0.95;
+      all[ep.id] = { t: done ? 0 : Math.max(0, Math.round(t)), d: Math.round(d), done: done, u: Date.now(),
+        ep: { kind: 'episode', id: ep.id, pid: ep.pid, title: ep.title, pname: ep.pname, art: ep.art, url: ep.url, date: ep.date, dur: ep.dur || Math.round(d), short: String(ep.short || '').slice(0, 200) } };
+      var keys = Object.keys(all);
+      if (keys.length > 500) keys.sort(function (a, b) { return (all[a].u || 0) - (all[b].u || 0); }).slice(0, keys.length - 500).forEach(function (k) { delete all[k]; });
+      write('pos', all); emit('pos');
+    },
+    // half beluisterde afleveringen, laatst beluisterd eerst
+    continueEps: function () {
+      var all = read('pos', {});
+      return Object.keys(all).map(function (k) { return all[k]; })
+        .filter(function (x) { return x && x.ep && !x.done && x.t >= 5; })
+        .sort(function (a, b) { return (b.u || 0) - (a.u || 0); }).slice(0, 30).map(function (x) { return x.ep; });
+    },
+    get podRate() { var r = read('podRate', 1); return [0.8, 1, 1.25, 1.5, 1.75, 2].indexOf(r) >= 0 ? r : 1; },
+    set podRate(v) { write('podRate', v); },
+    get searchMode() { return read('searchMode', 'st'); },
+    set searchMode(v) { write('searchMode', v === 'pod' ? 'pod' : 'st'); },
+    get podSort() { return read('podSort', 'new') === 'old' ? 'old' : 'new'; },
+    set podSort(v) { write('podSort', v === 'old' ? 'old' : 'new'); }
   };
 })();

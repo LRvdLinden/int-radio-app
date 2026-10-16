@@ -15,6 +15,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.lrvdlinden.tunr.AppScope
 import nl.lrvdlinden.tunr.Device
+import nl.lrvdlinden.tunr.data.Episode
+import nl.lrvdlinden.tunr.data.Podcast
 import nl.lrvdlinden.tunr.data.Station
 
 /** Tabs (SPEC §6): Ontdek · Bladeren · Kaart · Zoeken · Bibliotheek (+ Instellingen op tv) */
@@ -54,6 +56,11 @@ sealed class Route {
     data object Music : Route()
     data object NewsTalk : Route()
     data object Languages : Route()
+    /** Podcasts (SPEC §8): overzicht, genre-toplijst, podcastpagina, afleveringspagina */
+    data object PodcastsHome : Route()
+    data class PodcastGenre(val genreId: Int) : Route()
+    data class PodcastDetail(val podcast: Podcast) : Route()
+    data class EpisodeDetail(val episode: Episode, val queue: List<Episode> = listOf(episode)) : Route()
 }
 
 /** Waar een rasterpagina zijn zenders vandaan haalt. */
@@ -89,6 +96,8 @@ object Nav {
 
     fun station(s: Station) = push(Route.StationDetail(s))
     fun grid(source: GridSource) = push(Route.Grid(source))
+    fun podcast(p: Podcast) = push(Route.PodcastDetail(p))
+    fun episode(e: Episode, queue: List<Episode> = listOf(e)) = push(Route.EpisodeDetail(e, queue))
 
     fun pop(): Boolean {
         val top = stack.lastOrNull() ?: return false

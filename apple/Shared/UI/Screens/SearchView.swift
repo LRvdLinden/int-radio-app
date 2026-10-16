@@ -1,13 +1,15 @@
 import SwiftUI
 
-/// Zoeken: zoekveld (debounce 350 ms), schakelaar {land} / Wereldwijd.
-/// Leeg: populaire genres + recent gezocht (max 8, wisbaar). Resultaten: lijst.
+/// Zoeken: segment Zenders · Podcasts, zoekveld (debounce 350 ms), bij zenders schakelaar {land} / Wereldwijd.
+/// Leeg: populaire genres (of podcastgenres) + recent gezocht (max 8, wisbaar). Resultaten: lijst.
 struct SearchView: View {
     @EnvironmentObject private var library: Library
     @State private var query = ""
     @State private var worldwide = false
     @State private var results: LoadState<[Station]> = .idle
     @State private var lastQuery = ""
+    @AppStorage("ui.searchKind") private var kind: SearchKind = .stations
+    @Environment(\.navigate) private var navigate
 
     private var country: String { library.countryCode ?? "NL" }
     private var trimmed: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -23,11 +25,18 @@ struct SearchView: View {
                     .accessibilityAddTraits(.isHeader)
                 #endif
 
-                scopePicker
+                kindPicker
                     .padding(.horizontal, Theme.edge)
+
+                if kind == .stations {
+                    scopePicker
+                        .padding(.horizontal, Theme.edge)
+                }
 
                 if trimmed.count < 2 {
                     emptyContent
+                } else if kind == .podcasts {
+                    PodcastSearchResults(query: trimmed, country: country)
                 } else {
                     resultsContent
                 }
@@ -36,14 +45,26 @@ struct SearchView: View {
         }
         .scrollDismissesKeyboardIfAvailable()
         .screenBackground()
-        .searchable(text: $query, prompt: L("search.prompt"))
+        .searchable(text: $query, prompt: kind == .stations ? L("search.prompt") : L("search.promptPodcasts"))
         .onSubmit(of: .search) { library.addSearch(trimmed) }
         #if os(macOS)
         .navigationTitle(L("tab.search"))
         #endif
-        .task(id: trimmed + (worldwide ? "|w" : "|" + country)) {
+        .task(id: trimmed + (worldwide ? "|w" : "|" + country) + "|" + kind.rawValue) {
+            guard kind == .stations else { return }
             await search()
         }
+    }
+
+    private var kindPicker: some View {
+        Picker(L("search.kind"), selection: $kind) {
+            ForEach(SearchKind.allCases) { Text($0.title).tag($0) }
+        }
+        .pickerStyle(.segmented)
+        .frame(maxWidth: tvScaled(460))
+        #if os(macOS)
+        .labelsHidden()
+        #endif
     }
 
     private var scopePicker: some View {
@@ -64,8 +85,17 @@ struct SearchView: View {
         VStack(alignment: .leading, spacing: Theme.rowSpacing) {
             VStack(alignment: .leading, spacing: tvScaled(10)) {
                 SectionHeader(title: L("search.popularGenres"))
-                GenreChips(horizontal: false)
+                if kind == .stations {
+                    GenreChips(horizontal: false)
+                        .padding(.horizontal, Theme.edge)
+                } else {
+                    FlowLayout(spacing: tvScaled(8)) {
+                        ForEach(PodcastGenre.all) { g in
+                            GenreChip(title: g.title, symbol: g.symbol) { navigate(.podcastGenre(g)) }
+                        }
+                    }
                     .padding(.horizontal, Theme.edge)
+                }
             }
             if !library.recentSearches.isEmpty {
                 VStack(alignment: .leading, spacing: tvScaled(6)) {

@@ -98,6 +98,8 @@ import nl.lrvdlinden.tunr.ui.tvClickable
  */
 @Composable
 fun PlayerScreen(onClose: () -> Unit) {
+    val episode by RadioController.episode.collectAsState()
+    if (episode != null) { EpisodePlayerScreen(episode!!, onClose); return }
     val station by RadioController.station.collectAsState()
     val s = station ?: return
     val playing by RadioController.isPlaying.collectAsState()
@@ -238,7 +240,7 @@ fun PlayerScreen(onClose: () -> Unit) {
 }
 
 @Composable
-private fun Backdrop(s: Station, art: String?) {
+internal fun Backdrop(s: Station, art: String?) {
     Box(Modifier.fillMaxSize()) {
         if (Build.VERSION.SDK_INT >= 31) {
             StationArt(s, Modifier.fillMaxHeight().aspectRatio(1f, matchHeightConstraintsFirst = true).align(Alignment.Center)
@@ -251,7 +253,7 @@ private fun Backdrop(s: Station, art: String?) {
 }
 
 @Composable
-private fun ActionButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: Color = Color.White, onClick: () -> Unit) {
+internal fun ActionButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: Color = Color.White, onClick: () -> Unit) {
     Column(
         Modifier.width(if (Device.isTV) 104.dp else 78.dp).tvClickable(RoundedCornerShape(14.dp), scale = 1.06f, onClick = onClick)
             .background(Color.White.copy(alpha = 0.08f)).padding(vertical = 10.dp, horizontal = 4.dp),
@@ -265,8 +267,10 @@ private fun ActionButton(icon: androidx.compose.ui.graphics.vector.ImageVector, 
 
 /** "Slaaptimer" of de resterende tijd ("23:45") */
 @Composable
-private fun sleepLabel(): String {
+internal fun sleepLabel(): String {
     val until by RadioController.sleepUntil.collectAsState()
+    val endOfEpisode by RadioController.sleepEndOfEpisode.collectAsState()
+    if (endOfEpisode) return stringResource(R.string.sleep_end_of_episode_short)
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     LaunchedEffect(until) {
         while (until != null) { now = System.currentTimeMillis(); delay(1_000) }
@@ -280,6 +284,8 @@ private fun sleepLabel(): String {
 @Composable
 fun SleepTimerDialog(onDismiss: () -> Unit) {
     val until by RadioController.sleepUntil.collectAsState()
+    val endOfEpisode by RadioController.sleepEndOfEpisode.collectAsState()
+    val episode by RadioController.episode.collectAsState()
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = T.elevated,
@@ -297,7 +303,15 @@ fun SleepTimerDialog(onDismiss: () -> Unit) {
                             .padding(horizontal = 8.dp, vertical = 12.dp)
                     )
                 }
-                if (until != null) {
+                if (episode != null) {
+                    Text(
+                        stringResource(R.string.sleep_end_of_episode), color = if (endOfEpisode) T.accent else T.text, fontSize = 16.sp,
+                        modifier = Modifier.fillMaxWidth()
+                            .tvClickable(RoundedCornerShape(10.dp), scale = 1.02f) { RadioController.setSleepAtEndOfEpisode(); onDismiss() }
+                            .padding(horizontal = 8.dp, vertical = 12.dp)
+                    )
+                }
+                if (until != null || endOfEpisode) {
                     Text(
                         stringResource(R.string.sleep_off), color = T.accent, fontSize = 16.sp, fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth()
@@ -313,7 +327,7 @@ fun SleepTimerDialog(onDismiss: () -> Unit) {
 
 /** Volume van het mediakanaal (AudioManager), volgt ook de volumeknoppen */
 @Composable
-private fun VolumeSlider(modifier: Modifier = Modifier) {
+internal fun VolumeSlider(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val audio = remember { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }
     val max = remember { audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1) }

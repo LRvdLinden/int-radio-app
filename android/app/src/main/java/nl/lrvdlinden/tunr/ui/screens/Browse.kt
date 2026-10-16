@@ -36,6 +36,7 @@ import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Nightlight
 import androidx.compose.material.icons.rounded.Piano
 import androidx.compose.material.icons.rounded.Place
+import androidx.compose.material.icons.rounded.Podcasts
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.SportsSoccer
@@ -103,6 +104,7 @@ fun BrowseScreen() {
     val region by Library.localRegion.collectAsState()
     val tiles = listOf(
         Tile(R.string.browse_local, Icons.Rounded.Place, 0) { Nav.push(Route.Regions) },
+        Tile(R.string.podcasts, Icons.Rounded.Podcasts, 7) { Nav.push(Route.PodcastsHome) },
         Tile(R.string.browse_music, Icons.Rounded.MusicNote, 1) { Nav.push(Route.Music) },
         Tile(R.string.browse_news_talk, Icons.Rounded.Newspaper, 2) { Nav.push(Route.NewsTalk) },
         Tile(R.string.browse_sports, Icons.Rounded.SportsSoccer, 3) { Nav.grid(GridSource.Tag("sports", null)) },

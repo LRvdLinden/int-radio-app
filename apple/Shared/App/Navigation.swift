@@ -59,6 +59,11 @@ enum Route: Hashable {
     case music
     case newsTalk
     case sports
+    // Podcasts (SPEC §8)
+    case podcasts
+    case podcast(Podcast)
+    case episode(Episode)
+    case podcastGenre(PodcastGenre)
 }
 
 /// Navigeren vanuit elke view (ook vanuit contextmenu's): `navigate(.station(s))`
@@ -107,6 +112,10 @@ struct RouteView: View {
         case .music: MusicGenresView()
         case .newsTalk: NewsTalkView()
         case .sports: StationGridView(source: .genre(tag: "sports", country: Library.shared.countryCode))
+        case .podcasts: PodcastsHomeView()
+        case .podcast(let p): PodcastDetailView(podcast: p)
+        case .episode(let e): EpisodeDetailView(episode: e)
+        case .podcastGenre(let g): PodcastGenreView(genre: g)
         }
     }
 }

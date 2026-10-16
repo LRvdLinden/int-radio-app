@@ -207,4 +207,162 @@
     },
     click: function (id) { get('/json/url/' + enc(id)).catch(function () {}); }
   };
+
+  // ================= Podcasts (SPEC §8) =================
+  // Bronnen zonder sleutel: Apple-toplijst (rss.applemarketingtools.com), iTunes Search/Lookup en de oude
+  // iTunes-RSS per genre. iTunes stuurt niet altijd CORS-headers mee: lukt fetch niet, dan JSONP (&callback=);
+  // dat onthouden we voor de sessie zodat we niet elke keer eerst een geblokkeerde fetch doen.
+  var HOUR = 36e5;
+  var JP = 'tunr.itunesJsonp', RSSG = 'tunr.rssGenreFail';
+  function flag(k) { try { return sessionStorage.getItem(k) === '1'; } catch (e) { return false; } }
+  function setFlag(k) { try { sessionStorage.setItem(k, '1'); } catch (e) {} }
+  var jpN = 0;
+  function jsonp(url, ms) {
+    return new Promise(function (res, rej) {
+      var name = '__tunr_cb' + (++jpN) + '_' + Date.now().toString(36);
+      var sc = document.createElement('script'), done = false;
+      var timer = setTimeout(function () { finish(new Error('timeout')); }, ms || 12000);
+      function finish(err, data) {
+        if (done) return; done = true; clearTimeout(timer);
+        // een laat antwoord mag niet in een fout eindigen: noop laten staan en later opruimen
+        window[name] = function () {};
+        setTimeout(function () { try { delete window[name]; } catch (e) { window[name] = undefined; } }, 60000);
+        sc.remove();
+        if (err) rej(err); else res(data);
+      }
+      window[name] = function (data) { finish(null, data); };
+      sc.onerror = function () { finish(new Error('jsonp')); };
+      sc.async = true;
+      sc.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + name;
+      document.head.appendChild(sc);
+    });
+  }
+  function itunes(url) {
+    if (flag(JP)) return jsonp(url);
+    return fetchJSON(url, 10000).catch(function (e) {
+      // TypeError = netwerk/CORS; HTTP-fouten (404 enz.) niet opnieuw proberen
+      if (!(e instanceof TypeError)) throw e;
+      return jsonp(url).then(function (d) { setFlag(JP); return d; });
+    });
+  }
+  function big(u) { return String(u || '').replace(/\/\d+x\d+(bb|cc)?\.(jpg|jpeg|png|webp)(\?.*)?$/i, '/600x600bb.$2'); }
+  function clean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+  var podKnown = {};
+  function rememberP(arr) { (arr || []).forEach(function (p) { if (p && p.id) podKnown[p.id] = Object.assign({}, podKnown[p.id] || {}, p); }); return arr; }
+  function fromChart(r) {
+    var g = (r.genres || []).filter(function (x) { return x && x.name && x.name !== 'Podcasts'; })[0] || {};
+    return { id: String(r.id), name: clean(r.name), artist: clean(r.artistName), art: big(r.artworkUrl100), genre: clean(g.name) };
+  }
+  function fromItunes(r) {
+    var g = clean(r.primaryGenreName);
+    return { id: String(r.collectionId || r.trackId), name: clean(r.collectionName || r.trackName), artist: clean(r.artistName),
+      art: big(r.artworkUrl600 || r.artworkUrl100 || r.artworkUrl60), genre: g === 'Podcasts' ? '' : g, count: +r.trackCount || 0,
+      feedUrl: String(r.feedUrl || ''), date: r.releaseDate || '' };
+  }
+  function fromRss(e) {
+    var img = (e['im:image'] || []).slice(-1)[0];
+    var cat = e.category && e.category.attributes;
+    return { id: String(e.id && e.id.attributes && e.id.attributes['im:id'] || ''), name: clean(e['im:name'] && e['im:name'].label),
+      artist: clean(e['im:artist'] && e['im:artist'].label), art: big(img && img.label), genre: clean(cat && cat.label),
+      desc: clean(e.summary && e.summary.label) };
+  }
+  function normEp(r, p) {
+    return { kind: 'episode', id: String(r.trackId), pid: String(r.collectionId || p.id), title: clean(r.trackName) || '—',
+      desc: String(r.description || '').slice(0, 8000), short: clean(r.shortDescription || r.description || '').slice(0, 400),
+      date: r.releaseDate || '', dur: Math.round((+r.trackTimeMillis || 0) / 1000), url: String(r.episodeUrl || '').trim(),
+      art: big(r.artworkUrl600 || r.artworkUrl160 || '') || p.art, pname: p.name, ext: r.episodeFileExtension || '' };
+  }
+  function podList(d) { return ((d && d.results) || []).filter(function (r) { return r && (r.collectionId || r.trackId) && (r.collectionName || r.trackName); }).map(fromItunes); }
+  function ck(cc) { return String(cc || (T.store.country || {}).cc || 'us').toLowerCase(); }
+
+  T.pod = {
+    known: podKnown,
+    GENRES: [1489, 1303, 1545, 1488, 1324, 1321, 1512, 1487, 1533, 1318, 1305, 1310],
+    cc: function () { return ck(); },
+    // toplijst per land (50); terugval: us, daarna een zoekopdracht "podcast"
+    top: function (cc) {
+      cc = ck(cc);
+      var key = 'p:top:' + cc, hit = cacheGet(key);
+      if (hit) return Promise.resolve(rememberP(hit));
+      function chart(c) {
+        return fetchJSON('https://rss.applemarketingtools.com/api/v2/' + c + '/podcasts/top/50/podcasts.json', 10000).then(function (d) {
+          var r = (d && d.feed && d.feed.results) || [];
+          if (!r.length) throw new Error('empty');
+          return r.map(fromChart).filter(function (p) { return p.id && p.name; });
+        });
+      }
+      return chart(cc)
+        .catch(function (e) { if (cc !== 'us') return chart('us'); throw e; })
+        .catch(function () { return itunes('https://itunes.apple.com/search?media=podcast&entity=podcast&term=podcast&country=' + cc + '&limit=50').then(podList); })
+        .then(function (list) { if (list.length) cacheSet(key, list, 6 * HOUR); return rememberP(list); });
+    },
+    // toplijst per genre (oude iTunes-RSS); terugval: zoeken met genreId
+    genre: function (cc, gid) {
+      cc = ck(cc);
+      var key = 'p:g:' + cc + ':' + gid, hit = cacheGet(key);
+      if (hit) return Promise.resolve(rememberP(hit));
+      var rss = flag(RSSG) ? Promise.reject(new Error('skip')) :
+        fetchJSON('https://itunes.apple.com/' + cc + '/rss/toppodcasts/limit=50/genre=' + enc(gid) + '/json', 10000).then(function (d) {
+          var e = (d && d.feed && d.feed.entry) || [];
+          if (!Array.isArray(e)) e = [e];
+          var l = e.map(fromRss).filter(function (p) { return p.id && p.name; });
+          if (!l.length) throw new Error('empty');
+          return l;
+        }, function (err) { if (err instanceof TypeError) setFlag(RSSG); throw err; });
+      return rss.catch(function () {
+        return itunes('https://itunes.apple.com/search?media=podcast&entity=podcast&term=podcast&genreId=' + enc(gid) + '&country=' + cc + '&limit=50').then(podList);
+      }).then(function (list) { if (list.length) cacheSet(key, list, 6 * HOUR); return rememberP(list); });
+    },
+    search: function (q, cc) {
+      cc = ck(cc);
+      var key = 'p:s:' + cc + ':' + String(q).toLowerCase(), hit = cacheGet(key);
+      if (hit) return Promise.resolve(rememberP(hit));
+      return itunes('https://itunes.apple.com/search?media=podcast&entity=podcast&term=' + enc(q) + '&country=' + cc + '&limit=50').then(podList).then(function (l) {
+        cacheSet(key, l, 30 * MIN); return rememberP(l);
+      });
+    },
+    // podcast + afleveringen (nieuwste eerst); null als hij niet bestaat
+    lookup: function (id, cc) {
+      cc = ck(cc); id = String(id);
+      var key = 'p:l:' + id, hit = cacheGet(key);
+      if (hit) { rememberP([hit.p]); return Promise.resolve(hit); }
+      function one(country) {
+        return itunes('https://itunes.apple.com/lookup?id=' + enc(id) + '&entity=podcastEpisode&limit=100' + (country ? '&country=' + country : '')).then(function (d) {
+          var rs = (d && d.results) || [];
+          var pr = rs.filter(function (r) { return r.wrapperType === 'track' || r.kind === 'podcast'; })[0];
+          if (!pr) return null;
+          var p = fromItunes(pr);
+          var k = podKnown[p.id]; if (k && k.desc) p.desc = k.desc;
+          var eps = rs.filter(function (r) { return r.wrapperType === 'podcastEpisode' || r.kind === 'podcast-episode'; })
+            .map(function (r) { return normEp(r, p); }).filter(function (e) { return e.url; })
+            .sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
+          return { p: p, eps: eps };
+        });
+      }
+      return one(cc).then(function (r) { return r || one(''); }).then(function (r) {
+        if (r) { cacheSet(key, r, 30 * MIN); rememberP([r.p]); }
+        return r;
+      });
+    },
+    // beschrijving van de podcast (staat niet in de iTunes-gegevens): uit de RSS-feed zelf, als die dat toestaat
+    describe: function (p) {
+      if (!p) return Promise.resolve('');
+      if (p.desc) return Promise.resolve(p.desc);
+      var key = 'p:d:' + p.id, hit = cacheGet(key);
+      if (hit != null) return Promise.resolve(hit.v || '');
+      var u = String(p.feedUrl || '');
+      if (!/^https?:\/\//i.test(u) || (location.protocol === 'https:' && /^http:/i.test(u))) return Promise.resolve('');
+      var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 8000);
+      return fetch(u, ctl ? { signal: ctl.signal } : undefined).then(function (r) { clearTimeout(timer); if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function (xml) {
+          var doc = new DOMParser().parseFromString(xml.slice(0, 400000), 'text/xml');
+          var ch = doc.querySelector('channel');
+          var n = ch && Array.prototype.find.call(ch.children, function (c) { return c.localName === 'summary' || c.localName === 'description'; });
+          var d = n ? clean(n.textContent.replace(/<[^>]+>/g, ' ')).slice(0, 2000) : '';
+          cacheSet(key, { v: d }, DAY);
+          return d;
+        }).catch(function () { clearTimeout(timer); cacheSet(key, { v: '' }, DAY); return ''; });
+    }
+  };
 })();

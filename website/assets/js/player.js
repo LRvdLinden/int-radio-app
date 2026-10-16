@@ -90,7 +90,8 @@
   // #/discover, #/browse, #/browse/local, #/browse/local/<regio>, #/browse/music, #/browse/news, #/browse/language,
   // #/browse/language/<x>, #/top100, #/map, #/station/<uuid>, #/genre/<tag>, #/list/<popular|trending>, #/search, #/library,
   // #/settings, #/country  (?p=1 = volledige speler open, zodat "terug" hem sluit)
-  var TAB_OF = { discover: 'discover', list: 'discover', browse: 'browse', top100: 'browse', genre: 'browse', map: 'map', search: 'search', library: 'library', settings: 'settings', station: null, country: 'settings' };
+  // podcasts: #/podcasts, #/podcasts/genre/<id>, #/podcast/<id>, #/episode/<podcastId>/<episodeId>
+  var TAB_OF = { discover: 'discover', list: 'discover', browse: 'browse', top100: 'browse', genre: 'browse', podcasts: 'browse', podcast: null, episode: null, map: 'map', search: 'search', library: 'library', settings: 'settings', station: null, country: 'settings' };
   function parse() {
     var h = location.hash.replace(/^#\/?/, '');
     var q = ''; var qi = h.indexOf('?'); if (qi >= 0) { q = h.slice(qi + 1); h = h.slice(0, qi); }
@@ -112,7 +113,7 @@
     T.ui.closeSheet();
     T.views._next();
     T.ui.resetLists();
-    T.ui.detailRefresh = null; T.ui.libRender = null;
+    T.ui.detailRefresh = null; T.ui.libRender = null; T.ui.podRefresh = null;
     document.body.classList.toggle('solo', name === 'country' && !T.store.country);
     document.body.classList.toggle('on-map', name === 'map');
     document.title = 'Tunr';
@@ -130,10 +131,15 @@
         else fn = T.views.browse;
         break;
       case 'top100': fn = T.views.top100; break;
+      case 'podcasts':
+        if (p[1] === 'genre' && p[2]) { fn = T.views.podGenre; args = p.slice(2); } else fn = T.views.podcasts;
+        break;
+      case 'podcast': fn = T.views.podcast; tab = T.ui.curTab || 'browse'; break;
+      case 'episode': fn = T.views.episode; tab = T.ui.curTab || 'browse'; break;
       case 'genre': fn = T.views.genre; break;
       case 'map': fn = T.views.map; break;
       case 'station': fn = T.views.station; tab = T.ui.curTab; break;
-      case 'search': fn = T.views.search; args = [r.q.get('q') || '']; break;
+      case 'search': fn = T.views.search; args = [r.q.get('q') || '', r.q.get('m') || '']; break;
       case 'library': fn = T.views.library; args = [r.q.get('seg') || '']; break;
       case 'settings': fn = T.views.settings; break;
       case 'country': fn = T.views.country; break;
@@ -141,7 +147,7 @@
     }
     current = { name: name, key: key, hash: location.hash.split('?')[0] };
     T.ui.markNav(tab);
-    if (name === 'search') fn(view, [], args[0]);
+    if (name === 'search') fn(view, [], args[0], args[1]);
     else if (name === 'library') fn(view, [], args[0]);
     else fn(view, args);
     if (name !== 'map') window.scrollTo(0, 0);
@@ -154,6 +160,16 @@
   function rerender() { if (current) { var c = current; current = null; route(); } }
 
   // ================= klikafhandeling (één listener) =================
+  // aflevering uit de lijst van de container (podcastpagina, rijen) of uit de opgeslagen posities
+  function episodeFrom(el) {
+    var host = el.closest('[data-eid]'); if (!host) return null;
+    var id = host.getAttribute('data-eid');
+    var lc = el.closest('[data-list]');
+    var list = lc ? T.ui.list(lc.getAttribute('data-list')) : [];
+    var e = list.find(function (x) { return x.id === id; }) || (T.player.current && T.player.current.id === id ? T.player.current : null);
+    if (!e) { var ps = T.store.pos(id); e = ps && ps.ep; }
+    return e ? { e: e, list: list.length ? list : [e] } : null;
+  }
   function stationFrom(el) {
     var host = el.closest('[data-sid]'); if (!host) return null;
     var id = host.getAttribute('data-sid');
@@ -187,6 +203,21 @@
         if (T.ui.libRender) T.ui.libRender();
         break;
       }
+      case 'eplay': {
+        var ex = episodeFrom(a); if (!ex) return;
+        if (T.player.isCurrent(ex.e.id) && (T.player.state === 'playing' || T.player.state === 'loading')) T.player.pause();
+        else if (T.player.isCurrent(ex.e.id) && T.player.state === 'paused') T.player.resume();
+        else T.player.play(ex.e, ex.list);
+        break;
+      }
+      case 'back15': T.player.skip(-15); break;
+      case 'fwd30': T.player.skip(30); break;
+      case 'speed': T.ui.speedSheet(); break;
+      case 'podshare': {
+        var hp = location.hash.match(/^#\/podcast\/([^/?]+)/), pk = hp && T.pod.known[decodeURIComponent(hp[1])];
+        if (pk) T.ui.share({ kind: 'podcast', id: pk.id, name: pk.name, href: '#/podcast/' + encodeURIComponent(pk.id) });
+        break;
+      }
       case 'unfav': { var z = stationFrom(a); if (z) { T.store.removeFav(z.s.id); if (T.ui.libRender) T.ui.libRender(); } break; }
       case 'share': { var w = a.closest('#full') ? (cur ? { s: cur } : null) : stationFrom(a); if (w) T.ui.share(w.s); break; }
       case 'toggle': T.player.toggle(); break;
@@ -213,7 +244,21 @@
         break;
     }
   });
+  // tijdbalk: tijdens slepen alleen de tijd tonen, bij loslaten spoelen
+  function seekLabel(r) {
+    var d = T.player.duration, v = +r.value;
+    r.style.setProperty('--p', (d ? v / d * 100 : 0) + '%');
+    var w = r.closest('#mini, #full'); if (!w) return;
+    w.querySelectorAll('[data-tm]').forEach(function (n) { n.textContent = T.clock(v); });
+    w.querySelectorAll('[data-tl]').forEach(function (n) { n.textContent = '-' + T.clock(Math.max(0, d - v)); });
+  }
+  document.addEventListener('change', function (e) {
+    var r = e.target.closest('[data-act="seek"]'); if (!r) return;
+    r.dataset.drag = ''; T.player.seek(+r.value);
+  });
   document.addEventListener('input', function (e) {
+    var sk = e.target.closest('[data-act="seek"]');
+    if (sk) { sk.dataset.drag = '1'; seekLabel(sk); return; }
     var r = e.target.closest('[data-act="vol"]'); if (!r) return;
     var v = +r.value; T.player.setVolume(v);
     document.querySelectorAll('[data-act="vol"]').forEach(function (x) { if (x !== r) x.value = v; x.style.setProperty('--p', (v * 100) + '%'); });
@@ -224,6 +269,7 @@
     var tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'button' || tag === 'a' || e.target.isContentEditable) return;
     if (e.key === ' ' && T.player.current) { e.preventDefault(); T.player.toggle(); }
+    if (T.player.isEpisode && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); T.player.skip(e.key === 'ArrowLeft' ? -15 : 30); }
   });
   // vegen omlaag sluit de volledige speler
   (function () {
@@ -240,11 +286,13 @@
     T.ui.syncPlaying();
     if (T.views.map.sync) T.views.map.sync();
     if (T.ui.detailRefresh) T.ui.detailRefresh();
+    if (T.ui.podRefresh && (!s || s.kind === 'episode') && st === 'paused') T.ui.podRefresh();
     if (current && current.name === 'library' && T.ui.libRender && s && s.id !== lastId) T.ui.libRender();
     if (st === 'error' && lastSt !== 'error') T.ui.toast(t('player.err'));
     lastSt = st; lastId = s && s.id;
   });
   setInterval(function () { if (T.player.sleepEnd && T.ui.isFullOpen()) T.ui.renderFull(); }, 30000);
+  T.player.onTime(function () { T.ui.tick(); });
   T.store.on(function (what) {
     if (what === 'lang') { applyStatic(); T.ui.renderNav(); T.ui.renderMini(); if (T.ui.isFullOpen()) T.ui.renderFull(); rerender(); }
     if (what === 'country') { T.ui.renderNav(); }
@@ -254,7 +302,7 @@
   window.addEventListener('storage', function (e) {
     if (!e.key) return;
     if (e.key === 'tunr.lang') { applyStatic(); T.ui.renderNav(); rerender(); }
-    if (e.key === 'tunr.favorites' && T.ui.libRender) T.ui.libRender();
+    if ((e.key === 'tunr.favorites' || e.key === 'tunr.follows') && T.ui.libRender) T.ui.libRender();
   });
   function startApp() {
   // Na de eerste keer in deze sessie: geen poort en geen splash (geen geluid zonder tik nodig).

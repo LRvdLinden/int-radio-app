@@ -8,6 +8,7 @@ import UIKit
 /// Volledige speler: vervaagde art als achtergrond, LIVE-pil, grote art (hoes of zender), titel,
 /// vorige · play/pauze · volgende, favoriet, AirPlay (iOS/Mac), volume (iOS), en een rij
 /// "Meer van deze zender": Delen (niet op tv), Slaaptimer, Zenderinfo.
+/// Speelt er een podcastaflevering, dan toont hij de aflevering-modus (EpisodePlayerContent).
 struct PlayerView: View {
     @EnvironmentObject private var player: RadioPlayer
     @EnvironmentObject private var library: Library
@@ -25,6 +26,13 @@ struct PlayerView: View {
                 LinearGradient(colors: [.black.opacity(0.1), .black.opacity(0.7)], startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 content(s)
+            } else if let e = player.episode {
+                BlurredPodcastArt(url: e.artworkURL, name: e.podcastName)
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 0.6), value: e.id)
+                LinearGradient(colors: [.black.opacity(0.1), .black.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
+                EpisodePlayerContent(episode: e)
             } else {
                 EmptyStateView(symbol: "radio", title: L("player.nothing"), message: L("player.nothingHint"))
             }
@@ -106,26 +114,7 @@ struct PlayerView: View {
     }
 
     #if !os(tvOS)
-    private var topBar: some View {
-        HStack {
-            Button { dismiss() } label: {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 40, height: 40)
-                    .background(Color.white.opacity(0.12), in: Circle())
-            }
-            .buttonStyle(PressableStyle())
-            .accessibilityLabel(L("action.close"))
-            Spacer()
-            TunrLogo(size: 15)
-            Spacer()
-            RoutePicker()
-                .frame(width: 40, height: 40)
-                .background(Color.white.opacity(0.12), in: Circle())
-                .accessibilityLabel(L("player.airplay"))
-        }
-    }
+    private var topBar: some View { PlayerTopBar() }
     #endif
 
     private func artwork(_ s: Station) -> some View {
@@ -233,26 +222,7 @@ struct PlayerView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder private var volumeRow: some View {
-        #if os(iOS)
-        HStack(spacing: 10) {
-            Image(systemName: "speaker.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
-            SystemVolumeSlider().frame(height: 34)
-            Image(systemName: "speaker.wave.3.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
-        }
-        .accessibilityElement(children: .contain)
-        #elseif os(macOS)
-        HStack(spacing: 10) {
-            Image(systemName: "speaker.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
-            Slider(value: Binding(get: { Double(player.volume) }, set: { player.volume = Float($0) }), in: 0...1)
-                .tint(Theme.accent)
-                .accessibilityLabel(L("player.volume"))
-            Image(systemName: "speaker.wave.3.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
-        }
-        #else
-        EmptyView()
-        #endif
-    }
+    private var volumeRow: some View { PlayerVolumeRow() }
 
     private func actions(_ s: Station) -> some View {
         HStack(spacing: tvScaled(12)) {
@@ -306,21 +276,86 @@ struct PlayerView: View {
     }
 }
 
-/// Icoon + bijschrift voor de actierij
-private struct ActionLabel: View {
+/// Sluitknop · woordmerk · AirPlay boven in de speler (iPhone, iPad, Mac)
+#if !os(tvOS)
+struct PlayerTopBar: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        HStack {
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Color.white.opacity(0.12), in: Circle())
+            }
+            .buttonStyle(PressableStyle())
+            .accessibilityLabel(L("action.close"))
+            Spacer()
+            TunrLogo(size: 15)
+            Spacer()
+            RoutePicker()
+                .frame(width: 40, height: 40)
+                .background(Color.white.opacity(0.12), in: Circle())
+                .accessibilityLabel(L("player.airplay"))
+        }
+    }
+}
+#endif
+
+/// Volume: systeemvolume (iOS), eigen schuif (Mac), niets op tv
+struct PlayerVolumeRow: View {
+    @EnvironmentObject private var player: RadioPlayer
+
+    var body: some View {
+        #if os(iOS)
+        HStack(spacing: 10) {
+            Image(systemName: "speaker.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
+            SystemVolumeSlider().frame(height: 34)
+            Image(systemName: "speaker.wave.3.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
+        }
+        .accessibilityElement(children: .contain)
+        #elseif os(macOS)
+        HStack(spacing: 10) {
+            Image(systemName: "speaker.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
+            Slider(value: Binding(get: { Double(player.volume) }, set: { player.volume = Float($0) }), in: 0...1)
+                .tint(Theme.accent)
+                .accessibilityLabel(L("player.volume"))
+            Image(systemName: "speaker.wave.3.fill").font(.system(size: 12)).foregroundStyle(Theme.secondary)
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+}
+
+/// Icoon (of korte tekst, bv. "1,5×") + bijschrift voor de actierij
+struct ActionLabel: View {
     let symbol: String
     let title: String
     let tint: Color
+    var text: String? = nil
     @Environment(\.tvFocused) private var focused
 
     var body: some View {
         VStack(spacing: tvScaled(6)) {
-            Image(systemName: symbol)
-                .font(.system(size: tvScaled(19), weight: .semibold))
+            Group {
+                if let text {
+                    Text(text)
+                        .font(.system(size: tvScaled(14), weight: .heavy, design: .rounded))
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+                        .padding(.horizontal, tvScaled(4))
+                } else {
+                    Image(systemName: symbol)
+                        .font(.system(size: tvScaled(19), weight: .semibold))
+                        .contentTransition(.symbolEffect(.replace))
+                }
+            }
                 .foregroundStyle(focused ? Color.black : tint)
                 .frame(width: tvScaled(50), height: tvScaled(50))
                 .background(focused ? Color.white : Color.white.opacity(0.12), in: Circle())
-                .contentTransition(.symbolEffect(.replace))
             Text(title)
                 .font(.system(size: tvScaled(11), weight: .semibold))
                 .foregroundStyle(Theme.secondary)
@@ -335,7 +370,7 @@ private struct ActionLabel: View {
 }
 
 /// Transportknoppen: indrukken; tv: lift zonder grijs vlak
-private struct TransportButtonStyle: ButtonStyle {
+struct TransportButtonStyle: ButtonStyle {
     var scale: CGFloat = 1.15
     func makeBody(configuration: Configuration) -> some View {
         StyledBody(configuration: configuration, scale: scale)

@@ -14,6 +14,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import nl.lrvdlinden.tunr.data.Http
 import nl.lrvdlinden.tunr.data.Library
+import nl.lrvdlinden.tunr.data.PodcastApi
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Settings
 import java.util.Locale
@@ -26,6 +27,7 @@ class TunrApp : Application(), ImageLoaderFactory {
         Device.init(this)
         RadioBrowser.init(this)
         Library.init(this)
+        PodcastApi.init(this)
     }
 
     /** Coil gebruikt onze OkHttp-client (eigen User-Agent) en een ruime schijfcache voor zenderlogo's. */

@@ -14,7 +14,13 @@ final class DiscoverModel: ObservableObject {
     @Published var trending: LoadState<[Station]> = .idle
     @Published var local: LoadState<[Station]> = .idle
     @Published var genreRows: [GenreRow] = []
+    /// Populaire podcasts in het land (SPEC §8)
+    @Published var podcasts: LoadState<[Podcast]> = .idle
+    /// Laatste aflevering van elke gevolgde podcast
+    @Published var newEpisodes: [Episode] = []
+    @Published var newEpisodesLoading = false
     private(set) var loadedFor: String?
+    private var episodesFor: String?
 
     func load(country: String, region: String?, force: Bool = false) async {
         let key = country + "|" + (region ?? "")
@@ -34,6 +40,7 @@ final class DiscoverModel: ObservableObject {
         if pop == nil { loadedFor = nil }
 
         await loadLocal(country: country, region: region)
+        await loadPodcasts(country: country, force: force)
 
         if let tags = try? await RadioBrowser.shared.topGenres(country: country) {
             var rows: [GenreRow] = []
@@ -43,6 +50,29 @@ final class DiscoverModel: ObservableObject {
                 }
             }
             withAnimation(.easeOut(duration: 0.3)) { genreRows = rows }
+        }
+    }
+
+    func loadPodcasts(country: String, force: Bool = false) async {
+        if podcasts.value == nil || force { podcasts = .loading }
+        let list = try? await PodcastAPI.shared.topPodcasts(country: country)
+        withAnimation(.easeOut(duration: 0.3)) { podcasts = loadState(list) }
+    }
+
+    /// Nieuwe afleveringen van gevolgde podcasts (opnieuw als de lijst gevolgde podcasts verandert)
+    func loadNewEpisodes(country: String, followed: [String], force: Bool = false) async {
+        let key = country + "|" + followed.joined(separator: ",")
+        guard force || episodesFor != key else { return }
+        episodesFor = key
+        guard !followed.isEmpty else {
+            newEpisodes = []
+            return
+        }
+        newEpisodesLoading = newEpisodes.isEmpty
+        let list = await Library.shared.newEpisodes(country: country)
+        withAnimation(.easeOut(duration: 0.3)) {
+            newEpisodes = list
+            newEpisodesLoading = false
         }
     }
 
@@ -102,6 +132,22 @@ struct DiscoverView: View {
                              failed: model.trending.isFailed,
                              onRetry: reload)
 
+                // Podcasts (SPEC §8)
+                PodcastShelf(title: L("row.popularPodcastsIn", countryName),
+                             podcasts: model.podcasts.value ?? [],
+                             loading: model.podcasts.isLoading,
+                             ranked: true,
+                             onAll: { navigate(.podcasts) })
+
+                if !library.followedPodcasts.isEmpty {
+                    EpisodeShelf(title: L("row.newEpisodes"), episodes: model.newEpisodes,
+                                 loading: model.newEpisodesLoading)
+                }
+
+                if !library.continueListening.isEmpty {
+                    EpisodeShelf(title: L("row.continueEpisodes"), episodes: library.continueListening)
+                }
+
                 if !library.favorites.isEmpty {
                     StationShelf(title: L("row.favorites"), stations: library.favorites, source: .favorites)
                 }
@@ -132,7 +178,10 @@ struct DiscoverView: View {
         .scrollIndicators(.hidden)
         .screenBackground()
         #if !os(tvOS)
-        .refreshable { await model.load(country: country, region: library.currentRegion?.name, force: true) }
+        .refreshable {
+            await model.load(country: country, region: library.currentRegion?.name, force: true)
+            await model.loadNewEpisodes(country: country, followed: library.followedPodcasts.map(\.id), force: true)
+        }
         #endif
         #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
@@ -141,6 +190,9 @@ struct DiscoverView: View {
         #endif
         .task(id: country + "|" + (library.currentRegion?.name ?? "")) {
             await model.load(country: country, region: library.currentRegion?.name)
+        }
+        .task(id: country + "|" + library.followedPodcasts.map(\.id).joined(separator: ",")) {
+            await model.loadNewEpisodes(country: country, followed: library.followedPodcasts.map(\.id))
         }
     }
 

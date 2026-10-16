@@ -19,6 +19,7 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.extractor.metadata.icy.IcyInfo
+import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
@@ -29,18 +30,25 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import nl.lrvdlinden.tunr.Brand
 import nl.lrvdlinden.tunr.LocaleHelper
 import nl.lrvdlinden.tunr.MainActivity
 import nl.lrvdlinden.tunr.R
 import nl.lrvdlinden.tunr.data.Artwork
+import nl.lrvdlinden.tunr.data.Episode
+import nl.lrvdlinden.tunr.data.EpisodeCache
 import nl.lrvdlinden.tunr.data.GENRE_TAGS
 import nl.lrvdlinden.tunr.data.Http
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.data.NowPlaying
+import nl.lrvdlinden.tunr.data.Podcast
+import nl.lrvdlinden.tunr.data.PodcastApi
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Station
 import nl.lrvdlinden.tunr.data.localizedCountryName
@@ -68,6 +76,7 @@ class PlaybackService : MediaLibraryService() {
         super.onCreate()
         Library.init(this)
         RadioBrowser.init(this)
+        PodcastApi.init(this)
 
         val http = OkHttpDataSource.Factory(Http.client)
             .setUserAgent(Brand.userAgent)
@@ -80,6 +89,9 @@ class PlaybackService : MediaLibraryService() {
             )
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
+            // Podcasts: 15 s terug / 30 s vooruit (melding, vergrendelscherm, koptelefoon, Android Auto)
+            .setSeekBackIncrementMs(SEEK_BACK_MS)
+            .setSeekForwardIncrementMs(SEEK_FORWARD_MS)
             .build()
         exo.addListener(listener)
 
@@ -102,6 +114,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        saveEpisodeProgress()
         scope.cancel()
         session?.run {
             player.release()
@@ -115,6 +128,8 @@ class PlaybackService : MediaLibraryService() {
 
     private val listener = object : Player.Listener {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            // Aflevering: de vorige bewaren (of als beluisterd markeren als hij vanzelf afliep), dan hervatten
+            onEpisodeTransition(mediaItem, reason)
             // Ook een metadata-update (replaceMediaItem) kan hier komen: alleen bij een echt andere zender tellen
             val id = mediaItem?.mediaId
             if (id == null || id == lastCounted) return
@@ -136,12 +151,25 @@ class PlaybackService : MediaLibraryService() {
         override fun onPlaybackStateChanged(playbackState: Int) {
             // Gestopt (wachtrij leeg): de volgende keer dezelfde zender weer tellen
             if (playbackState == Player.STATE_IDLE && exo.mediaItemCount == 0) lastCounted = null
+            // Laatste aflevering van de lijst afgelopen: beluisterd
+            if (playbackState == Player.STATE_ENDED) {
+                currentEpisode()?.let { Library.markFinished(it, true) }
+                lastEpisode = null
+            }
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (isPlaying) startProgressTicker() else {
+                progressJob?.cancel()
+                saveEpisodeProgress() // bij pauze
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
             // url_resolved faalde: één keer opnieuw met `url`
             val index = exo.currentMediaItemIndex
             val item = exo.currentMediaItem ?: return
+            if (isEpisodeId(item.mediaId)) return
             val alt = item.mediaMetadata.extras?.getString(Extras.ALT_URL)
             if (alt.isNullOrEmpty() || !retried.add(item.mediaId)) return
             val replacement = item.buildUpon()
@@ -154,11 +182,94 @@ class PlaybackService : MediaLibraryService() {
         }
     }
 
+    // MARK: afleveringen: positie onthouden en hervatten (SPEC §8)
+
+    private var progressJob: Job? = null
+    /** Laatst bekende aflevering + positie (bij een overgang wijst currentPosition al naar het volgende item) */
+    private var lastEpisode: Episode? = null
+    private var lastEpisodePos: Long = 0L
+    private var lastEpisodeDur: Long = 0L
+
+    private fun currentEpisode(): Episode? = episodeIdOf(exo.currentMediaItem?.mediaId)?.let { EpisodeCache[it] }
+
+    /** Elke seconde de positie bijhouden, elke 10 s bewaren */
+    private fun startProgressTicker() {
+        progressJob?.cancel()
+        progressJob = scope.launch {
+            var ticks = 0
+            while (isActive) {
+                val ep = currentEpisode()
+                if (ep != null) {
+                    lastEpisode = ep
+                    lastEpisodePos = exo.currentPosition
+                    lastEpisodeDur = exo.duration.takeIf { it > 0 } ?: ep.durationMs
+                    if (++ticks % 10 == 0) Library.saveProgress(ep, lastEpisodePos, lastEpisodeDur)
+                }
+                delay(1_000)
+            }
+        }
+    }
+
+    private fun saveEpisodeProgress() {
+        val ep = currentEpisode() ?: return
+        val dur = exo.duration.takeIf { it > 0 } ?: ep.durationMs
+        Library.saveProgress(ep, exo.currentPosition, dur)
+        lastEpisode = ep; lastEpisodePos = exo.currentPosition; lastEpisodeDur = dur
+    }
+
+    private var seekButtonsShown = false
+
+    /** Mediamelding: bij afleveringen knoppen 15 s terug / 30 s vooruit; bij radio niet */
+    private fun updateSeekButtons(episode: Boolean) {
+        if (episode == seekButtonsShown) return
+        seekButtonsShown = episode
+        val layout: List<CommandButton> = if (!episode) emptyList() else listOf(
+            CommandButton.Builder()
+                .setDisplayName(getString(R.string.skip_back_15))
+                .setIconResId(R.drawable.ic_seek_back)
+                .setPlayerCommand(Player.COMMAND_SEEK_BACK)
+                .build(),
+            CommandButton.Builder()
+                .setDisplayName(getString(R.string.skip_forward_30))
+                .setIconResId(R.drawable.ic_seek_forward)
+                .setPlayerCommand(Player.COMMAND_SEEK_FORWARD)
+                .build(),
+        )
+        session?.setCustomLayout(ImmutableList.copyOf(layout))
+    }
+
+    private fun onEpisodeTransition(item: MediaItem?, reason: Int) {
+        val prev = lastEpisode
+        val newId = episodeIdOf(item?.mediaId)
+        if (prev != null && prev.id != newId) {
+            if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) Library.markFinished(prev, true)
+            else Library.saveProgress(prev, lastEpisodePos, lastEpisodeDur)
+        }
+        updateSeekButtons(newId != null)
+        // Snelheid: afleveringen met de gekozen snelheid, radio altijd 1×
+        val speed = if (newId != null) Library.playbackSpeed.value else 1f
+        if (exo.playbackParameters.speed != speed) exo.setPlaybackSpeed(speed)
+        if (newId == null) { lastEpisode = null; return }
+        val ep = EpisodeCache[newId]
+        if (ep == null) { lastEpisode = null; return }
+        if (prev?.id == newId) return // metadata-update van hetzelfde item
+        lastEpisode = ep
+        lastEpisodePos = 0L
+        lastEpisodeDur = ep.durationMs
+        // Hervatten waar je was (half beluisterd); beluisterde afleveringen beginnen opnieuw
+        val saved = Library.progressOf(ep.id)
+        if (saved != null && saved.inProgress && exo.currentPosition < 2_000) {
+            exo.seekTo(saved.positionMs)
+            lastEpisodePos = saved.positionMs
+        }
+    }
+
     /** ICY "StreamTitle": titel/artiest in de melding zetten en een albumhoes zoeken (iTunes). */
     private fun onIcyTitle(raw: String?) {
         if (raw == lastIcy) return
         lastIcy = raw
         val item = exo.currentMediaItem ?: return
+        if (isEpisodeId(item.mediaId)) return // afleveringen houden hun eigen titel
         val station = StationCache[item.mediaId]
         val name = station?.displayName ?: item.mediaMetadata.station?.toString() ?: ""
         val np = NowPlaying.parse(raw)?.takeIf { !it.line.equals(name, ignoreCase = true) }
@@ -211,6 +322,8 @@ class PlaybackService : MediaLibraryService() {
             browser: MediaSession.ControllerInfo,
             mediaId: String,
         ): ListenableFuture<LibraryResult<MediaItem>> {
+            val ep = episodeIdOf(mediaId)?.let { EpisodeCache[it] }
+            if (ep != null) return Futures.immediateFuture(LibraryResult.ofItem(ep.toMediaItem(), null))
             val s = StationCache[mediaId]
             return Futures.immediateFuture(
                 if (s != null) LibraryResult.ofItem(s.toMediaItem(), null)
@@ -241,7 +354,8 @@ class PlaybackService : MediaLibraryService() {
         ): ListenableFuture<MutableList<MediaItem>> {
             val future = SettableFuture.create<MutableList<MediaItem>>()
             scope.launch {
-                val missing = mediaItems.map { it.mediaId }.filter { StationCache[it] == null && it.isNotEmpty() }
+                val missing = mediaItems.map { it.mediaId }
+                    .filter { it.isNotEmpty() && !isEpisodeId(it) && !it.contains(':') && StationCache[it] == null }
                 if (missing.isNotEmpty()) runCatching { StationCache.putAll(RadioBrowser.byUuids(missing)) }
                 val resolved = mediaItems.mapNotNull { resolve(it) }.toMutableList()
                 future.set(resolved)
@@ -258,16 +372,31 @@ class PlaybackService : MediaLibraryService() {
         ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
             // Eén zender gekozen in Android Auto: de hele lijst waar hij in stond wordt de wachtrij (vorige/volgende)
             val single = mediaItems.singleOrNull()
-            val list = single?.let { lastLists[it.mediaId] }
             val fromOtherApp = controller.packageName != packageName
-            val items = if (single != null && list != null && fromOtherApp) list.map { it.toMediaItem() }.toMutableList() else mediaItems
-            val start = if (single != null && list != null && fromOtherApp) list.indexOfFirst { it.uuid == single.mediaId }.coerceAtLeast(0) else startIndex
+            val epList = single?.let { lastEpisodeLists[it.mediaId] }
+            val list = single?.let { lastLists[it.mediaId] }
+            val items: MutableList<MediaItem>
+            val start: Int
+            if (single != null && epList != null && fromOtherApp) {
+                // Aflevering in Android Auto: de afleveringen van die podcast worden de wachtrij
+                items = epList.map { it.toMediaItem() }.toMutableList()
+                start = epList.indexOfFirst { EPISODE_PREFIX + it.id == single.mediaId }.coerceAtLeast(0)
+            } else if (single != null && list != null && fromOtherApp) {
+                items = list.map { it.toMediaItem() }.toMutableList()
+                start = list.indexOfFirst { it.uuid == single.mediaId }.coerceAtLeast(0)
+            } else {
+                items = mediaItems
+                start = startIndex
+            }
             val future = SettableFuture.create<MediaSession.MediaItemsWithStartPosition>()
             val added = onAddMediaItems(mediaSession, controller, items)
             added.addListener({
                 val resolved = runCatching { added.get() }.getOrDefault(mutableListOf())
                 val idx = if (resolved.isEmpty()) C.INDEX_UNSET else start.coerceIn(0, resolved.size - 1)
-                future.set(MediaSession.MediaItemsWithStartPosition(resolved, idx, C.TIME_UNSET))
+                // Aflevering vanuit de app met een bewaarde positie: daar beginnen; radio altijd live (TIME_UNSET)
+                val startItemIsEpisode = idx >= 0 && isEpisodeId(resolved.getOrNull(idx)?.mediaId)
+                val pos = if (startItemIsEpisode && items === mediaItems && startPositionMs > 0) startPositionMs else C.TIME_UNSET
+                future.set(MediaSession.MediaItemsWithStartPosition(resolved, idx, pos))
             }, { it.run() })
             return future
         }
@@ -275,9 +404,12 @@ class PlaybackService : MediaLibraryService() {
 
     /** Laatst getoonde lijst per zender (voor de wachtrij in Android Auto) */
     private val lastLists = HashMap<String, List<Station>>()
+    /** Idem per aflevering (mediaId "ep:<id>") */
+    private val lastEpisodeLists = HashMap<String, List<Episode>>()
 
     /** MediaItem uit een controller → met stream-URI (controllers sturen de URI niet mee, alleen mediaId/requestMetadata). */
     private fun resolve(item: MediaItem): MediaItem? {
+        episodeIdOf(item.mediaId)?.let { id -> EpisodeCache[id]?.let { return it.toMediaItem() } }
         StationCache[item.mediaId]?.let { return it.toMediaItem() }
         val uri = item.requestMetadata.mediaUri ?: item.localConfiguration?.uri ?: return null
         return item.buildUpon().setUri(uri).build()
@@ -293,7 +425,15 @@ class PlaybackService : MediaLibraryService() {
                     folderItem(RECENTS, getString(R.string.recent)),
                     folderItem(POPULAR, getString(R.string.popular_in, land)),
                     folderItem(GENRES, getString(R.string.genres), MediaMetadata.MEDIA_TYPE_FOLDER_GENRES),
+                    folderItem(PODCASTS, getString(R.string.podcasts), MediaMetadata.MEDIA_TYPE_FOLDER_PODCASTS),
                 )
+            }
+            parentId == PODCASTS -> return Library.followedPodcasts.value.map { podcastFolder(it) }
+            parentId.startsWith(PODCAST_PREFIX) -> {
+                val id = parentId.removePrefix(PODCAST_PREFIX)
+                val episodes = PodcastApi.lookup(id, cc)?.second.orEmpty().take(50)
+                episodes.forEach { lastEpisodeLists[EPISODE_PREFIX + it.id] = episodes }
+                return episodes.map { it.toMediaItem() }
             }
             parentId == GENRES -> return GENRE_TAGS.map { tag ->
                 folderItem(GENRE_PREFIX + tag, getString(genreLabel(tag)), MediaMetadata.MEDIA_TYPE_GENRE)
@@ -308,6 +448,23 @@ class PlaybackService : MediaLibraryService() {
         return stations.map { it.toMediaItem() }
     }
 
+    /** Gevolgde podcast als map (met art) in de bladerboom */
+    private fun podcastFolder(p: Podcast): MediaItem =
+        MediaItem.Builder()
+            .setMediaId(PODCAST_PREFIX + p.id)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(p.displayName)
+                    .setArtist(p.artist)
+                    .setSubtitle(p.artist)
+                    .setArtworkUri(p.artwork.takeIf { it.startsWith("http") }?.let { Uri.parse(it) })
+                    .setIsBrowsable(true)
+                    .setIsPlayable(false)
+                    .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST)
+                    .build()
+            )
+            .build()
+
     companion object {
         const val ROOT = "root"
         const val FAVORITES = "favorites"
@@ -315,6 +472,10 @@ class PlaybackService : MediaLibraryService() {
         const val POPULAR = "popular"
         const val GENRES = "genres"
         const val GENRE_PREFIX = "genre:"
+        const val PODCASTS = "podcasts"
+        const val PODCAST_PREFIX = "pod:"
+        const val SEEK_BACK_MS = 15_000L
+        const val SEEK_FORWARD_MS = 30_000L
 
         /** Tekst-sleutel voor een genre-tag */
         fun genreLabel(tag: String): Int = when (tag) {
@@ -349,6 +510,15 @@ private class RadioPlayer(player: Player) : ForwardingPlayer(player) {
 
     private fun step(dir: Int) {
         val n = mediaItemCount
+        // Afleveringen: vorige/volgende in de lijst, zonder rond te lopen; vorige op de eerste = naar het begin
+        if (isEpisodeId(currentMediaItem?.mediaId)) {
+            val target = currentMediaItemIndex + dir
+            if (target < 0 || n <= 1) { seekTo(0L); return }
+            if (target >= n) return
+            seekToDefaultPosition(target)
+            if (!playWhenReady) play()
+            return
+        }
         if (n <= 1) return
         val next = ((currentMediaItemIndex + dir) % n + n) % n
         seekToDefaultPosition(next)

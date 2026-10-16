@@ -21,6 +21,9 @@ struct BrowseView: View {
         let region = library.currentRegion?.name
         return [
             Tile(id: "local", title: L("browse.local"), symbol: "location.fill", palette: 5, subtitle: region) { nav(.regions) },
+            // Podcasts (SPEC §8): bovenaan, naast Lokaal
+            Tile(id: "podcasts", title: L("browse.podcasts"), symbol: "mic.fill", palette: 4,
+                 subtitle: L("browse.podcastsHint")) { nav(.podcasts) },
             Tile(id: "music", title: L("browse.music"), symbol: "music.note.list", palette: 1) { nav(.music) },
             Tile(id: "news", title: L("browse.newsTalk"), symbol: "newspaper.fill", palette: 2) { nav(.newsTalk) },
             Tile(id: "sports", title: L("browse.sports"), symbol: "sportscourt.fill", palette: 3) { nav(.sports) },

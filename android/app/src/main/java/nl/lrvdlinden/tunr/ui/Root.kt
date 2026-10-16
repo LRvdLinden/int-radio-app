@@ -28,6 +28,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.player.RadioController
 import nl.lrvdlinden.tunr.ui.screens.CountryPickerScreen
+import nl.lrvdlinden.tunr.ui.screens.EpisodeDetailScreen
+import nl.lrvdlinden.tunr.ui.screens.PodcastDetailScreen
+import nl.lrvdlinden.tunr.ui.screens.PodcastGenreScreen
+import nl.lrvdlinden.tunr.ui.screens.PodcastsHomeScreen
 import nl.lrvdlinden.tunr.ui.screens.LanguagesScreen
 import nl.lrvdlinden.tunr.ui.screens.MainScreen
 import nl.lrvdlinden.tunr.ui.screens.MusicScreen
@@ -91,7 +95,9 @@ fun TunrRoot() {
     }
     // Speler sluiten als er niets meer is om te tonen
     val station by RadioController.station.collectAsState()
-    LaunchedEffect(station == null) { if (station == null) AppState.showPlayer = false }
+    val episode by RadioController.episode.collectAsState()
+    val nothing = station == null && episode == null
+    LaunchedEffect(nothing) { if (nothing) AppState.showPlayer = false }
 }
 
 @Composable
@@ -105,6 +111,10 @@ private fun RouteContent(route: Route, onClose: () -> Unit) {
         Route.Music -> MusicScreen(onClose = onClose)
         Route.NewsTalk -> NewsTalkScreen(onClose = onClose)
         Route.Languages -> LanguagesScreen(onClose = onClose)
+        Route.PodcastsHome -> PodcastsHomeScreen(onClose = onClose)
+        is Route.PodcastGenre -> PodcastGenreScreen(route.genreId, onClose = onClose)
+        is Route.PodcastDetail -> PodcastDetailScreen(route.podcast, onClose = onClose)
+        is Route.EpisodeDetail -> EpisodeDetailScreen(route.episode, route.queue, onClose = onClose)
     }
 }
 

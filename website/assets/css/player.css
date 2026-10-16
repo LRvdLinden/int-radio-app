@@ -568,3 +568,126 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 }
 
 .art.has-logo::before{opacity:0}
+
+/* ================= Podcasts (SPEC §8) ================= */
+/* PodcastArt: echte hoes, vult de tegel; terugval verloop + monogram */
+.art.pod .lt{opacity:1}
+.art.pod.has-logo .mono{opacity:0}
+.art.pod .logo{object-fit:cover}
+.card.podc{display:block}
+.card.podc .pbtn{cursor:pointer}
+.card.podc .pbtn::after{display:none}
+.card.podc:hover .art{transform:scale(1.02)}
+.card.podc .meta b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.card.podc .num{z-index:5}
+/* aflevering in een rij */
+.card.epc{width:200px}
+.card.epc .pbtn{position:relative}
+.card.epc .meta b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:14px}
+.cbar{position:absolute;left:10px;right:10px;bottom:10px;height:4px;border-radius:4px;background:#00000080;overflow:hidden;z-index:4}
+.cbar i{display:block;height:100%;background:var(--grad)}
+.card.epc.is-active .art .eq{display:inline-flex}
+/* lijsten */
+.plist .pli{display:flex}
+.plist .pli .main{display:flex}
+.plist .pli .chev{width:18px;height:18px;color:var(--dim);margin-right:6px}
+.plist .pli .fol{width:22px;height:22px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#1a0800;flex:none}
+.plist .pli .fol svg{width:14px;height:14px}
+.plist .pli:hover{background:#ffffff08}
+.plist .pli .art{width:60px}
+/* podcastoverzicht: toplijst links, genres rechts op brede schermen */
+.field.fake{height:50px;border-radius:14px;background:var(--surface);border:1px solid var(--stroke2);padding:0 16px 0 44px;color:var(--dim);cursor:text;transition:border-color .15s}
+.field.fake:hover{border-color:#ffffff50}
+.field.fake span{font-size:16px}
+.ptiles{grid-template-columns:repeat(2,1fr)}
+.tile.sm{min-height:86px;padding:14px}
+.tile.sm b{font-size:16px}
+.tile.sm .ti{width:70px;height:70px;right:-8px;top:-6px}
+@media (min-width:1100px){
+  .pgrid2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:start}
+  .pgrid2 .ptiles{grid-template-columns:repeat(2,1fr);gap:12px}
+}
+@media (min-width:900px) and (max-width:1099px){.ptiles{grid-template-columns:repeat(3,1fr)}}
+/* podcastpagina en afleveringspagina */
+.pdet .maker{font-weight:700;color:#fff;font-size:16.5px}
+.pdet .pmeta{color:var(--sec);font-size:14px;margin-top:4px}
+.pdet .acts .btn{height:50px;border-radius:14px}
+.pdesc{color:#d6d6dc;font-size:15.5px;line-height:1.6;margin-top:22px;max-width:70ch;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.pdesc.open{-webkit-line-clamp:unset;display:block}
+.linkbtn{color:var(--accent2);font-weight:800;font-size:14px;margin-top:6px;padding:4px 0}
+.linkbtn:hover{text-decoration:underline}
+.seg.sm button{height:30px;padding:0 12px;font-size:13px}
+.sech .seg{flex:none}
+.eplist{border-top:1px solid var(--stroke)}
+.ep{display:flex;align-items:center;gap:16px;padding:16px 4px;border-bottom:1px solid var(--stroke)}
+.ep .ept{flex:1;min-width:0;display:block}
+.ep .epd{display:block;font-size:12.5px;font-weight:700;color:var(--sec);text-transform:uppercase;letter-spacing:.04em}
+.ep .ept b{display:block;font-size:16px;line-height:1.3;margin-top:3px}
+.ep .ept:hover b{text-decoration:underline;text-decoration-color:#ffffff60}
+.ep .eps{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--sec);font-size:14px;margin-top:4px;line-height:1.45}
+.ep.done .ept b{color:#c8c8d0}
+.ep.is-playing .ept b{color:var(--accent2)}
+.epb{flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;width:56px}
+.epplay{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#ffffff12;border:1px solid var(--stroke2);transition:background .15s}
+.epplay:hover{background:#ffffff22}
+.epplay svg{width:20px;height:20px}
+.epplay .pa,.epplay .eq{display:none}
+.ep.is-active .epplay{background:var(--btn);border-color:transparent}
+.ep.is-active .epplay .pl{display:none}
+.ep.is-active .epplay .pa{display:block}
+.epbar{display:block;width:44px;height:4px;border-radius:4px;background:#ffffff1f;overflow:hidden}
+.epbar i{display:block;height:100%;background:var(--grad)}
+.epbar.wide{width:min(320px,100%);margin-top:12px}
+.epdone{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#4ade8022;color:#4ADE80}
+.epdone svg{width:14px;height:14px}
+.epdet .kick{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent2)}
+.epdet .kick:hover{text-decoration:underline}
+.epdet h1.eph{font-size:clamp(24px,3.4vw,34px);margin-top:6px}
+.eptext{margin-top:24px;max-width:72ch}
+.eptext p{color:#d6d6dc;font-size:15.5px;line-height:1.65;overflow-wrap:anywhere}
+.eptext p+p{margin-top:12px}
+/* miniplayer in afleveringmodus */
+#mini .mprog{position:absolute;left:0;right:0;bottom:0;height:2px;background:#ffffff14;z-index:1}
+#mini .mprog i{display:block;height:100%;background:var(--grad)}
+#mini.epm::after{display:none}
+#mini .mtime{display:none}
+#mini .c.rate{width:auto;min-width:44px;padding:0 8px;border-radius:10px;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
+#mini .c svg text{font-family:var(--font)}
+/* volledig scherm: tijdbalk en 5 knoppen */
+#full .seekw{margin-top:18px}
+#full .seekw input{width:100%;height:24px}
+#full .seekw input::-webkit-slider-runnable-track{height:5px;background:linear-gradient(90deg,var(--accent) 0,var(--accent2) var(--p),#ffffff30 var(--p))}
+#full .seekw input::-moz-range-track{height:5px;background:linear-gradient(90deg,var(--accent) 0,var(--accent2) var(--p),#ffffff30 var(--p))}
+#full .seekw input::-webkit-slider-thumb{margin-top:-5.5px}
+#full .times{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:#ffffffb0;font-variant-numeric:tabular-nums;margin-top:2px}
+#full .fmeta p a:hover{text-decoration:underline}
+#full .fmeta h2{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:clamp(20px,3vh,26px)}
+#full .ctl.ep{gap:clamp(6px,3vw,22px);margin-top:clamp(12px,2.5vh,22px)}
+#full .ctl.ep .c svg{width:36px;height:36px}
+#full .ctl.ep .c.sm{width:44px;height:44px;opacity:.8}
+#full .ctl.ep .c.sm svg{width:24px;height:24px}
+#full .more.four{grid-template-columns:repeat(4,1fr)}
+#full .more .mbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:14px;background:#ffffff10;border:1px solid #ffffff14;font-size:12.5px;font-weight:700;color:#ffffffd0}
+#full .more .mbtn:hover{background:#ffffff1c}
+#full .more .mbtn svg{width:22px;height:22px}
+#full .fart .art.pod{border-radius:20px}
+#sheet .opts .wide{grid-column:1/-1}
+@media (min-width:900px){
+  .card.epc{width:220px}
+  .ptiles{grid-template-columns:repeat(4,1fr)}
+  .pgrid2 .ptiles{grid-template-columns:repeat(2,1fr)}
+  .pdet{grid-template-columns:280px minmax(0,1fr)}
+  #mini.epm .center{flex-direction:row}
+  #mini .mtime{display:flex;align-items:center;gap:10px;flex:1;max-width:440px;margin-left:10px;font-size:12px;font-weight:700;color:var(--sec);font-variant-numeric:tabular-nums}
+  #mini .mtime input{flex:1;min-width:80px}
+  #mini.epm .open{flex:0 1 300px}
+  #mini.epm .mprog{display:none}
+}
+@media (max-width:899px){
+  .ep{gap:12px}
+  .pdet .head{text-align:center}
+  .pdet .pdesc{margin-left:auto;margin-right:auto}
+  .epdet .eptext{margin-left:auto;margin-right:auto}
+  .sech .seg.sm button{padding:0 10px}
+}
+.card.epc .pbtn::after{display:none}

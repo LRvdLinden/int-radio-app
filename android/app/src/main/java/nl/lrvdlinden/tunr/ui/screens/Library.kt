@@ -51,6 +51,7 @@ import nl.lrvdlinden.tunr.ui.Dims
 import nl.lrvdlinden.tunr.ui.EmptyState
 import nl.lrvdlinden.tunr.ui.Nav
 import nl.lrvdlinden.tunr.ui.Route
+import nl.lrvdlinden.tunr.ui.SegmentedControl
 import nl.lrvdlinden.tunr.ui.StationCard
 import nl.lrvdlinden.tunr.ui.StationMenu
 import nl.lrvdlinden.tunr.ui.StationRow
@@ -77,27 +78,17 @@ fun LibraryScreen() {
                 Nav.push(Route.Settings)
             }
         }
-        // Gesegmenteerde keuze
-        Row(
-            Modifier.padding(horizontal = Dims.edge, vertical = 12.dp).widthIn(max = 420.dp).fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp)).background(T.surface).padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            listOf(R.string.tab_favorites, R.string.recent).forEachIndexed { i, label ->
-                val sel = segment == i
-                Box(
-                    Modifier.weight(1f)
-                        .tvClickable(RoundedCornerShape(9.dp), scale = 1.03f, focusRequester = if (i == 0) first else null) { segment = i }
-                        .background(if (sel) T.accent else Color.Transparent)
-                        .padding(vertical = 9.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(label), color = if (sel) Color.White else T.secondary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                }
-            }
-        }
+        // Gesegmenteerde keuze: Favorieten · Podcasts · Recent (SPEC §8)
+        SegmentedControl(
+            listOf(stringResource(R.string.tab_favorites), stringResource(R.string.podcasts), stringResource(R.string.recent)),
+            segment,
+            Modifier.padding(horizontal = Dims.edge, vertical = 12.dp).widthIn(max = 480.dp).fillMaxWidth(),
+            firstFocus = first
+        ) { segment = it }
 
-        if (segment == 0) {
+        if (segment == 1) {
+            LibraryPodcasts()
+        } else if (segment == 0) {
             if (favorites.isEmpty()) {
                 EmptyState(Icons.Rounded.FavoriteBorder, stringResource(R.string.no_favorites_title), stringResource(R.string.no_favorites_message))
             } else {

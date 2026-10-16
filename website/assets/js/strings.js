@@ -28,7 +28,17 @@
       'toast.fav': 'Bewaard in je favorieten', 'toast.unfav': 'Verwijderd uit je favorieten', 'toast.copied': 'Link gekopieerd', 'toast.region': '{r} is nu je regio',
       'err.load': 'Laden is niet gelukt', 'err.load.p': 'Controleer je verbinding en probeer het opnieuw.', 'empty': 'Hier staan nog geen zenders.',
       'share.text': 'Luister naar {n} op Tunr',
-      'nav.label': 'Hoofdmenu', 'home': 'Naar de website'
+      'nav.label': 'Hoofdmenu', 'home': 'Naar de website',
+      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Toplijsten, volgen en verder luisteren',
+      'pod.title': 'Podcasts', 'pod.top': 'Top 50 in {c}', 'pod.genres': 'Genres', 'pod.search': 'Zoek podcasts', 'pod.popular': 'Populaire podcasts in {c}', 'pod.new': 'Nieuwe afleveringen', 'pod.continue': 'Verder luisteren',
+      'pod.follow': 'Volgen', 'pod.following': 'Volgend', 'pod.playLatest': 'Speel nieuwste', 'pod.episodes': 'Afleveringen', 'pod.eps': '{n} afleveringen', 'pod.ep1': '1 aflevering', 'pod.sortNew': 'Nieuwste', 'pod.sortOld': 'Oudste',
+      'pod.more': 'Meer lezen', 'pod.less': 'Minder', 'pod.played': 'Beluisterd', 'pod.left': 'nog {t}', 'pod.nf': 'Deze podcast is niet gevonden.', 'pod.epnf': 'Deze aflevering is niet gevonden.', 'pod.noeps': 'Geen afleveringen gevonden.',
+      'pod.toast.follow': 'Je volgt {n}', 'pod.toast.unfollow': 'Je volgt {n} niet meer', 'pod.lib.empty': 'Volg een podcast om hem hier te bewaren', 'pod.lib.find': 'Ontdek podcasts', 'pod.none': 'Geen podcasts gevonden voor "{q}"',
+      'pod.back15': '15 seconden terug', 'pod.fwd30': '30 seconden vooruit', 'pod.speed': 'Snelheid', 'pod.prev': 'Vorige aflevering', 'pod.next': 'Volgende aflevering', 'pod.seek': 'Positie', 'pod.info': 'Aflevering', 'pod.show': 'Podcast',
+      'sleep.eoe': 'Einde van aflevering', 'sleep.eoe.set': 'Slaaptimer: einde van aflevering', 'sleep.eoe.done': 'Slaaptimer: aflevering afgelopen',
+      'pod.err': 'Deze aflevering kan nu niet worden afgespeeld', 'pod.blocked': 'Deze aflevering kan alleen in de app worden afgespeeld', 'pod.blocked.p': 'De podcast gebruikt een onbeveiligde verbinding die browsers blokkeren. In de apps speelt hij wel.',
+      'seg.stations': 'Zenders', 'seg.podcasts': 'Podcasts', 'pod.ph': 'Podcasts, makers, onderwerpen…', 'pod.results': '{n} podcasts', 'pod.genreFail': 'Genres zijn nu niet beschikbaar.',
+      'pg.1489': 'Nieuws', 'pg.1303': 'Comedy', 'pg.1545': 'Sport', 'pg.1488': 'True crime', 'pg.1324': 'Maatschappij & cultuur', 'pg.1321': 'Zakelijk', 'pg.1512': 'Gezondheid', 'pg.1487': 'Geschiedenis', 'pg.1533': 'Wetenschap', 'pg.1318': 'Technologie', 'pg.1305': 'Kinderen & gezin', 'pg.1310': 'Muziek'
     },
     en: {
       'tap.title': 'Every radio station in the world', 'tap.sub': 'Tap to tune in', 'tap.btn': 'Start', 'tap.hint': 'With sound · tap to skip',
@@ -56,7 +66,17 @@
       'toast.fav': 'Saved to your favourites', 'toast.unfav': 'Removed from your favourites', 'toast.copied': 'Link copied', 'toast.region': '{r} is now your region',
       'err.load': 'Couldn\'t load this', 'err.load.p': 'Check your connection and try again.', 'empty': 'No stations here yet.',
       'share.text': 'Listen to {n} on Tunr',
-      'nav.label': 'Main menu', 'home': 'Go to the website'
+      'nav.label': 'Main menu', 'home': 'Go to the website',
+      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Top charts, follow and resume',
+      'pod.title': 'Podcasts', 'pod.top': 'Top 50 in {c}', 'pod.genres': 'Genres', 'pod.search': 'Search podcasts', 'pod.popular': 'Popular podcasts in {c}', 'pod.new': 'New episodes', 'pod.continue': 'Continue listening',
+      'pod.follow': 'Follow', 'pod.following': 'Following', 'pod.playLatest': 'Play latest', 'pod.episodes': 'Episodes', 'pod.eps': '{n} episodes', 'pod.ep1': '1 episode', 'pod.sortNew': 'Newest', 'pod.sortOld': 'Oldest',
+      'pod.more': 'Read more', 'pod.less': 'Less', 'pod.played': 'Played', 'pod.left': '{t} left', 'pod.nf': 'This podcast could not be found.', 'pod.epnf': 'This episode could not be found.', 'pod.noeps': 'No episodes found.',
+      'pod.toast.follow': 'You follow {n}', 'pod.toast.unfollow': 'You no longer follow {n}', 'pod.lib.empty': 'Follow a podcast to keep it here', 'pod.lib.find': 'Discover podcasts', 'pod.none': 'No podcasts found for "{q}"',
+      'pod.back15': 'Back 15 seconds', 'pod.fwd30': 'Forward 30 seconds', 'pod.speed': 'Speed', 'pod.prev': 'Previous episode', 'pod.next': 'Next episode', 'pod.seek': 'Position', 'pod.info': 'Episode', 'pod.show': 'Podcast',
+      'sleep.eoe': 'End of episode', 'sleep.eoe.set': 'Sleep timer: end of episode', 'sleep.eoe.done': 'Sleep timer: episode finished',
+      'pod.err': 'This episode can\'t be played right now', 'pod.blocked': 'This episode can only be played in the app', 'pod.blocked.p': 'The podcast uses an unencrypted connection that browsers block. It plays fine in the apps.',
+      'seg.stations': 'Stations', 'seg.podcasts': 'Podcasts', 'pod.ph': 'Podcasts, creators, topics…', 'pod.results': '{n} podcasts', 'pod.genreFail': 'Genres aren\'t available right now.',
+      'pg.1489': 'News', 'pg.1303': 'Comedy', 'pg.1545': 'Sports', 'pg.1488': 'True crime', 'pg.1324': 'Society & culture', 'pg.1321': 'Business', 'pg.1512': 'Health', 'pg.1487': 'History', 'pg.1533': 'Science', 'pg.1318': 'Technology', 'pg.1305': 'Kids & family', 'pg.1310': 'Music'
     }
   };
 
@@ -148,5 +168,36 @@
     return parts.join(' · ');
   };
   T.genreLabel = function (tag) { var k = 'g.' + tag; var v = T.t(k); return v === k ? tag.charAt(0).toUpperCase() + tag.slice(1) : v; };
+  // tijd: 1:05:09 / 4:07
+  T.clock = function (sec) {
+    sec = Math.max(0, Math.floor(sec || 0));
+    var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), x = sec % 60;
+    return (h ? h + ':' + (m < 10 ? '0' : '') : '') + m + ':' + (x < 10 ? '0' : '') + x;
+  };
+  // duur: "1 u 5 min" / "42 min"
+  T.dur = function (sec) {
+    sec = Math.round(sec || 0); if (!sec) return '';
+    var h = Math.floor(sec / 3600), m = Math.round(sec % 3600 / 60);
+    if (m === 60) { h++; m = 0; }
+    var u = lang() === 'nl' ? 'u' : 'h';
+    return h ? h + ' ' + u + (m ? ' ' + m + ' min' : '') : Math.max(1, m) + ' min';
+  };
+  T.date = function (iso) {
+    if (!iso) return '';
+    var d = new Date(iso); if (isNaN(d)) return '';
+    var o = { day: 'numeric', month: 'short' };
+    if (d.getFullYear() !== new Date().getFullYear()) o.year = 'numeric';
+    try { return d.toLocaleDateString(T.locale(), o); } catch (e) { return d.toDateString(); }
+  };
+  T.epsN = function (n) { return n === 1 ? T.t('pod.ep1') : T.t('pod.eps', { n: T.num(n) }); };
+  T.podGenre = function (id) { var k = 'pg.' + id; var v = T.t(k); return v === k ? '' : v; };
+  // PodcastArt: de hoes van iTunes, met een verloop + monogram eronder als terugval
+  T.podArt = function (p, cls) {
+    var pl = T.pal(p.name || p.pname || p.title), u = T.logoUrl(p.art);
+    return '<span class="art pod ' + (cls || '') + '" style="--a:' + pl[0] + ';--b:' + pl[1] + '" aria-hidden="true">' +
+      '<span class="mono">' + T.esc(T.monogram(p.name || p.pname || p.title)) + '</span>' +
+      (u ? '<span class="lt"><img class="logo" src="' + T.esc(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>' : '') +
+      '<span class="eq"><i></i><i></i><i></i><i></i></span></span>';
+  };
   T.tagsLine = function (s, n) { return (s.tags || []).slice(0, n || 3).map(function (t) { return T.genreLabel(t); }).join(', '); };
 })();

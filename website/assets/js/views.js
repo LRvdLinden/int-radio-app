@@ -83,6 +83,8 @@
       (recents.length ? T.ui.row(t('row.continue'), recents, { all: '#/library?seg=recent' }) : '') +
       '<div id="local">' + (region ? T.ui.skRow() : localPick()) + '</div>' +
       '<div id="pop">' + T.ui.skRow() + '</div><div id="trend">' + T.ui.skRow() + '</div>' +
+      (T.store.continueEps().length ? T.ui.epRow(t('pod.continue'), T.store.continueEps(), { all: '#/library?seg=podcasts' }) : '') +
+      '<div id="pnew"></div><div id="ppop">' + T.ui.skRow() + '</div>' +
       (favs.length ? T.ui.row(t('row.favorites'), favs, { all: '#/library' }) : '') +
       '<section class="sec"><div class="sech"><h2>' + esc(t('row.genres')) + '</h2></div><div class="chips">' + GENRES.map(chipHTML).join('') + '</div></section>' +
       '<div id="g2">' + T.ui.skRow() + '</div></div>';
@@ -112,6 +114,10 @@
       T.api.trending(c.cc).then(function (tr) {
         if (!live(tk)) return; fill('trend', T.ui.row(t('row.trending'), tr, { all: '#/list/trending' })); T.ui.syncPlaying();
       }).catch(function () { if (live(tk)) fill('trend', ''); });
+      T.pod.top(c.cc).then(function (list) {
+        if (!live(tk)) return; fill('ppop', T.ui.podRow(t('pod.popular', { c: cn }), list, { all: '#/podcasts' }));
+      }).catch(function () { if (live(tk)) fill('ppop', ''); });
+      newEpisodes(tk, function (eps) { if (live(tk)) { fill('pnew', T.ui.epRow(t('pod.new'), eps)); T.ui.syncPlaying(); } });
       if (region) T.api.region(c.cc, region).then(function (r) {
         if (!live(tk)) return;
         fill('local', r.length ? T.ui.row(t('row.local'), r, { sub: region, all: '#/browse/local/' + encodeURIComponent(region) }) : localPick()); T.ui.syncPlaying();
@@ -119,6 +125,17 @@
     }
     load();
   };
+  // laatste aflevering van elke gevolgde podcast, nieuwste eerst
+  function newEpisodes(tk, cb) {
+    var fs = T.store.follows().slice(0, 20);
+    if (!fs.length) return;
+    Promise.all(fs.map(function (f) { return T.pod.lookup(f.id).catch(function () { return null; }); })).then(function (rs) {
+      if (!live(tk)) return;
+      var eps = rs.filter(function (r) { return r && r.eps && r.eps[0]; }).map(function (r) { return r.eps[0]; })
+        .sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
+      if (eps.length) cb(eps);
+    });
+  }
   function hero(arr) {
     var k = T.ui.reg(arr);
     return '<section class="hero" aria-roledescription="carousel" aria-label="' + esc(t('row.popular', { c: cname() })) + '" data-list="' + k + '"><div class="slides">' +
@@ -200,8 +217,9 @@
     el.innerHTML = '<div class="pg"><header class="top"><span class="sp"></span>' + T.ui.ccBtn() + '</header>' +
       '<h1 class="ptitle">' + esc(t('tab.browse')) + '</h1>' +
       '<div class="tiles">' +
+      tile('#/podcasts', 'pod', 'pod', 1, true) +
       tile(region ? '#/browse/local/' + encodeURIComponent(region) : '#/browse/local', 'local', 'pin', 0, true) +
-      tile('#/browse/music', 'music', 'music', 1) + tile('#/browse/news', 'news', 'mic', 5) + tile('#/genre/sports', 'sports', 'ball', 3) +
+      tile('#/browse/music', 'music', 'music', 4) + tile('#/browse/news', 'news', 'mic', 5) + tile('#/genre/sports', 'sports', 'ball', 3) +
       tile('#/browse/language', 'lang', 'lang', 2) + tile('#/map', 'map', 'globe', 7, true) + tile('#/top100', 'top', 'trophy', 6, 'full') + '</div>' +
       '<section class="sec"><div class="sech"><h2>' + esc(t('row.genres')) + '</h2></div><div class="chips wrap">' + GENRES.map(chipHTML).join('') + '</div></section></div>';
   };
@@ -354,24 +372,43 @@
   };
 
   // ================= Zoeken =================
-  V.search = function (el, p, q0) {
+  V.search = function (el, p, q0, m0) {
     var tk = token, c = country();
     var world = T.store.searchWorld;
+    if (m0 === 'pod' || m0 === 'st') T.store.searchMode = m0;
+    var mode = T.store.searchMode === 'pod' ? 'pod' : 'st';
     el.innerHTML = '<div class="pg"><header class="top"><h1 class="ptitle" style="margin:0;font-size:clamp(28px,4.4vw,40px)">' + esc(t('tab.search')) + '</h1></header>' +
-      '<label class="field" style="max-width:720px"><span class="sr">' + esc(t('tab.search')) + '</span>' + I('search', 'lead') + '<input type="search" id="sq" placeholder="' + esc(t('search.ph')) + '" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="clr" type="button" id="sclr" hidden aria-label="' + esc(t('search.clear')) + '">' + I('x') + '</button></label>' +
-      '<div style="margin-top:12px"><div class="seg" role="group" aria-label="' + esc(t('tab.search')) + '"><button type="button" data-w="0" aria-pressed="' + !world + '">' + T.flag(c.cc) + ' ' + esc(cname()) + '</button><button type="button" data-w="1" aria-pressed="' + world + '">' + I('globe', 'ic') + esc(t('search.world')) + '</button></div></div>' +
+      '<div class="seg segm" role="group" aria-label="' + esc(t('tab.search')) + '" style="margin:0 0 12px"><button type="button" data-m="st" aria-pressed="' + (mode === 'st') + '">' + I('radio', 'ic') + esc(t('seg.stations')) + '</button><button type="button" data-m="pod" aria-pressed="' + (mode === 'pod') + '">' + I('pod', 'ic') + esc(t('seg.podcasts')) + '</button></div>' +
+      '<label class="field" style="max-width:720px"><span class="sr">' + esc(t('tab.search')) + '</span>' + I('search', 'lead') + '<input type="search" id="sq" placeholder="' + esc(mode === 'pod' ? t('pod.ph') : t('search.ph')) + '" autocomplete="off" spellcheck="false" enterkeyhint="search"><button class="clr" type="button" id="sclr" hidden aria-label="' + esc(t('search.clear')) + '">' + I('x') + '</button></label>' +
+      '<div style="margin-top:12px" id="wseg"' + (mode === 'pod' ? ' hidden' : '') + '><div class="seg segw" role="group" aria-label="' + esc(t('tab.search')) + '"><button type="button" data-w="0" aria-pressed="' + !world + '">' + T.flag(c.cc) + ' ' + esc(cname()) + '</button><button type="button" data-w="1" aria-pressed="' + world + '">' + I('globe', 'ic') + esc(t('search.world')) + '</button></div></div>' +
       '<div id="sres" style="margin-top:8px"></div></div>';
     var input = el.querySelector('#sq'), res = el.querySelector('#sres'), clr = el.querySelector('#sclr');
     var timer = null, seq = 0;
     function idle() {
       var rec = T.store.searches();
+      if (mode === 'pod') {
+        res.innerHTML = '<section class="sec"><div class="sech"><h2>' + esc(t('pod.genres')) + '</h2></div>' + podGenreTiles() + '</section>' +
+          (rec.length ? recentHTML(rec) : '');
+        return;
+      }
       res.innerHTML = '<section class="sec"><div class="sech"><h2>' + esc(t('search.genres')) + '</h2></div><div class="chips wrap">' + GENRES.map(chipHTML).join('') + '</div></section>' +
-        (rec.length ? '<section class="sec"><div class="sech"><h2>' + esc(t('search.recent')) + '</h2><button class="all" type="button" id="rclr">' + esc(t('search.clear')) + '</button></div><div class="rows" style="max-width:720px">' +
-          rec.map(function (q) { return '<button type="button" data-q="' + esc(q) + '">' + I('clock', 'ic') + '<span class="lab">' + esc(q) + '</span>' + I('chev', 'chev') + '</button>'; }).join('') + '</div></section>' : '');
+        (rec.length ? recentHTML(rec) : '');
+    }
+    function recentHTML(rec) {
+      return '<section class="sec"><div class="sech"><h2>' + esc(t('search.recent')) + '</h2><button class="all" type="button" id="rclr">' + esc(t('search.clear')) + '</button></div><div class="rows" style="max-width:720px">' +
+        rec.map(function (q) { return '<button type="button" data-q="' + esc(q) + '">' + I('clock', 'ic') + '<span class="lab">' + esc(q) + '</span>' + I('chev', 'chev') + '</button>'; }).join('') + '</div></section>';
     }
     function run(q) {
       var my = ++seq;
       res.innerHTML = '<div style="margin-top:16px">' + T.ui.skList(6) + '</div>';
+      if (mode === 'pod') {
+        T.pod.search(q, c.cc).then(function (arr) {
+          if (my !== seq || !live(tk)) return;
+          T.store.addSearch(q);
+          res.innerHTML = arr.length ? '<section class="sec" style="margin-top:18px"><div class="sech"><h2>' + esc(t('search.results')) + '<small>' + esc(t('pod.results', { n: T.num(arr.length) })) + '</small></h2></div>' + T.ui.podList(arr) + '</section>' : T.ui.empty(t('pod.none', { q: q }), 'pod');
+        }).catch(function () { if (my === seq && live(tk)) res.innerHTML = T.ui.error(function () { run(q); }); });
+        return;
+      }
       T.api.search(q, world ? '' : c.cc).then(function (arr) {
         if (my !== seq || !live(tk)) return;
         T.store.addSearch(q);
@@ -383,17 +420,25 @@
       var q = input.value.trim();
       clr.hidden = !input.value;
       clearTimeout(timer);
-      history.replaceState(history.state, '', '#/search' + (q ? '?q=' + encodeURIComponent(q) : ''));
+      history.replaceState(history.state, '', '#/search' + (q ? '?q=' + encodeURIComponent(q) + (mode === 'pod' ? '&m=pod' : '') : (mode === 'pod' ? '?m=pod' : '')));
       if (q.length < 2) { seq++; idle(); return; }
       timer = setTimeout(function () { run(q); }, 350);
     }
     input.addEventListener('input', onInput);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { clearTimeout(timer); var q = input.value.trim(); if (q.length >= 2) run(q); input.blur(); } });
     clr.addEventListener('click', function () { input.value = ''; onInput(); input.focus(); });
-    el.querySelector('.seg').addEventListener('click', function (e) {
+    el.querySelector('.segm').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-m]'); if (!b) return;
+      mode = b.getAttribute('data-m'); T.store.searchMode = mode;
+      el.querySelectorAll('.segm button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      el.querySelector('#wseg').hidden = mode === 'pod';
+      input.placeholder = mode === 'pod' ? t('pod.ph') : t('search.ph');
+      var q = input.value.trim(); if (q.length >= 2) run(q); else { seq++; idle(); }
+    });
+    el.querySelector('.segw').addEventListener('click', function (e) {
       var b = e.target.closest('[data-w]'); if (!b) return;
       world = b.getAttribute('data-w') === '1'; T.store.searchWorld = world;
-      el.querySelectorAll('.seg button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      el.querySelectorAll('.segw button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
       var q = input.value.trim(); if (q.length >= 2) run(q);
     });
     res.addEventListener('click', function (e) {
@@ -406,23 +451,28 @@
 
   // ================= Bibliotheek =================
   V.library = function (el, p, q) {
-    var seg = q === 'recent' ? 'recent' : 'fav';
+    var seg = q === 'recent' ? 'recent' : q === 'podcasts' ? 'podcasts' : 'fav';
     function render() {
       var favs = T.store.favorites(), rec = T.store.recents();
       var body;
       if (seg === 'fav') {
         body = favs.length ? T.ui.gridOf(favs).replace(/<div class="card/g, '<div class="card lib') : '<div class="msg"><span class="empty-heart"><i></i><i></i><i></i>' + I('heartf') + '</span><b>' + esc(t('lib.fav')) + '</b><span>' + esc(t('lib.empty')) + '</span></div>';
+      } else if (seg === 'podcasts') {
+        var fol = T.store.follows(), cont = T.store.continueEps();
+        body = (cont.length ? T.ui.epRow(t('pod.continue'), cont) : '') +
+          (fol.length ? '<section class="sec"><div class="sech"><h2>' + esc(t('seg.podcasts')) + '<small>' + esc(String(fol.length)) + '</small></h2><a class="all" href="#/podcasts">' + esc(t('pod.lib.find')) + '</a></div>' + T.ui.podGrid(fol) + '</section>'
+            : '<div class="msg"><span class="mi">' + I('pod') + '</span><b>' + esc(t('seg.podcasts')) + '</b><span>' + esc(t('pod.lib.empty')) + '</span><a class="btn" href="#/podcasts">' + esc(t('pod.lib.find')) + '</a></div>');
       } else {
         body = rec.length ? '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn sm ghost" type="button" id="clrR">' + I('trash') + '<span>' + esc(t('lib.clear')) + '</span></button></div>' + T.ui.listOf(rec) : '<div class="msg"><span class="mi">' + I('clock') + '</span><span>' + esc(t('lib.empty.r')) + '</span></div>';
       }
       el.innerHTML = '<div class="pg"><header class="top"><h1 class="ptitle" style="margin:0;font-size:clamp(28px,4.4vw,40px)">' + esc(t('tab.library')) + '</h1><span class="sp"></span>' + T.ui.gearBtn() + '</header>' +
-        '<div class="seg" role="tablist" style="margin:4px 0 22px"><button type="button" role="tab" data-seg="fav" aria-pressed="' + (seg === 'fav') + '" aria-selected="' + (seg === 'fav') + '">' + esc(t('lib.fav')) + (favs.length ? ' · ' + favs.length : '') + '</button><button type="button" role="tab" data-seg="recent" aria-pressed="' + (seg === 'recent') + '" aria-selected="' + (seg === 'recent') + '">' + esc(t('lib.recent')) + '</button></div>' +
+        '<div class="seg" role="tablist" style="margin:4px 0 22px"><button type="button" role="tab" data-seg="fav" aria-pressed="' + (seg === 'fav') + '" aria-selected="' + (seg === 'fav') + '">' + esc(t('lib.fav')) + (favs.length ? ' · ' + favs.length : '') + '</button><button type="button" role="tab" data-seg="podcasts" aria-pressed="' + (seg === 'podcasts') + '" aria-selected="' + (seg === 'podcasts') + '">' + esc(t('seg.podcasts')) + (T.store.follows().length ? ' · ' + T.store.follows().length : '') + '</button><button type="button" role="tab" data-seg="recent" aria-pressed="' + (seg === 'recent') + '" aria-selected="' + (seg === 'recent') + '">' + esc(t('lib.recent')) + '</button></div>' +
         body + '</div>';
       T.ui.syncPlaying();
     }
     el.onclick = function (e) {
       var b = e.target.closest('[data-seg]');
-      if (b) { seg = b.getAttribute('data-seg'); history.replaceState(history.state, '', '#/library' + (seg === 'recent' ? '?seg=recent' : '')); render(); return; }
+      if (b) { seg = b.getAttribute('data-seg'); history.replaceState(history.state, '', '#/library' + (seg !== 'fav' ? '?seg=' + seg : '')); render(); return; }
       if (e.target.closest('#clrR')) T.ui.confirm(t('set.confirmR'), t('lib.clear'), function () { T.store.clearRecents(); render(); });
     };
     // verversen van favorieten (namen/logo's/streams kunnen veranderen); stil op de achtergrond
@@ -433,6 +483,143 @@
     }
     T.ui.libRender = render;
     render();
+  };
+
+  // ================= Podcasts (SPEC §8) =================
+  function podGenreTiles() {
+    return '<div class="tiles ptiles">' + T.pod.GENRES.map(function (g, i) {
+      var p = T.PALETTE[(i + 1) % T.PALETTE.length];
+      return '<a class="tile sm" href="#/podcasts/genre/' + g + '" style="--a:' + p[0] + ';--b:' + p[1] + '"><span class="ti">' + I('pod') + '</span><b>' + esc(T.podGenre(g)) + '</b></a>';
+    }).join('') + '</div>';
+  }
+  V.podcasts = function (el) {
+    var tk = token, c = country(), cn = cname();
+    el.innerHTML = '<div class="pg"><header class="top"><button class="iconbtn" type="button" data-act="back" aria-label="' + esc(t('back')) + '">' + I('back') + '</button><span class="sp"></span>' + T.ui.ccBtn() + '</header>' +
+      '<h1 class="ptitle">' + esc(t('pod.title')) + '</h1>' +
+      '<a class="field fake" href="#/search?m=pod" style="max-width:720px;margin-top:12px">' + I('search', 'lead') + '<span>' + esc(t('pod.search')) + '</span></a>' +
+      '<div id="pcont"></div>' +
+      '<div class="pgrid2"><section class="sec"><div class="sech"><h2>' + esc(t('pod.top', { c: cn })) + '</h2></div><div id="ptop">' + T.ui.skList(10) + '</div></section>' +
+      '<section class="sec" id="pgen"><div class="sech"><h2>' + esc(t('pod.genres')) + '</h2></div>' + podGenreTiles() + '</section></div></div>';
+    var cont = T.store.continueEps();
+    if (cont.length) el.querySelector('#pcont').innerHTML = T.ui.epRow(t('pod.continue'), cont);
+    function load() {
+      T.pod.top(c.cc).then(function (list) {
+        if (!live(tk)) return;
+        el.querySelector('#ptop').innerHTML = list.length ? T.ui.podList(list.slice(0, 50), { ranked: true }) : T.ui.empty(t('empty'), 'pod');
+      }).catch(function () { if (live(tk)) el.querySelector('#ptop').innerHTML = T.ui.error(load); });
+    }
+    load();
+    // genres: één proefverzoek; lukt de genrebron niet, dan de tegels netjes weglaten
+    T.pod.genre(c.cc, T.pod.GENRES[0]).then(function (l) { if (live(tk) && !l.length) hideG(); }).catch(function () { if (live(tk)) hideG(); });
+    function hideG() { var g = el.querySelector('#pgen'); if (g) g.hidden = true; }
+    T.ui.syncPlaying();
+  };
+  V.podGenre = function (el, p) {
+    var tk = token, c = country(), gid = String(p[0] || '');
+    el.innerHTML = '<div class="pg">' + T.ui.head(T.podGenre(gid) || t('pod.title')) + '<div id="res">' + T.ui.skList(10) + '</div></div>';
+    function load() {
+      T.pod.genre(c.cc, gid).then(function (list) {
+        if (!live(tk)) return;
+        el.querySelector('#res').innerHTML = list.length ? T.ui.podList(list, { ranked: true }) : T.ui.empty(t('pod.genreFail'), 'pod');
+      }).catch(function () { if (live(tk)) el.querySelector('#res').innerHTML = T.ui.empty(t('pod.genreFail'), 'pod'); });
+    }
+    load();
+  };
+  // podcastpagina
+  V.podcast = function (el, p) {
+    var tk = token, id = decodeURIComponent(p[0] || ''), sort = T.store.podSort;
+    var k0 = T.pod.known[id];
+    el.innerHTML = '<div class="pg">' + T.ui.head('') + '<div id="pd">' + podHead(k0 || { id: id, name: '' }, null, true) + '<div style="margin-top:24px">' + T.ui.skList(6) + '</div></div></div>';
+    var data = null;
+    function load() {
+      T.pod.lookup(id).then(function (r) {
+        if (!live(tk)) return;
+        if (!r) { el.querySelector('#pd').innerHTML = T.ui.empty(t('pod.nf'), 'alert'); return; }
+        data = r; render();
+        T.pod.describe(r.p).then(function (d) {
+          if (!live(tk) || !d) return; r.p.desc = d;
+          var n = el.querySelector('#pdesc'); if (n) { n.innerHTML = descHTML(d); }
+        });
+      }).catch(function () { if (live(tk)) el.querySelector('#pd').innerHTML = T.ui.error(load); });
+    }
+    function sorted() { var a = data.eps.slice(); if (sort === 'old') a.reverse(); return a; }
+    function render() {
+      var pp = data.p;
+      document.title = pp.name + ' · Tunr';
+      el.querySelector('#pd').innerHTML = podHead(pp, data.eps) +
+        '<section class="sec"><div class="sech"><h2>' + esc(t('pod.episodes')) + '<small>' + esc(T.epsN(data.eps.length)) + '</small></h2>' +
+        '<div class="seg sm" role="group" aria-label="' + esc(t('pod.episodes')) + '"><button type="button" data-sort="new" aria-pressed="' + (sort === 'new') + '">' + esc(t('pod.sortNew')) + '</button><button type="button" data-sort="old" aria-pressed="' + (sort === 'old') + '">' + esc(t('pod.sortOld')) + '</button></div></div>' +
+        (data.eps.length ? T.ui.epList(sorted()) : T.ui.empty(t('pod.noeps'), 'pod')) + '</section>';
+      T.ui.syncPlaying();
+    }
+    el.onclick = function (e) {
+      var s = e.target.closest('[data-sort]');
+      if (s && data) { sort = s.getAttribute('data-sort'); T.store.podSort = sort; render(); return; }
+      if (e.target.closest('[data-act="follow"]') && data) {
+        var on = T.store.toggleFollow(data.p);
+        T.ui.toast(t(on ? 'pod.toast.follow' : 'pod.toast.unfollow', { n: data.p.name }));
+        var b = el.querySelector('[data-act="follow"]'); if (b) b.outerHTML = followBtn(data.p.id);
+        return;
+      }
+      if (e.target.closest('[data-act="latest"]') && data && data.eps[0]) T.player.play(data.eps[0], data.eps);
+      var m = e.target.closest('[data-act="dmore"]');
+      if (m) { var d = el.querySelector('.pdesc'); var o = d.classList.toggle('open'); m.textContent = t(o ? 'pod.less' : 'pod.more'); }
+    };
+    T.ui.podRefresh = function () { if (data) render(); };
+    load();
+  };
+  function followBtn(id) {
+    var on = T.store.isFollowing(id);
+    return '<button class="btn ' + (on ? 'ghost' : 'white') + '" type="button" data-act="follow" aria-pressed="' + on + '">' + I(on ? 'check' : 'plus') + '<span>' + esc(t(on ? 'pod.following' : 'pod.follow')) + '</span></button>';
+  }
+  function descHTML(d) {
+    return '<p class="pdesc">' + esc(d) + '</p>' + (d.length > 220 ? '<button class="linkbtn" type="button" data-act="dmore">' + esc(t('pod.more')) + '</button>' : '');
+  }
+  function podHead(pp, eps, sk) {
+    var meta = [pp.genre, pp.count ? T.epsN(pp.count) : (eps ? T.epsN(eps.length) : '')].filter(Boolean).join(' · ');
+    var latest = eps && eps[0];
+    return '<div class="det pdet"><div>' + T.podArt(pp, 'bigart') + '</div><div><div class="head">' +
+      (sk && !pp.name ? '<div class="sk" style="height:36px;width:60%;border-radius:8px"></div>' : '<h1>' + esc(pp.name) + '</h1>') +
+      '<p class="place maker">' + esc(pp.artist || '') + '</p>' + (meta ? '<p class="pmeta">' + esc(meta) + '</p>' : '') +
+      (eps ? '<div class="acts">' + (latest ? '<button class="btn playbig" type="button" data-act="latest" data-ep-play="' + esc(latest.id) + '" data-label="' + esc(t('pod.playLatest')) + '">' + I('play') + '<span>' + esc(t('pod.playLatest')) + '</span></button>' : '') + followBtn(pp.id) +
+        '<button class="rbtn" type="button" data-act="podshare" aria-label="' + esc(t('detail.share')) + '">' + I('share') + '</button></div>' : '') + '</div>' +
+      '<div id="pdesc">' + (pp.desc ? descHTML(pp.desc) : '') + '</div></div></div>';
+  }
+  // afleveringspagina
+  V.episode = function (el, p) {
+    var tk = token, pid = decodeURIComponent(p[0] || ''), eid = decodeURIComponent(p[1] || '');
+    el.innerHTML = '<div class="pg">' + T.ui.head('') + '<div id="ed">' + T.ui.skList(4) + '</div></div>';
+    function load() {
+      T.pod.lookup(pid).then(function (r) {
+        if (!live(tk)) return;
+        var e = r && r.eps.find(function (x) { return x.id === eid; });
+        if (!e) { var ps = T.store.pos(eid); e = ps && ps.ep; }
+        if (!e) { el.querySelector('#ed').innerHTML = T.ui.empty(t('pod.epnf'), 'alert'); return; }
+        render(e, r ? r.eps : [e], r && r.p);
+      }).catch(function () {
+        var ps = T.store.pos(eid);
+        if (ps && ps.ep && live(tk)) render(ps.ep, [ps.ep], null); else if (live(tk)) el.querySelector('#ed').innerHTML = T.ui.error(load);
+      });
+    }
+    function render(e, list, pp) {
+      document.title = e.title + ' · Tunr';
+      var k = T.ui.reg(list), pr = T.ui.epProg(e), active = T.player.isActive(e.id);
+      var text = String(e.desc || e.short || '');
+      // beschrijving is soms HTML: alleen tekst, met alinea's
+      var tmp = document.createElement('div'); tmp.innerHTML = text.replace(/<(br|\/p|\/div|\/li)\s*\/?>/gi, '\n');
+      var plain = (tmp.textContent || '').split(/\n{1,}/).map(function (x) { return x.trim(); }).filter(Boolean);
+      el.querySelector('#ed').innerHTML = '<div class="det pdet epdet" data-list="' + k + '"><div data-eid="' + esc(e.id) + '">' + T.podArt({ name: e.pname, art: e.art }, 'bigart') + '</div><div><div class="head" data-eid="' + esc(e.id) + '">' +
+        '<a class="kick" href="#/podcast/' + encodeURIComponent(e.pid) + '">' + esc(e.pname || (pp && pp.name) || t('pod.show')) + '</a><h1 class="eph">' + esc(e.title) + '</h1>' +
+        '<p class="pmeta">' + esc([T.date(e.date), e.dur ? T.dur(e.dur) : '', pr.done ? t('pod.played') : pr.pct ? t('pod.left', { t: T.dur(pr.left) }) : ''].filter(Boolean).join(' · ')) + '</p>' +
+        (pr.pct > 0 && !pr.done ? '<span class="epbar wide"><i style="width:' + pr.pct.toFixed(1) + '%"></i></span>' : '') +
+        '<div class="acts"><button class="btn playbig" type="button" data-act="eplay" data-ep-play="' + esc(e.id) + '">' + I(active ? 'pause' : 'play') + '<span>' + esc(active ? t('pause') : t('play')) + '</span></button>' +
+        '<a class="btn ghost" href="#/podcast/' + encodeURIComponent(e.pid) + '">' + I('pod') + '<span>' + esc(t('pod.show')) + '</span></a>' +
+        '<button class="rbtn" type="button" data-act="epshare" aria-label="' + esc(t('detail.share')) + '">' + I('share') + '</button></div></div>' +
+        '<div class="eptext">' + plain.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + '</div></div></div>';
+      el.onclick = function (ev) { if (ev.target.closest('[data-act="epshare"]')) T.ui.share(e); };
+      T.ui.syncPlaying();
+    }
+    load();
   };
 
   // ================= Instellingen =================

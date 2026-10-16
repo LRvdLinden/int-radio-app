@@ -19,6 +19,8 @@ final class Library: ObservableObject {
 
     static let maxRecents = 30
     static let maxSearches = 8
+    static let maxPositions = 500
+    static let maxRecentEpisodes = 40
 
     @Published private(set) var favorites: [Station] = []
     @Published private(set) var recents: [Station] = []
@@ -28,6 +30,12 @@ final class Library: ObservableObject {
     /// Engelse landnaam (voor /json/states)
     @Published private(set) var countryName: String = ""
     @Published private(set) var localRegion: LocalRegion?
+    /// Gevolgde podcasts (nieuwste eerst)
+    @Published private(set) var followedPodcasts: [Podcast] = []
+    /// Afspeelposities per aflevering (episodeId → positie)
+    @Published private(set) var episodePositions: [String: EpisodePosition] = [:]
+    /// Laatst beluisterde afleveringen (compact, voor "Verder luisteren")
+    @Published private(set) var recentEpisodes: [Episode] = []
 
     private enum K {
         static let favorites = "lib.favorites"
@@ -37,7 +45,11 @@ final class Library: ObservableObject {
         static let countryName = "lib.countryName"
         static let region = "lib.region"
         static let favoritesStamp = "lib.favorites.stamp"
-        static let all = [favorites, recents, searches, country, countryName, region]
+        static let podcasts = "lib.podcasts"
+        static let podcastsStamp = "lib.podcasts.stamp"
+        static let positions = "lib.episodePositions"
+        static let episodes = "lib.recentEpisodes"
+        static let all = [favorites, recents, searches, country, countryName, region, podcasts, positions, episodes]
     }
 
     private let defaults = UserDefaults.standard
@@ -70,6 +82,9 @@ final class Library: ObservableObject {
         countryCode = defaults.string(forKey: K.country)
         countryName = defaults.string(forKey: K.countryName) ?? ""
         localRegion = decode(LocalRegion.self, defaults.data(forKey: K.region))
+        followedPodcasts = decode([Podcast].self, defaults.data(forKey: K.podcasts)) ?? []
+        episodePositions = decode([String: EpisodePosition].self, defaults.data(forKey: K.positions)) ?? [:]
+        recentEpisodes = decode([Episode].self, defaults.data(forKey: K.episodes)) ?? []
     }
 
     private func save(_ key: String, _ data: Data?) {
@@ -141,6 +156,33 @@ final class Library: ObservableObject {
                     localRegion = r
                     defaults.set(cloud.data(forKey: K.region), forKey: K.region)
                 }
+            case K.podcasts:
+                guard let remote = decode([Podcast].self, cloud.data(forKey: K.podcasts)) else { continue }
+                let remoteStamp = cloud.double(forKey: K.podcastsStamp)
+                let localStamp = defaults.double(forKey: K.podcastsStamp)
+                if remoteStamp >= localStamp {
+                    followedPodcasts = remote
+                } else {
+                    let ids = Set(followedPodcasts.map(\.id))
+                    followedPodcasts += remote.filter { !ids.contains($0.id) }
+                }
+                defaults.set(try? JSONEncoder().encode(followedPodcasts), forKey: K.podcasts)
+                defaults.set(max(remoteStamp, localStamp), forKey: K.podcastsStamp)
+                changed.send()
+            case K.positions:
+                guard let remote = decode([String: EpisodePosition].self, cloud.data(forKey: K.positions)) else { continue }
+                // per aflevering wint de nieuwste positie
+                var merged = episodePositions
+                for (id, p) in remote where (merged[id]?.updated ?? .distantPast) < p.updated { merged[id] = p }
+                episodePositions = Self.capped(merged)
+                defaults.set(try? JSONEncoder().encode(episodePositions), forKey: K.positions)
+            case K.episodes:
+                guard let remote = decode([Episode].self, cloud.data(forKey: K.episodes)) else { continue }
+                var merged = recentEpisodes
+                let ids = Set(recentEpisodes.map(\.id))
+                merged += remote.filter { !ids.contains($0.id) }
+                recentEpisodes = Array(merged.prefix(Self.maxRecentEpisodes))
+                defaults.set(try? JSONEncoder().encode(recentEpisodes), forKey: K.episodes)
             default:
                 break
             }
@@ -267,5 +309,119 @@ final class Library: ObservableObject {
     var country: Country? {
         guard let code = countryCode else { return nil }
         return Country(name: countryName, code: code, stationCount: 0)
+    }
+}
+
+// MARK: - Podcasts
+
+extension Library {
+    // MARK: Volgen
+
+    func isFollowing(_ p: Podcast) -> Bool { followedPodcasts.contains { $0.id == p.id } }
+    func isFollowing(podcastId: String) -> Bool { followedPodcasts.contains { $0.id == podcastId } }
+
+    func toggleFollow(_ p: Podcast) {
+        if isFollowing(p) { unfollow(p) } else { follow(p) }
+    }
+
+    func follow(_ p: Podcast) {
+        guard !isFollowing(p) else { return }
+        followedPodcasts.insert(p, at: 0)
+        saveFollowed()
+    }
+
+    func unfollow(_ p: Podcast) {
+        followedPodcasts.removeAll { $0.id == p.id }
+        saveFollowed()
+    }
+
+    /// Gegevens van een gevolgde podcast bijwerken (art, aantal afleveringen) na het laden van de pagina
+    func updateFollowed(_ p: Podcast) {
+        guard let i = followedPodcasts.firstIndex(where: { $0.id == p.id }) else { return }
+        let fresh = p.merged(with: followedPodcasts[i])
+        guard fresh.name != followedPodcasts[i].name || fresh.artworkURL != followedPodcasts[i].artworkURL
+                || fresh.trackCount != followedPodcasts[i].trackCount || fresh.feedURL != followedPodcasts[i].feedURL else { return }
+        followedPodcasts[i] = fresh
+        saveFollowed()
+    }
+
+    private func saveFollowed() {
+        save(K.podcasts, try? JSONEncoder().encode(followedPodcasts))
+        let stamp = Date().timeIntervalSince1970
+        defaults.set(stamp, forKey: K.podcastsStamp)
+        cloud.set(stamp, forKey: K.podcastsStamp)
+        changed.send()
+    }
+
+    // MARK: Afspeelposities
+
+    func position(for episodeId: String) -> EpisodePosition? { episodePositions[episodeId] }
+
+    /// Positie bewaren; `finished` wordt ook gezet bij ≥ 95%
+    /// `syncCloud == false` (tijdens het afspelen, elke 10 s) = alleen lokaal; bij pauze/stop ook naar iCloud.
+    func savePosition(_ e: Episode, seconds: Double, duration: Double, finished: Bool = false, syncCloud: Bool = true) {
+        guard seconds.isFinite, duration.isFinite else { return }
+        let dur = duration > 0 ? duration : e.duration
+        let done = finished || (dur > 0 && seconds / dur >= 0.95)
+        episodePositions[e.id] = EpisodePosition(seconds: done ? 0 : max(0, seconds), duration: dur,
+                                                 finished: done, updated: Date())
+        episodePositions = Self.capped(episodePositions)
+        let data = try? JSONEncoder().encode(episodePositions)
+        if syncCloud { save(K.positions, data) } else { defaults.set(data, forKey: K.positions) }
+    }
+
+    func markFinished(_ e: Episode, _ finished: Bool = true) {
+        let dur = episodePositions[e.id]?.duration ?? e.duration
+        episodePositions[e.id] = EpisodePosition(seconds: 0, duration: dur, finished: finished, updated: Date())
+        save(K.positions, try? JSONEncoder().encode(episodePositions))
+    }
+
+    /// Max. 500 posities: de oudste eruit
+    fileprivate static func capped(_ dict: [String: EpisodePosition]) -> [String: EpisodePosition] {
+        guard dict.count > maxPositions else { return dict }
+        let keep = dict.sorted { $0.value.updated > $1.value.updated }.prefix(maxPositions)
+        return Dictionary(uniqueKeysWithValues: keep.map { ($0.key, $0.value) })
+    }
+
+    // MARK: Laatst beluisterd
+
+    func pushRecentEpisode(_ e: Episode) {
+        var list = recentEpisodes.filter { $0.id != e.id }
+        list.insert(e.compact, at: 0)
+        recentEpisodes = Array(list.prefix(Self.maxRecentEpisodes))
+        save(K.episodes, try? JSONEncoder().encode(recentEpisodes))
+    }
+
+    func removeRecentEpisode(_ e: Episode) {
+        recentEpisodes.removeAll { $0.id == e.id }
+        save(K.episodes, try? JSONEncoder().encode(recentEpisodes))
+    }
+
+    /// Half beluisterde afleveringen (meest recent eerst)
+    var continueListening: [Episode] {
+        recentEpisodes
+            .compactMap { e -> (Episode, Date)? in
+                guard let p = episodePositions[e.id], !p.finished, p.seconds >= 15 else { return nil }
+                return (e, p.updated)
+            }
+            .sorted { $0.1 > $1.1 }
+            .map(\.0)
+    }
+
+    /// Laatste aflevering van elke gevolgde podcast, nieuwste eerst
+    func newEpisodes(country: String) async -> [Episode] {
+        let podcasts = Array(followedPodcasts.prefix(30))
+        guard !podcasts.isEmpty else { return [] }
+        let api = PodcastAPI.shared
+        let found: [Episode] = await withTaskGroup(of: Episode?.self) { group in
+            for p in podcasts {
+                let id = p.id
+                group.addTask { await api.latestEpisode(id, country: country) }
+            }
+            var out: [Episode] = []
+            for await e in group { if let e { out.append(e) } }
+            return out
+        }
+        return found.sorted { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }
     }
 }

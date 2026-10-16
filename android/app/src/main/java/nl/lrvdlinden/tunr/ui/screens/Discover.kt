@@ -56,6 +56,7 @@ import nl.lrvdlinden.tunr.LocaleHelper
 import nl.lrvdlinden.tunr.R
 import nl.lrvdlinden.tunr.data.GENRE_TAGS
 import nl.lrvdlinden.tunr.data.Library
+import nl.lrvdlinden.tunr.data.PodcastApi
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Station
 import nl.lrvdlinden.tunr.data.flagEmoji
@@ -66,12 +67,16 @@ import nl.lrvdlinden.tunr.ui.AppState
 import nl.lrvdlinden.tunr.ui.CircleIconButton
 import nl.lrvdlinden.tunr.ui.Dims
 import nl.lrvdlinden.tunr.ui.EqualizerBars
+import nl.lrvdlinden.tunr.ui.EpisodeRowSection
 import nl.lrvdlinden.tunr.ui.ErrorRetry
 import nl.lrvdlinden.tunr.ui.GenreChips
 import nl.lrvdlinden.tunr.ui.GridSource
 import nl.lrvdlinden.tunr.ui.LivePill
 import nl.lrvdlinden.tunr.ui.Nav
 import nl.lrvdlinden.tunr.ui.PillButton
+import nl.lrvdlinden.tunr.ui.PodcastArt
+import nl.lrvdlinden.tunr.ui.PodcastRowSection
+import nl.lrvdlinden.tunr.ui.ProgressLine
 import nl.lrvdlinden.tunr.ui.Route
 import nl.lrvdlinden.tunr.ui.SectionHeader
 import nl.lrvdlinden.tunr.ui.Skeleton
@@ -97,11 +102,20 @@ fun DiscoverScreen() {
     val recents by Library.recents.collectAsState()
     val favorites by Library.favorites.collectAsState()
     val current by RadioController.station.collectAsState()
+    val currentEpisode by RadioController.episode.collectAsState()
 
     val popular = rememberLoad(cc) { RadioBrowser.popular(cc) }
     val trending = rememberLoad(cc) { RadioBrowser.trending(cc) }
     val local = rememberLoad(cc, region) { region?.let { RadioBrowser.byState(cc, it, 40) } ?: emptyList() }
     val genres = rememberLoad(cc) { RadioBrowser.topGenres(cc, 2) }
+
+    // Podcasts (SPEC §8)
+    val topPodcasts = rememberLoad(cc) { PodcastApi.topPodcasts(cc) }
+    val followed by Library.followedPodcasts.collectAsState()
+    val progress by Library.progress.collectAsState()
+    val followedIds = followed.joinToString(",") { it.id }
+    val newEpisodes = rememberLoad(cc, followedIds) { if (followed.isEmpty()) emptyList() else Library.newEpisodes(cc, followed) }
+    val continueEpisodes = remember(progress) { Library.continueListening(progress) }
 
     // Favorieten op de achtergrond verversen (logo/stream kunnen veranderd zijn)
     LaunchedEffect(Unit) {
@@ -126,10 +140,13 @@ fun DiscoverScreen() {
         if (Device.isTV && current != null) {
             item(key = "nowplaying") { TvNowPlayingCard(current!!) }
         }
+        if (Device.isTV && currentEpisode != null) {
+            item(key = "nowplaying-episode") { TvEpisodeNowPlayingCard(currentEpisode!!) }
+        }
         item(key = "hero") {
             val list = popular.value?.take(6)
             when {
-                list != null && list.isNotEmpty() -> Hero(list, popular.value!!, firstFocus = if (current == null || !Device.isTV) firstFocus else null)
+                list != null && list.isNotEmpty() -> Hero(list, popular.value!!, firstFocus = if ((current == null && currentEpisode == null) || !Device.isTV) firstFocus else null)
                 popular.failed -> ErrorRetry(onRetry = { popular.retry(); trending.retry() }, focusRequester = firstFocus)
                 else -> Skeleton(Modifier.padding(horizontal = Dims.edge).fillMaxWidth().height(if (Device.isTV) 260.dp else 210.dp), Dims.cardRadius)
             }
@@ -148,6 +165,16 @@ fun DiscoverScreen() {
         }
         item(key = "trending") {
             StationRowSection(stringResource(R.string.trending), trending, onSeeAll = { Nav.grid(GridSource.Trending(cc)) })
+        }
+        item(key = "podcasts") {
+            PodcastRowSection(stringResource(R.string.popular_podcasts_in, land), topPodcasts,
+                onSeeAll = { Nav.push(Route.PodcastsHome) }, numbered = true)
+        }
+        if (followed.isNotEmpty()) item(key = "new-episodes") {
+            EpisodeRowSection(stringResource(R.string.new_episodes), newEpisodes)
+        }
+        if (continueEpisodes.isNotEmpty()) item(key = "continue-episodes") {
+            EpisodeRowSection(stringResource(R.string.continue_listening_podcasts), null, continueEpisodes)
         }
         if (favorites.isNotEmpty()) item(key = "favorites") {
             StationRowSection(stringResource(R.string.your_favorites), null, favorites.take(20),
@@ -350,6 +377,40 @@ private fun TvNowPlayingCard(s: Station) {
                 overflow = TextOverflow.Ellipsis)
         }
         Box(Modifier.size(56.dp).clip(CircleShape).background(T.accent).aspectRatio(1f), contentAlignment = Alignment.Center) {
+            Icon(if (playing) Icons.Rounded.Pause else Icons.Rounded.PlayArrow, null, tint = Color.White, modifier = Modifier.size(30.dp))
+        }
+    }
+}
+
+/** Tv: "Nu aan het spelen"-kaart voor een aflevering (titel, podcast, voortgang) */
+@Composable
+private fun TvEpisodeNowPlayingCard(e: nl.lrvdlinden.tunr.data.Episode) {
+    val playing by RadioController.isPlaying.collectAsState()
+    val position by RadioController.position.collectAsState()
+    val duration by RadioController.duration.collectAsState()
+    Row(
+        Modifier.padding(horizontal = Dims.edge).fillMaxWidth()
+            .tvClickable(RoundedCornerShape(Dims.cardRadius), scale = 1.02f, focusRequester = rememberInitialFocus(key = e.id)) {
+                AppState.showPlayer = true
+            }
+            .background(T.elevated).padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PodcastArt(e.art, e.podcastName, Modifier.size(96.dp), radius = 14.dp)
+        Spacer(Modifier.width(18.dp))
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.now_playing_tv).uppercase(), color = T.accent, fontSize = 13.sp,
+                    fontWeight = FontWeight.Black, letterSpacing = 1.sp)
+                Spacer(Modifier.width(10.dp))
+                EqualizerBars(playing = playing)
+            }
+            Text(e.displayTitle, style = heading(24.sp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(e.podcastName, color = T.secondary, fontSize = 15.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(8.dp))
+            ProgressLine(if (duration > 0) position.toFloat() / duration else 0f, Modifier.fillMaxWidth(0.6f))
+        }
+        Box(Modifier.size(56.dp).clip(CircleShape).background(T.accent), contentAlignment = Alignment.Center) {
             Icon(if (playing) Icons.Rounded.Pause else Icons.Rounded.PlayArrow, null, tint = Color.White, modifier = Modifier.size(30.dp))
         }
     }

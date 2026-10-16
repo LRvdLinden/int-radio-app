@@ -656,6 +656,8 @@ fun MiniPlayer(modifier: Modifier = Modifier) {
     val error by RadioController.error.collectAsState()
     val np by RadioController.nowPlaying.collectAsState()
     val queue by RadioController.queue.collectAsState()
+    val episode by RadioController.episode.collectAsState()
+    if (episode != null) { EpisodeMiniPlayer(episode!!, modifier); return }
     val s = station ?: return
     Row(
         modifier

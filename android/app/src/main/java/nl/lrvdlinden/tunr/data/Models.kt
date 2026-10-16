@@ -144,3 +144,91 @@ val GENRE_TAGS = listOf(
 
 /** Muziekgenres (Bladeren → Muziek): de chips zonder nieuws, talk en sport */
 val MUSIC_TAGS = GENRE_TAGS.filter { it != "news" && it != "talk" && it != "sports" }
+
+// MARK: podcasts (SPEC §8)
+
+/** Podcast (uit de Apple-toplijst, iTunes Search of iTunes Lookup). [id] = iTunes collectionId. */
+@Serializable
+data class Podcast(
+    val id: String = "",
+    val name: String = "",
+    val artist: String = "",
+    val artwork: String = "",
+    val feedUrl: String = "",
+    val genre: String = "",
+    val trackCount: Int = 0,
+    val releaseDate: String = "",
+) {
+    val displayName: String get() = name.trim().replace(Regex("\\s+"), " ").ifEmpty { "Podcast" }
+}
+
+/** Aflevering (iTunes Lookup, `wrapperType: podcastEpisode`). [id] = trackId. */
+@Serializable
+data class Episode(
+    val id: String = "",
+    val podcastId: String = "",
+    val podcastName: String = "",
+    val podcastArtwork: String = "",
+    val title: String = "",
+    val description: String = "",
+    val shortDescription: String = "",
+    /** ISO 8601, bv. "2024-05-01T04:00:00Z" (sorteerbaar als tekst) */
+    val releaseDate: String = "",
+    val durationMs: Long = 0,
+    val url: String = "",
+    val artwork: String = "",
+    val fileExtension: String = "",
+) {
+    val displayTitle: String get() = title.trim().replace(Regex("\\s+"), " ").ifEmpty { podcastName.ifEmpty { "Episode" } }
+
+    /** Art van de aflevering, anders die van de podcast */
+    val art: String get() = artwork.ifEmpty { podcastArtwork }
+
+    /** Minimale podcast (voor de podcastpagina, die de rest zelf ophaalt) */
+    fun podcast(): Podcast = Podcast(id = podcastId, name = podcastName, artwork = podcastArtwork)
+
+    /** Korte omschrijving als platte tekst */
+    val summary: String get() = plainText(shortDescription.ifBlank { description })
+
+    /** Volledige omschrijving als platte tekst */
+    val fullDescription: String get() = plainText(description.ifBlank { shortDescription })
+}
+
+/** Afspeelpositie van een aflevering (SPEC §8 Opslag). */
+@Serializable
+data class EpisodeProgress(
+    val episodeId: String = "",
+    val positionMs: Long = 0,
+    val durationMs: Long = 0,
+    val finished: Boolean = false,
+    val updatedAt: Long = 0,
+    /** Gegevens van de aflevering (voor "Verder luisteren"), omschrijving ingekort */
+    val episode: Episode? = null,
+) {
+    val fraction: Float
+        get() = if (durationMs <= 0) 0f else (positionMs.toFloat() / durationMs).coerceIn(0f, 1f)
+
+    /** Half beluisterd: begonnen (≥ 30 s) en nog niet af */
+    val inProgress: Boolean get() = !finished && positionMs >= 30_000
+}
+
+/** HTML (iTunes-omschrijvingen) → platte tekst */
+fun plainText(raw: String): String {
+    if (raw.isBlank()) return ""
+    val text = if (raw.contains('<') || raw.contains('&')) {
+        runCatching {
+            androidx.core.text.HtmlCompat.fromHtml(raw, androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
+        }.getOrDefault(raw)
+    } else raw
+    return text.replace(' ', ' ').replace(Regex("[ \\t]+"), " ").replace(Regex("\\n{3,}"), "\n\n").trim()
+}
+
+/** iTunes-artwork altijd in 600×600 (SPEC §8) */
+fun art600(url: String?): String {
+    val u = url?.trim().orEmpty()
+    if (u.isEmpty()) return ""
+    return u.replace(Regex("/\\d+x\\d+(bb|cc|sr)?\\.(jpg|png|webp)"), "/600x600bb.jpg")
+}
+
+/** Podcastgenres (SPEC §8): iTunes genre-id → tekst-sleutel in PodcastGenres */
+val PODCAST_GENRE_IDS = listOf(1489, 1303, 1545, 1488, 1324, 1321, 1512, 1487, 1533, 1318, 1305, 1310)

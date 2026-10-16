@@ -59,6 +59,7 @@ import nl.lrvdlinden.tunr.Device
 import nl.lrvdlinden.tunr.R
 import nl.lrvdlinden.tunr.data.GENRE_TAGS
 import nl.lrvdlinden.tunr.data.Library
+import nl.lrvdlinden.tunr.data.PODCAST_GENRE_IDS
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Station
 import nl.lrvdlinden.tunr.data.localizedCountryName
@@ -68,6 +69,10 @@ import nl.lrvdlinden.tunr.ui.Dims
 import nl.lrvdlinden.tunr.ui.ErrorRetry
 import nl.lrvdlinden.tunr.ui.GridSource
 import nl.lrvdlinden.tunr.ui.Nav
+import nl.lrvdlinden.tunr.ui.Route
+import nl.lrvdlinden.tunr.ui.SegmentedControl
+import nl.lrvdlinden.tunr.ui.podcastGenreIcon
+import nl.lrvdlinden.tunr.ui.podcastGenreLabel
 import nl.lrvdlinden.tunr.ui.SkeletonList
 import nl.lrvdlinden.tunr.ui.StationRow
 import nl.lrvdlinden.tunr.ui.T
@@ -128,16 +133,18 @@ fun SearchScreen() {
     val cc = currentCountryCode()
     var query by rememberSaveable { mutableStateOf("") }
     var worldwide by rememberSaveable { mutableStateOf(false) }
+    /** 0 = Zenders, 1 = Podcasts (SPEC §8) */
+    var segment by rememberSaveable { mutableStateOf(0) }
     var results by remember { mutableStateOf<List<Station>?>(null) }
     var failed by remember { mutableStateOf(false) }
     var attempt by remember { mutableStateOf(0) }
     val recentSearches by Library.recentSearches.collectAsState()
     val fieldFocus = rememberInitialFocus()
 
-    LaunchedEffect(query, worldwide, cc, attempt) {
+    LaunchedEffect(query, worldwide, cc, attempt, segment) {
         val q = query.trim()
         failed = false
-        if (q.length < 2) { results = null; return@LaunchedEffect }
+        if (q.length < 2 || segment != 0) { results = null; return@LaunchedEffect }
         delay(350)
         results = null
         try {
@@ -153,16 +160,54 @@ fun SearchScreen() {
     Column(Modifier.fillMaxSize().background(T.bg).statusBarsPadding()) {
         Text(stringResource(R.string.tab_search), style = heading(if (Device.isTV) 34.sp else 28.sp),
             modifier = Modifier.padding(start = Dims.edge, end = Dims.edge, top = 16.dp))
-        SearchField(query, { query = it }, stringResource(R.string.search_placeholder),
+        SegmentedControl(
+            listOf(stringResource(R.string.stations), stringResource(R.string.podcasts)), segment,
+            Modifier.padding(start = Dims.edge, end = Dims.edge, top = 12.dp).widthIn(max = 420.dp).fillMaxWidth()
+        ) { segment = it }
+        SearchField(query, { query = it },
+            stringResource(if (segment == 0) R.string.search_placeholder else R.string.search_podcasts_placeholder),
             Modifier.padding(horizontal = Dims.edge, vertical = 12.dp).widthIn(max = 720.dp), focusRequester = fieldFocus)
-        Row(Modifier.padding(horizontal = Dims.edge), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Chip(localizedCountryName(cc, cc), selected = !worldwide) { worldwide = false }
-            Chip(stringResource(R.string.worldwide), selected = worldwide) { worldwide = true }
+        if (segment == 0) {
+            Row(Modifier.padding(horizontal = Dims.edge), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Chip(localizedCountryName(cc, cc), selected = !worldwide) { worldwide = false }
+                Chip(stringResource(R.string.worldwide), selected = worldwide) { worldwide = true }
+            }
+            Spacer(Modifier.height(8.dp))
         }
-        Spacer(Modifier.height(8.dp))
 
         val q = query.trim()
         when {
+            segment == 1 && q.length >= 2 -> PodcastSearchResults(q, cc)
+            segment == 1 -> LazyColumn(contentPadding = PaddingValues(bottom = bottomContentPadding)) {
+                item {
+                    Text(stringResource(R.string.podcast_genres), style = heading(Dims.titleSize),
+                        modifier = Modifier.padding(start = Dims.edge, end = Dims.edge, top = 8.dp, bottom = 10.dp))
+                    FlowRow(Modifier.padding(horizontal = Dims.edge), horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        PODCAST_GENRE_IDS.forEach { id ->
+                            Chip(stringResource(podcastGenreLabel(id)), icon = podcastGenreIcon(id)) { Nav.push(Route.PodcastGenre(id)) }
+                        }
+                    }
+                }
+                if (recentSearches.isNotEmpty()) {
+                    item {
+                        Text(stringResource(R.string.recent_searches), style = heading(Dims.titleSize),
+                            modifier = Modifier.padding(start = Dims.edge, end = Dims.edge, top = 24.dp, bottom = 4.dp))
+                    }
+                    itemsIndexed(recentSearches, key = { _, s -> "pr$s" }) { _, s ->
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = Dims.edge - 8.dp)
+                                .tvClickable(RoundedCornerShape(10.dp), scale = 1.02f) { query = s }
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Rounded.History, null, tint = T.secondary, modifier = Modifier.size(20.dp))
+                            Spacer(Modifier.width(12.dp))
+                            Text(s, color = T.text, fontSize = 16.sp)
+                        }
+                    }
+                }
+            }
             q.length < 2 -> LazyColumn(contentPadding = PaddingValues(bottom = bottomContentPadding)) {
                 item {
                     Text(stringResource(R.string.popular_genres), style = heading(Dims.titleSize),

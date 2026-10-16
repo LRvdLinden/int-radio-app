@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import nl.lrvdlinden.tunr.AppScope
+import nl.lrvdlinden.tunr.data.Episode
+import nl.lrvdlinden.tunr.data.EpisodeCache
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.data.NowPlaying
 import nl.lrvdlinden.tunr.data.Station
@@ -64,6 +66,33 @@ object RadioController {
 
     private var autoplayChecked = false
 
+    // MARK: podcastmodus (SPEC §8)
+
+    /** Aflevering die nu speelt (dan is [station] null) */
+    private val _episode = MutableStateFlow<Episode?>(null)
+    val episode: StateFlow<Episode?> = _episode.asStateFlow()
+
+    /** Lijst afleveringen van waaruit gestart is (vorige/volgende) */
+    private val _episodeQueue = MutableStateFlow<List<Episode>>(emptyList())
+    val episodeQueue: StateFlow<List<Episode>> = _episodeQueue.asStateFlow()
+
+    /** Positie en duur in ms (alleen bij afleveringen; elke 500 ms bijgewerkt tijdens afspelen) */
+    private val _position = MutableStateFlow(0L)
+    val position: StateFlow<Long> = _position.asStateFlow()
+    private val _duration = MutableStateFlow(0L)
+    val duration: StateFlow<Long> = _duration.asStateFlow()
+    private var pollJob: Job? = null
+
+    /** Afspeelsnelheid (0,8–2,0), bewaard in de bibliotheek */
+    val speed: StateFlow<Float> get() = Library.playbackSpeed
+
+    /** Slaaptimer "Einde van aflevering" */
+    private val _sleepEndOfEpisode = MutableStateFlow(false)
+    val sleepEndOfEpisode: StateFlow<Boolean> = _sleepEndOfEpisode.asStateFlow()
+
+    /** Speelt er iets (zender of aflevering)? */
+    val hasMedia: Boolean get() = _station.value != null || _episode.value != null
+
     fun connect(context: Context) {
         if (future != null) return
         val app = context.applicationContext
@@ -93,6 +122,10 @@ object RadioController {
         val finalList = if (list.any { it.uuid == station.uuid }) list else listOf(station) + list
         val index = finalList.indexOfFirst { it.uuid == station.uuid }.coerceAtLeast(0)
         StationCache.putAll(finalList)
+        _episode.value = null
+        _episodeQueue.value = emptyList()
+        _sleepEndOfEpisode.value = false
+        stopPolling()
         _station.value = station
         _queue.value = finalList
         _error.value = false
@@ -113,6 +146,7 @@ object RadioController {
         if (c.isPlaying || c.playWhenReady && c.playbackState == Player.STATE_BUFFERING) c.pause()
         else {
             if (c.playbackState == Player.STATE_IDLE) c.prepare()
+            if (c.playbackState == Player.STATE_ENDED) c.seekTo(0L) // aflevering was afgelopen: opnieuw
             c.play()
         }
     }
@@ -121,6 +155,7 @@ object RadioController {
 
     /** Opnieuw proberen na een fout */
     fun retry() {
+        _episode.value?.let { playEpisode(it, _episodeQueue.value); return }
         val s = _station.value ?: return
         play(s, _queue.value)
     }
@@ -128,13 +163,93 @@ object RadioController {
     fun next() = withController { if (it.mediaItemCount > 1) it.seekToNext() }
     fun previous() = withController { if (it.mediaItemCount > 1) it.seekToPrevious() }
 
-    val canSkip: Boolean get() = _queue.value.size > 1
+    val canSkip: Boolean get() = if (_episode.value != null) _episodeQueue.value.size > 1 else _queue.value.size > 1
 
     fun stop() = withController {
         it.stop()
         it.clearMediaItems()
         _station.value = null
         _queue.value = emptyList()
+        _episode.value = null
+        _episodeQueue.value = emptyList()
+        _sleepEndOfEpisode.value = false
+        stopPolling()
+    }
+
+    // MARK: afleveringen
+
+    /**
+     * Speel [episode] af via dezelfde Media3-sessie; [list] = de lijst waarin hij stond (vorige/volgende blijven
+     * daarbinnen). Hervat op de bewaarde positie als de aflevering half beluisterd is.
+     */
+    fun playEpisode(episode: Episode, list: List<Episode> = listOf(episode)) {
+        val clean = list.filter { it.url.isNotEmpty() }.distinctBy { it.id }
+        val finalList = if (clean.any { it.id == episode.id }) clean else listOf(episode) + clean
+        val index = finalList.indexOfFirst { it.id == episode.id }.coerceAtLeast(0)
+        EpisodeCache.putAll(finalList)
+        val saved = Library.progressOf(episode.id)
+        val start = if (saved != null && saved.inProgress) saved.positionMs else 0L
+        _station.value = null
+        _queue.value = emptyList()
+        _nowPlaying.value = null
+        _artwork.value = null
+        _episode.value = episode
+        _episodeQueue.value = finalList
+        _error.value = false
+        _buffering.value = true
+        _position.value = start
+        _duration.value = episode.durationMs
+        withController { c ->
+            c.setMediaItems(finalList.map { it.toMediaItem() }, index, start)
+            c.setPlaybackSpeed(Library.playbackSpeed.value)
+            c.prepare()
+            c.play()
+        }
+        val def = Library.settings.value.defaultSleepMinutes
+        if (def > 0 && _sleepUntil.value == null && !_sleepEndOfEpisode.value) setSleepTimer(def)
+    }
+
+    fun seekTo(ms: Long) {
+        val d = _duration.value
+        val target = if (d > 0) ms.coerceIn(0L, d) else ms.coerceAtLeast(0L)
+        _position.value = target
+        withController { it.seekTo(target) }
+    }
+
+    /** 15 s terug */
+    fun skipBack() = withController {
+        it.seekBack()
+        _position.value = it.currentPosition
+    }
+
+    /** 30 s vooruit */
+    fun skipForward() = withController {
+        it.seekForward()
+        _position.value = it.currentPosition
+    }
+
+    fun setSpeed(value: Float) {
+        Library.setPlaybackSpeed(value)
+        if (_episode.value != null) withController { it.setPlaybackSpeed(Library.playbackSpeed.value) }
+    }
+
+    private fun startPolling() {
+        if (pollJob?.isActive == true) return
+        pollJob = AppScope.launch {
+            while (true) {
+                val c = controller
+                if (c == null || !c.isPlaying || _episode.value == null) break
+                _position.value = c.currentPosition.coerceAtLeast(0L)
+                c.duration.takeIf { it > 0 }?.let { _duration.value = it }
+                delay(500)
+            }
+            pollJob = null
+        }
+    }
+
+    private fun stopPolling() {
+        pollJob?.cancel()
+        pollJob = null
     }
 
     // MARK: slaaptimer
@@ -142,6 +257,7 @@ object RadioController {
     /** [minutes] 0 = uit */
     fun setSleepTimer(minutes: Int) {
         sleepJob?.cancel()
+        _sleepEndOfEpisode.value = false
         if (minutes <= 0) { _sleepUntil.value = null; return }
         val until = System.currentTimeMillis() + minutes * 60_000L
         _sleepUntil.value = until
@@ -150,6 +266,13 @@ object RadioController {
             pause()
             _sleepUntil.value = null
         }
+    }
+
+    /** Slaaptimer: pauzeren aan het einde van de huidige aflevering */
+    fun setSleepAtEndOfEpisode() {
+        sleepJob?.cancel()
+        _sleepUntil.value = null
+        _sleepEndOfEpisode.value = _episode.value != null
     }
 
     // MARK: automatisch verder spelen
@@ -183,6 +306,18 @@ object RadioController {
             }
         }
 
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            // "Einde van aflevering": de vorige liep vanzelf af → stoppen (aan het begin van de volgende)
+            if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO && _sleepEndOfEpisode.value) {
+                _sleepEndOfEpisode.value = false
+                controller?.pause()
+            }
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) _sleepEndOfEpisode.value = false
+        }
+
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
             // ICY-titel en albumhoes zet de dienst in de extras van het MediaItem
             readNowPlaying(controller?.currentMediaItem?.mediaMetadata ?: mediaMetadata)
@@ -195,6 +330,32 @@ object RadioController {
         if (p.isPlaying) _error.value = false
         val item: MediaItem? = p.currentMediaItem
         if (item == null) return
+        // Aflevering: podcastmodus (positie/duur, wachtrij van afleveringen)
+        val epId = episodeIdOf(item.mediaId)
+        if (epId != null) {
+            val ep = EpisodeCache[epId]
+            if (ep != null && ep.id != _episode.value?.id) {
+                _episode.value = ep
+                _station.value = null
+                _queue.value = emptyList()
+                _nowPlaying.value = null
+                _artwork.value = null
+                _error.value = false
+            }
+            if (_episodeQueue.value.none { it.id == epId }) {
+                _episodeQueue.value = (0 until p.mediaItemCount).mapNotNull { EpisodeCache[episodeIdOf(p.getMediaItemAt(it).mediaId)] }
+            }
+            _position.value = p.currentPosition.coerceAtLeast(0L)
+            val d = p.duration
+            if (d > 0) _duration.value = d else if (ep != null && ep.durationMs > 0) _duration.value = ep.durationMs
+            if (p.isPlaying) startPolling() else stopPolling()
+            return
+        }
+        if (_episode.value != null) {
+            _episode.value = null
+            _episodeQueue.value = emptyList()
+            stopPolling()
+        }
         val s = StationCache[item.mediaId]
         if (s != null && s.uuid != _station.value?.uuid) {
             _station.value = s

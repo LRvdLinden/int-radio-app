@@ -2,6 +2,8 @@ package nl.lrvdlinden.tunr.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,13 +41,20 @@ object Library {
     private const val KEY_COUNTRY = "country"
     private const val KEY_REGION = "local_region"
     private const val KEY_LAST = "last_station"
+    private const val KEY_PODCASTS = "followed_podcasts"
+    private const val KEY_PROGRESS = "episode_progress"
+    private const val KEY_SPEED = "playback_speed"
 
     private const val MAX_RECENTS = 30
     private const val MAX_SEARCHES = 8
+    /** Max. bewaarde afspeelposities (oudste eruit, SPEC §8) */
+    private const val MAX_PROGRESS = 500
 
     private lateinit var prefs: SharedPreferences
     private val json get() = Http.json
     private val stationList = ListSerializer(Station.serializer())
+    private val podcastList = ListSerializer(Podcast.serializer())
+    private val progressList = ListSerializer(EpisodeProgress.serializer())
 
     private val _favorites = MutableStateFlow<List<Station>>(emptyList())
     val favorites: StateFlow<List<Station>> = _favorites.asStateFlow()
@@ -65,6 +74,18 @@ object Library {
     private val _settings = MutableStateFlow(Settings())
     val settings: StateFlow<Settings> = _settings.asStateFlow()
 
+    /** Gevolgde podcasts (nieuwste volg-actie eerst) */
+    private val _podcasts = MutableStateFlow<List<Podcast>>(emptyList())
+    val followedPodcasts: StateFlow<List<Podcast>> = _podcasts.asStateFlow()
+
+    /** Afspeelposities per aflevering-id */
+    private val _progress = MutableStateFlow<Map<String, EpisodeProgress>>(emptyMap())
+    val progress: StateFlow<Map<String, EpisodeProgress>> = _progress.asStateFlow()
+
+    /** Afspeelsnelheid voor afleveringen (0,8–2,0) */
+    private val _speed = MutableStateFlow(1f)
+    val playbackSpeed: StateFlow<Float> = _speed.asStateFlow()
+
     private var initialized = false
 
     fun init(context: Context) {
@@ -77,6 +98,9 @@ object Library {
         _country.value = read(KEY_COUNTRY, SelectedCountry.serializer())
         _region.value = prefs.getString(KEY_REGION, null)
         _settings.value = read(KEY_SETTINGS, Settings.serializer()) ?: Settings()
+        _podcasts.value = read(KEY_PODCASTS, podcastList) ?: emptyList()
+        _progress.value = (read(KEY_PROGRESS, progressList) ?: emptyList()).associateBy { it.episodeId }
+        _speed.value = prefs.getFloat(KEY_SPEED, 1f).coerceIn(0.8f, 2f)
     }
 
     private fun <T> read(key: String, ser: kotlinx.serialization.KSerializer<T>): T? {
@@ -174,5 +198,81 @@ object Library {
         _settings.value = transform(_settings.value)
         // commit: de taal moet al op schijf staan als de activity zich direct daarna opnieuw maakt
         prefs.edit().putString(KEY_SETTINGS, json.encodeToString(Settings.serializer(), _settings.value)).commit()
+    }
+
+    // MARK: podcasts (SPEC §8)
+
+    fun isFollowing(podcastId: String): Boolean = _podcasts.value.any { it.id == podcastId }
+
+    fun toggleFollow(p: Podcast) {
+        val list = _podcasts.value
+        _podcasts.value = if (list.any { it.id == p.id }) list.filterNot { it.id == p.id } else listOf(p) + list
+        write(KEY_PODCASTS, podcastList, _podcasts.value)
+    }
+
+    /** Gevolgde podcast bijwerken met verse gegevens (art, aantal, feed), volgorde blijft */
+    fun refreshFollowed(p: Podcast) {
+        val list = _podcasts.value
+        if (list.none { it.id == p.id }) return
+        _podcasts.value = list.map { if (it.id == p.id) p else it }
+        write(KEY_PODCASTS, podcastList, _podcasts.value)
+    }
+
+    fun progressOf(episodeId: String): EpisodeProgress? = _progress.value[episodeId]
+
+    /**
+     * Positie bewaren (elke 10 s en bij pauze). ≥ 95% = beluisterd. Max [MAX_PROGRESS] posities: de oudste gaan eruit.
+     */
+    fun saveProgress(episode: Episode, positionMs: Long, durationMs: Long) {
+        if (episode.id.isEmpty()) return
+        val dur = if (durationMs > 0) durationMs else episode.durationMs
+        val finished = dur > 0 && positionMs >= dur * 0.95
+        // omschrijving inkorten: de lijst blijft klein in SharedPreferences
+        val slim = episode.copy(description = "", shortDescription = episode.summary.take(300))
+        val entry = EpisodeProgress(
+            episodeId = episode.id,
+            positionMs = if (finished) 0L else positionMs.coerceAtLeast(0L),
+            durationMs = dur,
+            finished = finished,
+            updatedAt = System.currentTimeMillis(),
+            episode = slim,
+        )
+        putProgress(entry)
+    }
+
+    fun markFinished(episode: Episode, finished: Boolean) {
+        val old = _progress.value[episode.id]
+        val slim = episode.copy(description = "", shortDescription = episode.summary.take(300))
+        putProgress(
+            EpisodeProgress(episode.id, 0L, old?.durationMs ?: episode.durationMs, finished, System.currentTimeMillis(), slim)
+        )
+    }
+
+    private fun putProgress(entry: EpisodeProgress) {
+        val map = LinkedHashMap(_progress.value)
+        map[entry.episodeId] = entry
+        val trimmed = if (map.size > MAX_PROGRESS) {
+            map.values.sortedByDescending { it.updatedAt }.take(MAX_PROGRESS).associateBy { it.episodeId }
+        } else map
+        _progress.value = trimmed
+        write(KEY_PROGRESS, progressList, trimmed.values.toList())
+    }
+
+    /** Half beluisterde afleveringen, laatst beluisterd eerst ("Verder luisteren") */
+    fun continueListening(map: Map<String, EpisodeProgress> = _progress.value, limit: Int = 20): List<Episode> =
+        map.values.filter { it.inProgress && it.episode != null }
+            .sortedByDescending { it.updatedAt }
+            .take(limit)
+            .mapNotNull { it.episode }
+
+    /** Laatste aflevering van elke gevolgde podcast, nieuwste eerst ("Nieuwe afleveringen") */
+    suspend fun newEpisodes(cc: String, podcasts: List<Podcast> = _podcasts.value): List<Episode> =
+        kotlinx.coroutines.coroutineScope {
+            podcasts.take(30).map { p -> async { PodcastApi.latestEpisode(p, cc) } }.awaitAll()
+        }.filterNotNull().sortedByDescending { it.releaseDate }
+
+    fun setPlaybackSpeed(speed: Float) {
+        _speed.value = speed.coerceIn(0.8f, 2f)
+        prefs.edit().putFloat(KEY_SPEED, _speed.value).apply()
     }
 }

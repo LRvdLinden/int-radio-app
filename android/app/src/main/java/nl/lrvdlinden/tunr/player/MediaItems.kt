@@ -7,6 +7,8 @@ import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
+import nl.lrvdlinden.tunr.data.Episode
+import nl.lrvdlinden.tunr.data.EpisodeCache
 import nl.lrvdlinden.tunr.data.Station
 import java.util.concurrent.ConcurrentHashMap
 
@@ -29,6 +31,43 @@ object Extras {
     const val NP_ART = "tunr.np_art"
     const val STATION_ART = "tunr.station_art"
     const val GENRES = "tunr.genres"
+    const val DURATION_MS = "tunr.duration_ms"
+    const val PODCAST_ID = "tunr.podcast_id"
+}
+
+/** mediaId-voorvoegsel voor podcastafleveringen ("ep:<trackId>"); zenders gebruiken hun uuid */
+const val EPISODE_PREFIX = "ep:"
+
+fun isEpisodeId(mediaId: String?): Boolean = mediaId?.startsWith(EPISODE_PREFIX) == true
+fun episodeIdOf(mediaId: String?): String? = mediaId?.takeIf { it.startsWith(EPISODE_PREFIX) }?.removePrefix(EPISODE_PREFIX)
+
+/** Aflevering → afspeelbaar MediaItem (mediaId "ep:<id>", titel, artiest = podcast, art, duur in extras). */
+fun Episode.toMediaItem(): MediaItem {
+    EpisodeCache.put(this)
+    val extras = Bundle().apply {
+        putLong(Extras.DURATION_MS, durationMs)
+        putString(Extras.PODCAST_ID, podcastId)
+    }
+    val artUri = art.trim().takeIf { it.startsWith("http") }?.let { Uri.parse(it) }
+    val meta = MediaMetadata.Builder()
+        .setTitle(displayTitle)
+        .setDisplayTitle(displayTitle)
+        .setArtist(podcastName)
+        .setAlbumTitle(podcastName)
+        .setSubtitle(podcastName)
+        .setArtworkUri(artUri)
+        .setIsPlayable(true)
+        .setIsBrowsable(false)
+        .setMediaType(MediaMetadata.MEDIA_TYPE_PODCAST_EPISODE)
+        .setExtras(extras)
+        .build()
+    return MediaItem.Builder()
+        .setMediaId(EPISODE_PREFIX + id)
+        .setUri(url)
+        .apply { if (url.contains(".m3u8", ignoreCase = true)) setMimeType(MimeTypes.APPLICATION_M3U8) }
+        .setRequestMetadata(MediaItem.RequestMetadata.Builder().setMediaUri(Uri.parse(url)).build())
+        .setMediaMetadata(meta)
+        .build()
 }
 
 /** Zender → afspeelbaar MediaItem (ook voor de bladerboom van Android Auto). */

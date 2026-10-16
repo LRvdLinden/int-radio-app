@@ -105,11 +105,12 @@ fun MainScreen() {
 @Composable
 private fun PhoneMain(content: @Composable (Tab) -> Unit) {
     val station by RadioController.station.collectAsState()
+    val episode by RadioController.episode.collectAsState()
     Column(Modifier.fillMaxSize().background(T.bg)) {
         Box(Modifier.weight(1f).fillMaxWidth()) {
             Crossfade(AppState.tab, animationSpec = tween(180), label = "tab") { content(it) }
         }
-        AnimatedVisibility(station != null, enter = expandVertically(), exit = shrinkVertically()) { MiniPlayer() }
+        AnimatedVisibility(station != null || episode != null, enter = expandVertically(), exit = shrinkVertically()) { MiniPlayer() }
         NavigationBar(containerColor = T.surface, tonalElevation = 0.dp) {
             TABS.forEach { item ->
                 NavigationBarItem(
@@ -131,6 +132,7 @@ private fun PhoneMain(content: @Composable (Tab) -> Unit) {
 @Composable
 private fun TabletMain(content: @Composable (Tab) -> Unit) {
     val station by RadioController.station.collectAsState()
+    val episode by RadioController.episode.collectAsState()
     Row(Modifier.fillMaxSize().background(T.bg)) {
         NavigationRail(containerColor = T.surface, header = {
             Spacer(Modifier.height(12.dp)); TunrLogo(18.sp); Spacer(Modifier.height(12.dp))
@@ -155,7 +157,7 @@ private fun TabletMain(content: @Composable (Tab) -> Unit) {
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 Crossfade(AppState.tab, animationSpec = tween(180), label = "tab") { content(it) }
             }
-            AnimatedVisibility(station != null, enter = expandVertically(), exit = shrinkVertically()) {
+            AnimatedVisibility(station != null || episode != null, enter = expandVertically(), exit = shrinkVertically()) {
                 Box(Modifier.navigationBarsPadding()) { MiniPlayer() }
             }
         }
@@ -168,6 +170,7 @@ private fun TvMain(content: @Composable (Tab) -> Unit) {
     val items = TABS + TabItem(Tab.SETTINGS, R.string.settings, Icons.Rounded.Settings)
     var railFocused by remember { mutableStateOf(false) }
     val station by RadioController.station.collectAsState()
+    val episode by RadioController.episode.collectAsState()
     val playing by RadioController.isPlaying.collectAsState()
     Row(Modifier.fillMaxSize().background(T.bg)) {
         Column(
@@ -187,7 +190,7 @@ private fun TvMain(content: @Composable (Tab) -> Unit) {
             items.forEach { item ->
                 if (item.tab == Tab.SETTINGS) Spacer(Modifier.weight(1f))
                 TvRailItem(item, selected = AppState.tab == item.tab, expanded = railFocused,
-                    playingHere = item.tab == Tab.DISCOVER && station != null && playing)
+                    playingHere = item.tab == Tab.DISCOVER && (station != null || episode != null) && playing)
             }
         }
         Box(Modifier.weight(1f).fillMaxHeight()) {
