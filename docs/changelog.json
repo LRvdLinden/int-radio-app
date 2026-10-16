@@ -297,6 +297,85 @@
           "en": "Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials."
         }
       ]
+    },
+    {
+      "build": 7,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Podcasts: toplijst van je land (top 50), genres en zoeken, via Bladeren → Podcasts en Zoeken (Zenders · Podcasts).",
+          "en": "Podcasts: your country's top 50, genres and search, via Browse → Podcasts and Search (Stations · Podcasts)."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Podcastpagina met beschrijving, Volgen en alle afleveringen (Nieuwste/Oudste), en een pagina per aflevering.",
+          "en": "Podcast page with description, Follow and all episodes (Newest/Oldest), plus a page per episode."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Speler voor afleveringen: tijdbalk, 15 s terug en 30 s vooruit, afspeelsnelheid 0,8× tot 2×, slaaptimer tot het einde van de aflevering en verder luisteren waar je was.",
+          "en": "Episode player: time bar, 15 s back and 30 s forward, playback speed 0.8× to 2×, sleep timer until the end of the episode and resume where you left off."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Ontdek toont Populaire podcasts, Nieuwe afleveringen van wat je volgt en Verder luisteren; Bibliotheek heeft nu Favorieten · Podcasts · Recent.",
+          "en": "Discover shows Popular podcasts, New episodes of what you follow and Continue listening; Library now has Favourites · Podcasts · Recent."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "carplay",
+            "android"
+          ],
+          "nl": "Podcasts in CarPlay en Android Auto: gevolgde podcasts en hun afleveringen, met 15/30 s-knoppen.",
+          "en": "Podcasts in CarPlay and Android Auto: followed podcasts and their episodes, with 15/30 s buttons."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Website vernieuwd: schermen, Waarom Tunr, Podcasts, Wereldkaart, Zo werkt het, Download (Coming Soon), FAQ en een footer met het buildnummer; sneller laden met WebP.",
+          "en": "Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP."
+        }
+      ]
     }
   ]
 }

@@ -4,6 +4,27 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 7
+_2026-10-16_
+
+**Nieuw**
+
+- Podcasts: toplijst van je land (top 50), genres en zoeken, via Bladeren → Podcasts en Zoeken (Zenders · Podcasts). _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Podcasts: your country's top 50, genres and search, via Browse → Podcasts and Search (Stations · Podcasts).</sub>
+- Podcastpagina met beschrijving, Volgen en alle afleveringen (Nieuwste/Oudste), en een pagina per aflevering. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Podcast page with description, Follow and all episodes (Newest/Oldest), plus a page per episode.</sub>
+- Speler voor afleveringen: tijdbalk, 15 s terug en 30 s vooruit, afspeelsnelheid 0,8× tot 2×, slaaptimer tot het einde van de aflevering en verder luisteren waar je was. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Episode player: time bar, 15 s back and 30 s forward, playback speed 0.8× to 2×, sleep timer until the end of the episode and resume where you left off.</sub>
+- Ontdek toont Populaire podcasts, Nieuwe afleveringen van wat je volgt en Verder luisteren; Bibliotheek heeft nu Favorieten · Podcasts · Recent. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Discover shows Popular podcasts, New episodes of what you follow and Continue listening; Library now has Favourites · Podcasts · Recent.</sub>
+- Podcasts in CarPlay en Android Auto: gevolgde podcasts en hun afleveringen, met 15/30 s-knoppen. _(CarPlay, Android)_  
+  <sub>Podcasts in CarPlay and Android Auto: followed podcasts and their episodes, with 15/30 s buttons.</sub>
+
+**Verbeterd**
+
+- Website vernieuwd: schermen, Waarom Tunr, Podcasts, Wereldkaart, Zo werkt het, Download (Coming Soon), FAQ en een footer met het buildnummer; sneller laden met WebP. _(Website)_  
+  <sub>Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP.</sub>
+
 ## Build 6
 _2026-10-16_
 
