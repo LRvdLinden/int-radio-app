@@ -231,14 +231,11 @@ private struct SplashSkipStyle: ButtonStyle {
 }
 
 /// De Tunr-intro-tune (Shared/Resources/tunr_tune.m4a, gemaakt met tools/make_tune.py).
-/// `.playback` + `mixWithOthers`; uit te zetten in Instellingen → Intromuziek.
+/// `.playback` + `mixWithOthers`. Build 9: speelt altijd (geen instelling meer).
 enum SplashTune {
     @MainActor private static var player: AVAudioPlayer?
 
-    static var enabled: Bool {
-        get { UserDefaults.standard.object(forKey: SettingsKey.introMusic) as? Bool ?? true }
-        set { UserDefaults.standard.set(newValue, forKey: SettingsKey.introMusic) }
-    }
+    static let enabled = true
 
     @MainActor static func play() {
         guard enabled, let url = Bundle.main.url(forResource: "tunr_tune", withExtension: "m4a") else { return }

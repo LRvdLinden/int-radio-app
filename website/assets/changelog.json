@@ -396,6 +396,37 @@
           "en": "Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it."
         }
       ]
+    },
+    {
+      "build": 9,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Je instellingen (taal, standaard-slaaptimer en automatisch verder spelen) gaan nu ook via iCloud mee tussen je iPhone, iPad, Mac en Apple TV, net als favorieten en podcasts.",
+          "en": "Your settings (language, default sleep timer and auto-resume) now also sync via iCloud between your iPhone, iPad, Mac and Apple TV, just like favourites and podcasts."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "De Tunr-intro speelt altijd bij het opstarten; de instelling Intromuziek is verdwenen.",
+          "en": "The Tunr intro always plays at start-up; the Intro music setting is gone."
+        }
+      ]
     }
   ]
 }

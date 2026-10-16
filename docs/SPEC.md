@@ -56,7 +56,7 @@ Open community-database, geen sleutel nodig.
    - op 1,45 s **klik/lock**: naald staat stil, er gaan 3 **cirkelgolven** uit (accent, uitdijend, vervagend);
    - de letters **T U N R** springen één voor één omhoog (90 ms uit elkaar, tegelijk met de 4 tonen), de schaal krimpt tot de balk onder het woordmerk;
    - glanzende veeg over de letters (2,1 s), fade-out (3,1–3,4 s).
-   - Tune: `tunr_tune.m4a` (gemaakt met `tools/make_tune.py`), speelt met `.playback` + `mixWithOthers`. Uit te zetten in Instellingen → Intromuziek.
+   - Tune: `tunr_tune.m4a` (gemaakt met `tools/make_tune.py`), speelt met `.playback` + `mixWithOthers`. Speelt altijd (niet uit te zetten, sinds build 9).
 2. **Landkeuze** (verplicht bij eerste start, daarna via Instellingen of het landknopje rechtsboven op Home):
    - titel "Kies je land" / "Choose your country", subtitel "Je kunt dit later altijd wijzigen";
    - zoekveld; bovenaan **"Voorgesteld"** met het land van het toestel; daarna **"Alle landen"** alfabetisch;
@@ -108,7 +108,8 @@ Open community-database, geen sleutel nodig.
 ### Instellingen
 - **Land** (vlag + naam, → Landkeuze)
 - **Taal**: Systeem, Nederlands, English
-- **Intromuziek** aan/uit
+- (Intromuziek is geen instelling: de tune speelt altijd)
+- **Taal, slaaptimer en automatisch verder spelen** gaan op Apple via iCloud mee tussen je apparaten
 - **Slaaptimer standaard** (uit/15/30/60)
 - **Automatisch verder spelen bij opstarten** (laatste zender, standaard uit)
 - **Recent wissen**, **Favorieten wissen** (met bevestiging)

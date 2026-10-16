@@ -200,7 +200,7 @@
 "settings.data" = "Data";
 "settings.defaultSleep" = "Default sleep timer";
 "settings.general" = "General";
-"settings.icloudFooter" = "Favourites and recent stations sync via iCloud between your iPhone, iPad, Mac and Apple TV.";
+"settings.icloudFooter" = "Favourites, recent stations, podcasts, listening positions and your settings sync via iCloud between your iPhone, iPad, Mac and Apple TV.";
 "settings.introMusic" = "Intro music";
 "settings.language" = "Language";
 "settings.languageSystem" = "System";

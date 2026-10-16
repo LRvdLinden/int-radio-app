@@ -4,6 +4,16 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 9
+_2026-10-16_
+
+**Verbeterd**
+
+- Je instellingen (taal, standaard-slaaptimer en automatisch verder spelen) gaan nu ook via iCloud mee tussen je iPhone, iPad, Mac en Apple TV, net als favorieten en podcasts. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Your settings (language, default sleep timer and auto-resume) now also sync via iCloud between your iPhone, iPad, Mac and Apple TV, just like favourites and podcasts.</sub>
+- De Tunr-intro speelt altijd bij het opstarten; de instelling Intromuziek is verdwenen. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>The Tunr intro always plays at start-up; the Intro music setting is gone.</sub>
+
 ## Build 8
 _2026-10-16_
 

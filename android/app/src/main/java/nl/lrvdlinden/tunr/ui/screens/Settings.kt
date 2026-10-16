@@ -87,7 +87,6 @@ fun SettingsScreen(onClose: (() -> Unit)?) {
                     SettingRow(stringResource(R.string.country), "${flagEmoji(cc)} ${localizedCountryName(cc, country?.name ?: cc)}",
                         focus = first) { Nav.push(Route.CountryPicker) }
                     SettingRow(stringResource(R.string.language), languageLabel(settings.language)) { dialog = "language" }
-                    SwitchRow(stringResource(R.string.intro_music), settings.introMusic) { v -> Library.updateSettings { it.copy(introMusic = v) } }
                     SettingRow(stringResource(R.string.default_sleep_timer), sleepLabel(settings.defaultSleepMinutes)) { dialog = "sleep" }
                     SwitchRow(stringResource(R.string.autoplay_last), settings.autoplayLast) { v -> Library.updateSettings { it.copy(autoplayLast = v) } }
                 }

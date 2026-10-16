@@ -4,7 +4,6 @@ import SwiftUI
 
 /// Sleutels van de instellingen (ook bruikbaar met @AppStorage)
 enum SettingsKey {
-    static let introMusic = "settings.introMusic"           // Bool, standaard aan
     static let language = Localizer.key                     // "", "nl", "en"
     static let defaultSleep = "settings.defaultSleepMinutes" // Int: 0 = uit, 15, 30, 60
     static let autoplayLast = "settings.autoplayLast"        // Bool, standaard uit

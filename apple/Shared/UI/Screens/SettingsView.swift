@@ -8,7 +8,6 @@ struct SettingsView: View {
     @EnvironmentObject private var localizer: Localizer
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(SettingsKey.introMusic) private var introMusic = true
     @AppStorage(SettingsKey.defaultSleep) private var defaultSleep = 0
     @AppStorage(SettingsKey.autoplayLast) private var autoplayLast = false
     @State private var confirmRecents = false
@@ -60,9 +59,6 @@ struct SettingsView: View {
             }
 
             Section {
-                Toggle(isOn: $introMusic) {
-                    settingLabel(L("settings.introMusic"), symbol: "music.note")
-                }
                 Picker(selection: $defaultSleep) {
                     Text(L("sleep.off")).tag(0)
                     ForEach([15, 30, 60], id: \.self) { m in Text(L("sleep.minutes", m)).tag(m) }

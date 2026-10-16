@@ -631,7 +631,6 @@
         '<a href="#/country"><span class="rico">' + I('globe') + '</span><span class="lab">' + esc(t('set.country')) + '</span><span class="val">' + (c ? T.flag(c.cc) + ' ' + esc(T.countryName(c.cc, c.name)) : '') + '</span>' + I('chev', 'chev') + '</a>' +
         '<div class="row"><span class="rico" style="--a:#6366F1;--b:#06B6D4">' + I('lang') + '</span><span class="lab">' + esc(t('set.lang')) + '</span><span class="seg" role="group" aria-label="' + esc(t('set.lang')) + '">' +
         [['system', t('set.system')], ['nl', 'Nederlands'], ['en', 'English']].map(function (o) { return '<button type="button" data-lang="' + o[0] + '" aria-pressed="' + (ls === o[0]) + '">' + esc(o[1]) + '</button>'; }).join('') + '</span></div>' +
-        '<button type="button" role="switch" aria-checked="' + intro + '" id="intro"><span class="rico" style="--a:#7C3AED;--b:#DB2777">' + I('music') + '</span><span class="lab">' + esc(t('set.intro')) + '<small>' + esc(t('set.intro.sub')) + '</small></span><span class="switch"></span></button>' +
         '</div></section>' +
         '<section class="sec"><div class="sech"><h2>' + esc(t('set.data')) + '</h2></div><div class="rows">' +
         '<button type="button" id="cr"><span class="rico" style="--a:#14B8A6;--b:#3B82F6">' + I('clock') + '</span><span class="lab danger">' + esc(t('set.clearR')) + '</span><span class="cnt">' + T.store.recents().length + '</span></button>' +
@@ -649,7 +648,6 @@
     el.onclick = function (e) {
       var l = e.target.closest('[data-lang]');
       if (l) { T.store.lang = l.getAttribute('data-lang'); return; } // store-event tekent alles opnieuw
-      if (e.target.closest('#intro')) { T.store.intro = !T.store.intro; render(); return; }
       if (e.target.closest('#cr')) T.ui.confirm(t('set.confirmR'), t('lib.clear'), function () { T.store.clearRecents(); T.ui.toast(t('set.done')); render(); });
       if (e.target.closest('#cf')) T.ui.confirm(t('set.confirmF'), t('lib.clear'), function () { T.store.clearFavs(); T.ui.toast(t('set.done')); render(); });
     };

@@ -65,7 +65,7 @@ import kotlin.math.sin
  * Splash (SPEC §3.1, ±3,4 s): frequentieschaal 88–108 fadet in, de naald zoekt met haperingen (0–1,4 s), op 1,45 s
  * klik/lock met 3 cirkelgolven, de letters T U N R springen één voor één omhoog (90 ms uit elkaar) terwijl de schaal
  * krimpt tot de balk onder het woordmerk, glanzende veeg (2,1 s) en fade-out (3,1–3,4 s).
- * Overslaan met tikken, OK (D-pad) of terug. Tune als Instellingen → Intromuziek aan staat.
+ * Overslaan met tikken, OK (D-pad) of terug. De tune speelt altijd (build 9: geen instelling meer).
  */
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
@@ -83,14 +83,14 @@ fun SplashScreen(onFinished: () -> Unit) {
 
     // Tune (mengt met andere audio: MediaPlayer vraagt zelf geen audiofocus)
     DisposableEffect(Unit) {
-        val player: MediaPlayer? = if (Library.settings.value.introMusic) runCatching {
+        val player: MediaPlayer? = runCatching {
             MediaPlayer.create(
                 context, R.raw.tunr_tune,
                 AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build(),
                 0
             )?.apply { setVolume(0.8f, 0.8f); start() }
-        }.getOrNull() else null
+        }.getOrNull()
         onDispose { runCatching { player?.stop(); player?.release() } }
     }
 

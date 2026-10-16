@@ -14,6 +14,8 @@ struct TunrApp: App {
         URLCache.shared = URLCache(memoryCapacity: 32 * 1024 * 1024, diskCapacity: 200 * 1024 * 1024)
         DeviceKind.configure()
         Brand.configurePlatform()
+        // build 9: taal, slaaptimer en automatisch verder spelen via iCloud
+        SettingsSync.shared.start()
     }
 
     var body: some Scene {

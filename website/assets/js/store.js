@@ -26,8 +26,8 @@
     },
     get langSetting() { var v = null; try { v = localStorage.getItem('tunr.lang'); } catch (e) {} return v === 'nl' || v === 'en' ? v : 'system'; },
     set lang(v) { try { if (v === 'system') localStorage.removeItem('tunr.lang'); else localStorage.setItem('tunr.lang', v); } catch (e) {} emit('lang'); },
-    get intro() { return read('intro', true); },
-    set intro(v) { write('intro', !!v); emit('settings'); },
+    // build 9: de intromuziek speelt altijd (geen instelling meer)
+    get intro() { return true; },
     get volume() { var v = read('volume', 1); return typeof v === 'number' ? Math.min(1, Math.max(0, v)) : 1; },
     set volume(v) { write('volume', v); },
 
