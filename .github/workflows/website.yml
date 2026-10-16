@@ -1,0 +1,56 @@
+name: Website
+
+# Publiceert website/ (homepage, webspeler op /web/, changelog, privacy, voorwaarden) via FTP.
+# Secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, optioneel FTP_DIR (standaard ./).
+# Zonder FTP_SERVER wordt de upload overgeslagen met een waarschuwing.
+on:
+  push:
+    branches: [main]
+    paths: ['website/**', '.github/workflows/website.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Controleer JSON
+        run: |
+          python3 -c "import json; json.load(open('website/assets/changelog.json')); json.load(open('website/manifest.webmanifest'))"
+
+      - name: FTP-gegevens aanwezig?
+        id: cfg
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_DIR: ${{ secrets.FTP_DIR }}
+        run: |
+          if [ -z "$FTP_SERVER" ]; then
+            echo "::warning::FTP_SERVER is niet ingesteld: de upload van de website wordt overgeslagen."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "dir=${FTP_DIR:-./}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload via FTP
+        if: steps.cfg.outputs.deploy == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./website/
+          server-dir: ${{ steps.cfg.outputs.dir }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.DS_Store
