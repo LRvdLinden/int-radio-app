@@ -237,14 +237,14 @@
     if (!T.player.current) return;
     T.ui.renderFull();
     full.classList.add('open'); full.setAttribute('aria-hidden', 'false');
-    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden'; document.body.classList.add('full-open');
     if (!/[?&]p=1/.test(location.hash)) history.pushState({ full: 1 }, '', location.hash.split('?')[0] + '?p=1');
     setTimeout(function () { var b = full.querySelector('[data-act="toggle"]'); if (b) b.focus(); }, 60);
   };
   T.ui.closeFull = function (fromPop) {
     if (!full.classList.contains('open')) return;
     full.classList.remove('open'); full.setAttribute('aria-hidden', 'true');
-    document.documentElement.style.overflow = '';
+    document.documentElement.style.overflow = ''; document.body.classList.remove('full-open');
     if (!fromPop && /[?&]p=1/.test(location.hash)) history.back();
     var o = mini.querySelector('.open'); if (o) o.focus();
   };

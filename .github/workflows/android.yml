@@ -1,7 +1,12 @@
 name: Android
 
-# Bouwt de Android-app (telefoon, tablet en Android TV in één APK) bij elke push die android/ raakt.
-# Alleen een controle-build; de APK komt niet openbaar op GitHub. Zelf bouwen: open android/ in Android Studio.
+# Bouwt de Android-app (telefoon, tablet, Android TV en Android Auto in één APK) bij elke push die android/ raakt.
+# Als de build slaagt en dit buildnummer nog niet bestaat:
+#   - APK in de repo: versions/android/<versie>/build-<N>/Tunr-<versie>-build<N>.apk
+#   - GitHub-release "Android 1.0.0 (build N)" met de APK als download.
+# Ondertekening: met de eigen release-sleutel uit de secrets TUNR_KEYSTORE_BASE64, TUNR_KEYSTORE_PASSWORD
+# (en optioneel TUNR_KEY_ALIAS, TUNR_KEY_PASSWORD). Zonder die secrets met android/ci-debug.keystore,
+# zodat elke APK in elk geval met dezelfde sleutel is getekend en updates over elkaar heen installeren.
 on:
   push:
     branches: [main]
@@ -10,9 +15,12 @@ on:
     paths: ['android/**']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: android-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -28,12 +36,60 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build (debug + release)
+
+      - name: Ondertekensleutel klaarzetten
+        env:
+          KS_B64: ${{ secrets.TUNR_KEYSTORE_BASE64 }}
+          KS_PW: ${{ secrets.TUNR_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.TUNR_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.TUNR_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PW" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/tunr-release.jks"
+            echo "TUNR_KEYSTORE=$RUNNER_TEMP/tunr-release.jks" >> $GITHUB_ENV
+            echo "TUNR_KEYSTORE_PASSWORD=$KS_PW" >> $GITHUB_ENV
+            echo "TUNR_KEY_ALIAS=${KS_ALIAS:-tunr}" >> $GITHUB_ENV
+            echo "TUNR_KEY_PASSWORD=${KEY_PW:-$KS_PW}" >> $GITHUB_ENV
+            echo "Release-sleutel uit de secrets"
+          else
+            echo "::warning::Geen release-sleutel in de secrets; APK wordt getekend met android/ci-debug.keystore."
+            echo "TUNR_KEYSTORE=$GITHUB_WORKSPACE/android/ci-debug.keystore" >> $GITHUB_ENV
+            echo "TUNR_KEYSTORE_PASSWORD=android" >> $GITHUB_ENV
+            echo "TUNR_KEY_ALIAS=androiddebugkey" >> $GITHUB_ENV
+            echo "TUNR_KEY_PASSWORD=android" >> $GITHUB_ENV
+          fi
+
+      - name: Build (release-APK)
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build.log
+          ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build.log
+
       - name: Foutenoverzicht
         if: failure()
         run: |
           grep -E "^e: |error:|FAILURE|What went wrong" -A3 build.log | head -200 || true
+
+      - name: APK in de repo en als GitHub-release
+        if: github.event_name != 'pull_request'
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(grep -m1 '^TUNR_VERSION=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          B=$(grep -m1 '^TUNR_BUILD=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          APK=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
+          DIR="versions/android/$V/build-$B"; OUT="$DIR/Tunr-$V-build$B.apk"; TAG="android-v$V-build$B"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+          if [ -f "$OUT" ]; then echo "$OUT bestaat al: niets te doen"; exit 0; fi
+          mkdir -p "$DIR"; cp "$APK" "$OUT"; ls -lh "$OUT"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add "$OUT"
+          git commit -m "Android $V build $B: APK [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
+          NOTES=$(awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60)
+          gh release create "$TAG" "$OUT" --target "${GITHUB_REF_NAME}" \
+            --title "Android $V (build $B)" \
+            --notes "${NOTES:-Tunr voor Android, Android TV en Android Auto — versie $V, build $B.}" \
+            || gh release upload "$TAG" "$OUT" --clobber

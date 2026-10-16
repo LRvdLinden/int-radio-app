@@ -85,25 +85,35 @@ jobs:
           tail -n 30 macos.log; exit $rc
 
       # Complete Xcode-project als zip in de repo: versions/apple/<versie>/build-<N>/ (alleen als alles slaagt en hij nog niet bestaat)
-      - name: Xcode-zip in de repo zetten
+      - name: Xcode-zip in de repo en als GitHub-release
         if: github.event_name != 'pull_request' && steps.ios.outcome == 'success' && steps.tvos.outcome == 'success' && steps.macos.outcome == 'success'
         working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           V=$(grep -m1 'MARKETING_VERSION' apple/project.yml | grep -o '[0-9][0-9.]*')
           B=$(grep -m1 'CURRENT_PROJECT_VERSION' apple/project.yml | grep -o '[0-9]\+')
-          DIR="versions/apple/$V/build-$B"; ZIP="$DIR/Tunr-$V-build$B-Xcode.zip"
+          DIR="versions/apple/$V/build-$B"; ZIP="$DIR/Tunr-$V-build$B-Xcode.zip"; TAG="apple-v$V-build$B"
           git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
           if [ -f "$ZIP" ]; then echo "$ZIP bestaat al"; exit 0; fi
-          mkdir -p "$DIR"
+          # uitpakken geeft één map "Tunr" met Tunr.xcodeproj erin: dubbelklikken en bouwen
           rm -f apple/*.log
-          zip -qr "$ZIP" apple -x 'apple/build/*' '*/xcuserdata/*' '*.DS_Store'
+          rm -rf "$RUNNER_TEMP/pkg" && mkdir -p "$RUNNER_TEMP/pkg"
+          rsync -a --exclude 'build/' --exclude 'xcuserdata/' --exclude '.DS_Store' apple/ "$RUNNER_TEMP/pkg/Tunr/"
+          mkdir -p "$DIR"
+          (cd "$RUNNER_TEMP/pkg" && zip -qry "$GITHUB_WORKSPACE/$ZIP" Tunr)
+          unzip -l "$ZIP" | grep -m1 'Tunr.xcodeproj/project.pbxproj'
           ls -lh "$ZIP"
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add "$ZIP"
-          git commit -m "Xcode-project $V build $B als zip [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
-          echo "::error::Xcode-zip niet gepusht"; exit 1
+          git commit -m "Apple $V build $B: Xcode-project als zip [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
+          NOTES=$(awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60)
+          gh release create "$TAG" "$ZIP" --target "${GITHUB_REF_NAME}" \
+            --title "Apple $V (build $B) — Xcode-project" \
+            --notes "${NOTES:-Compleet Xcode-project voor iPhone, iPad, Mac en Apple TV (+ CarPlay). Uitpakken en Tunr/Tunr.xcodeproj openen.}" \
+            || gh release upload "$TAG" "$ZIP" --clobber
 
       - name: Foutenoverzicht
         if: always()

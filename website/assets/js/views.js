@@ -193,7 +193,7 @@
   // ================= Bladeren =================
   function tile(href, key, icon, palI, big) {
     var p = T.PALETTE[palI];
-    return '<a class="tile' + (big ? ' big' : '') + '" href="' + href + '" style="--a:' + p[0] + ';--b:' + p[1] + '"><span class="ti">' + I(icon) + '</span><span class="tsm">' + I(icon) + '</span><b>' + esc(t('browse.' + key)) + '</b><small>' + esc(t('browse.' + key + '.sub')) + '</small></a>';
+    return '<a class="tile' + (big ? ' big' : '') + (big === 'full' ? ' full' : '') + '" href="' + href + '" style="--a:' + p[0] + ';--b:' + p[1] + '"><span class="ti">' + I(icon) + '</span><span class="tsm">' + I(icon) + '</span><b>' + esc(t('browse.' + key)) + '</b><small>' + esc(t('browse.' + key + '.sub')) + '</small></a>';
   }
   V.browse = function (el) {
     var region = T.store.region;
@@ -202,7 +202,7 @@
       '<div class="tiles">' +
       tile(region ? '#/browse/local/' + encodeURIComponent(region) : '#/browse/local', 'local', 'pin', 0, true) +
       tile('#/browse/music', 'music', 'music', 1) + tile('#/browse/news', 'news', 'mic', 5) + tile('#/genre/sports', 'sports', 'ball', 3) +
-      tile('#/browse/language', 'lang', 'lang', 2) + tile('#/map', 'map', 'globe', 7, false) + tile('#/top100', 'top', 'trophy', 6, true) + '</div>' +
+      tile('#/browse/language', 'lang', 'lang', 2) + tile('#/map', 'map', 'globe', 7, true) + tile('#/top100', 'top', 'trophy', 6, 'full') + '</div>' +
       '<section class="sec"><div class="sech"><h2>' + esc(t('row.genres')) + '</h2></div><div class="chips wrap">' + GENRES.map(chipHTML).join('') + '</div></section></div>';
   };
   V.local = function (el) {

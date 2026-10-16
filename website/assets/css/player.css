@@ -103,6 +103,7 @@ body.has-mini main#view{padding-bottom:calc(var(--tabh) + var(--minih) + 32px)}
 .art .logo{width:100%;height:100%;object-fit:contain}
 .art .eq{position:absolute;left:8%;bottom:8%;z-index:3;display:none;align-items:flex-end;gap:2px;height:16px;padding:5px 6px;border-radius:7px;background:#000000a6;box-sizing:content-box}
 .is-playing .art .eq,.art.is-playing .eq{display:inline-flex}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
 .eq i{width:3px;height:100%;border-radius:2px;background:var(--accent);transform-origin:bottom;animation:eq .9s ease-in-out infinite}
 .eq i:nth-child(2){animation-duration:.7s;animation-delay:-.3s}
 .eq i:nth-child(3){animation-duration:1.1s;animation-delay:-.5s}
@@ -221,6 +222,7 @@ body.has-mini main#view{padding-bottom:calc(var(--tabh) + var(--minih) + 32px)}
 .tile small{display:block;font-size:13px;font-weight:600;color:#ffffffd9;margin-top:2px}
 .tile.big{grid-column:1/-1;min-height:150px}
 .tile.big b{font-size:24px}
+.tile.full{grid-column:1/-1}
 
 /* lijsten */
 .list{display:flex;flex-direction:column;gap:4px}
@@ -399,6 +401,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radiu
 /* toast */
 #toast{position:fixed;left:50%;bottom:calc(var(--tabh) + 16px);transform:translate(-50%,20px);z-index:90;padding:11px 18px;border-radius:999px;background:#fff;color:#0A0A0C;font-weight:700;font-size:14px;box-shadow:0 14px 40px -10px #000;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+.full-open #toast{left:50%!important}
 body.has-mini #toast{bottom:calc(var(--tabh) + var(--minih) + 24px)}
 
 /* ================= kaart ================= */
@@ -500,6 +503,7 @@ body.has-mini #mapwrap{bottom:var(--tabh)}
   .tile b{font-size:22px}
   .tile .ti{width:130px;height:130px}
   .tile.big{grid-column:span 2;min-height:170px}
+  .tile.full{grid-column:1/-1}
   .tile.big b{font-size:28px}
   .det{grid-template-columns:320px minmax(0,1fr);gap:44px;align-items:start;margin-top:10px}
   .det .bigart{width:100%;margin:0}

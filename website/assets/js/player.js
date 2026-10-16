@@ -51,6 +51,8 @@
   function splash(done) {
     var el = document.getElementById('splash');
     var tune = null;
+    var timers = [], finished = false;
+    function at(ms, f) { timers.push(setTimeout(f, ms)); }
     if (T.store.intro) {
       tune = new Audio();
       var canAac = tune.canPlayType('audio/mp4; codecs="mp4a.40.2"');
@@ -66,9 +68,6 @@
       el.hidden = false;
       run(el);
     }
-    var timers = [];
-    function at(ms, f) { timers.push(setTimeout(f, ms)); }
-    var finished = false;
     function finish() {
       if (finished) return; finished = true;
       timers.forEach(clearTimeout);
