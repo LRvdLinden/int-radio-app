@@ -52,7 +52,9 @@ jobs:
           echo "::warning::Xcode-project niet gepusht"
 
       - name: Beschikbare bestemmingen (iPhone, iPad, Mac, Apple TV)
-        run: xcodebuild -showdestinations -project Tunr.xcodeproj -scheme Tunr 2>&1 | grep -E "platform:" | sed -E 's/, id:[^,]*//' | sort -u | head -40 || true
+        run: |
+          xcodebuild -showdestinations -project Tunr.xcodeproj -scheme Tunr > destinations.txt 2>&1 || true
+          grep -E "platform:" destinations.txt | sed -E 's/, id:[^,]*//' | sort -u | head -40 || true
 
       - name: Packages ophalen
         run: xcodebuild -resolvePackageDependencies -project Tunr.xcodeproj -scheme Tunr || true
@@ -100,9 +102,8 @@ jobs:
           git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
           if [ -f "$ZIP" ]; then echo "$ZIP bestaat al"; exit 0; fi
           # uitpakken geeft één map "Tunr" met Tunr.xcodeproj erin: dubbelklikken en bouwen
-          rm -f apple/*.log
           rm -rf "$RUNNER_TEMP/pkg" && mkdir -p "$RUNNER_TEMP/pkg"
-          rsync -a --exclude 'build/' --exclude 'xcuserdata/' --exclude '.DS_Store' apple/ "$RUNNER_TEMP/pkg/Tunr/"
+          rsync -a --exclude 'build/' --exclude 'xcuserdata/' --exclude '.DS_Store' --exclude '*.log' --exclude 'destinations.txt' apple/ "$RUNNER_TEMP/pkg/Tunr/"
           mkdir -p "$DIR"
           (cd "$RUNNER_TEMP/pkg" && zip -qry "$GITHUB_WORKSPACE/$ZIP" Tunr)
           unzip -l "$ZIP" | grep -m1 'Tunr.xcodeproj/project.pbxproj'
@@ -117,6 +118,23 @@ jobs:
             --title "Apple $V (build $B) — Xcode-project" \
             --notes "${NOTES:-Compleet Xcode-project voor iPhone, iPad, Mac en Apple TV (+ CarPlay). Uitpakken en Tunr/Tunr.xcodeproj openen.}" \
             || gh release upload "$TAG" "$ZIP" --clobber
+
+      # Log op de branch ci-logs (latest.txt), zodat fouten en bestemmingen ook buiten GitHub te lezen zijn
+      - name: Build-rapport op branch ci-logs
+        if: always() && github.event_name != 'pull_request'
+        working-directory: .
+        run: |
+          mkdir -p "$RUNNER_TEMP/rep"
+          {
+            echo "commit: $GITHUB_SHA"
+            echo "ios: ${{ steps.ios.outcome }}  tvos: ${{ steps.tvos.outcome }}  macos: ${{ steps.macos.outcome }}"
+            echo; echo "=== bestemmingen ==="; cat apple/destinations.txt 2>/dev/null | head -80
+            for f in ios tvos macos; do echo; echo "=== $f errors ==="; grep -E "error:" apple/$f.log 2>/dev/null | sort -u | head -150; done
+          } > "$RUNNER_TEMP/rep/latest.txt"
+          cd "$RUNNER_TEMP/rep"
+          git init -q && git checkout -q -b ci-logs
+          git add latest.txt && git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "apple $GITHUB_SHA [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" ci-logs
 
       - name: Foutenoverzicht
         if: always()
