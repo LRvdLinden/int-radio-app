@@ -33,6 +33,7 @@
 		A710CD544731291B39B61954 /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F64632FBA964CF13FE8C366 /* Cards.swift */; };
 		AAA84398B71254613645DF7B /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B211D0140C7CDBADAB4AA48 /* DiscoverView.swift */; };
 		ABCBD2868DDF846FBD92A2C8 /* Brand+Art.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AF8FE9CC0562561750ACB2 /* Brand+Art.swift */; };
+		AD2F83CB53DFE1812CF24278 /* SettingsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164A240C07605C0B5378E68C /* SettingsSync.swift */; };
 		B08869B6D2E13B95CD05AE96 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08AFD0AC63492179E7D66BFB /* CarPlaySceneDelegate.swift */; };
 		BA155AAB7179D6990D355F70 /* CountryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB13927D9EE43267041CD5FE /* CountryPickerView.swift */; };
 		BDC779F5E734081F9E678FDD /* PodcastDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF2335BEB7E807E50D53AD3 /* PodcastDetailView.swift */; };
@@ -52,6 +53,7 @@
 		0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformSupport.swift; sourceTree = "<group>"; };
 		0C65277A2F1F06D203FB1EA9 /* MiniPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayer.swift; sourceTree = "<group>"; };
 		0F64632FBA964CF13FE8C366 /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
+		164A240C07605C0B5378E68C /* SettingsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSync.swift; sourceTree = "<group>"; };
 		2531CF5372B484EEEA39F550 /* RadioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlayer.swift; sourceTree = "<group>"; };
 		383372F34C74D40469B52BC3 /* PodcastAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastAPI.swift; sourceTree = "<group>"; };
 		3C12C2BB7D4B1328705F8EC9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				6633117DC4DABCDCCE1A0EB9 /* Library.swift */,
+				164A240C07605C0B5378E68C /* SettingsSync.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -347,6 +350,7 @@
 				0386BEE23C644575C4E9444D /* RadioBrowser.swift in Sources */,
 				2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */,
 				1996F80AC404DA7C9DF005E2 /* SearchView.swift in Sources */,
+				AD2F83CB53DFE1812CF24278 /* SettingsSync.swift in Sources */,
 				D0B25D77D3484300B7E9D9D6 /* SettingsView.swift in Sources */,
 				6078071F87F48ABB9E8238AA /* SplashView.swift in Sources */,
 				9918C1D760C6BB6839770EB5 /* StationDetailView.swift in Sources */,
@@ -451,7 +455,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -520,7 +524,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
