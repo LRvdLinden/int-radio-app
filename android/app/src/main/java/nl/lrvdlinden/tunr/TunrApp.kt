@@ -5,10 +5,14 @@ import android.app.UiModeManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
+import nl.lrvdlinden.tunr.data.Http
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Settings
@@ -16,13 +20,23 @@ import java.util.Locale
 import kotlin.coroutines.CoroutineContext
 
 /** Start van het proces (ook als alleen Android Auto of de mediamelding de dienst start). */
-class TunrApp : Application() {
+class TunrApp : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         Device.init(this)
         RadioBrowser.init(this)
         Library.init(this)
     }
+
+    /** Coil gebruikt onze OkHttp-client (eigen User-Agent) en een ruime schijfcache voor zenderlogo's. */
+    override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this)
+        .okHttpClient { Http.client }
+        .crossfade(true)
+        .respectCacheHeaders(false)
+        .diskCache {
+            DiskCache.Builder().directory(cacheDir.resolve("logos")).maxSizeBytes(64L * 1024 * 1024).build()
+        }
+        .build()
 }
 
 /** Is dit een tv (Android TV / Google TV / Fire TV)? Dan de tv-indeling met D-pad-focus. */
@@ -60,9 +74,16 @@ object LocaleHelper {
     /** Context met de gekozen taal (of ongewijzigd bij "Systeem"). */
     fun wrap(base: Context): Context {
         val tag = languageTag(base)
-        if (tag == Settings.SYSTEM || tag.isBlank()) return base
+        if (tag == Settings.SYSTEM || tag.isBlank()) {
+            // terug naar Systeem: ook de standaard-Locale (landnamen, getallen) weer die van het toestel
+            val sys = android.content.res.Resources.getSystem().configuration.locales
+            if (sys.size() > 0) Locale.setDefault(sys[0])
+            return base
+        }
+        val locale = Locale(tag)
+        Locale.setDefault(locale)
         val config = Configuration(base.resources.configuration)
-        config.setLocale(Locale(tag))
+        config.setLocale(locale)
         return base.createConfigurationContext(config)
     }
 

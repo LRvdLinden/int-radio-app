@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tunr: webspeler</title>
+<meta name="description" content="Luister gratis naar tienduizenden radiozenders uit de hele wereld, direct in je browser.">
+<link rel="canonical" href="https://tunr.app/web/">
+<meta property="og:title" content="Tunr: webspeler">
+<meta property="og:description" content="Alle radio van de wereld, direct in je browser.">
+<meta property="og:image" content="https://tunr.app/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tunr">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../favicon.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://all.api.radio-browser.info" crossorigin>
+<link rel="stylesheet" href="../assets/css/player.css?v=1">
+</head>
+<body class="solo">
+<noscript><p style="padding:40px;text-align:center;color:#fff">De webspeler heeft JavaScript nodig. / The web player needs JavaScript.</p></noscript>
+
+<!-- 1. tik om te starten (browsers blokkeren autoplay) -->
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <div class="rings" aria-hidden="true"><i style="--s:220px"></i><i style="--s:380px"></i><i style="--s:560px"></i><i style="--s:760px"></i></div>
+  <div class="in">
+    <span class="logo" id="gate-logo"></span>
+    <h1 id="gate-t" data-t="tap.title">Alle radio van de wereld</h1>
+    <p data-t="tap.sub">Tik om af te stemmen</p>
+    <button class="go" id="gate-go" type="button" aria-label="Start"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg></button>
+    <small data-t="tap.hint">Met geluid · overslaan met een tik</small>
+  </div>
+</div>
+
+<!-- 2. splash (SPEC §3.1) -->
+<div id="splash" hidden aria-hidden="true">
+  <div class="stage">
+    <div class="word"><span>T</span><span>U</span><span>N</span><span>R</span></div>
+    <div class="scale">
+      <div class="ticks"></div><div class="ticks major"></div>
+      <div class="nums"><span>88</span><span>92</span><span>96</span><span>100</span><span>104</span><span>108</span></div>
+      <div class="bar"></div>
+      <div class="needle"></div>
+      <div class="waves"><i></i><i></i><i></i></div>
+    </div>
+  </div>
+  <button class="skip" type="button" data-t="splash.skip">Overslaan</button>
+</div>
+
+<div id="app">
+  <aside class="side" aria-label="Hoofdmenu">
+    <a href="#/discover" id="side-logo" aria-label="Tunr"></a>
+    <nav id="side-nav"></nav>
+    <div class="foot" id="side-foot"></div>
+  </aside>
+  <main id="view" tabindex="-1"></main>
+  <nav class="tabs" id="tabs" aria-label="Hoofdmenu"></nav>
+  <div id="mini" hidden></div>
+</div>
+
+<section id="full" aria-hidden="true" aria-label="Speler" role="dialog" aria-modal="true"></section>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../assets/js/brand.js?v=1"></script>
+<script src="../assets/js/store.js?v=1"></script>
+<script src="../assets/js/strings.js?v=1"></script>
+<script src="../assets/js/api.js?v=1"></script>
+<script src="../assets/js/audio.js?v=1"></script>
+<script src="../assets/js/ui.js?v=1"></script>
+<script src="../assets/js/views.js?v=1"></script>
+<script src="../assets/js/map.js?v=1"></script>
+<script src="../assets/js/player.js?v=1"></script>
+</body>
+</html>

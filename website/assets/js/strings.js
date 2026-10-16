@@ -1,0 +1,152 @@
+// Tunr webspeler: teksten (NL/EN, zelfde als de apps) en kleine hulpjes (vlag, landnaam, getallen, StationArt).
+(function () {
+  var T = window.T = window.T || {};
+  var S = {
+    nl: {
+      'tap.title': 'Alle radio van de wereld', 'tap.sub': 'Tik om af te stemmen', 'tap.btn': 'Start', 'tap.hint': 'Met geluid · overslaan met een tik',
+      'splash.skip': 'Overslaan',
+      'tab.discover': 'Ontdek', 'tab.browse': 'Bladeren', 'tab.map': 'Kaart', 'tab.search': 'Zoeken', 'tab.library': 'Bibliotheek', 'tab.settings': 'Instellingen',
+      'greet.morning': 'Goedemorgen', 'greet.afternoon': 'Goedemiddag', 'greet.evening': 'Goedenavond', 'greet.night': 'Goedenacht',
+      'country.title': 'Kies je land', 'country.sub': 'Je kunt dit later altijd wijzigen', 'country.search': 'Zoek een land', 'country.suggested': 'Voorgesteld', 'country.all': 'Alle landen', 'country.none': 'Geen land gevonden',
+      'stations': '{n} zenders', 'station1': '1 zender',
+      'row.continue': 'Verder luisteren', 'row.local': 'Lokaal', 'row.popular': 'Populair in {c}', 'row.trending': 'Trending', 'row.favorites': 'Jouw favorieten', 'row.genres': 'Genres', 'row.genre': '{g} in {c}',
+      'all': 'Alles', 'listen': 'Luister', 'info': 'Info', 'play': 'Afspelen', 'pause': 'Pauze', 'stop': 'Stop', 'retry': 'Opnieuw', 'back': 'Terug', 'close': 'Sluiten', 'more': 'Meer',
+      'local.pick': 'Kies je regio', 'local.pick.sub': 'Zenders uit je eigen provincie of staat, voortaan hier op Ontdek.', 'local.make': 'Maak dit mijn regio', 'local.is': 'Jouw regio', 'local.regions': 'Regio\'s in {c}', 'local.none': 'Geen regio\'s gevonden voor dit land.', 'local.filter': 'Zoek een regio',
+      'browse.local': 'Lokaal', 'browse.music': 'Muziek', 'browse.news': 'Nieuws & Talk', 'browse.sports': 'Sport', 'browse.lang': 'Op taal', 'browse.map': 'Wereldkaart', 'browse.top': 'Top 100 wereldwijd',
+      'browse.local.sub': 'Je provincie of staat', 'browse.music.sub': 'Van pop tot klassiek', 'browse.news.sub': 'Nieuws, praat en debat', 'browse.sports.sub': 'Live verslag', 'browse.lang.sub': 'Radio in elke taal', 'browse.map.sub': 'Draai de wereld rond', 'browse.top.sub': 'Meest beluisterd',
+      'news.news': 'Nieuws', 'news.talk': 'Talk',
+      'g.pop': 'Pop', 'g.news': 'Nieuws', 'g.rock': 'Rock', 'g.dance': 'Dance', 'g.jazz': 'Jazz', 'g.classical': 'Klassiek', 'g.hits': 'Hits', 'g.talk': 'Talk', 'g.sports': 'Sport', 'g.oldies': 'Oldies', 'g.hiphop': 'Hiphop', 'g.country': 'Country', 'g.ambient': 'Ambient', 'g.christian': 'Christelijk',
+      'genre.world': 'Weinig zenders in {c}, daarom wereldwijd.',
+      'map.world': 'Wereld', 'map.country': '{c}', 'map.random': 'Willekeurig', 'map.loading': 'Kaart laden…', 'map.fail.t': 'De kaart kan nu niet worden geladen', 'map.fail.p': 'Controleer je verbinding of een blokkering van externe scripts. Bladeren en Zoeken werken gewoon.', 'map.count': '{n} zenders op de kaart', 'map.none': 'Geen zenders met een locatie in dit land. Probeer Wereld.', 'map.near': 'In de buurt',
+      'detail.website': 'Website', 'detail.share': 'Delen', 'detail.fav': 'Favoriet', 'detail.similar': 'Vergelijkbare zenders', 'detail.codec': 'Codec', 'detail.bitrate': 'Bitrate', 'detail.lang': 'Taal', 'detail.votes': 'Stemmen', 'detail.clicks': 'Luisteraars', 'detail.hls': 'HLS', 'yes': 'ja', 'no': 'nee', 'kbps': '{n} kbps', 'detail.nf': 'Deze zender is niet gevonden.', 'detail.np': 'Nu aan het spelen',
+      'player.live': 'Live', 'player.prev': 'Vorige zender', 'player.next': 'Volgende zender', 'player.sleep': 'Slaaptimer', 'player.info': 'Zenderinfo', 'player.share': 'Delen', 'player.open': 'Speler openen', 'player.volume': 'Volume', 'player.loading': 'Verbinden…', 'player.playing': 'Nu live', 'player.paused': 'Gepauzeerd',
+      'player.err': 'Deze zender is nu niet bereikbaar', 'player.blocked': 'Deze zender kan alleen in de app worden afgespeeld', 'player.blocked.p': 'De zender gebruikt een onbeveiligde verbinding die browsers blokkeren. In de apps speelt hij wel.', 'player.apps': 'Apps: binnenkort in de App Store en Google Play',
+      'sleep.off': 'Uit', 'sleep.min': '{n} min', 'sleep.left': 'Stopt over {t}', 'sleep.set': 'Slaaptimer: {n} minuten', 'sleep.cleared': 'Slaaptimer uit', 'sleep.done': 'Slaaptimer: radio gestopt',
+      'search.ph': 'Zenders, genres, steden…', 'search.world': 'Wereldwijd', 'search.genres': 'Populaire genres', 'search.recent': 'Recent gezocht', 'search.clear': 'Wissen', 'search.none': 'Niets gevonden voor "{q}"', 'search.results': 'Resultaten',
+      'lib.fav': 'Favorieten', 'lib.recent': 'Recent', 'lib.empty': 'Tik op het hartje bij een zender om hem hier te bewaren', 'lib.empty.r': 'Zenders die je hebt beluisterd, verschijnen hier', 'lib.clear': 'Wissen', 'lib.remove': 'Verwijder uit favorieten',
+      'set.country': 'Land', 'set.lang': 'Taal', 'set.system': 'Systeem', 'set.intro': 'Intromuziek', 'set.intro.sub': 'De tune bij het opstarten', 'set.data': 'Gegevens', 'set.clearR': 'Recent wissen', 'set.clearF': 'Favorieten wissen', 'set.confirmR': 'Alle recente zenders wissen?', 'set.confirmF': 'Alle favorieten wissen?', 'set.about': 'Over', 'set.version': 'Versie', 'set.site': 'Website', 'set.privacy': 'Privacy', 'set.terms': 'Voorwaarden', 'set.source': 'Broncode', 'set.credit': 'Zendergegevens: Radio Browser (community)', 'set.credit.p': 'Alle zenders komen uit de open community-database Radio Browser. Ontbreekt er een? Voeg hem daar toe.', 'set.done': 'Gewist',
+      'toast.fav': 'Bewaard in je favorieten', 'toast.unfav': 'Verwijderd uit je favorieten', 'toast.copied': 'Link gekopieerd', 'toast.region': '{r} is nu je regio',
+      'err.load': 'Laden is niet gelukt', 'err.load.p': 'Controleer je verbinding en probeer het opnieuw.', 'empty': 'Hier staan nog geen zenders.',
+      'share.text': 'Luister naar {n} op Tunr',
+      'nav.label': 'Hoofdmenu', 'home': 'Naar de website'
+    },
+    en: {
+      'tap.title': 'Every radio station in the world', 'tap.sub': 'Tap to tune in', 'tap.btn': 'Start', 'tap.hint': 'With sound · tap to skip',
+      'splash.skip': 'Skip',
+      'tab.discover': 'Discover', 'tab.browse': 'Browse', 'tab.map': 'Map', 'tab.search': 'Search', 'tab.library': 'Library', 'tab.settings': 'Settings',
+      'greet.morning': 'Good morning', 'greet.afternoon': 'Good afternoon', 'greet.evening': 'Good evening', 'greet.night': 'Good night',
+      'country.title': 'Choose your country', 'country.sub': 'You can always change this later', 'country.search': 'Search for a country', 'country.suggested': 'Suggested', 'country.all': 'All countries', 'country.none': 'No country found',
+      'stations': '{n} stations', 'station1': '1 station',
+      'row.continue': 'Continue listening', 'row.local': 'Local', 'row.popular': 'Popular in {c}', 'row.trending': 'Trending', 'row.favorites': 'Your favourites', 'row.genres': 'Genres', 'row.genre': '{g} in {c}',
+      'all': 'See all', 'listen': 'Listen', 'info': 'Info', 'play': 'Play', 'pause': 'Pause', 'stop': 'Stop', 'retry': 'Try again', 'back': 'Back', 'close': 'Close', 'more': 'More',
+      'local.pick': 'Choose your region', 'local.pick.sub': 'Stations from your own province or state, right here on Discover.', 'local.make': 'Make this my region', 'local.is': 'Your region', 'local.regions': 'Regions in {c}', 'local.none': 'No regions found for this country.', 'local.filter': 'Search for a region',
+      'browse.local': 'Local', 'browse.music': 'Music', 'browse.news': 'News & Talk', 'browse.sports': 'Sports', 'browse.lang': 'By language', 'browse.map': 'World map', 'browse.top': 'Top 100 worldwide',
+      'browse.local.sub': 'Your province or state', 'browse.music.sub': 'From pop to classical', 'browse.news.sub': 'News, talk and debate', 'browse.sports.sub': 'Live commentary', 'browse.lang.sub': 'Radio in every language', 'browse.map.sub': 'Spin the globe', 'browse.top.sub': 'Most listened',
+      'news.news': 'News', 'news.talk': 'Talk',
+      'g.pop': 'Pop', 'g.news': 'News', 'g.rock': 'Rock', 'g.dance': 'Dance', 'g.jazz': 'Jazz', 'g.classical': 'Classical', 'g.hits': 'Hits', 'g.talk': 'Talk', 'g.sports': 'Sports', 'g.oldies': 'Oldies', 'g.hiphop': 'Hip-hop', 'g.country': 'Country', 'g.ambient': 'Ambient', 'g.christian': 'Christian',
+      'genre.world': 'Few stations in {c}, so showing worldwide.',
+      'map.world': 'World', 'map.country': '{c}', 'map.random': 'Random', 'map.loading': 'Loading map…', 'map.fail.t': 'The map can\'t be loaded right now', 'map.fail.p': 'Check your connection or anything blocking external scripts. Browse and Search still work.', 'map.count': '{n} stations on the map', 'map.none': 'No stations with a location in this country. Try World.', 'map.near': 'Nearby',
+      'detail.website': 'Website', 'detail.share': 'Share', 'detail.fav': 'Favourite', 'detail.similar': 'Similar stations', 'detail.codec': 'Codec', 'detail.bitrate': 'Bitrate', 'detail.lang': 'Language', 'detail.votes': 'Votes', 'detail.clicks': 'Listeners', 'detail.hls': 'HLS', 'yes': 'yes', 'no': 'no', 'kbps': '{n} kbps', 'detail.nf': 'This station could not be found.', 'detail.np': 'Now playing',
+      'player.live': 'Live', 'player.prev': 'Previous station', 'player.next': 'Next station', 'player.sleep': 'Sleep timer', 'player.info': 'Station info', 'player.share': 'Share', 'player.open': 'Open player', 'player.volume': 'Volume', 'player.loading': 'Connecting…', 'player.playing': 'Live now', 'player.paused': 'Paused',
+      'player.err': 'This station can\'t be reached right now', 'player.blocked': 'This station can only be played in the app', 'player.blocked.p': 'The station uses an unencrypted connection that browsers block. It plays fine in the apps.', 'player.apps': 'Apps: coming soon to the App Store and Google Play',
+      'sleep.off': 'Off', 'sleep.min': '{n} min', 'sleep.left': 'Stops in {t}', 'sleep.set': 'Sleep timer: {n} minutes', 'sleep.cleared': 'Sleep timer off', 'sleep.done': 'Sleep timer: radio stopped',
+      'search.ph': 'Stations, genres, cities…', 'search.world': 'Worldwide', 'search.genres': 'Popular genres', 'search.recent': 'Recent searches', 'search.clear': 'Clear', 'search.none': 'Nothing found for "{q}"', 'search.results': 'Results',
+      'lib.fav': 'Favourites', 'lib.recent': 'Recent', 'lib.empty': 'Tap the heart on a station to keep it here', 'lib.empty.r': 'Stations you\'ve listened to show up here', 'lib.clear': 'Clear', 'lib.remove': 'Remove from favourites',
+      'set.country': 'Country', 'set.lang': 'Language', 'set.system': 'System', 'set.intro': 'Intro music', 'set.intro.sub': 'The tune at start-up', 'set.data': 'Data', 'set.clearR': 'Clear recent', 'set.clearF': 'Clear favourites', 'set.confirmR': 'Clear all recent stations?', 'set.confirmF': 'Clear all favourites?', 'set.about': 'About', 'set.version': 'Version', 'set.site': 'Website', 'set.privacy': 'Privacy', 'set.terms': 'Terms', 'set.source': 'Source code', 'set.credit': 'Station data: Radio Browser (community)', 'set.credit.p': 'All stations come from the open community database Radio Browser. Missing one? Add it there.', 'set.done': 'Cleared',
+      'toast.fav': 'Saved to your favourites', 'toast.unfav': 'Removed from your favourites', 'toast.copied': 'Link copied', 'toast.region': '{r} is now your region',
+      'err.load': 'Couldn\'t load this', 'err.load.p': 'Check your connection and try again.', 'empty': 'No stations here yet.',
+      'share.text': 'Listen to {n} on Tunr',
+      'nav.label': 'Main menu', 'home': 'Go to the website'
+    }
+  };
+
+  function lang() { return T.store ? T.store.lang : 'nl'; }
+  T.t = function (key, vars) {
+    var l = lang();
+    var s = (S[l] && S[l][key]) || S.nl[key] || key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return s;
+  };
+  T.locale = function () { return lang() === 'nl' ? 'nl-NL' : 'en-GB'; };
+  T.num = function (n) { return Number(n || 0).toLocaleString(T.locale()); };
+  T.stationsN = function (n) { return n === 1 ? T.t('station1') : T.t('stations', { n: T.num(n) }); };
+
+  T.flag = function (cc) {
+    cc = String(cc || '').toUpperCase();
+    if (!/^[A-Z]{2}$/.test(cc)) return '🌐';
+    return String.fromCodePoint(cc.charCodeAt(0) + 127397, cc.charCodeAt(1) + 127397);
+  };
+  var dnCache = {};
+  T.countryName = function (cc, fallback) {
+    cc = String(cc || '').toUpperCase();
+    var l = lang();
+    try {
+      if (!dnCache[l]) dnCache[l] = new Intl.DisplayNames([l], { type: 'region' });
+      var n = dnCache[l].of(cc);
+      if (n && n !== cc) return n;
+    } catch (e) {}
+    return fallback || cc;
+  };
+  var lnCache = {};
+  T.languageName = function (name, code) {
+    var l = lang();
+    if (code) {
+      try {
+        if (!lnCache[l]) lnCache[l] = new Intl.DisplayNames([l], { type: 'language' });
+        var n = lnCache[l].of(String(code).split(',')[0].trim());
+        if (n && n.toLowerCase() !== String(code).toLowerCase()) return n.charAt(0).toUpperCase() + n.slice(1);
+      } catch (e) {}
+    }
+    name = String(name || '');
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
+  T.esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+
+  // ---------- StationArt (SPEC §1) ----------
+  T.PALETTE = [['#FF5A1F', '#FFB020'], ['#7C3AED', '#DB2777'], ['#0EA5E9', '#22D3EE'], ['#10B981', '#84CC16'],
+    ['#F43F5E', '#FB923C'], ['#6366F1', '#06B6D4'], ['#EAB308', '#F97316'], ['#14B8A6', '#3B82F6']];
+  T.hash = function (s) { var h = 0; s = String(s || ''); for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) | 0; } return Math.abs(h); };
+  T.pal = function (name) { return T.PALETTE[T.hash(String(name || '').toLowerCase()) % T.PALETTE.length]; };
+  T.monogram = function (name) {
+    var w = String(name || '?').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '?';
+    var m = w.length > 1 && /^\p{L}/u.test(w[1]) ? w[0].charAt(0) + w[1].charAt(0) : Array.from(w[0]).slice(0, 2).join('');
+    return m.toUpperCase();
+  };
+  T.logoUrl = function (u) {
+    u = String(u || '').trim();
+    if (!/^https?:\/\//i.test(u)) return '';
+    if (location.protocol === 'https:') u = u.replace(/^http:/i, 'https:'); // gemengde inhoud vermijden
+    return u;
+  };
+  // cls: extra klassen (bijv. 'lg'); de equalizer staat altijd in de art en is alleen zichtbaar bij .is-playing
+  T.art = function (s, cls) {
+    var p = T.pal(s.name), logo = T.logoUrl(s.favicon);
+    return '<span class="art ' + (cls || '') + '" style="--a:' + p[0] + ';--b:' + p[1] + '" aria-hidden="true">' +
+      '<span class="mono">' + T.esc(T.monogram(s.name)) + '</span>' +
+      (logo ? '<span class="lt"><img class="logo" src="' + T.esc(logo) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>' : '') +
+      '<span class="eq"><i></i><i></i><i></i><i></i></span></span>';
+  };
+  // mislukte logo's → monogram; geladen logo's → monogram weg. (load/error bubbelen niet: capture)
+  document.addEventListener('error', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'IMG' && el.classList.contains('logo')) { var lt = el.parentNode; if (lt && lt.parentNode) lt.parentNode.classList.remove('has-logo'); lt && lt.remove(); }
+  }, true);
+  document.addEventListener('load', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'IMG' && el.classList.contains('logo')) {
+      if (el.naturalWidth < 8) { var lt = el.parentNode; lt && lt.remove(); return; }
+      var a = el.closest('.art'); if (a) a.classList.add('has-logo');
+    }
+  }, true);
+
+  T.place = function (s) {
+    var parts = [];
+    if (s.state && s.state.toLowerCase() !== String(s.country).toLowerCase()) parts.push(s.state);
+    if (s.cc) parts.push(T.countryName(s.cc, s.country) + ' ' + T.flag(s.cc)); else if (s.country) parts.push(s.country);
+    return parts.join(' · ');
+  };
+  T.genreLabel = function (tag) { var k = 'g.' + tag; var v = T.t(k); return v === k ? tag.charAt(0).toUpperCase() + tag.slice(1) : v; };
+  T.tagsLine = function (s, n) { return (s.tags || []).slice(0, n || 3).map(function (t) { return T.genreLabel(t); }).join(', '); };
+})();
