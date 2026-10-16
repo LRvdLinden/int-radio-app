@@ -51,6 +51,9 @@ jobs:
           for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
           echo "::warning::Xcode-project niet gepusht"
 
+      - name: Beschikbare bestemmingen (iPhone, iPad, Mac, Apple TV)
+        run: xcodebuild -showdestinations -project Tunr.xcodeproj -scheme Tunr 2>&1 | grep -E "platform:" | sed -E 's/, id:[^,]*//' | sort -u | head -40 || true
+
       - name: Packages ophalen
         run: xcodebuild -resolvePackageDependencies -project Tunr.xcodeproj -scheme Tunr || true
 

@@ -79,3 +79,20 @@ targets:
         "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
         "CODE_SIGN_IDENTITY[sdk=macosx*]": "Apple Development"
+
+# Gedeeld scheme (staat in Tunr.xcodeproj/xcshareddata): bovenin Xcode kies je hiermee iPhone, iPad, Mac of Apple TV
+schemes:
+  Tunr:
+    build:
+      targets:
+        Tunr: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
