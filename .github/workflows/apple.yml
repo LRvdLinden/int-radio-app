@@ -1,0 +1,70 @@
+name: Apple
+
+# Bouwt de iOS/iPadOS-app (Tunr) en de Apple TV-app (TunrTV) bij elke push die apple/ raakt.
+# Alleen een controle-build voor de simulator, zonder ondertekening; er komt geen pakket op GitHub (de repo is openbaar).
+on:
+  push:
+    branches: [main]
+    paths: ['apple/**', '.github/workflows/apple.yml']
+  pull_request:
+    paths: ['apple/**']
+  workflow_dispatch:
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: apple
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode kiezen
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)"
+          xcodebuild -version
+
+      - name: Project genereren (XcodeGen)
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build iOS + iPadOS (simulator)
+        id: ios
+        continue-on-error: true
+        run: |
+          set +e
+          xcodebuild build -project Tunr.xcodeproj -scheme Tunr \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > ios.log 2>&1; rc=$?
+          tail -n 30 ios.log; exit $rc
+
+      - name: Build tvOS (simulator)
+        id: tvos
+        continue-on-error: true
+        run: |
+          set +e
+          xcodebuild build -project Tunr.xcodeproj -scheme TunrTV \
+            -destination 'generic/platform=tvOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > tvos.log 2>&1; rc=$?
+          tail -n 30 tvos.log; exit $rc
+
+      - name: Foutenoverzicht
+        if: always()
+        run: |
+          echo "## Apple-build" >> $GITHUB_STEP_SUMMARY
+          echo "- iOS/iPadOS: ${{ steps.ios.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- tvOS: ${{ steps.tvos.outcome }}" >> $GITHUB_STEP_SUMMARY
+          for f in ios tvos; do
+            echo "=== $f errors ==="
+            grep -E "error:" $f.log | sort -u | head -200 || true
+          done
+
+      - name: Status
+        if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success'
+        run: exit 1

@@ -1,0 +1,37 @@
+name: Android
+
+# Bouwt de Android-app (telefoon, tablet en Android TV in één APK) bij elke push die android/ raakt.
+# Alleen een controle-build; de APK komt niet openbaar op GitHub. Zelf bouwen: open android/ in Android Studio.
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  pull_request:
+    paths: ['android/**']
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build (debug + release)
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build.log
+      - name: Foutenoverzicht
+        if: failure()
+        run: grep -E "^e: |error:|FAILURE|What went wrong" -A3 build.log | head -200 || true

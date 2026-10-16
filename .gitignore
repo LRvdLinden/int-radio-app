@@ -1,0 +1,17 @@
+.DS_Store
+# Apple
+apple/*.xcodeproj/
+apple/build/
+xcuserdata/
+DerivedData/
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/.kotlin/
+*.iml
+# Tools
+tools/*.wav
+node_modules/
