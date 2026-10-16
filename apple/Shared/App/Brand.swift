@@ -10,11 +10,11 @@ enum Brand {
     static let bundleID = "nl.lrvdlinden.tunr"
     static let version = "1.0.0"
 
-    /// Website (voorlopig de repo), privacy en voorwaarden (website/privacy en website/voorwaarden)
-    static let website = URL(string: "https://github.com/LRvdLinden/int-radio-app")!
-    static let domain = URL(string: "https://tunr.app")!
-    static let privacy = URL(string: "https://tunr.app/privacy/")!
-    static let terms = URL(string: "https://tunr.app/voorwaarden/")!
+    /// Website (tunr.online), privacy en voorwaarden (website/privacy en website/voorwaarden)
+    static let website = URL(string: "https://tunr.online")!
+    static let domain = URL(string: "https://tunr.online")!
+    static let privacy = URL(string: "https://tunr.online/privacy/")!
+    static let terms = URL(string: "https://tunr.online/voorwaarden/")!
     static let radioBrowser = URL(string: "https://www.radio-browser.info")!
 
     /// "iOS", "iPadOS", "tvOS" of "macOS"; wordt bij het starten ingevuld (zie `configurePlatform`).

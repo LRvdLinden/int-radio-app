@@ -30,5 +30,5 @@ Tunr is een wereldwijde radio-app (werknaam) voor **iPhone, iPad, Mac, Apple TV,
 - Geen geheime sleutels in de repo. De app gebruikt alleen openbare, sleutelloze bronnen:
   - zenders: **Radio Browser** (community-database, `api.radio-browser.info`), altijd met een eigen User-Agent `Tunr/1.0.0`;
   - albumhoezen bij "nu speelt": **iTunes Search API** (zonder sleutel).
-- Website-FTP: secrets `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` (optioneel `FTP_DIR`). Zonder secrets slaat de workflow de upload over.
+- Website: **https://tunr.online**. Upload via FTPS (workflow *Website*): secrets `FTP_SERVER` = `ftp.dotenterprises.nl`, `FTP_USERNAME` = `lrvdlinden@tunr.online`, `FTP_PASSWORD` (optioneel `FTP_DIR`; de FTP-gebruiker komt al uit in de map van tunr.online). Zonder secrets slaat de workflow de upload over. Na elke upload controleert de workflow of tunr.online het nieuwe buildnummer toont.
 - De naam "Tunr" is een werknaam en staat op één plek per platform (`apple/Shared/App/Brand.swift`, `android/.../Brand.kt`, `website/assets/js/brand.js`) plus teksten; zoek-en-vervang op `Tunr` volstaat bij een nieuwe naam.

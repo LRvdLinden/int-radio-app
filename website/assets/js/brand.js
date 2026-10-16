@@ -2,7 +2,7 @@
 // Bij een nieuwe naam volstaat zoek-en-vervang op "Tunr".
 window.TUNR = {
   name: 'Tunr',
-  domain: 'https://tunr.app',
+  domain: 'https://tunr.online',
   repo: 'https://github.com/LRvdLinden/int-radio-app',
   version: '1.0.0',
   radioBrowser: 'https://www.radio-browser.info',

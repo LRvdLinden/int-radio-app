@@ -1,14 +1,14 @@
-# tunr.app
+# tunr.online
 
 De website van **Tunr**, de gratis app voor radio en podcasts uit de hele wereld, voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV / Google TV / Fire TV, Android Auto en de browser. De site is er in het Nederlands en het Engels.
 
 - Alle apps (Apple, Android) en deze site staan in één repo: [LRvdLinden/int-radio-app](https://github.com/LRvdLinden/int-radio-app)
-- Wat er nieuw is per build: [tunr.app/changelog](https://tunr.app/changelog/)
+- Wat er nieuw is per build: [tunr.online/changelog](https://tunr.online/changelog/)
 - Functionele spec en huisstijl: `docs/SPEC.md`
 
 ## /web: Tunr in je browser
 
-Op [tunr.app/web](https://tunr.app/web/) luister je zonder iets te installeren, in Chrome, Safari, Edge of Firefox, op je computer, iPad of telefoon. Geen account nodig.
+Op [tunr.online/web](https://tunr.online/web/) luister je zonder iets te installeren, in Chrome, Safari, Edge of Firefox, op je computer, iPad of telefoon. Geen account nodig.
 
 - **Zelfde schermen als de apps**: Ontdek, Bladeren, Kaart, Zoeken en Bibliotheek, met een miniplayer en een speler op volledig scherm.
 - **Radio**: zenders uit [Radio Browser](https://www.radio-browser.info) (open community-database, zonder sleutel): populair, trending, lokaal (provincie of staat), op genre, op taal, de Top 100 wereldwijd en een wereldkaart (Leaflet + CARTO-tegels).
@@ -21,9 +21,9 @@ Op [tunr.app/web](https://tunr.app/web/) luister je zonder iets te installeren, 
 
 ## Functies van de site
 
-- **Home** ([tunr.app](https://tunr.app)): uitleg over Tunr, screenshots per apparaat (WebP met JPG als terugval, per taal in `assets/img/nl` en `assets/img/en`), podcasts, de wereldkaart, downloads (nog *Coming Soon*: alleen de webspeler is live) en veelgestelde vragen.
-- **Changelog** ([/changelog](https://tunr.app/changelog/)): wat er nieuw is per build, uitklapbaar en te filteren per platform. Leest `assets/changelog.json`, gemaakt door `python3 tools/make_changelog.py` uit `docs/changelog.json`.
-- **Privacy** ([/privacy](https://tunr.app/privacy/)) en **Voorwaarden** ([/voorwaarden](https://tunr.app/voorwaarden/)).
+- **Home** ([tunr.online](https://tunr.online)): uitleg over Tunr, screenshots per apparaat (WebP met JPG als terugval, per taal in `assets/img/nl` en `assets/img/en`), podcasts, de wereldkaart, downloads (nog *Coming Soon*: alleen de webspeler is live) en veelgestelde vragen.
+- **Changelog** ([/changelog](https://tunr.online/changelog/)): wat er nieuw is per build, uitklapbaar en te filteren per platform. Leest `assets/changelog.json`, gemaakt door `python3 tools/make_changelog.py` uit `docs/changelog.json`.
+- **Privacy** ([/privacy](https://tunr.online/privacy/)) en **Voorwaarden** ([/voorwaarden](https://tunr.online/voorwaarden/)).
 - **404** (`404.html`, alle paden absoluut) voor onbekende adressen.
 - De footer toont de versie en de nieuwste build (`<span data-build>`): een vaste waarde in de HTML, en `assets/js/home.js` zet daar het hoogste buildnummer uit de changelog neer als dat hoger is.
 - Overal Nederlands en Engels: volgt de taal van je browser, of kies zelf (NL/EN rechtsboven; `?lang=nl` en `?lang=en` gaan voor). Teksten: NL in de HTML, EN in `window.TUNR_I18N` per pagina en in `assets/js/i18n.js`.
@@ -34,7 +34,7 @@ Per pagina hreflang-links voor `?lang=nl`, `?lang=en` en x-default; de canonical
 
 ## Naam en domein
 
-"Tunr" is een werknaam. De naam, het domein en de repo staan in `assets/js/brand.js`, plus `sitemap.xml`, `robots.txt` en de hreflang-links; zoek-en-vervang op `Tunr` en `tunr.app` volstaat.
+"Tunr" is een werknaam. De naam, het domein en de repo staan in `assets/js/brand.js`, plus `sitemap.xml`, `robots.txt` en de hreflang-links; zoek-en-vervang op `Tunr` en `tunr.online` volstaat.
 
 ## Publiceren
 

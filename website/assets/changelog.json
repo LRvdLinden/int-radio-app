@@ -376,6 +376,26 @@
           "en": "Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP."
         }
       ]
+    },
+    {
+      "build": 8,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Tunr heeft een eigen website: tunr.online. Website, privacy en voorwaarden in de apps verwijzen er nu naar.",
+          "en": "Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it."
+        }
+      ]
     }
   ]
 }

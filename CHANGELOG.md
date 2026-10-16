@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 8
+_2026-10-16_
+
+**Verbeterd**
+
+- Tunr heeft een eigen website: tunr.online. Website, privacy en voorwaarden in de apps verwijzen er nu naar. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it.</sub>
+
 ## Build 7
 _2026-10-16_
 

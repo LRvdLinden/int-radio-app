@@ -4,75 +4,75 @@
      Domein: ook in assets/js/brand.js (window.TUNR.domain), robots.txt en de hreflang-links. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://tunr.app/</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/"/>
+    <loc>https://tunr.online/</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/"/>
   </url>
   <url>
-    <loc>https://tunr.app/?lang=nl</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/"/>
+    <loc>https://tunr.online/?lang=nl</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/"/>
   </url>
   <url>
-    <loc>https://tunr.app/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/"/>
+    <loc>https://tunr.online/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/"/>
   </url>
   <url>
-    <loc>https://tunr.app/changelog/</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/changelog/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/changelog/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/changelog/"/>
+    <loc>https://tunr.online/changelog/</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/changelog/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/changelog/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/changelog/"/>
   </url>
   <url>
-    <loc>https://tunr.app/changelog/?lang=nl</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/changelog/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/changelog/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/changelog/"/>
+    <loc>https://tunr.online/changelog/?lang=nl</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/changelog/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/changelog/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/changelog/"/>
   </url>
   <url>
-    <loc>https://tunr.app/changelog/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/changelog/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/changelog/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/changelog/"/>
+    <loc>https://tunr.online/changelog/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/changelog/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/changelog/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/changelog/"/>
   </url>
   <url>
-    <loc>https://tunr.app/privacy/</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/privacy/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/privacy/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/privacy/"/>
+    <loc>https://tunr.online/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/privacy/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/privacy/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/privacy/"/>
   </url>
   <url>
-    <loc>https://tunr.app/privacy/?lang=nl</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/privacy/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/privacy/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/privacy/"/>
+    <loc>https://tunr.online/privacy/?lang=nl</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/privacy/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/privacy/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/privacy/"/>
   </url>
   <url>
-    <loc>https://tunr.app/privacy/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/privacy/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/privacy/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/privacy/"/>
+    <loc>https://tunr.online/privacy/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/privacy/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/privacy/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/privacy/"/>
   </url>
   <url>
-    <loc>https://tunr.app/voorwaarden/</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/voorwaarden/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/voorwaarden/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/voorwaarden/"/>
+    <loc>https://tunr.online/voorwaarden/</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/voorwaarden/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/voorwaarden/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/voorwaarden/"/>
   </url>
   <url>
-    <loc>https://tunr.app/voorwaarden/?lang=nl</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/voorwaarden/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/voorwaarden/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/voorwaarden/"/>
+    <loc>https://tunr.online/voorwaarden/?lang=nl</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/voorwaarden/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/voorwaarden/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/voorwaarden/"/>
   </url>
   <url>
-    <loc>https://tunr.app/voorwaarden/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.app/voorwaarden/?lang=nl"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.app/voorwaarden/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.app/voorwaarden/"/>
+    <loc>https://tunr.online/voorwaarden/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://tunr.online/voorwaarden/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tunr.online/voorwaarden/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tunr.online/voorwaarden/"/>
   </url>
 </urlset>

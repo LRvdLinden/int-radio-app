@@ -9,10 +9,10 @@ object Brand {
     const val APP_ID = "nl.lrvdlinden.tunr"
 
     /** Website (placeholder tot het domein live is) */
-    const val WEBSITE = "https://github.com/LRvdLinden/int-radio-app"
+    const val WEBSITE = "https://tunr.online"
     /** Privacy en voorwaarden: pagina's uit website/ (privacy/, voorwaarden/) */
-    const val PRIVACY = "https://tunr.app/privacy/"
-    const val TERMS = "https://tunr.app/voorwaarden/"
+    const val PRIVACY = "https://tunr.online/privacy/"
+    const val TERMS = "https://tunr.online/voorwaarden/"
     const val RADIO_BROWSER = "https://www.radio-browser.info"
 
     /** Versie zonder buildnummer, zoals in de User-Agent ("Tunr/1.0.0") */
