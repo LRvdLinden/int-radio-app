@@ -1,0 +1,16 @@
+# Gradle / Android Studio
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+# Buildpakketten en sleutels nooit in de (openbare) repo
+*.apk
+*.aab
+*.jks
+*.keystore

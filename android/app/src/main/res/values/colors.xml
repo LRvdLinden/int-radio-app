@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Huisstijl (docs/SPEC.md §1) -->
+    <color name="tunr_bg">#FF0A0A0C</color>
+    <color name="tunr_surface">#FF16161A</color>
+    <color name="tunr_elevated">#FF202026</color>
+    <color name="tunr_stroke">#14FFFFFF</color>
+    <color name="tunr_text">#FFFFFFFF</color>
+    <color name="tunr_secondary">#FFA8A8B3</color>
+    <color name="tunr_accent">#FFFF5A1F</color>
+    <color name="tunr_accent2">#FFFFB020</color>
+    <color name="tunr_live">#FFFF3B30</color>
+</resources>

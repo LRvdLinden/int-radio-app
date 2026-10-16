@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Altijd donker; Compose tekent alles, dit is alleen het venster (geen AppCompat) -->
+    <style name="Theme.Tunr" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/tunr_bg</item>
+        <item name="android:colorBackground">@color/tunr_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:colorAccent">@color/tunr_accent</item>
+        <item name="android:colorPrimary">@color/tunr_accent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
