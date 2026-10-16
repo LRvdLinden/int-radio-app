@@ -73,25 +73,19 @@
     })
     .catch(function () { /* terugval blijft staan */ });
 
-  // ---- schermen: verberg ontbrekende screenshots; geen enkele → rij weg ----
-  var shots = document.getElementById('shots');
-  if (shots) {
+  // ---- schermen: de sectie staat standaard verborgen en verschijnt pas als er echt een screenshot laadt;
+  //      ontbrekende screenshots verdwijnen per stuk (ook bij taalwissel)
+  var shots = document.getElementById('shots'), sec = document.getElementById('schermen');
+  if (shots && sec) {
     var imgs = shots.querySelectorAll('img');
-    var check = function () {
-      var vis = Array.prototype.some.call(shots.querySelectorAll('figure'), function (f) { return !f.hidden; });
-      var sec = document.getElementById('schermen'); if (sec) sec.hidden = !vis;
-    };
     imgs.forEach(function (img) {
-      img.addEventListener('error', function () { var f = img.closest('figure'); if (f) f.hidden = true; check(); });
-      img.addEventListener('load', function () { var f = img.closest('figure'); if (f) f.hidden = false; check(); });
+      img.addEventListener('error', function () { var f = img.closest('figure'); if (f) f.classList.add('missing'); });
+      img.addEventListener('load', function () { var f = img.closest('figure'); if (f) f.classList.remove('missing'); sec.hidden = false; });
     });
-    // lazy-plaatjes buiten beeld laden pas later: test er één direct, zodat een lege rij meteen verdwijnt
-    var first = imgs[0];
-    if (first) {
+    if (imgs[0]) {
       var probe = new Image();
-      probe.onerror = function () { var sec = document.getElementById('schermen'); if (sec) sec.hidden = true; };
-      probe.onload = function () { var sec = document.getElementById('schermen'); if (sec) sec.hidden = false; };
-      probe.src = first.getAttribute('src');
+      probe.onload = function () { sec.hidden = false; };
+      probe.src = imgs[0].getAttribute('src');
     }
   }
 })();

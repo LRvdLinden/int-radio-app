@@ -135,6 +135,7 @@
 /* ===== screenshots ===== */
 .shots{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:30px var(--g) 16px;margin:0 calc(var(--g) * -1);scrollbar-width:thin;scrollbar-color:#3a3a44 transparent}
 .shots figure{flex:none;scroll-snap-align:start}
+.shots figure.missing{display:none}
 .shots img{height:440px;width:auto;border-radius:30px;box-shadow:0 0 0 1px #ffffff1a,0 30px 60px -30px #000;background:var(--surface)}
 .shots .tv img,.shots .mac img{border-radius:14px;height:320px}
 .shots figcaption{font-size:14px;color:var(--sec);margin-top:12px;font-weight:600}
@@ -348,7 +349,7 @@
 </section>
 
 <!-- Schermen -->
-<section class="block" id="schermen" aria-labelledby="shots-h" style="padding-top:20px">
+<section class="block" id="schermen" aria-labelledby="shots-h" style="padding-top:20px" hidden>
   <div class="wrap">
     <span class="eyebrow" data-i18n="shots.eyebrow">Schermen</span>
     <h2 class="h2" id="shots-h" data-i18n="shots.title">Zo ziet Tunr eruit</h2>
