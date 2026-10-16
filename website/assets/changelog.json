@@ -255,6 +255,28 @@
           "en": "Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform."
         }
       ]
+    },
+    {
+      "build": 5,
+      "date": "2026-10-16",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Website opnieuw opgebouwd in dezelfde opzet als bingr.online, met eigen Tunr-stijl: Zo ziet Tunr eruit (echte schermen), Waarom Tunr, Wereldkaart, In drie tikken, Download Tunr (Coming Soon) en FAQ.",
+          "en": "Website rebuilt in the same layout as bingr.online, in Tunr's own style: See Tunr in action (real screens), Why Tunr, World map, Three taps, Download Tunr (Coming Soon) and FAQ."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Apps nog niet te downloaden: App Store, Google Play en de auto staan op Binnenkort; luisteren kan nu al in de browser.",
+          "en": "Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser."
+        }
+      ]
     }
   ]
 }
