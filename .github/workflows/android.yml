@@ -30,8 +30,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build (debug + release)
         run: |
+          set -o pipefail
           chmod +x gradlew
           ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build.log
       - name: Foutenoverzicht
         if: failure()
-        run: grep -E "^e: |error:|FAILURE|What went wrong" -A3 build.log | head -200 || true
+        run: |
+          grep -E "^e: |error:|FAILURE|What went wrong" -A3 build.log | head -200 || true
