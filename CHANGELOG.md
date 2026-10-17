@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 12
+_2026-10-17_
+
+**Verbeterd**
+
+- De tegelwand op de homepage toont nu logo's van populaire zenders (uit je eigen land en wereldwijd), live uit Radio Browser. _(Website)_  
+  <sub>The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser.</sub>
+
 ## Build 11
 _2026-10-17_
 

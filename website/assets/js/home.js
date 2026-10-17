@@ -1,4 +1,5 @@
-// Tunr homepage: de muur van zendertegels in de hero (gegenereerd, geen echte logo's)
+// Tunr homepage: de muur van zendertegels in de hero. Eerst gegenereerde tegels (verloop + letters); daarna worden ze
+// gevuld met de logo's van populaire zenders uit Radio Browser (eigen land voorop), zodra die echt geladen zijn
 // en de live teller (aantal zenders en landen uit Radio Browser, met een vaste terugval).
 (function () {
   var PAL = [['#FF5A1F', '#FFB020'], ['#7C3AED', '#DB2777'], ['#0EA5E9', '#22D3EE'], ['#10B981', '#84CC16'],
@@ -31,6 +32,67 @@
     wall.innerHTML = html;
   }
 
+  // ---- echte zenderlogo's in de muur ----
+  // Populaire zenders (eigen land voorop, dan wereldwijd) met een https-logo. Een tegel krijgt het logo pas als de
+  // afbeelding echt geladen is en groot genoeg is; anders blijft de gegenereerde tegel staan.
+  function fillLogos(list) {
+    if (!wall || !list || !list.length) return;
+    var tiles = Array.prototype.slice.call(wall.querySelectorAll('.tile'));
+    // niet elke tegel: ongeveer 2 op de 3, verspreid over de muur
+    tiles = tiles.filter(function (_, i) { return i % 3 !== 1; });
+    var queue = list.slice(), seen = {};
+    function next(tile) {
+      var s = queue.shift(); if (!s) return;
+      if (seen[s.favicon]) return next(tile);
+      seen[s.favicon] = 1;
+      var img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.decoding = 'async';
+      img.alt = '';
+      img.onload = function () {
+        if (img.naturalWidth < 64 || img.naturalHeight < 64) return next(tile);   // te klein of een pixel-favicon
+        if (tile.classList.contains('card')) {
+          var a = tile.querySelector('.a'); a.textContent = ''; a.appendChild(img); a.classList.add('logo');
+          var t = tile.querySelector('.t'); t.innerHTML = '<b></b><small></small>';
+          t.querySelector('b').textContent = s.name; t.querySelector('small').textContent = s.place;
+        } else {
+          var b = tile.querySelector('b'); if (b) b.remove();
+          tile.insertBefore(img, tile.firstChild); tile.classList.add('logo');
+        }
+        tile.title = s.name;
+      };
+      img.onerror = function () { next(tile); };
+      img.src = s.favicon;
+    }
+    tiles.forEach(function (tile, i) { setTimeout(function () { next(tile); }, 120 + i * 35); });
+  }
+  function cc() {
+    var m = /[-_]([A-Za-z]{2})$/.exec(navigator.language || ''); var c = m ? m[1].toUpperCase() : '';
+    if (!c) { var l = (window.TunrI18n && TunrI18n.lang) || 'nl'; c = l === 'nl' ? 'NL' : ''; }
+    return c;
+  }
+  function clean(arr) {
+    return (arr || []).map(function (x) {
+      var f = String(x.favicon || '').trim();
+      return { name: String(x.name || '').trim(), favicon: f, place: [x.state, x.country].filter(Boolean).join(', ') };
+    }).filter(function (x) { return x.name && /^https:\/\//i.test(x.favicon) && !/\.ico(\?|$)/i.test(x.favicon); });
+  }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function loadLogos(base) {
+    var key = 'tunr.wallLogos.' + (cc() || 'xx');
+    try { var c0 = JSON.parse(localStorage.getItem(key) || 'null'); if (c0 && Date.now() - c0.t < 6 * 3600e3) { fillLogos(shuffle(c0.v)); return; } } catch (e) {}
+    var q = '/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=';
+    var local = cc() ? getJSON(base + q + '80&countrycode=' + cc(), 7000).catch(function () { return []; }) : Promise.resolve([]);
+    var world = getJSON(base + q + '160', 7000).catch(function () { return []; });
+    Promise.all([local, world]).then(function (r) {
+      var a = clean(r[0]).slice(0, 40), b = shuffle(clean(r[1])).slice(0, 80);
+      var list = shuffle(a.concat(b));
+      if (!list.length) return;
+      try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: list })); } catch (e) {}
+      fillLogos(list);
+    });
+  }
+
   // ---- live teller ----
   var el = document.getElementById('counter');
   var FALLBACK = ['https://de1.api.radio-browser.info', 'https://de2.api.radio-browser.info', 'https://fi1.api.radio-browser.info'];
@@ -51,14 +113,14 @@
     var t = setTimeout(function () { ctl && ctl.abort(); }, ms || 6000);
     return fetch(u, ctl ? { signal: ctl.signal } : {}).then(function (r) { clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.json(); });
   }
+  var base = null;
   function tryServers(list) {
     if (!list.length) return Promise.reject(new Error('no server'));
-    return getJSON(list[0] + '/json/stats').catch(function () { return tryServers(list.slice(1)); });
+    return getJSON(list[0] + '/json/stats').then(function (r) { base = list[0]; return r; }, function () { return tryServers(list.slice(1)); });
   }
-  try {
-    var cached = JSON.parse(sessionStorage.getItem('tunr.stats') || 'null');
-    if (cached && Date.now() - cached.t < 3600e3) { stats = cached.v; render(); return; }
-  } catch (e) {}
+  var cachedStats = null;
+  try { cachedStats = JSON.parse(sessionStorage.getItem('tunr.stats') || 'null'); } catch (e) {}
+  if (cachedStats && Date.now() - cachedStats.t < 3600e3) { stats = cachedStats.v; render(); }
   getJSON('https://all.api.radio-browser.info/json/servers', 5000)
     .then(function (s) {
       var names = (s || []).map(function (x) { return 'https://' + x.name; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
@@ -66,6 +128,7 @@
       return tryServers(names.concat(FALLBACK));
     }, function () { return tryServers(FALLBACK); })
     .then(function (s) {
+      if (base && wall && !matchMedia('(prefers-reduced-data: reduce)').matches) loadLogos(base);
       if (!s || !s.stations) return;
       stats = { stations: s.stations, countries: s.countries, languages: s.languages };
       try { sessionStorage.setItem('tunr.stats', JSON.stringify({ t: Date.now(), v: stats })); } catch (e) {}

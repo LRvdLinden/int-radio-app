@@ -475,6 +475,20 @@
           "en": "Your last five map searches are ready when you open the search field; on Apple they sync via iCloud."
         }
       ]
+    },
+    {
+      "build": 12,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "De tegelwand op de homepage toont nu logo's van populaire zenders (uit je eigen land en wereldwijd), live uit Radio Browser.",
+          "en": "The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser."
+        }
+      ]
     }
   ]
 }
