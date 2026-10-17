@@ -503,6 +503,20 @@
           "en": "More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https."
         }
       ]
+    },
+    {
+      "build": 14,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "De tegelwand op de homepage staat nu vol met echte zenderlogo's (alle tegels), met één opvallende tegel van Tunr zelf.",
+          "en": "The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile."
+        }
+      ]
     }
   ]
 }

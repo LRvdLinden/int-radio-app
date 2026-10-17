@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 14
+_2026-10-17_
+
+**Verbeterd**
+
+- De tegelwand op de homepage staat nu vol met echte zenderlogo's (alle tegels), met één opvallende tegel van Tunr zelf. _(Website)_  
+  <sub>The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile.</sub>
+
 ## Build 13
 _2026-10-17_
 

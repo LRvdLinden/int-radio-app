@@ -30,6 +30,12 @@
       html += '</div>';
     }
     wall.innerHTML = html;
+    // één tegel van Tunr zelf, aan de linkerkant (minder donker door de vignet; op desktop én telefoon in beeld)
+    var tc = wall.children[2], tt = tc && tc.children[3];
+    if (tt) {
+      tt.className = 'tile tunr'; tt.removeAttribute('style');
+      tt.innerHTML = '<img src="assets/img/icon-rounded.png" alt="Tunr">';
+    }
   }
 
   // ---- echte zenderlogo's in de muur ----
@@ -38,8 +44,8 @@
   function fillLogos(list) {
     if (!wall || !list || !list.length) return;
     var tiles = Array.prototype.slice.call(wall.querySelectorAll('.tile'));
-    // niet elke tegel: ongeveer 2 op de 3, verspreid over de muur
-    tiles = shuffle(tiles.filter(function (_, i) { return i % 4 !== 1; }));
+    // elke tegel (behalve die van Tunr zelf) krijgt een logo, in willekeurige volgorde
+    tiles = shuffle(tiles.filter(function (t) { return !t.classList.contains('tunr'); }));
     var queue = list.slice(), seen = {};
     function next(tile) {
       var s = queue.shift(); if (!s) return;
@@ -81,18 +87,18 @@
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function loadLogos(base) {
-    var key = 'tunr.wallLogos2.' + (cc() || 'xx');
+    var key = 'tunr.wallLogos3.' + (cc() || 'xx');
     try { var c0 = JSON.parse(localStorage.getItem(key) || 'null'); if (c0 && Date.now() - c0.t < 6 * 3600e3) { fillLogos(c0.v); return; } } catch (e) {}
     var q = '/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=';
     // de populairste zenders van je eigen land (Qmusic, SLAM!, Radio 538 …) eerst, daarna wereldwijd
-    var local = cc() ? getJSON(base + q + '200&countrycode=' + cc(), 8000).catch(function () { return []; }) : Promise.resolve([]);
-    var world = getJSON(base + q + '300', 8000).catch(function () { return []; });
+    var local = cc() ? getJSON(base + q + '400&countrycode=' + cc(), 9000).catch(function () { return []; }) : Promise.resolve([]);
+    var world = getJSON(base + q + '600', 9000).catch(function () { return []; });
     Promise.all([local, world]).then(function (r) {
       var a = clean(r[0]), b = shuffle(clean(r[1]));
       // dubbele namen (zelfde zender met meerdere streams) eruit
       var names = {}, uniq = function (x) { var k = x.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12); if (names[k]) return false; names[k] = 1; return true; };
       a = a.filter(uniq); b = b.filter(uniq);
-      var list = a.slice(0, 60).concat(b.slice(0, 80), a.slice(60));
+      var list = a.slice(0, 80).concat(b.slice(0, 120), a.slice(80), b.slice(120));
       if (!list.length) return;
       try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: list })); } catch (e) {}
       fillLogos(list);
