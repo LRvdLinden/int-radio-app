@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 24
+_2026-10-18_
+
+**Verbeterd**
+
+- Voorbereiding op de App Store: schermafbeeldingsmodus voor de officiële App Store-afbeeldingen. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>App Store preparation: screenshot mode for the official App Store images.</sub>
+
 ## Build 23
 _2026-10-18_
 

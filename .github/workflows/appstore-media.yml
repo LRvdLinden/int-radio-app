@@ -1,0 +1,212 @@
+name: App Store media
+
+# App Store-afbeeldingen (Engels) uit de echte app:
+# 1. bouwt Tunr voor de iOS- en tvOS-simulator en de Mac (zonder ondertekening);
+# 2. start de app per scène met `-TunrScreenshot <scène>` (apple/Shared/App/ScreenshotMode.swift: Engels, land NL,
+#    geen intro, ping of iCloud) en maakt opnames: iPhone 16 Pro Max (6,9"), iPhone 16 Pro (6,3"),
+#    iPad Pro 13-inch (M4), Apple TV 4K en het Mac-venster;
+# 3. tools/make_appstore_media.py zet ze op maat met kop en rand (+ icoon, Apple TV-merkafbeeldingen, promobanner);
+# 4. pusht de map appstore/ als één commit naar de branch appstore-media (geforceerd).
+# Geen artefacten of releases.
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: "Toestellen (kommagescheiden): iphone69,iphone63,ipad13,appletv,mac"
+        default: "iphone69,iphone63,ipad13,appletv,mac"
+      wait:
+        description: "Seconden wachten per scène (gegevens komen live van Radio Browser/iTunes)"
+        default: "15"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: appstore-media
+  cancel-in-progress: true
+
+env:
+  BUNDLE_ID: nl.lrvdlinden.tunr
+  DEVICES: ${{ github.event.inputs.devices || 'iphone69,iphone63,ipad13,appletv,mac' }}
+  WAIT: ${{ github.event.inputs.wait || '15' }}
+  # scènes per soort toestel (gelijk aan DEVICES in tools/make_appstore_media.py)
+  SCENES_PHONE: "discover player map search podcasts library"
+  SCENES_MAC: "discover player map podcasts library"
+  SCENES_TV: "discover player browse podcasts search"
+
+jobs:
+  media:
+    runs-on: macos-15
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode 16.4 kiezen
+        run: |
+          X=/Applications/Xcode_16.4.app
+          [ -d "$X" ] || X="$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)"
+          sudo xcode-select -s "$X"
+          xcodebuild -version
+
+      - name: Project genereren (XcodeGen)
+        working-directory: apple
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Bouwen (iOS-simulator, tvOS-simulator, macOS)
+        working-directory: apple
+        run: |
+          set -o pipefail
+          has() { case ",$DEVICES," in *",$1,"*) return 0;; esac; return 1; }
+          build() {
+            echo "::group::build $1"
+            xcodebuild build -project Tunr.xcodeproj -scheme Tunr -configuration Debug \
+              -destination "$1" -derivedDataPath build/dd \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > "build-$2.log" 2>&1 || { grep -E "error:" "build-$2.log" | sort -u | head -80; tail -40 "build-$2.log"; exit 1; }
+            echo "::endgroup::"
+          }
+          mkdir -p build
+          if has iphone69 || has iphone63 || has ipad13; then build 'generic/platform=iOS Simulator' ios; fi
+          if has appletv; then build 'generic/platform=tvOS Simulator' tvos; fi
+          if has mac; then build 'generic/platform=macOS' macos; fi
+          ls -d build/dd/Build/Products/*/Tunr.app
+
+      - name: Opnames in de simulators
+        if: contains(env.DEVICES, 'iphone') || contains(env.DEVICES, 'ipad') || contains(env.DEVICES, 'appletv')
+        run: |
+          RAW="$RUNNER_TEMP/raw"; mkdir -p "$RAW"
+          P=apple/build/dd/Build/Products
+          has() { case ",$DEVICES," in *",$1,"*) return 0;; esac; return 1; }
+
+          # nieuwste runtime per platform en het gevraagde toesteltype (op naam)
+          runtime() { xcrun simctl list runtimes -j | python3 -c "
+          import json,sys
+          rs=[r for r in json.load(sys.stdin)['runtimes'] if r.get('isAvailable') and r['platform']==sys.argv[1]]
+          rs.sort(key=lambda r:[int(x) for x in r['version'].split('.')])
+          print(rs[-1]['identifier'] if rs else '')" "$1"; }
+          devtype() { xcrun simctl list devicetypes -j | python3 -c "
+          import json,sys
+          ts=json.load(sys.stdin)['devicetypes']
+          want=sys.argv[1:]
+          for w in want:
+              for t in ts:
+                  if t['name']==w: print(t['identifier']); sys.exit()
+          for w in want:
+              for t in ts:
+                  if t['name'].startswith(w): print(t['identifier']); sys.exit()" "$@"; }
+
+          shoot() {  # $1 = naam in de uitvoer, $2 = runtime-platform, $3 = app, $4 = scènes, $5.. = toesteltype(n)
+            local dev=$1 plat=$2 app=$3 scenes=$4; shift 4
+            local rt; rt=$(runtime "$plat"); local dt; dt=$(devtype "$@")
+            if [ -z "$rt" ] || [ -z "$dt" ]; then echo "::warning::$dev: geen runtime/toesteltype ($plat / $*)"; return 0; fi
+            echo "::group::$dev ($dt, $rt)"
+            local udid; udid=$(xcrun simctl create "tunr-$dev" "$dt" "$rt")
+            xcrun simctl boot "$udid"
+            xcrun simctl bootstatus "$udid" -b > /dev/null
+            xcrun simctl ui "$udid" appearance dark || true
+            if [ "$plat" = "iOS" ]; then
+              xcrun simctl status_bar "$udid" override --time 9:41 --dataNetwork wifi --wifiMode active --wifiBars 3 \
+                --cellularMode active --cellularBars 4 --operatorName "" --batteryState charged --batteryLevel 100 || true
+            fi
+            xcrun simctl install "$udid" "$app"
+            # opwarmen: caches (landen, iconentabel, logo's) vullen
+            xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -TunrScreenshot discover > /dev/null || true
+            sleep 25
+            for s in $scenes; do
+              xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -TunrScreenshot "$s" > /dev/null \
+                || echo "::warning::$dev-$s: starten mislukt"
+              sleep "$WAIT"
+              [ "$s" = "player" ] && sleep 6   # stream + nu-speelt-titel + albumhoes
+              xcrun simctl io "$udid" screenshot --type=png "$RAW/$dev-$s.png" > /dev/null 2>&1 \
+                && python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$RAW/$dev-$s.png" \
+                || echo "::warning::$dev-$s: geen opname"
+            done
+            xcrun simctl terminate "$udid" "$BUNDLE_ID" || true
+            xcrun simctl shutdown "$udid" || true
+            xcrun simctl delete "$udid" || true
+            echo "::endgroup::"
+          }
+
+          IOS_APP="$P/Debug-iphonesimulator/Tunr.app"
+          TV_APP="$P/Debug-appletvsimulator/Tunr.app"
+          if has iphone69; then shoot iphone69 iOS "$IOS_APP" "$SCENES_PHONE" "iPhone 16 Pro Max"; fi
+          if has iphone63; then shoot iphone63 iOS "$IOS_APP" "$SCENES_PHONE" "iPhone 16 Pro"; fi
+          if has ipad13; then shoot ipad13 iOS "$IOS_APP" "$SCENES_PHONE" "iPad Pro 13-inch (M4)" "iPad Pro (13-inch)"; fi
+          if has appletv; then shoot appletv tvOS "$TV_APP" "$SCENES_TV" "Apple TV 4K (3rd generation)" "Apple TV 4K"; fi
+          ls -la "$RAW"
+
+      - name: Opnames op de Mac
+        if: contains(env.DEVICES, 'mac')
+        run: |
+          RAW="$RUNNER_TEMP/raw"; mkdir -p "$RAW"
+          APP=apple/build/dd/Build/Products/Debug/Tunr.app
+          system_profiler SPDisplaysDataType | grep -E "Resolution|Retina" || true
+          swiftc -O tools/macos_window.swift -o "$RUNNER_TEMP/macwin"
+          first=1
+          for s in $SCENES_MAC; do
+            extra=0; [ $first = 1 ] && extra=15; first=0          # eerste start: caches vullen
+            [ "$s" = "player" ] && extra=$((extra + 6))
+            delay=$((WAIT + extra))
+            rm -f "$RAW/mac-$s.png" "$RAW/self-$s.png"
+            # de app maakt na $delay s zelf een 2×-opname van zijn venster (ScreenshotMode.swift)
+            TUNR_SCREENSHOT_OUT="$RAW/self-$s.png" TUNR_SCREENSHOT_DELAY="$delay" \
+              "$APP/Contents/MacOS/Tunr" -TunrScreenshot "$s" > /dev/null 2>&1 &
+            pid=$!
+            sleep $((delay + 4))
+            shot="$RAW/sc-$s.png"; rm -f "$shot"
+            if win=$("$RUNNER_TEMP/macwin" Tunr); then
+              read -r id x y w h <<< "$win"
+              echo "$s: venster $id ${w}x${h} op $x,$y"
+              screencapture -x -o -l"$id" "$shot" 2>/dev/null || screencapture -x -R"$x,$y,$w,$h" "$shot" 2>/dev/null || true
+            else
+              echo "::warning::mac-$s: geen venster gevonden"
+            fi
+            # voorkeur: de eigen 2×-opname (scherp, geen toestemming nodig); kaart (MapKit/Metal) via screencapture
+            if [ "$s" != "map" ] && [ -s "$RAW/self-$s.png" ]; then cp "$RAW/self-$s.png" "$RAW/mac-$s.png"
+            elif [ -s "$shot" ]; then cp "$shot" "$RAW/mac-$s.png"
+            elif [ -s "$RAW/self-$s.png" ]; then cp "$RAW/self-$s.png" "$RAW/mac-$s.png"
+            else echo "::warning::mac-$s: geen opname"; fi
+            [ -s "$RAW/mac-$s.png" ] && sips -g pixelWidth -g pixelHeight "$RAW/mac-$s.png" | tail -2 | tr '\n' ' ' && echo
+            kill "$pid" 2>/dev/null || true
+            sleep 2
+            kill -9 "$pid" 2>/dev/null || true
+          done
+          # tussenbestanden niet meenemen
+          rm -f "$RAW"/self-*.png "$RAW"/sc-*.png
+          ls -la "$RAW"
+
+      - name: Afbeeldingen opmaken
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q pillow
+          # Inter (OFL) voor de koppen
+          export TUNR_FONT_DIR="$RUNNER_TEMP/fonts"; mkdir -p "$TUNR_FONT_DIR"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/inter.zip" https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip \
+            && unzip -q -o "$RUNNER_TEMP/inter.zip" -d "$TUNR_FONT_DIR" \
+            || echo "::warning::Inter niet opgehaald: terugvalfont"
+          rm -rf appstore/en
+          "$RUNNER_TEMP/venv/bin/python" tools/make_appstore_media.py --raw "$RUNNER_TEMP/raw" --out appstore/en \
+            --only "$DEVICES" | tee "$RUNNER_TEMP/files.txt"
+
+      - name: Naar branch appstore-media
+        run: |
+          D="$RUNNER_TEMP/push"; rm -rf "$D"; mkdir -p "$D"
+          cp -R appstore "$D/"
+          cd "$D"
+          git init -q && git checkout -q -b appstore-media
+          git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "App Store-afbeeldingen (en) van $GITHUB_SHA [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" appstore-media
+
+      - name: Overzicht
+        if: always()
+        run: |
+          {
+            echo "## App Store-afbeeldingen (en)"
+            echo "Branch \`appstore-media\` → map \`appstore/en/\`"
+            echo
+            echo '```'
+            grep -E "×" "$RUNNER_TEMP/files.txt" 2>/dev/null || echo "(geen uitvoer)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

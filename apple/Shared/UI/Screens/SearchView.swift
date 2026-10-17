@@ -4,8 +4,9 @@ import SwiftUI
 /// Leeg: populaire genres (of podcastgenres) + recent gezocht (max 8, wisbaar). Resultaten: lijst.
 struct SearchView: View {
     @EnvironmentObject private var library: Library
-    @State private var query = ""
-    @State private var worldwide = false
+    // App Store-schermafbeeldingen: met een zoekterm, wereldwijd
+    @State private var query = ScreenshotMode.initialSearch
+    @State private var worldwide = ScreenshotMode.scene == .search
     @State private var results: LoadState<[Station]> = .idle
     @State private var lastQuery = ""
     @AppStorage("ui.searchKind") private var kind: SearchKind = .stations

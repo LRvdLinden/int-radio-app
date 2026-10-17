@@ -85,8 +85,14 @@ extension EnvironmentValues {
 
 /// NavigationStack met een eigen pad en alle bestemmingen
 struct NavStack<Content: View>: View {
-    @ViewBuilder let content: () -> Content
-    @State private var path: [Route] = []
+    let content: () -> Content
+    @State private var path: [Route]
+
+    /// `initial`: bestemmingen die bij het openen al op de stapel staan (App Store-schermafbeeldingen)
+    init(initial: [Route] = [], @ViewBuilder content: @escaping () -> Content) {
+        self.content = content
+        _path = State(initialValue: initial)
+    }
 
     var body: some View {
         NavigationStack(path: $path) {

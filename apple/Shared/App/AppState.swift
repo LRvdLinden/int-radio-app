@@ -49,6 +49,13 @@ final class AppState: ObservableObject {
     private var bag = Set<AnyCancellable>()
 
     init() {
+        // App Store-schermafbeeldingen: meteen het hoofdscherm met de gevraagde scène (niets onthouden)
+        if ScreenshotMode.isActive {
+            stage = .main
+            tab = ScreenshotMode.tab
+            ScreenshotMode.prepare(app: self)
+            return
+        }
         // tabblad onthouden tussen starts
         if let raw = UserDefaults.standard.string(forKey: "ui.tab"), let t = AppTab(rawValue: raw) { tab = t }
         $tab.dropFirst()

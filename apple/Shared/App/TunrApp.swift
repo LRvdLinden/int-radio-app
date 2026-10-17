@@ -14,8 +14,10 @@ struct TunrApp: App {
         URLCache.shared = URLCache(memoryCapacity: 32 * 1024 * 1024, diskCapacity: 200 * 1024 * 1024)
         DeviceKind.configure()
         Brand.configurePlatform()
+        // App Store-schermafbeeldingen (-TunrScreenshot <scène>): geen iCloud-instellingen, ping of Live Activity
+        let screenshot = ScreenshotMode.isActive
         // build 9: taal, slaaptimer en automatisch verder spelen via iCloud
-        SettingsSync.shared.start()
+        if !screenshot { SettingsSync.shared.start() }
         // anonieme gebruiksping (max. 1× per 12 uur; uit te zetten in Instellingen)
         StatsPing.shared.pingIfDue()
         #if os(iOS) || os(macOS)
@@ -25,7 +27,7 @@ struct TunrApp: App {
         #endif
         #if os(iOS) && canImport(ActivityKit)
         // Live Activity "Nu speelt" (Dynamic Island, vergrendelscherm)
-        LiveActivityController.shared.start()
+        if !screenshot { LiveActivityController.shared.start() }
         #endif
     }
 
@@ -50,7 +52,8 @@ struct TunrApp: App {
                 #endif
         }
         #if os(macOS)
-        .defaultSize(width: 1280, height: 820)
+        // schermafbeeldingen: 1440 × 900 punten (= 2880 × 1800 op Retina)
+        .defaultSize(width: ScreenshotMode.isActive ? 1440 : 1280, height: ScreenshotMode.isActive ? 900 : 820)
         .commands { PlaybackCommands(player: player, library: library) }
         #endif
         .onChange(of: phase) { _, p in

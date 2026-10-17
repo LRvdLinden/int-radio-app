@@ -57,7 +57,7 @@ struct TabRoot: View {
     var body: some View {
         switch tab {
         case .discover: NavStack { DiscoverView() }
-        case .browse: NavStack { BrowseView() }
+        case .browse: NavStack(initial: ScreenshotMode.initialRoutes(for: .browse)) { BrowseView() }
         case .map: NavStack { MapExplorerView() }
         case .search: NavStack { SearchView() }
         case .library: NavStack { LibraryView() }

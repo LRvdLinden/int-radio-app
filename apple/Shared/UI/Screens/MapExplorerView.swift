@@ -1206,6 +1206,12 @@ struct MapExplorerView: View {
 
     /// Kaart op het land (of de wereld) zetten
     private func focusOnData() {
+        if model.world, ScreenshotMode.mapRegionIsEurope {
+            // App Store-schermafbeeldingen: Europa met Nederland in beeld
+            camera = .region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.5, longitude: 9),
+                                                span: MKCoordinateSpan(latitudeDelta: 26, longitudeDelta: 34)))
+            return
+        }
         if model.world {
             withAnimation(.easeInOut(duration: 0.8)) {
                 camera = .region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 25, longitude: 10),

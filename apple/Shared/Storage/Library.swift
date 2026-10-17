@@ -61,7 +61,11 @@ final class Library: ObservableObject {
     private let cloud = NSUbiquitousKeyValueStore.default
     private var observer: NSObjectProtocol?
 
+    /// App Store-schermafbeeldingen: alles alleen in het geheugen (niets naar UserDefaults of iCloud)
+    private let persists = !ScreenshotMode.isActive
+
     private init() {
+        guard persists else { return }
         loadLocal()
         observer = NotificationCenter.default.addObserver(
             forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: cloud, queue: .main
@@ -94,11 +98,13 @@ final class Library: ObservableObject {
     }
 
     private func save(_ key: String, _ data: Data?) {
+        guard persists else { return }
         defaults.set(data, forKey: key)
         if let data { cloud.set(data, forKey: key) } else { cloud.removeObject(forKey: key) }
     }
 
     private func saveFavorites() {
+        guard persists else { changed.send(); return }
         save(K.favorites, try? JSONEncoder().encode(favorites))
         let stamp = Date().timeIntervalSince1970
         defaults.set(stamp, forKey: K.favoritesStamp)
@@ -280,12 +286,14 @@ final class Library: ObservableObject {
         var list = recentSearches.filter { $0.caseInsensitiveCompare(t) != .orderedSame }
         list.insert(t, at: 0)
         recentSearches = Array(list.prefix(Self.maxSearches))
+        guard persists else { return }
         defaults.set(recentSearches, forKey: K.searches)
         cloud.set(recentSearches, forKey: K.searches)
     }
 
     func clearSearches() {
         recentSearches = []
+        guard persists else { return }
         defaults.set(recentSearches, forKey: K.searches)
         cloud.set(recentSearches, forKey: K.searches)
     }
@@ -310,6 +318,7 @@ final class Library: ObservableObject {
         let changedCountry = countryCode != c.code
         countryCode = c.code
         countryName = c.name
+        guard persists else { changed.send(); return }
         defaults.set(c.code, forKey: K.country)
         defaults.set(c.name, forKey: K.countryName)
         cloud.set(c.code, forKey: K.country)
@@ -326,6 +335,21 @@ final class Library: ObservableObject {
         let r = LocalRegion(countryCode: code, name: name)
         localRegion = r
         save(K.region, try? JSONEncoder().encode(r))
+    }
+
+    // MARK: - App Store-schermafbeeldingen (ScreenshotMode, alleen in het geheugen)
+
+    func applyScreenshotCountry(code: String, name: String) {
+        guard !persists else { return }
+        countryCode = code
+        countryName = name
+        changed.send()
+    }
+
+    func setScreenshotFavorites(_ list: [Station]) {
+        guard !persists else { return }
+        favorites = list
+        changed.send()
     }
 
     /// Lokale regio die bij het huidige land hoort

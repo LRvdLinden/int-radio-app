@@ -14,7 +14,7 @@ final class Localizer: ObservableObject {
     /// "" = volg het systeem
     @Published var override: String {
         didSet {
-            UserDefaults.standard.set(override, forKey: Self.key)
+            if !ScreenshotMode.isActive { UserDefaults.standard.set(override, forKey: Self.key) }
             apply()
         }
     }
@@ -25,7 +25,8 @@ final class Localizer: ObservableObject {
     private var bundle: Bundle
 
     private init() {
-        let o = UserDefaults.standard.string(forKey: Self.key) ?? ""
+        // App Store-schermafbeeldingen: altijd Engels (niet bewaard)
+        let o = ScreenshotMode.isActive ? "en" : (UserDefaults.standard.string(forKey: Self.key) ?? "")
         let lang = Self.resolve(o)
         // via de opslag zelf: `self` mag hier nog niet gebruikt worden (en didSet hoeft niet te lopen)
         _override = Published(initialValue: o)

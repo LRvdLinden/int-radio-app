@@ -34,7 +34,7 @@ final class StatsPing {
 
     func pingIfDue() {
         let base = Brand.statsURL.trimmingCharacters(in: .whitespaces)
-        guard !base.isEmpty, isEnabled, !inFlight else { return }
+        guard !base.isEmpty, isEnabled, !inFlight, !ScreenshotMode.isActive else { return }
         let now = Date().timeIntervalSince1970
         let last = defaults.double(forKey: StatsKey.lastPing)
         if last > 0, now - last < Self.interval, now >= last { return }

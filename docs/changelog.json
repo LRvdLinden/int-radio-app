@@ -768,6 +768,23 @@
           "en": "No more GitHub links on the website and in the web player; questions and reports via info@tunr.online."
         }
       ]
+    },
+    {
+      "build": 24,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Voorbereiding op de App Store: schermafbeeldingsmodus voor de officiële App Store-afbeeldingen.",
+          "en": "App Store preparation: screenshot mode for the official App Store images."
+        }
+      ]
     }
   ]
 }
