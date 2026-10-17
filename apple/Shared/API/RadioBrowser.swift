@@ -280,6 +280,15 @@ final class RadioBrowser: @unchecked Sendable {
         return try await search(ranked(p, limit: country == nil ? 1500 : 500)).filter { $0.coordinate != nil }
     }
 
+    /// Zenders binnen `distance` meter van een punt (kaart-zoeken, SPEC §9), populairste eerst
+    func geoStations(latitude: Double, longitude: Double, distance: Int, limit: Int = 300) async throws -> [Station] {
+        let p = ["geo_lat": String(format: "%.4f", latitude),
+                 "geo_long": String(format: "%.4f", longitude),
+                 "geo_distance": String(distance),
+                 "has_geo_info": "true"]
+        return try await search(ranked(p, limit: limit)).filter { $0.coordinate != nil }
+    }
+
     /// Een willekeurige zender wereldwijd (met coördinaten) uit de top 5000
     func randomStation() async throws -> Station? {
         for _ in 0..<3 {
