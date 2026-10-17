@@ -143,7 +143,7 @@ struct StationDetailView: View {
         }
     }
 
-    private var shareURL: URL { station.homepageURL ?? station.streamURL ?? Brand.website }
+    private var shareURL: URL { ShareLinks.station(station.id) }
     private var shareText: String { L("share.text", station.displayName, Brand.name) }
 
     private func iconButton(_ symbol: String, label: String, tint: Color, action: @escaping () -> Void) -> some View {

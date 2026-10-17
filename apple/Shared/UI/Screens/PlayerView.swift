@@ -234,7 +234,7 @@ struct PlayerView: View {
             }
 
             #if !os(tvOS)
-            ShareLink(item: s.homepageURL ?? s.streamURL ?? Brand.website,
+            ShareLink(item: ShareLinks.station(s.id),
                       subject: Text(s.displayName),
                       message: Text(L("share.text", s.displayName, Brand.name))) {
                 ActionLabel(symbol: "square.and.arrow.up", title: L("action.share"), tint: .white)

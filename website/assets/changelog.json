@@ -567,6 +567,31 @@
           "en": "The station logos in the homepage hero are now fixed and load instantly, without flickering."
         }
       ]
+    },
+    {
+      "build": 17,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "android"
+          ],
+          "nl": "Delen deelt nu altijd een vaste link naar de zender, podcast of aflevering op tunr.online, die iedereen kan openen in de webspeler, ook zonder de app.",
+          "en": "Sharing now always shares a fixed link to the station, podcast or episode on tunr.online, which anyone can open in the web player, even without the app."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "android"
+          ],
+          "nl": "Delen-knop in de afleveringsspeler.",
+          "en": "Share button in the episode player."
+        }
+      ]
     }
   ]
 }

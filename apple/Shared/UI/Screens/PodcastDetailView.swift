@@ -168,8 +168,8 @@ struct PodcastDetailView: View {
             .buttonStyle(SecondaryButtonStyle())
 
             #if !os(tvOS)
-            if let url = shown.pageURL {
-                ShareLink(item: url, subject: Text(shown.displayName), message: Text(L("share.podcast", shown.displayName, Brand.name))) {
+            Group {
+                ShareLink(item: ShareLinks.podcast(shown.id), subject: Text(shown.displayName), message: Text(L("share.podcast", shown.displayName, Brand.name))) {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: tvScaled(16), weight: .semibold))
                         .frame(width: tvScaled(44), height: tvScaled(42))
@@ -419,8 +419,8 @@ struct EpisodeDetailView: View {
             .accessibilityLabel(status.finished ? L("episode.markUnplayed") : L("episode.markPlayed"))
 
             #if !os(tvOS)
-            if let url = episode.pageURL ?? episode.audioURL {
-                ShareLink(item: url, subject: Text(episode.displayTitle), message: Text(L("share.podcast", episode.displayTitle, Brand.name))) {
+            Group {
+                ShareLink(item: ShareLinks.episode(podcastID: episode.podcastId, episodeID: episode.id), subject: Text(episode.displayTitle), message: Text(L("share.podcast", episode.displayTitle, Brand.name))) {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: tvScaled(17), weight: .semibold))
                         .frame(width: tvScaled(46), height: tvScaled(44))

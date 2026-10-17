@@ -240,8 +240,8 @@ struct EpisodePlayerContent: View {
             #endif
 
             #if !os(tvOS)
-            if let url = episode.pageURL ?? episode.audioURL {
-                ShareLink(item: url, subject: Text(episode.displayTitle),
+            Group {
+                ShareLink(item: ShareLinks.episode(podcastID: episode.podcastId, episodeID: episode.id), subject: Text(episode.displayTitle),
                           message: Text(L("share.podcast", episode.displayTitle, Brand.name))) {
                     ActionLabel(symbol: "square.and.arrow.up", title: L("action.share"), tint: .white)
                 }

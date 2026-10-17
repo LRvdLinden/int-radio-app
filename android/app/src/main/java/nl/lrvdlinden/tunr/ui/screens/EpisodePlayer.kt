@@ -32,6 +32,7 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -176,6 +177,10 @@ fun EpisodePlayerScreen(episode: Episode, onClose: () -> Unit) {
                     ActionButton(Icons.Rounded.Bedtime, sleepLabel()) { showSleep = true }
                     ActionButton(Icons.Rounded.Info, stringResource(R.string.podcast_info)) {
                         onClose(); Nav.podcast(episode.podcast())
+                    }
+                    if (!Device.isTV) {
+                        val ctx = androidx.compose.ui.platform.LocalContext.current
+                        ActionButton(Icons.Rounded.Share, stringResource(R.string.share)) { shareEpisode(ctx, episode) }
                     }
                 }
 

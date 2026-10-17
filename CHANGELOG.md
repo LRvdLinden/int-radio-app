@@ -4,6 +4,19 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 17
+_2026-10-17_
+
+**Nieuw**
+
+- Delen-knop in de afleveringsspeler. _(Android)_  
+  <sub>Share button in the episode player.</sub>
+
+**Verbeterd**
+
+- Delen deelt nu altijd een vaste link naar de zender, podcast of aflevering op tunr.online, die iedereen kan openen in de webspeler, ook zonder de app. _(iPhone, iPad, Mac, Android)_  
+  <sub>Sharing now always shares a fixed link to the station, podcast or episode on tunr.online, which anyone can open in the web player, even without the app.</sub>
+
 ## Build 16
 _2026-10-17_
 
