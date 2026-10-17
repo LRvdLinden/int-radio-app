@@ -489,6 +489,20 @@
           "en": "The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser."
         }
       ]
+    },
+    {
+      "build": 13,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Meer echte zenderlogo's in de tegelwand: de populairste zenders van je eigen land (zoals Qmusic, SLAM! en Radio 538) eerst, daarna wereldwijd; ook logo's die alleen via http staan worden via https geprobeerd.",
+          "en": "More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https."
+        }
+      ]
     }
   ]
 }

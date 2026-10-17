@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 13
+_2026-10-17_
+
+**Verbeterd**
+
+- Meer echte zenderlogo's in de tegelwand: de populairste zenders van je eigen land (zoals Qmusic, SLAM! en Radio 538) eerst, daarna wereldwijd; ook logo's die alleen via http staan worden via https geprobeerd. _(Website)_  
+  <sub>More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https.</sub>
+
 ## Build 12
 _2026-10-17_
 

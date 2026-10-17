@@ -39,7 +39,7 @@
     if (!wall || !list || !list.length) return;
     var tiles = Array.prototype.slice.call(wall.querySelectorAll('.tile'));
     // niet elke tegel: ongeveer 2 op de 3, verspreid over de muur
-    tiles = tiles.filter(function (_, i) { return i % 3 !== 1; });
+    tiles = shuffle(tiles.filter(function (_, i) { return i % 4 !== 1; }));
     var queue = list.slice(), seen = {};
     function next(tile) {
       var s = queue.shift(); if (!s) return;
@@ -50,7 +50,7 @@
       img.decoding = 'async';
       img.alt = '';
       img.onload = function () {
-        if (img.naturalWidth < 64 || img.naturalHeight < 64) return next(tile);   // te klein of een pixel-favicon
+        if (img.naturalWidth < 40 || img.naturalHeight < 40) return next(tile);   // te klein of een pixel-favicon
         if (tile.classList.contains('card')) {
           var a = tile.querySelector('.a'); a.textContent = ''; a.appendChild(img); a.classList.add('logo');
           var t = tile.querySelector('.t'); t.innerHTML = '<b></b><small></small>';
@@ -61,8 +61,10 @@
         }
         tile.title = s.name;
       };
+      // http-logo's: eerst de https-variant (de site is https; http wordt door de browser geblokkeerd)
+      var alt = s.favicon.replace(/^http:/i, 'https:');
       img.onerror = function () { next(tile); };
-      img.src = s.favicon;
+      img.src = alt;
     }
     tiles.forEach(function (tile, i) { setTimeout(function () { next(tile); }, 120 + i * 35); });
   }
@@ -75,18 +77,22 @@
     return (arr || []).map(function (x) {
       var f = String(x.favicon || '').trim();
       return { name: String(x.name || '').trim(), favicon: f, place: [x.state, x.country].filter(Boolean).join(', ') };
-    }).filter(function (x) { return x.name && /^https:\/\//i.test(x.favicon) && !/\.ico(\?|$)/i.test(x.favicon); });
+    }).filter(function (x) { return x.name && /^https?:\/\//i.test(x.favicon) && !/\.ico(\?|$)/i.test(x.favicon); });
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function loadLogos(base) {
-    var key = 'tunr.wallLogos.' + (cc() || 'xx');
-    try { var c0 = JSON.parse(localStorage.getItem(key) || 'null'); if (c0 && Date.now() - c0.t < 6 * 3600e3) { fillLogos(shuffle(c0.v)); return; } } catch (e) {}
+    var key = 'tunr.wallLogos2.' + (cc() || 'xx');
+    try { var c0 = JSON.parse(localStorage.getItem(key) || 'null'); if (c0 && Date.now() - c0.t < 6 * 3600e3) { fillLogos(c0.v); return; } } catch (e) {}
     var q = '/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=';
-    var local = cc() ? getJSON(base + q + '80&countrycode=' + cc(), 7000).catch(function () { return []; }) : Promise.resolve([]);
-    var world = getJSON(base + q + '160', 7000).catch(function () { return []; });
+    // de populairste zenders van je eigen land (Qmusic, SLAM!, Radio 538 …) eerst, daarna wereldwijd
+    var local = cc() ? getJSON(base + q + '200&countrycode=' + cc(), 8000).catch(function () { return []; }) : Promise.resolve([]);
+    var world = getJSON(base + q + '300', 8000).catch(function () { return []; });
     Promise.all([local, world]).then(function (r) {
-      var a = clean(r[0]).slice(0, 40), b = shuffle(clean(r[1])).slice(0, 80);
-      var list = shuffle(a.concat(b));
+      var a = clean(r[0]), b = shuffle(clean(r[1]));
+      // dubbele namen (zelfde zender met meerdere streams) eruit
+      var names = {}, uniq = function (x) { var k = x.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12); if (names[k]) return false; names[k] = 1; return true; };
+      a = a.filter(uniq); b = b.filter(uniq);
+      var list = a.slice(0, 60).concat(b.slice(0, 80), a.slice(60));
       if (!list.length) return;
       try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: list })); } catch (e) {}
       fillLogos(list);
