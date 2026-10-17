@@ -32,8 +32,8 @@
 
 /* ===== hero ===== */
 .hero{position:relative;min-height:min(100svh,1000px);display:flex;align-items:center;padding:136px 0 76px;overflow:hidden;isolation:isolate}
-.wall{position:absolute;inset:-40% -20%;z-index:-2;display:grid;grid-template-columns:repeat(11,1fr);gap:16px;transform:rotate(-12deg);align-content:center;animation:drift 80s linear infinite alternate}
-.wall .col{display:flex;flex-direction:column;gap:16px}
+.wall{position:absolute;inset:-40% -20%;z-index:-2;display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:16px;transform:rotate(-12deg);align-content:center;animation:drift 80s linear infinite alternate}
+.wall .col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .wall .col:nth-child(even){margin-top:-120px}
 .wall .col:nth-child(3n){margin-top:-60px}
 @keyframes drift{to{transform:rotate(-12deg) translate3d(-5%,-4%,0)}}
@@ -135,7 +135,7 @@
 .hero .wrap>:nth-child(4){animation-delay:.21s}.hero .wrap>:nth-child(5){animation-delay:.28s}
 .hero .wrap>:nth-child(6){animation-delay:.35s}.hero .wrap>:nth-child(7){animation-delay:.42s}
 @media (max-width:980px){
-  .wall{grid-template-columns:repeat(5,1fr);inset:-30% -50%}
+  .wall{grid-template-columns:repeat(5,minmax(0,1fr));inset:-30% -50%}
   .wall .col:nth-child(n+6){display:none}
 }
 @media (max-width:640px){
@@ -587,7 +587,7 @@
       </div>
     </div>
     <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 16</span></p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 19</span></p>
   </div>
 </footer>
 

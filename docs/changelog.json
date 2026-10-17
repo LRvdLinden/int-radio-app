@@ -632,6 +632,20 @@
           "en": "On iOS 26 the \"Now Playing\" widget and the Live Activity also appear in CarPlay."
         }
       ]
+    },
+    {
+      "build": 19,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "web"
+          ],
+          "nl": "De zenderlogo's in de hero van de homepage zijn weer zichtbaar.",
+          "en": "The station logos in the homepage hero are visible again."
+        }
+      ]
     }
   ]
 }

@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 19
+_2026-10-17_
+
+**Opgelost**
+
+- De zenderlogo's in de hero van de homepage zijn weer zichtbaar. _(Website)_  
+  <sub>The station logos in the homepage hero are visible again.</sub>
+
 ## Build 18
 _2026-10-17_
 
