@@ -691,3 +691,9 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
   .sech .seg.sm button{padding:0 10px}
 }
 .card.epc .pbtn::after{display:none}
+
+/* Apple Maps (MapKit JS): stippen en clusters als DOM-annotaties; bedieningsknoppen in huisstijl */
+.mdot.mk{position:relative;width:22px;height:22px;cursor:pointer}
+.mclu.mk{cursor:pointer}
+#mapwrap.apple .mk-controls-container .mk-zoom-control,#mapwrap.apple .mk-controls-container .mk-map-type-control{margin-top:72px}
+@media (max-width:899px){#mapwrap.apple .mk-controls-container .mk-zoom-control{display:none}}

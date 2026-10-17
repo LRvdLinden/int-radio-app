@@ -427,6 +427,20 @@
           "en": "The Tunr intro always plays at start-up; the Intro music setting is gone."
         }
       ]
+    },
+    {
+      "build": 10,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "De wereldkaart in de webspeler gebruikt nu Apple Maps: donker en rustig, met dezelfde gloeiende stippen, clusters en de knop Willekeurig.",
+          "en": "The world map in the web player now uses Apple Maps: dark and calm, with the same glowing dots, clusters and Random button."
+        }
+      ]
     }
   ]
 }

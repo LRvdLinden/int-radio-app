@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 10
+_2026-10-17_
+
+**Verbeterd**
+
+- De wereldkaart in de webspeler gebruikt nu Apple Maps: donker en rustig, met dezelfde gloeiende stippen, clusters en de knop Willekeurig. _(Website)_  
+  <sub>The world map in the web player now uses Apple Maps: dark and calm, with the same glowing dots, clusters and Random button.</sub>
+
 ## Build 9
 _2026-10-16_
 
