@@ -1,5 +1,4 @@
-// Tunr homepage: de muur van zendertegels in de hero. Eerst gegenereerde tegels (verloop + letters); daarna worden ze
-// gevuld met de logo's van populaire zenders uit Radio Browser (eigen land voorop), zodra die echt geladen zijn
+// Tunr homepage: de muur van zendertegels in de hero met vaste zenderlogo's (assets/js/wall.js)
 // en de live teller (aantal zenders en landen uit Radio Browser, met een vaste terugval).
 (function () {
   var PAL = [['#FF5A1F', '#FFB020'], ['#7C3AED', '#DB2777'], ['#0EA5E9', '#22D3EE'], ['#10B981', '#84CC16'],
@@ -13,96 +12,36 @@
   var EQ = '<span class="eq"><i></i><i></i><i></i><i></i></span>';
 
   var wall = document.getElementById('wall');
+  // vaste zenderlogo's (assets/js/wall.js + assets/img/wall/*.webp, gemaakt door tools/make_wall.py): staan direct in
+  // de HTML, worden niet live opgehaald en wisselen niet, dus niets flikkert. Zonder lijst: de gegenereerde tegels.
+  var LOGOS = (window.TUNR_WALL || []).filter(function (x) { return x && x.i && x.n; });
+  function esc(v) { return String(v).replace(/[&<>"']/g, function (ch) { return '&#' + ch.charCodeAt(0) + ';'; }); }
+  function logoImg(x) { return '<img src="assets/img/wall/' + esc(x.i) + '" alt="" width="192" height="192" decoding="async">'; }
   if (wall) {
-    var cols = 11, per = 7, k = 0, html = '';
+    var cols = 11, per = 7, k = 0, li = 0, html = '';
     for (var c = 0; c < cols; c++) {
       html += '<div class="col">';
       for (var r = 0; r < per; r++) {
         var n = NAMES[(k * 7 + c) % NAMES.length]; k++;
+        var isTunr = c === 2 && r === 3;
+        var isCard = (c + r) % 5 === 3;
+        if (isTunr) { html += '<div class="tile tunr"><img src="assets/img/icon-rounded.png" alt="Tunr"></div>'; continue; }
+        var x = LOGOS.length ? LOGOS[li++ % LOGOS.length] : null;
         var p = PAL[hash(n) % PAL.length];
         var bg = 'background:linear-gradient(135deg,' + p[0] + ',' + p[1] + ')';
-        if ((c + r) % 5 === 3) {
-          html += '<div class="tile card"><span class="a" style="' + bg + '">' + mono(n) + '</span><span class="t"><span></span><span></span></span>' + ((c + r) % 2 ? EQ : '') + '</div>';
+        if (isCard) {
+          html += x
+            ? '<div class="tile card" title="' + esc(x.n) + '"><span class="a logo">' + logoImg(x) + '</span><span class="t"><b>' + esc(x.n) + '</b><small>' + esc(x.p || '') + '</small></span>' + ((c + r) % 2 ? EQ : '') + '</div>'
+            : '<div class="tile card"><span class="a" style="' + bg + '">' + mono(n) + '</span><span class="t"><span></span><span></span></span>' + ((c + r) % 2 ? EQ : '') + '</div>';
         } else {
-          html += '<div class="tile" style="' + bg + '"><b>' + mono(n) + '</b>' + ((c * 3 + r) % 4 === 0 ? EQ : '') + '</div>';
+          html += x
+            ? '<div class="tile logo" title="' + esc(x.n) + '">' + logoImg(x) + ((c * 3 + r) % 4 === 0 ? EQ : '') + '</div>'
+            : '<div class="tile" style="' + bg + '"><b>' + mono(n) + '</b>' + ((c * 3 + r) % 4 === 0 ? EQ : '') + '</div>';
         }
       }
       html += '</div>';
     }
     wall.innerHTML = html;
-    // één tegel van Tunr zelf, aan de linkerkant (minder donker door de vignet; op desktop én telefoon in beeld)
-    var tc = wall.children[2], tt = tc && tc.children[3];
-    if (tt) {
-      tt.className = 'tile tunr'; tt.removeAttribute('style');
-      tt.innerHTML = '<img src="assets/img/icon-rounded.png" alt="Tunr">';
-    }
-  }
-
-  // ---- echte zenderlogo's in de muur ----
-  // Populaire zenders (eigen land voorop, dan wereldwijd) met een https-logo. Een tegel krijgt het logo pas als de
-  // afbeelding echt geladen is en groot genoeg is; anders blijft de gegenereerde tegel staan.
-  function fillLogos(list) {
-    if (!wall || !list || !list.length) return;
-    var tiles = Array.prototype.slice.call(wall.querySelectorAll('.tile'));
-    // elke tegel (behalve die van Tunr zelf) krijgt een logo, in willekeurige volgorde
-    tiles = shuffle(tiles.filter(function (t) { return !t.classList.contains('tunr'); }));
-    var queue = list.slice(), seen = {};
-    function next(tile) {
-      var s = queue.shift(); if (!s) return;
-      if (seen[s.favicon]) return next(tile);
-      seen[s.favicon] = 1;
-      var img = new Image();
-      img.referrerPolicy = 'no-referrer';
-      img.decoding = 'async';
-      img.alt = '';
-      img.onload = function () {
-        if (img.naturalWidth < 40 || img.naturalHeight < 40) return next(tile);   // te klein of een pixel-favicon
-        if (tile.classList.contains('card')) {
-          var a = tile.querySelector('.a'); a.textContent = ''; a.appendChild(img); a.classList.add('logo');
-          var t = tile.querySelector('.t'); t.innerHTML = '<b></b><small></small>';
-          t.querySelector('b').textContent = s.name; t.querySelector('small').textContent = s.place;
-        } else {
-          var b = tile.querySelector('b'); if (b) b.remove();
-          tile.insertBefore(img, tile.firstChild); tile.classList.add('logo');
-        }
-        tile.title = s.name;
-      };
-      // http-logo's: eerst de https-variant (de site is https; http wordt door de browser geblokkeerd)
-      var alt = s.favicon.replace(/^http:/i, 'https:');
-      img.onerror = function () { next(tile); };
-      img.src = alt;
-    }
-    tiles.forEach(function (tile, i) { setTimeout(function () { next(tile); }, 120 + i * 35); });
-  }
-  function cc() {
-    var m = /[-_]([A-Za-z]{2})$/.exec(navigator.language || ''); var c = m ? m[1].toUpperCase() : '';
-    if (!c) { var l = (window.TunrI18n && TunrI18n.lang) || 'nl'; c = l === 'nl' ? 'NL' : ''; }
-    return c;
-  }
-  function clean(arr) {
-    return (arr || []).map(function (x) {
-      var f = String(x.favicon || '').trim();
-      return { name: String(x.name || '').trim(), favicon: f, place: [x.state, x.country].filter(Boolean).join(', ') };
-    }).filter(function (x) { return x.name && /^https?:\/\//i.test(x.favicon) && !/\.ico(\?|$)/i.test(x.favicon); });
-  }
-  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function loadLogos(base) {
-    var key = 'tunr.wallLogos3.' + (cc() || 'xx');
-    try { var c0 = JSON.parse(localStorage.getItem(key) || 'null'); if (c0 && Date.now() - c0.t < 6 * 3600e3) { fillLogos(c0.v); return; } } catch (e) {}
-    var q = '/json/stations/search?hidebroken=true&order=clickcount&reverse=true&limit=';
-    // de populairste zenders van je eigen land (Qmusic, SLAM!, Radio 538 …) eerst, daarna wereldwijd
-    var local = cc() ? getJSON(base + q + '400&countrycode=' + cc(), 9000).catch(function () { return []; }) : Promise.resolve([]);
-    var world = getJSON(base + q + '600', 9000).catch(function () { return []; });
-    Promise.all([local, world]).then(function (r) {
-      var a = clean(r[0]), b = shuffle(clean(r[1]));
-      // dubbele namen (zelfde zender met meerdere streams) eruit
-      var names = {}, uniq = function (x) { var k = x.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12); if (names[k]) return false; names[k] = 1; return true; };
-      a = a.filter(uniq); b = b.filter(uniq);
-      var list = a.slice(0, 80).concat(b.slice(0, 120), a.slice(80), b.slice(120));
-      if (!list.length) return;
-      try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: list })); } catch (e) {}
-      fillLogos(list);
-    });
   }
 
   // ---- live teller ----
@@ -140,7 +79,6 @@
       return tryServers(names.concat(FALLBACK));
     }, function () { return tryServers(FALLBACK); })
     .then(function (s) {
-      if (base && wall && !matchMedia('(prefers-reduced-data: reduce)').matches) loadLogos(base);
       if (!s || !s.stations) return;
       stats = { stations: s.stations, countries: s.countries, languages: s.languages };
       try { sessionStorage.setItem('tunr.stats', JSON.stringify({ t: Date.now(), v: stats })); } catch (e) {}

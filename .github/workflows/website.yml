@@ -13,9 +13,17 @@ on:
     branches: [main]
     paths: ['website/**', '.github/workflows/website.yml']
   workflow_dispatch:
+    inputs:
+      refresh_wall:
+        description: "Hero-logo's vernieuwen (opnieuw uit Radio Browser halen)"
+        type: boolean
+        default: false
   # elke maand opnieuw uploaden, zodat het Apple Maps-token (geldig 180 dagen) altijd vers is
   schedule:
     - cron: '17 4 1 * *'
+
+permissions:
+  contents: write
 
 concurrency:
   group: website-deploy
@@ -33,6 +41,23 @@ jobs:
 
       - name: lftp en Pillow installeren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp python3-pil
+
+      # Vaste zenderlogo's voor de hero: alleen maken als ze er nog niet zijn (of op verzoek), dan in de repo zetten.
+      # Zo staan ze vast en laadt de site alleen eigen bestanden (geen live ophalen, geen geflikker).
+      - name: Hero-logo's (vast)
+        if: github.event_name != 'pull_request'
+        working-directory: .
+        run: |
+          if [ -f website/assets/js/wall.js ] && [ "${{ inputs.refresh_wall }}" != "true" ]; then
+            echo "Hero-logo's staan er al ($(ls website/assets/img/wall | wc -l) stuks)"; exit 0
+          fi
+          python3 tools/make_wall.py || { echo "::warning::Hero-logo's niet gemaakt (Radio Browser onbereikbaar?)"; exit 0; }
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add website/assets/js/wall.js website/assets/img/wall
+          git diff --cached --quiet && exit 0
+          git commit -qm "Hero: vaste zenderlogo's (tools/make_wall.py) [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
+          echo "::warning::Hero-logo's niet gepusht (wel geüpload)"
 
       # De homepage laadt de screenshots als WebP (<picture> met JPG als terugval); hier opnieuw gemaakt zodat ze kloppen.
       - name: WebP van de screenshots maken
