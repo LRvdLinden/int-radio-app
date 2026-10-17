@@ -1,17 +1,29 @@
 name: Icons
 
-# Mooie zendericonen: per populaire zender het app-icoon uit de App Store (iTunes Search API, zonder sleutel).
-# tools/make_station_icons.py zoekt rustig (≈ 20 verzoeken per minuut) en gaat elke run verder waar de vorige
-# stopte; de cache staat op de branch icons-data. Uitvoer: website/assets/data/icons/<CC>.json (+ _world.json),
-# gecommit naar main; daarna start deze workflow de workflow Website, zodat tunr.online de nieuwe tabel serveert.
+# Mooie zendericonen, uit twee bronnen die naast elkaar draaien (docs/SPEC.md §1):
+# - appstore: per populaire zender het app-icoon uit de App Store (tools/make_station_icons.py, iTunes Search API
+#   zonder sleutel, ≈ 20 verzoeken per minuut; elke run gaat verder waar de vorige stopte, cache cache.json);
+# - site-icons: het app-icoon van de eigen website van de zender (manifest / apple-touch-icon;
+#   tools/make_site_icons.py, snel, ~40 minuten; cache site-cache.json).
+# Beide caches staan op de branch icons-data. De job publish voegt de tabellen samen (tools/merge_icon_tables.py:
+# App Store gaat voor, er verdwijnt nooit iets), zet website/assets/data/icons/<CC>.json op main en start de
+# workflow Website, zodat tunr.online de nieuwe tabellen serveert.
 on:
   workflow_dispatch:
     inputs:
+      source:
+        description: "Welke bron (all = beide; site = alleen de snelle website-iconen)"
+        type: choice
+        options: [all, appstore, site]
+        default: all
       budget:
         description: "Tijdsbudget voor iTunes-verzoeken (minuten)"
         default: "330"
+      site_budget:
+        description: "Tijdsbudget voor website-iconen (minuten)"
+        default: "40"
       offline:
-        description: "Geen iTunes-verzoeken, alleen de uitvoer opnieuw maken uit de cache"
+        description: "Geen verzoeken, alleen de uitvoer opnieuw maken uit de caches"
         type: boolean
         default: false
   schedule:
@@ -21,28 +33,45 @@ permissions:
   contents: write
   actions: write
 
+# per bron een eigen groep, zodat "site" ook kan draaien terwijl een lange App Store-run bezig is;
+# publish en icons_data_save.sh voegen samen, dus gelijktijdige runs overschrijven elkaar niet
 concurrency:
-  group: icons
+  group: icons-${{ inputs.source || 'all' }}
   cancel-in-progress: false
 
 jobs:
-  icons:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Pillow installeren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq python3-pil
+      - name: Tests (offline)
+        run: |
+          python3 -m py_compile tools/make_station_icons.py tools/make_site_icons.py tools/merge_icon_tables.py \
+            tools/test_station_icons.py tools/test_site_icons.py tools/make_wall.py
+          bash -n tools/icons_data_save.sh
+          python3 tools/test_station_icons.py
+          python3 tools/test_site_icons.py
+
+  appstore:
+    needs: tests
+    if: ${{ (inputs.source || 'all') != 'site' }}
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    outputs:
+      data: ${{ steps.up.outputs.data }}
     steps:
       - uses: actions/checkout@v5
 
-      - name: Tests (offline)
-        run: |
-          python3 -m py_compile tools/make_station_icons.py tools/test_station_icons.py
-          python3 tools/test_station_icons.py
-
       - name: Cache ophalen (branch icons-data)
         run: |
-          if git fetch -q --depth 1 origin icons-data 2>/dev/null && git show FETCH_HEAD:cache.json > "$RUNNER_TEMP/icons-cache.json" 2>/dev/null; then
-            echo "cache: $(wc -c < "$RUNNER_TEMP/icons-cache.json") bytes"
+          mkdir -p "$RUNNER_TEMP/icons/out/icons"
+          if git fetch -q --depth 1 origin icons-data 2>/dev/null && git show FETCH_HEAD:cache.json > "$RUNNER_TEMP/icons/out/cache.json" 2>/dev/null; then
+            echo "cache: $(wc -c < "$RUNNER_TEMP/icons/out/cache.json") bytes"
           else
-            echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons-cache.json"
+            echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons/out/cache.json"
             echo "nog geen cache: begin bij nul"
           fi
 
@@ -50,35 +79,128 @@ jobs:
         timeout-minutes: 340
         run: |
           B="${{ inputs.budget }}"; [ -n "$B" ] || B=330
-          python3 tools/make_station_icons.py --cache "$RUNNER_TEMP/icons-cache.json" --budget-min "$B" \
-            ${{ inputs.offline && '--offline' || '' }}
+          python3 tools/make_station_icons.py --cache "$RUNNER_TEMP/icons/out/cache.json" --budget-min "$B" \
+            --out "$RUNNER_TEMP/icons/out/icons" ${{ inputs.offline && '--offline' || '' }}
 
-      # cache altijd bewaren (ook als de stap hierboven stopte), zodat de volgende run verdergaat
+      # cache altijd meteen bewaren (ook als de stap hierboven stopte), zodat de volgende run verdergaat
       - name: Cache bewaren (branch icons-data)
         if: always()
-        run: |
-          [ -s "$RUNNER_TEMP/icons-cache.json" ] || exit 0
-          mkdir -p "$RUNNER_TEMP/data" && cp "$RUNNER_TEMP/icons-cache.json" "$RUNNER_TEMP/data/cache.json"
-          cd "$RUNNER_TEMP/data"
-          git init -q && git checkout -q -b icons-data
-          git add cache.json && git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "icons cache $GITHUB_RUN_ID [skip ci]"
-          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" icons-data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/icons_data_save.sh "icons cache (App Store) $GITHUB_RUN_ID" cache.json="$RUNNER_TEMP/icons/out/cache.json"
 
-      - name: Tabel in de repo zetten
+      - name: Uitvoer doorgeven aan publish
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: icons-appstore
+          path: ${{ runner.temp }}/icons/out
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - id: up
+        if: always()
+        run: '[ -n "$(ls -A "$RUNNER_TEMP/icons/out/icons" 2>/dev/null)" ] && echo "data=1" >> "$GITHUB_OUTPUT" || true'
+
+  site-icons:
+    needs: tests
+    if: ${{ (inputs.source || 'all') != 'appstore' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      data: ${{ steps.up.outputs.data }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Pillow installeren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq python3-pil
+
+      - name: Cache ophalen (branch icons-data)
+        run: |
+          mkdir -p "$RUNNER_TEMP/icons/out/icons"
+          if git fetch -q --depth 1 origin icons-data 2>/dev/null && git show FETCH_HEAD:site-cache.json > "$RUNNER_TEMP/icons/out/site-cache.json" 2>/dev/null; then
+            echo "site-cache: $(wc -c < "$RUNNER_TEMP/icons/out/site-cache.json") bytes"
+          else
+            echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons/out/site-cache.json"
+            echo "nog geen site-cache: begin bij nul"
+          fi
+
+      - name: Website-iconen zoeken
+        timeout-minutes: 50
+        run: |
+          B="${{ inputs.site_budget }}"; [ -n "$B" ] || B=40
+          python3 tools/make_site_icons.py --cache "$RUNNER_TEMP/icons/out/site-cache.json" --budget-min "$B" \
+            --out "$RUNNER_TEMP/icons/out/icons" ${{ inputs.offline && '--offline' || '' }}
+
+      - name: Cache bewaren (branch icons-data)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/icons_data_save.sh "icons cache (websites) $GITHUB_RUN_ID" site-cache.json="$RUNNER_TEMP/icons/out/site-cache.json"
+
+      - name: Uitvoer doorgeven aan publish
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: icons-site
+          path: ${{ runner.temp }}/icons/out
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - id: up
+        if: always()
+        run: '[ -n "$(ls -A "$RUNNER_TEMP/icons/out/icons" 2>/dev/null)" ] && echo "data=1" >> "$GITHUB_OUTPUT" || true'
+
+  publish:
+    needs: [appstore, site-icons]
+    if: ${{ always() && (needs.appstore.outputs.data == '1' || needs.site-icons.outputs.data == '1') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Uitvoer van de bronnen ophalen
+        uses: actions/download-artifact@v4
+        with:
+          pattern: icons-*
+          path: ${{ runner.temp }}/icons/in
+
+      - name: Caches bewaren (branch icons-data)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tools/icons_data_save.sh "icons caches $GITHUB_RUN_ID" \
+            cache.json="$RUNNER_TEMP/icons/in/icons-appstore/cache.json" \
+            site-cache.json="$RUNNER_TEMP/icons/in/icons-site/site-cache.json"
+
+      # altijd vanaf de nieuwste main samenvoegen (ook een andere run kan net tabellen gecommit hebben);
+      # merge_icon_tables.py verwijdert nooit iets uit de bestaande tabellen
+      - name: Tabellen samenvoegen en in de repo zetten
         id: commit
         run: |
           git config user.name "github-actions"; git config user.email "actions@github.com"
-          git add -A website/assets/data/icons
-          if git diff --cached --quiet; then echo "iconen ongewijzigd"; exit 0; fi
-          echo "files: $(ls website/assets/data/icons | wc -l), $(du -sh website/assets/data/icons | cut -f1)"
-          git commit -qm "Zendericonen uit de App Store bijgewerkt (tools/make_station_icons.py) [skip ci]"
+          BR="${GITHUB_REF_NAME}"
           for i in 1 2 3 4 5; do
-            if git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}"; then
-              echo "changed=1" >> "$GITHUB_OUTPUT"; exit 0
-            fi
-            sleep 10
+            git fetch -q origin "$BR" && git reset -q --hard "origin/$BR"
+            python3 tools/merge_icon_tables.py tables --existing website/assets/data/icons \
+              --appstore "$RUNNER_TEMP/icons/in/icons-appstore/icons" --site "$RUNNER_TEMP/icons/in/icons-site/icons" \
+              --out website/assets/data/icons --sources "$RUNNER_TEMP/icons/sources.json"
+            git add -A website/assets/data/icons
+            if git diff --cached --quiet; then echo "iconen ongewijzigd"; exit 0; fi
+            echo "files: $(ls website/assets/data/icons | wc -l), $(du -sh website/assets/data/icons | cut -f1)"
+            git commit -qm "Zendericonen bijgewerkt (App Store + websites, tools/merge_icon_tables.py) [skip ci]"
+            if git push -q origin "HEAD:$BR"; then echo "changed=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+            echo "main veranderde tussendoor: opnieuw ($i)"
+            sleep $((i * 10))
           done
           echo "::error::Iconen niet gepusht"; exit 1
+
+      # per sleutel de gekozen bron (alleen voor debuggen, niet in de openbare tabellen)
+      - name: Bronnen bewaren (branch icons-data)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/icons_data_save.sh "icons sources $GITHUB_RUN_ID" sources.json="$RUNNER_TEMP/icons/sources.json"
 
       - name: Website opnieuw uploaden
         if: steps.commit.outputs.changed == '1'

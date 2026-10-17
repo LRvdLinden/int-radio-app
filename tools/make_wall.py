@@ -6,9 +6,10 @@ houdt alleen nette, (bijna) vierkante logo's van minstens 96 px over en schrijft
 website/assets/img/wall/ plus de lijst naar website/assets/js/wall.js. De site laadt daarna alleen die vaste
 bestanden: geen live ophalen, geen geflikker. Opnieuw maken: workflow Website met "Hero-logo's vernieuwen".
 
-Voorkeur: het app-icoon uit de App Store (zelfde match als tools/make_station_icons.py; eerst de vaste tabel
-website/assets/data/icons/<CC>.json, anders hooguit LIVE_MAX keer zelf iTunes vragen), daarna het favicon uit
-Radio Browser.
+Voorkeur: het app-icoon uit de vaste tabel website/assets/data/icons/<CC>.json (samengevoegd door
+tools/merge_icon_tables.py: App Store-icoon, anders het app-icoon van de eigen website van de zender); staat de
+zender er niet in, dan hooguit LIVE_MAX keer zelf iTunes vragen (zelfde match als tools/make_station_icons.py);
+daarna het favicon uit Radio Browser.
 
 Gebruik: python3 tools/make_wall.py [aantal]   (standaard 76 = alle tegels behalve die van Tunr)
 """
@@ -32,7 +33,7 @@ _maps, _live = {}, {'n': 0, 'itunes': None}
 
 
 def icon_map(cc):
-    """Vaste tabel met App Store-iconen voor een land (of {} als die er niet is)."""
+    """Vaste tabel met zendericonen (App Store + websites) voor een land (of {} als die er niet is)."""
     cc = cc or '_world'
     if cc not in _maps:
         try:
@@ -44,7 +45,7 @@ def icon_map(cc):
 
 
 def app_icon(s):
-    """URL van het App Store-icoon van de zender, of ''."""
+    """URL van het app-icoon van de zender (tabel: App Store of eigen website; anders live iTunes), of ''."""
     cc = (s.get('countrycode') or '').upper()
     m = icon_map(cc)
     url = (m.get('u') or {}).get(s.get('stationuuid') or '') or (m.get('n') or {}).get(icons.norm_key(s.get('name')))
@@ -184,7 +185,7 @@ def main():
             fh.write(data)
         items.append({'n': name, 'p': place, 'i': fn})
     with open(OUT_JS, 'w', encoding='utf-8') as fh:
-        fh.write('// Gemaakt door tools/make_wall.py: vaste zenderlogo\'s voor de hero (bron: App Store-iconen en Radio Browser).\n')
+        fh.write('// Gemaakt door tools/make_wall.py: vaste zenderlogo\'s voor de hero (bron: App Store-iconen, iconen van zenderwebsites en Radio Browser).\n')
         fh.write('window.TUNR_WALL = ' + json.dumps(items, ensure_ascii=False, separators=(',', ':')) + ';\n')
     print(f'{len(items)} logo\'s geschreven')
 

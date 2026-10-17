@@ -12,7 +12,9 @@ vaste tabel die de apps en de webspeler van tunr.online halen.
 3. resultaat (ook "niets gevonden") in een cache (branch icons-data), zodat elke run verdergaat waar de vorige
    stopte; missers na 90 dagen en treffers na 180 dagen opnieuw;
 4. uitvoer: website/assets/data/icons/<CC>.json (+ _world.json voor zenders zonder land) =
-   {"u": {stationuuid: url}, "n": {naamsleutel: url}}.
+   {"u": {stationuuid: url}, "n": {naamsleutel: url}}, samengevoegd met wat er al staat via
+   tools/merge_icon_tables.py (App Store-icoon gaat voor het website-icoon van tools/make_site_icons.py; er
+   verdwijnt niets).
 
 Gebruik:
     python3 tools/make_station_icons.py [--cache pad] [--budget-min 330] [--countries 60] [--per-country 150]
@@ -23,6 +25,9 @@ Gebruik:
 """
 import argparse, json, os, random, re, signal, sys, time, unicodedata, urllib.error, urllib.parse, urllib.request
 from datetime import date, datetime, timedelta
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import merge_icon_tables  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, 'website', 'assets', 'data', 'icons')
@@ -367,14 +372,9 @@ def write_output(groups, cache, out_dir=OUT_DIR):
             continue
         cc, k = ck.split('|', 1)
         files.setdefault(cc or '_world', {'u': {}, 'n': {}})['n'].setdefault(k, e['u'])
-    os.makedirs(out_dir, exist_ok=True)
-    for fn in os.listdir(out_dir):
-        if fn.endswith('.json') and fn[:-5] not in files:
-            os.remove(os.path.join(out_dir, fn))
-    for name, data in files.items():
-        data = {'u': dict(sorted(data['u'].items())), 'n': dict(sorted(data['n'].items()))}
-        with open(os.path.join(out_dir, name + '.json'), 'w', encoding='utf-8') as fh:
-            json.dump(data, fh, ensure_ascii=False, separators=(',', ':'))
+    # samenvoegen met wat er al staat (website-iconen, eerdere runs): één plek voor de voorrang,
+    # tools/merge_icon_tables.py; er verdwijnt nooit iets
+    merge_icon_tables.merge_into_dir(out_dir, appstore=files)
     return files
 
 
