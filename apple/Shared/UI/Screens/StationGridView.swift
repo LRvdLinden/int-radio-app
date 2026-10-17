@@ -52,6 +52,8 @@ struct StationGridView: View {
             .screenBackground()
             .navigationTitle(source.title)
             .inlineTitle()
+            #if !os(tvOS)
+            // Apple TV: deze knoppen staan bovenaan in de inhoud (de navigatiebalk is daar niet bereikbaar)
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     if canMakeRegion {
@@ -71,6 +73,7 @@ struct StationGridView: View {
                     }
                 }
             }
+            #endif
             .task(id: source) { await load() }
     }
 
@@ -91,6 +94,9 @@ struct StationGridView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: tvScaled(14)) {
+                    #if os(tvOS)
+                    tvActions
+                    #endif
                     if isMyRegion {
                         Label(L("local.isMine"), systemImage: "location.fill")
                             .font(Theme.caption)
@@ -124,6 +130,41 @@ struct StationGridView: View {
             #endif
         }
     }
+
+    #if os(tvOS)
+    /// Apple TV: Alles afspelen en (bij een regio) Maak mijn regio als focusbare knoppen boven het raster
+    @ViewBuilder private var tvActions: some View {
+        if !stations.isEmpty || canMakeRegion {
+            HStack(spacing: 24) {
+                if !stations.isEmpty {
+                    Button {
+                        if let first = stations.first { player.play(first, queue: stations) }
+                    } label: {
+                        Label(L("action.playAll"), systemImage: "play.fill")
+                            .font(.system(size: 28, weight: .bold))
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, 16)
+                    }
+                    .buttonStyle(AccentButtonStyle())
+                }
+                if canMakeRegion {
+                    Button {
+                        if let name = regionName { library.setLocalRegion(name) }
+                    } label: {
+                        Label(L("local.makeMine"), systemImage: "location.fill")
+                            .font(.system(size: 28, weight: .bold))
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, 16)
+                    }
+                    .buttonStyle(SecondaryButtonStyle())
+                }
+            }
+            .padding(.horizontal, Theme.edge)
+            .padding(.vertical, 10)
+            .focusSection()
+        }
+    }
+    #endif
 
     private func load(force: Bool = false) async {
         guard !source.isLocal else { return }

@@ -167,6 +167,9 @@ struct LocalRegionsView: View {
     @EnvironmentObject private var library: Library
     @Environment(\.navigate) private var navigate
     @State private var state: LoadState<[RegionState]> = .idle
+    #if os(tvOS)
+    @FocusState private var focusedRegion: String?
+    #endif
 
     var body: some View {
         Group {
@@ -182,6 +185,28 @@ struct LocalRegionsView: View {
                     EmptyStateView(symbol: "location.slash", title: L("local.none"), message: L("local.noneHint"))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
+                    #if os(tvOS)
+                    // Apple TV: eigen lijst (rijen met focusvlak), scrolt mee met de focus; de huidige regio krijgt de focus
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 6) {
+                            ForEach(regions) { r in
+                                regionRow(r)
+                                    .focused($focusedRegion, equals: r.name)
+                            }
+                            Text(L("local.footer"))
+                                .font(Theme.caption)
+                                .foregroundStyle(Theme.secondary)
+                                .padding(.top, 20)
+                                .padding(.horizontal, 16)
+                        }
+                        .frame(maxWidth: 1200)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, Theme.edge)
+                        .padding(.vertical, 30)
+                    }
+                    .scrollClipDisabled()
+                    .defaultFocus($focusedRegion, library.currentRegion?.name)
+                    #else
                     List {
                         Section {
                             ForEach(regions) { r in regionRow(r) }
@@ -190,6 +215,7 @@ struct LocalRegionsView: View {
                         }
                     }
                     .hiddenListBackground()
+                    #endif
                 }
             }
         }
@@ -220,8 +246,9 @@ struct LocalRegionsView: View {
             .padding(.vertical, tvScaled(4))
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .listRowButton()
         .listRowBackground(Theme.surface)
+        .accessibilityAddTraits(library.currentRegion?.name == r.name ? .isSelected : [])
     }
 
     private func load() async {
@@ -254,32 +281,47 @@ struct LanguagesView: View {
                 ErrorRetryView { Task { await load() } }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .loaded(let langs):
-                List(langs) { lang in
-                    Button {
-                        navigate(.list(.language(name: lang.name, title: lang.displayName)))
-                    } label: {
-                        HStack {
-                            Text(lang.displayName).font(.system(size: tvScaled(16), weight: .semibold)).foregroundStyle(.white)
-                            Spacer()
-                            Text(formattedNumber(lang.stationCount))
-                                .font(.system(size: tvScaled(13), weight: .medium)).foregroundStyle(Theme.secondary)
-                                .monospacedDigit()
-                            Image(systemName: "chevron.right").font(.system(size: tvScaled(12), weight: .semibold)).foregroundStyle(Theme.secondary)
-                        }
-                        .padding(.vertical, tvScaled(4))
-                        .contentShape(Rectangle())
+                #if os(tvOS)
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 6) {
+                        ForEach(langs) { lang in languageRow(lang) }
                     }
-                    .buttonStyle(.plain)
-                    .listRowBackground(Theme.surface)
-                    .accessibilityLabel(lang.displayName + ", " + L("stations.count", formattedNumber(lang.stationCount)))
+                    .frame(maxWidth: 1200)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, Theme.edge)
+                    .padding(.vertical, 30)
                 }
-                .hiddenListBackground()
+                .scrollClipDisabled()
+                #else
+                List(langs) { lang in languageRow(lang) }
+                    .hiddenListBackground()
+                #endif
             }
         }
         .screenBackground()
         .navigationTitle(L("browse.language"))
         .inlineTitle()
         .task { if state.value == nil { await load() } }
+    }
+
+    private func languageRow(_ lang: LanguageInfo) -> some View {
+        Button {
+            navigate(.list(.language(name: lang.name, title: lang.displayName)))
+        } label: {
+            HStack {
+                Text(lang.displayName).font(.system(size: tvScaled(16), weight: .semibold)).foregroundStyle(.white)
+                Spacer()
+                Text(formattedNumber(lang.stationCount))
+                    .font(.system(size: tvScaled(13), weight: .medium)).foregroundStyle(Theme.secondary)
+                    .monospacedDigit()
+                Image(systemName: "chevron.right").font(.system(size: tvScaled(12), weight: .semibold)).foregroundStyle(Theme.secondary)
+            }
+            .padding(.vertical, tvScaled(4))
+            .contentShape(Rectangle())
+        }
+        .listRowButton()
+        .listRowBackground(Theme.surface)
+        .accessibilityLabel(lang.displayName + ", " + L("stations.count", formattedNumber(lang.stationCount)))
     }
 
     private func load() async {

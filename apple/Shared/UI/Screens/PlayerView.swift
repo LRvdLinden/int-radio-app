@@ -15,6 +15,11 @@ struct PlayerView: View {
     @EnvironmentObject private var app: AppState
     @Environment(\.dismiss) private var dismiss
     @State private var showInfo = false
+    #if os(tvOS)
+    /// Apple TV: slaaptimer als keuzelijst (een Menu werkt op tv niet prettig met de focus)
+    @State private var showSleep = false
+    @FocusState private var focus: PlayerFocus?
+    #endif
 
     var body: some View {
         ZStack {
@@ -54,6 +59,13 @@ struct PlayerView: View {
         }
         #if os(tvOS)
         .onPlayPauseCommand { player.toggle() }
+        .confirmationDialog(L("player.sleepTimer"), isPresented: $showSleep, titleVisibility: .visible) {
+            ForEach([15, 30, 45, 60, 90], id: \.self) { m in
+                Button(L("sleep.minutes", m)) { player.setSleepTimer(minutes: m) }
+            }
+            Button(L("sleep.off"), role: player.sleepEnd == nil ? nil : .destructive) { player.setSleepTimer(minutes: 0) }
+            Button(L("action.cancel"), role: .cancel) {}
+        }
         #endif
         #if os(tvOS) || os(macOS)
         .onExitCommand { dismiss() }
@@ -73,6 +85,8 @@ struct PlayerView: View {
             .focusSection()
         }
         .padding(80)
+        // afspelen/pauze krijgt als eerste de focus
+        .defaultFocus($focus, .play)
         #else
         GeometryReader { geo in
             let wide = geo.size.width > 700 && geo.size.width > geo.size.height
@@ -207,6 +221,8 @@ struct PlayerView: View {
             .accessibilityLabel(player.state == .playing ? L("player.pause") : L("player.play"))
             #if os(iOS)
             .keyboardShortcut(.space, modifiers: [])
+            #elseif os(tvOS)
+            .focused($focus, equals: .play)
             #endif
 
             Button { Haptics.tap(); player.next() } label: {
@@ -242,6 +258,11 @@ struct PlayerView: View {
             .buttonStyle(PressableStyle())
             #endif
 
+            #if os(tvOS)
+            actionButton(player.sleepEnd == nil ? "moon.zzz" : "moon.zzz.fill",
+                         title: L("player.sleepTimer"),
+                         tint: player.sleepEnd == nil ? .white : Theme.accent2) { showSleep = true }
+            #else
             Menu {
                 ForEach([15, 30, 45, 60, 90], id: \.self) { m in
                     Button(L("sleep.minutes", m)) { player.setSleepTimer(minutes: m) }
@@ -257,6 +278,7 @@ struct PlayerView: View {
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
+            #endif
             #endif
 
             actionButton("info.circle", title: L("player.stationInfo"), tint: .white) { showInfo = true }
@@ -275,6 +297,11 @@ struct PlayerView: View {
         #endif
     }
 }
+
+#if os(tvOS)
+/// Apple TV: wat in de speler als eerste de focus krijgt
+enum PlayerFocus: Hashable { case play }
+#endif
 
 /// Sluitknop · woordmerk · AirPlay boven in de speler (iPhone, iPad, Mac)
 #if !os(tvOS)

@@ -2,16 +2,41 @@ import SwiftUI
 
 /// Speler in aflevering-modus (SPEC §8): geen LIVE-pil maar een tijdbalk (sleepbaar op iPhone/iPad/Mac) met
 /// verstreken/resterende tijd, knoppen vorige · 15 s terug · afspelen/pauze · 30 s vooruit · volgende,
-/// snelheid, slaaptimer (incl. "Einde van aflevering"), delen en afleveringsinfo.
-/// tvOS: tijdbalk focusbaar; links/rechts op de afstandsbediening = −15/+30 s.
+/// favoriet (de podcast), snelheid, slaaptimer (incl. "Einde van aflevering"), delen en afleveringsinfo.
+/// tvOS: tijdbalk focusbaar; links/rechts op de afstandsbediening = −15/+30 s; snelheid/slaaptimer als keuzelijst.
 struct EpisodePlayerContent: View {
     let episode: Episode
 
     @EnvironmentObject private var player: RadioPlayer
+    @EnvironmentObject private var library: Library
     @State private var showInfo = false
+    #if os(tvOS)
+    /// Apple TV: snelheid en slaaptimer als keuzelijst (een Menu werkt op tv niet prettig met de focus)
+    @State private var showSpeed = false
+    @State private var showSleep = false
+    @FocusState private var focus: PlayerFocus?
+    #endif
+
+    private var isFavorite: Bool { library.isFollowing(podcastId: episode.podcastId) }
 
     var body: some View {
         content
+            #if os(tvOS)
+            .confirmationDialog(L("player.speed"), isPresented: $showSpeed, titleVisibility: .visible) {
+                ForEach(RadioPlayer.rates, id: \.self) { r in
+                    Button((r == player.rate ? "✓ " : "") + PodcastFormat.rate(r)) { player.setRate(r) }
+                }
+                Button(L("action.cancel"), role: .cancel) {}
+            }
+            .confirmationDialog(L("player.sleepTimer"), isPresented: $showSleep, titleVisibility: .visible) {
+                Button(L("sleep.endOfEpisode")) { player.setSleepAtEpisodeEnd() }
+                ForEach([15, 30, 45, 60, 90], id: \.self) { m in
+                    Button(L("sleep.minutes", m)) { player.setSleepTimer(minutes: m) }
+                }
+                Button(L("sleep.off"), role: player.sleepActive ? .destructive : nil) { player.setSleepTimer(minutes: 0) }
+                Button(L("action.cancel"), role: .cancel) {}
+            }
+            #endif
             .sheet(isPresented: $showInfo) {
                 NavStack {
                     EpisodeDetailView(episode: episode)
@@ -35,12 +60,14 @@ struct EpisodePlayerContent: View {
                 titles(alignment: .leading)
                 EpisodeTimeBar(progress: player.progress)
                 transport
-                actions
+                actions(includeFavorite: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .focusSection()
         }
         .padding(80)
+        // afspelen/pauze krijgt als eerste de focus (niet de tijdbalk)
+        .defaultFocus($focus, .play)
         #else
         GeometryReader { geo in
             let wide = geo.size.width > 700 && geo.size.width > geo.size.height
@@ -55,7 +82,7 @@ struct EpisodePlayerContent: View {
                             EpisodeTimeBar(progress: player.progress)
                             transport
                             PlayerVolumeRow()
-                            actions
+                            actions(includeFavorite: true)
                         }
                         .frame(maxWidth: 480)
                     }
@@ -70,11 +97,16 @@ struct EpisodePlayerContent: View {
                     Spacer(minLength: 0)
                     artwork.frame(maxWidth: min(geo.size.width - 64, 360))
                     Spacer(minLength: 0)
-                    titles(alignment: .center)
+                    // smal (iPhone): het hartje naast de titel, zodat de actierij past
+                    HStack(alignment: .center, spacing: 8) {
+                        Color.clear.frame(width: 40, height: 40)
+                        titles(alignment: .center)
+                        favoriteIconButton
+                    }
                     EpisodeTimeBar(progress: player.progress)
                     transport
                     PlayerVolumeRow()
-                    actions
+                    actions(includeFavorite: false)
                 }
                 .padding(.horizontal, 28)
                 .padding(.vertical, 16)
@@ -172,6 +204,8 @@ struct EpisodePlayerContent: View {
             .accessibilityLabel(player.state == .playing ? L("player.pause") : L("player.play"))
             #if os(iOS)
             .keyboardShortcut(.space, modifiers: [])
+            #elseif os(tvOS)
+            .focused($focus, equals: .play)
             #endif
 
             Button { Haptics.tap(); player.skip(RadioPlayer.skipForward) } label: {
@@ -195,8 +229,57 @@ struct EpisodePlayerContent: View {
         .frame(maxWidth: .infinity)
     }
 
-    private var actions: some View {
+    private func toggleFavorite() {
+        Haptics.success()
+        withAnimation(.spring(response: 0.3)) { library.toggleFollow(episode.podcastStub) }
+    }
+
+    /// Alleen het hartje (smalle speler, naast de titel)
+    private var favoriteIconButton: some View {
+        Button(action: toggleFavorite) {
+            Image(systemName: isFavorite ? "heart.fill" : "heart")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(isFavorite ? Theme.accent : .white)
+                .frame(width: 40, height: 40)
+                .background(Color.white.opacity(0.12), in: Circle())
+                .contentTransition(.symbolEffect(.replace))
+        }
+        .buttonStyle(PressableStyle())
+        .accessibilityLabel(isFavorite ? L("podcast.unfavoritePodcast") : L("podcast.favoritePodcast"))
+    }
+
+    private func actions(includeFavorite: Bool) -> some View {
         HStack(spacing: tvScaled(12)) {
+            if includeFavorite {
+                // Favoriet: de podcast van deze aflevering (zelfde opslag als volgen); tv: eerste knop van de rij
+                Button(action: toggleFavorite) {
+                    ActionLabel(symbol: isFavorite ? "heart.fill" : "heart",
+                                title: isFavorite ? L("podcast.following") : L("podcast.follow"),
+                                tint: isFavorite ? Theme.accent : .white)
+                }
+                #if os(tvOS)
+                .buttonStyle(TVLiftStyle(scale: 1.1, border: false))
+                #else
+                .buttonStyle(PressableStyle())
+                #endif
+                .accessibilityLabel(isFavorite ? L("podcast.unfavoritePodcast") : L("podcast.favoritePodcast"))
+            }
+
+            #if os(tvOS)
+            Button { showSpeed = true } label: {
+                ActionLabel(symbol: "speedometer", title: L("player.speed"),
+                            tint: player.rate == 1 ? .white : Theme.accent2, text: PodcastFormat.rate(player.rate))
+            }
+            .buttonStyle(TVLiftStyle(scale: 1.1, border: false))
+            .accessibilityLabel(L("player.speed") + ", " + PodcastFormat.rate(player.rate))
+
+            Button { showSleep = true } label: {
+                ActionLabel(symbol: player.sleepActive ? "moon.zzz.fill" : "moon.zzz",
+                            title: L("player.sleepTimer"),
+                            tint: player.sleepActive ? Theme.accent2 : .white)
+            }
+            .buttonStyle(TVLiftStyle(scale: 1.1, border: false))
+            #else
             Menu {
                 ForEach(RadioPlayer.rates, id: \.self) { r in
                     Button {
@@ -237,6 +320,7 @@ struct EpisodePlayerContent: View {
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
+            #endif
             #endif
 
             #if !os(tvOS)

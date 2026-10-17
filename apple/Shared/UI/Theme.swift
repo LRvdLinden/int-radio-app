@@ -147,6 +147,40 @@ struct TVLiftStyle: ButtonStyle {
     }
 }
 
+/// Apple TV: lijstrij (landen, regio's, talen) met eigen focusvlak: donker vlak + witte 3px rand + licht schalen,
+/// zodat de witte tekst leesbaar blijft (geen wit systeemvlak). Zet `tvFocused` voor de inhoud.
+struct TVRowButtonStyle: ButtonStyle {
+    var cornerRadius: CGFloat = 18
+    var scale: CGFloat = 1.02
+    func makeBody(configuration: Configuration) -> some View {
+        Row(configuration: configuration, cornerRadius: cornerRadius, scale: scale)
+    }
+
+    private struct Row: View {
+        let configuration: ButtonStyleConfiguration
+        let cornerRadius: CGFloat
+        let scale: CGFloat
+        @Environment(\.isFocused) private var focused
+        var body: some View {
+            configuration.label
+                .environment(\.tvFocused, focused)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(focused ? Theme.elevated : Color.clear)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .strokeBorder(Color.white, lineWidth: focused ? 3 : 0)
+                )
+                .scaleEffect(configuration.isPressed ? scale * 0.98 : (focused ? scale : 1))
+                .shadow(color: .black.opacity(focused ? 0.5 : 0), radius: 14, y: 8)
+                .animation(.spring(response: 0.28, dampingFraction: 0.78), value: focused)
+                .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+        }
+    }
+}
+
 private struct TVFocusedKey: EnvironmentKey { static let defaultValue = false }
 extension EnvironmentValues {
     /// Is de knop waar dit in staat geselecteerd (Apple TV)?
@@ -216,6 +250,8 @@ struct SecondaryButtonStyle: ButtonStyle {
         }
         var body: some View {
             configuration.label
+                // labels met een eigen kleur lezen dit via `tvAwareForeground` (wit → zwart op het witte focusvlak)
+                .environment(\.tvFocused, isFocused)
                 .foregroundStyle(isFocused ? Color.black : Color.white)
                 .background(isFocused ? Color.white : Theme.elevated,
                             in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
@@ -246,6 +282,15 @@ extension View {
         self.buttonStyle(TVLiftStyle(scale: 1.05, border: false))
         #else
         self.buttonStyle(PressableStyle())
+        #endif
+    }
+
+    /// Knoppen in een lijst (landen, regio's, talen): tv = eigen focusvlak (TVRowButtonStyle), elders `.plain`
+    @ViewBuilder func listRowButton() -> some View {
+        #if os(tvOS)
+        self.buttonStyle(TVRowButtonStyle())
+        #else
+        self.buttonStyle(.plain)
         #endif
     }
 
@@ -299,6 +344,22 @@ extension View {
 extension Font {
     static func rounded(_ size: CGFloat, _ weight: Font.Weight = .heavy) -> Font {
         .system(size: tvScaled(size), weight: weight, design: .rounded)
+    }
+}
+
+/// Zie `tvAwareForeground(_:)`
+struct TVAwareForeground: ViewModifier {
+    let color: Color
+    @Environment(\.tvFocused) private var focused
+    func body(content: Content) -> some View {
+        content.foregroundStyle(focused && color == .white ? Color.black : color)
+    }
+}
+
+extension View {
+    /// Voorgrondkleur die op Apple TV van wit naar zwart gaat als de knop (SecondaryButtonStyle) focus heeft
+    func tvAwareForeground(_ color: Color) -> some View {
+        modifier(TVAwareForeground(color: color))
     }
 }
 

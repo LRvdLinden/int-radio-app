@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
+import nl.lrvdlinden.tunr.data.LogoSources
 import nl.lrvdlinden.tunr.data.Episode
 import nl.lrvdlinden.tunr.data.EpisodeCache
 import nl.lrvdlinden.tunr.data.Station
@@ -85,7 +86,8 @@ fun Station.toMediaItem(): MediaItem {
         .setArtist(genresLine.ifEmpty { placeLine() })
         .setSubtitle(placeLine())
         .setStation(displayName)
-        .setArtworkUri(favicon.trim().takeIf { it.startsWith("http") }?.let { Uri.parse(it) })
+        // logo met terugval (favicon → Google/DuckDuckGo op het domein), zie LogoSources
+        .setArtworkUri(LogoSources.best(this)?.let { Uri.parse(it) })
         .setIsPlayable(true)
         .setIsBrowsable(false)
         .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)

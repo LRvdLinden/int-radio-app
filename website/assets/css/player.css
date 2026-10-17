@@ -622,6 +622,11 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 .plist .pli .chev{width:18px;height:18px;color:var(--dim);margin-right:6px}
 .plist .pli .fol{width:22px;height:22px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#1a0800;flex:none}
 .plist .pli .fol svg{width:14px;height:14px}
+/* podcast: favoriet (hartje in accent) */
+.favbtn.on svg{color:var(--accent)}
+.card.podc .pbtn{position:relative}
+.card.podc .pfav{position:absolute;right:8px;bottom:8px;z-index:3;width:24px;height:24px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff}
+.card.podc .pfav svg{width:13px;height:13px}
 .plist .pli:hover{background:#ffffff08}
 .plist .pli .art{width:60px}
 /* podcastoverzicht: toplijst links, genres rechts op brede schermen */

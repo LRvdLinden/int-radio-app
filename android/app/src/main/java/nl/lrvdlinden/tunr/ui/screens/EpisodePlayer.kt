@@ -25,6 +25,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bedtime
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Pause
@@ -72,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import nl.lrvdlinden.tunr.Device
 import nl.lrvdlinden.tunr.R
 import nl.lrvdlinden.tunr.data.Episode
+import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.player.RadioController
 import nl.lrvdlinden.tunr.ui.CircleIconButton
 import nl.lrvdlinden.tunr.ui.EqualizerBars
@@ -108,6 +111,9 @@ fun EpisodePlayerScreen(episode: Episode, onClose: () -> Unit) {
     val dragAnim by animateFloatAsState(drag, label = "drag")
     val playFocus = rememberInitialFocus(key = episode.id)
     val wide = isWide()
+    // Favoriet: de podcast van deze aflevering (zelfde opslag als volgen)
+    val followed by Library.followedPodcasts.collectAsState()
+    val favorite = followed.any { it.id == episode.podcastId }
 
     Box(
         Modifier
@@ -173,6 +179,14 @@ fun EpisodePlayerScreen(episode: Episode, onClose: () -> Unit) {
 
                 Spacer(Modifier.height(22.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    if (Device.isTV) {
+                        // tv: hartje als eerste actie (telefoon/tablet: rechtsboven)
+                        ActionButton(
+                            if (favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                            stringResource(if (favorite) R.string.following else R.string.follow),
+                            tint = if (favorite) T.accent else Color.White,
+                        ) { Library.toggleFollow(episode.podcast()) }
+                    }
                     SpeedButton()
                     ActionButton(Icons.Rounded.Bedtime, sleepLabel()) { showSleep = true }
                     ActionButton(Icons.Rounded.Info, stringResource(R.string.podcast_info)) {
@@ -198,7 +212,13 @@ fun EpisodePlayerScreen(episode: Episode, onClose: () -> Unit) {
                 Text(stringResource(R.string.now_playing).uppercase(), color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp,
                     fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp)
                 Spacer(Modifier.weight(1f))
-                if (!Device.isTV) Spacer(Modifier.size(44.dp))
+                if (!Device.isTV) {
+                    CircleIconButton(
+                        if (favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                        stringResource(if (favorite) R.string.unfavorite_podcast else R.string.favorite_podcast),
+                        tint = if (favorite) T.accent else Color.White, background = Color.Transparent,
+                    ) { Library.toggleFollow(episode.podcast()) }
+                }
             }
             if (wide) {
                 Row(Modifier.fillMaxSize().padding(horizontal = 48.dp), verticalAlignment = Alignment.CenterVertically) {

@@ -4,6 +4,26 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 20
+_2026-10-17_
+
+**Nieuw**
+
+- Podcasts als favoriet: een hartje bovenaan elke podcast en in de afleveringsspeler; favoriete podcasts staan in je bibliotheek (ook via lang indrukken in de apps). _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Favourite podcasts: a heart at the top of every podcast and in the episode player; favourite podcasts appear in your library (also via long-press in the apps).</sub>
+
+**Verbeterd**
+
+- Veel meer zenderlogo's: heeft een zender geen (goed) logo, dan haalt Tunr het icoon van de website van de zender op. _(Alle apps)_  
+  <sub>Many more station logos: if a station has no (usable) logo, Tunr fetches the icon of the station's website.</sub>
+- Apple TV: land kiezen schermvullend met zoeken, alle knoppen en lijsten goed te bedienen met de afstandsbediening, duidelijke focus, bereikbare instellingen en kaartkeuze via de lijst. _(Apple TV)_  
+  <sub>Apple TV: full-screen country picker with search, all buttons and lists work well with the remote, clear focus, reachable settings and map selection via the list.</sub>
+
+**Opgelost**
+
+- Apple TV: grijze knoppen (favoriet, website, afgespeeld) waren onzichtbaar als ze focus hadden. _(Apple TV)_  
+  <sub>Apple TV: grey buttons (favourite, website, played) were invisible when focused.</sub>
+
 ## Build 19
 _2026-10-17_
 

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Podcastpagina: grote art, titel, maker, genre, aantal afleveringen, Volgen/Volgend, uitklapbare beschrijving,
+/// Podcastpagina: grote art, titel, maker, genre, aantal afleveringen, Favoriet (hartje), uitklapbare beschrijving,
 /// Speel nieuwste en de afleveringenlijst (datum, duur, voortgang, ✓) met sorteren Nieuwste/Oudste.
 /// iPad/Mac/tv: twee kolommen (art + knoppen links, afleveringen rechts).
 struct PodcastDetailView: View {
@@ -13,6 +13,10 @@ struct PodcastDetailView: View {
     @State private var about = ""
     @State private var expanded = false
     @AppStorage("ui.episodeSort") private var sort: EpisodeSort = .newest
+    #if os(tvOS)
+    /// Apple TV: het hartje krijgt bij openen als eerste de focus
+    @FocusState private var focus: PodcastDetailFocus?
+    #endif
 
     private var shown: Podcast { info.map { $0.merged(with: podcast) } ?? podcast }
     private var wide: Bool { !DeviceKind.isPhone }
@@ -56,6 +60,9 @@ struct PodcastDetailView: View {
         }
         .navigationTitle(wide ? shown.displayName : "")
         .inlineTitle()
+        #if os(tvOS)
+        .defaultFocus($focus, .favorite)
+        #endif
         .task(id: podcast.id) { await load() }
     }
 
@@ -152,20 +159,19 @@ struct PodcastDetailView: View {
             .buttonStyle(AccentButtonStyle())
             .disabled((episodes.value ?? []).isEmpty)
 
+            // Favoriet (hartje, zoals bij zenders); zelfde opslag als "volgen" (followedPodcasts + iCloud)
             Button {
                 Haptics.success()
                 withAnimation(.spring(response: 0.3)) { library.toggleFollow(shown) }
             } label: {
-                Label(library.isFollowing(shown) ? L("podcast.following") : L("podcast.follow"),
-                      systemImage: library.isFollowing(shown) ? "checkmark" : "plus")
-                    .font(.system(size: tvScaled(15), weight: .bold))
-                    .lineLimit(1)
-                    .foregroundStyle(library.isFollowing(shown) ? Theme.accent : .white)
-                    .padding(.horizontal, tvScaled(18))
-                    .padding(.vertical, tvScaled(12))
-                    .contentTransition(.symbolEffect(.replace))
+                FavoriteButtonLabel(isFavorite: library.isFollowing(shown))
             }
             .buttonStyle(SecondaryButtonStyle())
+            .accessibilityLabel(library.isFollowing(shown) ? L("action.unfavorite") : L("action.favorite"))
+            .accessibilityValue(library.isFollowing(shown) ? L("podcast.following") : "")
+            #if os(tvOS)
+            .focused($focus, equals: .favorite)
+            #endif
 
             #if !os(tvOS)
             Group {
@@ -292,6 +298,26 @@ struct PodcastDetailView: View {
     }
 }
 
+#if os(tvOS)
+enum PodcastDetailFocus: Hashable { case favorite }
+#endif
+
+/// Hartje + "Favoriet" / "In favorieten" (accentkleur als hij favoriet is)
+struct FavoriteButtonLabel: View {
+    let isFavorite: Bool
+
+    var body: some View {
+        Label(isFavorite ? L("podcast.following") : L("podcast.follow"),
+              systemImage: isFavorite ? "heart.fill" : "heart")
+            .font(.system(size: tvScaled(15), weight: .bold))
+            .lineLimit(1)
+            .tvAwareForeground(isFavorite ? Theme.accent : .white)
+            .padding(.horizontal, tvScaled(18))
+            .padding(.vertical, tvScaled(12))
+            .contentTransition(.symbolEffect(.replace))
+    }
+}
+
 /// Afleveringspagina: titel, podcast, datum, duur, volledige omschrijving en Afspelen
 struct EpisodeDetailView: View {
     let episode: Episode
@@ -412,7 +438,7 @@ struct EpisodeDetailView: View {
             } label: {
                 Image(systemName: status.finished ? "checkmark.circle.fill" : "checkmark.circle")
                     .font(.system(size: tvScaled(17), weight: .semibold))
-                    .foregroundStyle(status.finished ? Theme.accent : .white)
+                    .tvAwareForeground(status.finished ? Theme.accent : .white)
                     .frame(width: tvScaled(46), height: tvScaled(44))
             }
             .buttonStyle(SecondaryButtonStyle())

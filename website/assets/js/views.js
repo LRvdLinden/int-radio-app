@@ -140,7 +140,7 @@
     var k = T.ui.reg(arr);
     return '<section class="hero" aria-roledescription="carousel" aria-label="' + esc(t('row.popular', { c: cname() })) + '" data-list="' + k + '"><div class="slides">' +
       arr.map(function (s, i) {
-        var p = T.pal(s.name), logo = T.logoUrl(s.favicon);
+        var p = T.pal(s.name), logo = T.logoBest(s);
         return '<div class="slide" data-sid="' + esc(s.id) + '" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' / ' + arr.length + '"' + (i ? ' aria-hidden="true"' : '') + '>' +
           '<div class="bgart" style="--a:' + p[0] + ';--b:' + p[1] + '">' + (logo ? '<img src="' + esc(logo) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '</div>' +
           T.art(s) + '<div class="txt"><span class="kick">#' + (i + 1) + ' · ' + esc(t('row.popular', { c: cname() })) + '</span><h3>' + esc(s.name) + '</h3><p>' + esc(T.tagsLine(s, 3) || T.place(s)) + '</p>' +
@@ -460,7 +460,7 @@
       } else if (seg === 'podcasts') {
         var fol = T.store.follows(), cont = T.store.continueEps();
         body = (cont.length ? T.ui.epRow(t('pod.continue'), cont) : '') +
-          (fol.length ? '<section class="sec"><div class="sech"><h2>' + esc(t('seg.podcasts')) + '<small>' + esc(String(fol.length)) + '</small></h2><a class="all" href="#/podcasts">' + esc(t('pod.lib.find')) + '</a></div>' + T.ui.podGrid(fol) + '</section>'
+          (fol.length ? '<section class="sec"><div class="sech"><h2>' + esc(t('pod.favs')) + '<small>' + esc(String(fol.length)) + '</small></h2><a class="all" href="#/podcasts">' + esc(t('pod.lib.find')) + '</a></div>' + T.ui.podGrid(fol) + '</section>'
             : '<div class="msg"><span class="mi">' + I('pod') + '</span><b>' + esc(t('seg.podcasts')) + '</b><span>' + esc(t('pod.lib.empty')) + '</span><a class="btn" href="#/podcasts">' + esc(t('pod.lib.find')) + '</a></div>');
       } else {
         body = rec.length ? '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn sm ghost" type="button" id="clrR">' + I('trash') + '<span>' + esc(t('lib.clear')) + '</span></button></div>' + T.ui.listOf(rec) : '<div class="msg"><span class="mi">' + I('clock') + '</span><span>' + esc(t('lib.empty.r')) + '</span></div>';
@@ -568,9 +568,11 @@
     T.ui.podRefresh = function () { if (data) render(); };
     load();
   };
+  // Favoriet (hartje, zoals bij zenders); opslag = gevolgde podcasts (store.follows)
   function followBtn(id) {
     var on = T.store.isFollowing(id);
-    return '<button class="btn ' + (on ? 'ghost' : 'white') + '" type="button" data-act="follow" aria-pressed="' + on + '">' + I(on ? 'check' : 'plus') + '<span>' + esc(t(on ? 'pod.following' : 'pod.follow')) + '</span></button>';
+    return '<button class="btn ghost favbtn' + (on ? ' on' : '') + '" type="button" data-act="follow" aria-pressed="' + on + '" aria-label="' + esc(t(on ? 'pod.fav.remove' : 'pod.fav.add')) + '">' +
+      I(on ? 'heartf' : 'heart') + '<span>' + esc(t(on ? 'pod.following' : 'pod.follow')) + '</span></button>';
   }
   function descHTML(d) {
     return '<p class="pdesc">' + esc(d) + '</p>' + (d.length > 220 ? '<button class="linkbtn" type="button" data-act="dmore">' + esc(t('pod.more')) + '</button>' : '');

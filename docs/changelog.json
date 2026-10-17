@@ -646,6 +646,57 @@
           "en": "The station logos in the homepage hero are visible again."
         }
       ]
+    },
+    {
+      "build": 20,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Podcasts als favoriet: een hartje bovenaan elke podcast en in de afleveringsspeler; favoriete podcasts staan in je bibliotheek (ook via lang indrukken in de apps).",
+          "en": "Favourite podcasts: a heart at the top of every podcast and in the episode player; favourite podcasts appear in your library (also via long-press in the apps)."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Veel meer zenderlogo's: heeft een zender geen (goed) logo, dan haalt Tunr het icoon van de website van de zender op.",
+          "en": "Many more station logos: if a station has no (usable) logo, Tunr fetches the icon of the station's website."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Apple TV: land kiezen schermvullend met zoeken, alle knoppen en lijsten goed te bedienen met de afstandsbediening, duidelijke focus, bereikbare instellingen en kaartkeuze via de lijst.",
+          "en": "Apple TV: full-screen country picker with search, all buttons and lists work well with the remote, clear focus, reachable settings and map selection via the list."
+        },
+        {
+          "type": "fixed",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Apple TV: grijze knoppen (favoriet, website, afgespeeld) waren onzichtbaar als ze focus hadden.",
+          "en": "Apple TV: grey buttons (favourite, website, played) were invisible when focused."
+        }
+      ]
     }
   ]
 }

@@ -150,7 +150,7 @@ struct StationDetailView: View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: tvScaled(17), weight: .semibold))
-                .foregroundStyle(tint)
+                .tvAwareForeground(tint)
                 .frame(width: tvScaled(46), height: tvScaled(44))
                 .contentTransition(.symbolEffect(.replace))
         }

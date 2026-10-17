@@ -60,7 +60,7 @@ struct FrequencyBar: View {
 
 // MARK: - Zendercover
 
-/// Vierkante zendercover: verloop uit de naam-hash, het logo op een witte afgeronde tegel (62%, 8% marge),
+/// Vierkante zendercover: verloop uit de naam-hash, het logo (favicon of terugval via het domein van de zender),
 /// of een monogram als er geen logo is of het laden mislukt.
 struct StationArt: View {
     let station: Station
@@ -76,11 +76,10 @@ struct StationArt: View {
                 LinearGradient(colors: [colors.0, colors.1], startPoint: .topLeading, endPoint: .bottomTrailing)
                 if let overrideURL {
                     RemoteImage(url: overrideURL, contentMode: .fill) { monogram(side) }
-                } else if let logo = station.logoURL {
-                    // build 4: het logo vult de hele tegel, zonder extra witte tegel of rand eromheen
-                    RemoteImage(url: logo, contentMode: .fill) { monogram(side) }
                 } else {
-                    monogram(side)
+                    // build 4: het logo vult de hele tegel, zonder extra witte tegel of rand eromheen.
+                    // Logo met terugval: favicon → Google/DuckDuckGo op het domein → monogram (LogoSources)
+                    StationLogoImage(station: station) { monogram(side) }
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
@@ -101,6 +100,55 @@ struct StationArt: View {
             .lineLimit(1)
             .shadow(color: .black.opacity(0.2), radius: 4)
             .padding(side * 0.08)
+    }
+}
+
+/// Zenderlogo via LogoResolver (probeert de bronnen uit `LogoSources` na elkaar), met een eigen terugval.
+struct StationLogoImage<Fallback: View>: View {
+    let station: Station
+    let fallback: () -> Fallback
+
+    @State private var image: PlatformImage?
+    @State private var failed: Bool
+
+    init(station: Station, @ViewBuilder fallback: @escaping () -> Fallback) {
+        self.station = station
+        self.fallback = fallback
+        _image = State(initialValue: LogoResolver.shared.cachedImage(for: station))
+        _failed = State(initialValue: LogoResolver.shared.knownMissing(station) || station.logoCandidates.isEmpty)
+    }
+
+    var body: some View {
+        ZStack {
+            if let image {
+                Image(platformImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .aspectRatio(contentMode: .fill)
+                    .transition(.opacity)
+            } else {
+                fallback().opacity(failed ? 1 : 0.55)
+            }
+        }
+        .task(id: station.id) {
+            if let hit = LogoResolver.shared.cachedImage(for: station) {
+                image = hit
+                failed = false
+                return
+            }
+            image = nil
+            guard !station.logoCandidates.isEmpty, !LogoResolver.shared.knownMissing(station) else {
+                failed = true
+                return
+            }
+            failed = false
+            let loaded = await LogoResolver.shared.image(for: station)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeIn(duration: 0.2)) {
+                image = loaded
+                failed = loaded == nil
+            }
+        }
     }
 }
 

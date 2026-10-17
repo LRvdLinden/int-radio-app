@@ -34,7 +34,7 @@
 "browse.top100" = "Top 100 worldwide";
 "browse.worldMap" = "World map";
 "carplay.loading" = "Loading…";
-"carplay.podcastsHint" = "Follow podcasts on your iPhone to find them here";
+"carplay.podcastsHint" = "Add podcasts to your favourites on your iPhone to find them here";
 "carplay.popular" = "Popular";
 "common.no" = "No";
 "common.yes" = "Yes";
@@ -87,7 +87,7 @@
 "library.emptyFavorites" = "No favourites yet";
 "library.emptyFavoritesHint" = "Tap the heart on a station to keep it here";
 "library.emptyPodcasts" = "No podcasts yet";
-"library.emptyPodcastsHint" = "Follow a podcast to see it here, with new episodes on Discover";
+"library.emptyPodcastsHint" = "Tap the heart on a podcast to keep it here, with new episodes on Discover";
 "library.emptyRecent" = "Nothing played yet";
 "library.emptyRecentHint" = "Stations you listen to show up here";
 "library.favorites" = "Favourites";
@@ -152,8 +152,10 @@
 "player.volume" = "Volume";
 "podcast.episodeCount" = "%ld episodes";
 "podcast.episodes" = "Episodes";
-"podcast.follow" = "Follow";
-"podcast.following" = "Following";
+"podcast.favoritePodcast" = "Add podcast to favourites";
+"podcast.unfavoritePodcast" = "Remove podcast from favourites";
+"podcast.follow" = "Favourite";
+"podcast.following" = "In favourites";
 "podcast.less" = "Less";
 "podcast.more" = "More";
 "podcast.noEpisodes" = "No episodes";
@@ -163,9 +165,9 @@
 "podcast.sort" = "Sort";
 "podcast.sortNewest" = "Newest";
 "podcast.sortOldest" = "Oldest";
-"podcast.unfollow" = "Unfollow";
+"podcast.unfollow" = "Remove from favourites";
 "podcasts.errorTitle" = "Can't reach the podcasts";
-"podcasts.following" = "Podcasts you follow";
+"podcasts.following" = "Favourite podcasts";
 "podcasts.none" = "No podcasts found";
 "podcasts.noneHint" = "Try another genre or search for a podcast.";
 "podcasts.title" = "Podcasts";

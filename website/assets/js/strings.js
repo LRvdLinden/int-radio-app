@@ -30,11 +30,11 @@
       'err.load': 'Laden is niet gelukt', 'err.load.p': 'Controleer je verbinding en probeer het opnieuw.', 'empty': 'Hier staan nog geen zenders.',
       'share.text': 'Luister naar {n} op Tunr',
       'nav.label': 'Hoofdmenu', 'home': 'Naar de website',
-      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Toplijsten, volgen en verder luisteren',
+      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Toplijsten, favorieten en verder luisteren',
       'pod.title': 'Podcasts', 'pod.top': 'Top 50 in {c}', 'pod.genres': 'Genres', 'pod.search': 'Zoek podcasts', 'pod.popular': 'Populaire podcasts in {c}', 'pod.new': 'Nieuwe afleveringen', 'pod.continue': 'Verder luisteren',
-      'pod.follow': 'Volgen', 'pod.following': 'Volgend', 'pod.playLatest': 'Speel nieuwste', 'pod.episodes': 'Afleveringen', 'pod.eps': '{n} afleveringen', 'pod.ep1': '1 aflevering', 'pod.sortNew': 'Nieuwste', 'pod.sortOld': 'Oudste',
+      'pod.follow': 'Favoriet', 'pod.following': 'In favorieten', 'pod.favs': 'Favoriete podcasts', 'pod.fav.add': 'Podcast aan favorieten toevoegen', 'pod.fav.remove': 'Podcast uit favorieten verwijderen', 'pod.playLatest': 'Speel nieuwste', 'pod.episodes': 'Afleveringen', 'pod.eps': '{n} afleveringen', 'pod.ep1': '1 aflevering', 'pod.sortNew': 'Nieuwste', 'pod.sortOld': 'Oudste',
       'pod.more': 'Meer lezen', 'pod.less': 'Minder', 'pod.played': 'Beluisterd', 'pod.left': 'nog {t}', 'pod.nf': 'Deze podcast is niet gevonden.', 'pod.epnf': 'Deze aflevering is niet gevonden.', 'pod.noeps': 'Geen afleveringen gevonden.',
-      'pod.toast.follow': 'Je volgt {n}', 'pod.toast.unfollow': 'Je volgt {n} niet meer', 'pod.lib.empty': 'Volg een podcast om hem hier te bewaren', 'pod.lib.find': 'Ontdek podcasts', 'pod.none': 'Geen podcasts gevonden voor "{q}"',
+      'pod.toast.follow': '{n} staat in je favorieten', 'pod.toast.unfollow': '{n} is uit je favorieten verwijderd', 'pod.lib.empty': 'Tik op het hartje bij een podcast om hem hier te bewaren', 'pod.lib.find': 'Ontdek podcasts', 'pod.none': 'Geen podcasts gevonden voor "{q}"',
       'pod.back15': '15 seconden terug', 'pod.fwd30': '30 seconden vooruit', 'pod.speed': 'Snelheid', 'pod.prev': 'Vorige aflevering', 'pod.next': 'Volgende aflevering', 'pod.seek': 'Positie', 'pod.info': 'Aflevering', 'pod.show': 'Podcast',
       'sleep.eoe': 'Einde van aflevering', 'sleep.eoe.set': 'Slaaptimer: einde van aflevering', 'sleep.eoe.done': 'Slaaptimer: aflevering afgelopen',
       'pod.err': 'Deze aflevering kan nu niet worden afgespeeld', 'pod.blocked': 'Deze aflevering kan alleen in de app worden afgespeeld', 'pod.blocked.p': 'De podcast gebruikt een onbeveiligde verbinding die browsers blokkeren. In de apps speelt hij wel.',
@@ -69,11 +69,11 @@
       'err.load': 'Couldn\'t load this', 'err.load.p': 'Check your connection and try again.', 'empty': 'No stations here yet.',
       'share.text': 'Listen to {n} on Tunr',
       'nav.label': 'Main menu', 'home': 'Go to the website',
-      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Top charts, follow and resume',
+      'browse.pod': 'Podcasts', 'browse.pod.sub': 'Top charts, favourites and resume',
       'pod.title': 'Podcasts', 'pod.top': 'Top 50 in {c}', 'pod.genres': 'Genres', 'pod.search': 'Search podcasts', 'pod.popular': 'Popular podcasts in {c}', 'pod.new': 'New episodes', 'pod.continue': 'Continue listening',
-      'pod.follow': 'Follow', 'pod.following': 'Following', 'pod.playLatest': 'Play latest', 'pod.episodes': 'Episodes', 'pod.eps': '{n} episodes', 'pod.ep1': '1 episode', 'pod.sortNew': 'Newest', 'pod.sortOld': 'Oldest',
+      'pod.follow': 'Favourite', 'pod.following': 'In favourites', 'pod.favs': 'Favourite podcasts', 'pod.fav.add': 'Add podcast to favourites', 'pod.fav.remove': 'Remove podcast from favourites', 'pod.playLatest': 'Play latest', 'pod.episodes': 'Episodes', 'pod.eps': '{n} episodes', 'pod.ep1': '1 episode', 'pod.sortNew': 'Newest', 'pod.sortOld': 'Oldest',
       'pod.more': 'Read more', 'pod.less': 'Less', 'pod.played': 'Played', 'pod.left': '{t} left', 'pod.nf': 'This podcast could not be found.', 'pod.epnf': 'This episode could not be found.', 'pod.noeps': 'No episodes found.',
-      'pod.toast.follow': 'You follow {n}', 'pod.toast.unfollow': 'You no longer follow {n}', 'pod.lib.empty': 'Follow a podcast to keep it here', 'pod.lib.find': 'Discover podcasts', 'pod.none': 'No podcasts found for "{q}"',
+      'pod.toast.follow': '{n} is in your favourites', 'pod.toast.unfollow': '{n} was removed from your favourites', 'pod.lib.empty': 'Tap the heart on a podcast to keep it here', 'pod.lib.find': 'Discover podcasts', 'pod.none': 'No podcasts found for "{q}"',
       'pod.back15': 'Back 15 seconds', 'pod.fwd30': 'Forward 30 seconds', 'pod.speed': 'Speed', 'pod.prev': 'Previous episode', 'pod.next': 'Next episode', 'pod.seek': 'Position', 'pod.info': 'Episode', 'pod.show': 'Podcast',
       'sleep.eoe': 'End of episode', 'sleep.eoe.set': 'Sleep timer: end of episode', 'sleep.eoe.done': 'Sleep timer: episode finished',
       'pod.err': 'This episode can\'t be played right now', 'pod.blocked': 'This episode can only be played in the app', 'pod.blocked.p': 'The podcast uses an unencrypted connection that browsers block. It plays fine in the apps.',
@@ -142,25 +142,89 @@
     if (location.protocol === 'https:') u = u.replace(/^http:/i, 'https:'); // gemengde inhoud vermijden
     return u;
   };
+  // ---------- zenderlogo's met terugval ----------
+  // 1. favicon uit Radio Browser (http → https); 2. Google-favicondienst op het domein van de homepage (sz=256);
+  // 3. DuckDuckGo-favicondienst; 4. monogram. Resultaten van de diensten kleiner dan 48 px = mislukt (Google geeft
+  // dan een globe van 16 px). Een klein favicon alleen als laatste redmiddel. Mislukte URL's onthouden we deze sessie.
+  var LOGO_MIN = 48, logoBad = {}, logoTiny = {}, logoGood = {};
+  function isLogoService(u) { return /^https:\/\/(www\.google\.com\/s2\/favicons|icons\.duckduckgo\.com\/ip3\/)/i.test(u); }
+  // domein van de homepage ("https://www.npo.nl/radio2" → "www.npo.nl"), of ''
+  T.logoHost = function (hp) {
+    hp = String(hp || '').trim();
+    if (!hp) return '';
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(hp)) hp = 'http://' + hp;
+    try {
+      var h = new URL(hp).hostname.toLowerCase();
+      return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(h) ? h : '';
+    } catch (e) { return ''; }
+  };
+  // alle bronnen in volgorde (zonder de URL's die deze sessie al mislukten)
+  T.logoCandidates = function (s) {
+    var out = [], f = T.logoUrl(s && s.favicon), h = T.logoHost(s && s.homepage);
+    if (f) out.push(f);
+    if (h) {
+      out.push('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(h) + '&sz=256');
+      out.push('https://icons.duckduckgo.com/ip3/' + h + '.ico');
+    }
+    return out.filter(function (u) { return !logoBad[u]; });
+  };
+  // beste bekende logo voor achtergronden en de mediasessie (een eerder geladen bron, anders de eerste kandidaat)
+  T.logoBest = function (s) {
+    if (s && logoGood[s.id]) return logoGood[s.id];
+    var c = T.logoCandidates(s).filter(function (u) { return !logoTiny[u]; });
+    return c[0] || '';
+  };
   // cls: extra klassen (bijv. 'lg'); de equalizer staat altijd in de art en is alleen zichtbaar bij .is-playing
   T.art = function (s, cls) {
-    var p = T.pal(s.name), logo = T.logoUrl(s.favicon);
+    var p = T.pal(s.name), all = T.logoCandidates(s);
+    var good = logoGood[s.id] && !logoBad[logoGood[s.id]] ? logoGood[s.id] : '';
+    // te kleine favicons pas als laatste redmiddel
+    var tiny = all.filter(function (u) { return logoTiny[u]; })[0] || '';
+    var list = good ? [good] : all.filter(function (u) { return !logoTiny[u]; });
+    var first = list[0] || tiny;
     return '<span class="art ' + (cls || '') + '" style="--a:' + p[0] + ';--b:' + p[1] + '" aria-hidden="true">' +
       '<span class="mono">' + T.esc(T.monogram(s.name)) + '</span>' +
-      (logo ? '<span class="lt"><img class="logo" src="' + T.esc(logo) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>' : '') +
+      (first ? '<span class="lt"><img class="logo" src="' + T.esc(first) + '" data-lk="' + T.esc(s.id || '') + '" data-cur="' + T.esc(first) +
+        '" data-alt="' + T.esc(list.slice(1).join(' ')) + '"' + (tiny && tiny !== first ? ' data-tiny="' + T.esc(tiny) + '"' : '') +
+        (first === tiny ? ' data-final="1"' : '') + ' alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>' : '') +
       '<span class="eq"><i></i><i></i><i></i><i></i></span></span>';
   };
-  // mislukte logo's → monogram; geladen logo's → monogram weg. (load/error bubbelen niet: capture)
+  function dropLogo(el) { var lt = el.parentNode; if (lt && lt.parentNode) lt.parentNode.classList.remove('has-logo'); if (lt) lt.remove(); }
+  function acceptLogo(el) { var a = el.closest('.art'); if (a) a.classList.add('has-logo'); }
+  // volgende bron proberen; op = monogram (of het kleine favicon als laatste redmiddel)
+  function nextLogo(el) {
+    var alts = (el.getAttribute('data-alt') || '').split(' ').filter(function (u) { return u && !logoBad[u]; });
+    var nxt = alts.shift();
+    if (nxt) { el.setAttribute('data-alt', alts.join(' ')); el.setAttribute('data-cur', nxt); el.src = nxt; return; }
+    var tiny = el.getAttribute('data-tiny');
+    if (tiny && !logoBad[tiny]) { el.removeAttribute('data-tiny'); el.setAttribute('data-final', '1'); el.setAttribute('data-cur', tiny); el.src = tiny; return; }
+    dropLogo(el);
+  }
+  // mislukte logo's → volgende bron of monogram; geladen logo's → monogram weg. (load/error bubbelen niet: capture)
   document.addEventListener('error', function (e) {
     var el = e.target;
-    if (el && el.tagName === 'IMG' && el.classList.contains('logo')) { var lt = el.parentNode; if (lt && lt.parentNode) lt.parentNode.classList.remove('has-logo'); lt && lt.remove(); }
+    if (!el || el.tagName !== 'IMG' || !el.classList.contains('logo')) return;
+    if (el.hasAttribute('data-lk')) { logoBad[el.getAttribute('data-cur')] = 1; nextLogo(el); return; }
+    dropLogo(el);
   }, true);
   document.addEventListener('load', function (e) {
     var el = e.target;
-    if (el && el.tagName === 'IMG' && el.classList.contains('logo')) {
+    if (!el || el.tagName !== 'IMG' || !el.classList.contains('logo')) return;
+    if (!el.hasAttribute('data-lk')) {
       if (el.naturalWidth < 8) { var lt = el.parentNode; lt && lt.remove(); return; }
-      var a = el.closest('.art'); if (a) a.classList.add('has-logo');
+      acceptLogo(el);
+      return;
     }
+    var cur = el.getAttribute('data-cur') || '', w = el.naturalWidth;
+    if (el.hasAttribute('data-final')) { if (w >= 8) { acceptLogo(el); } else { logoBad[cur] = 1; dropLogo(el); } return; }
+    if (w >= LOGO_MIN) { logoGood[el.getAttribute('data-lk')] = cur; acceptLogo(el); return; }
+    if (isLogoService(cur) || w < 8) { logoBad[cur] = 1; nextLogo(el); return; }
+    // klein favicon: bewaren als laatste redmiddel; zijn er geen andere bronnen meer, dan meteen gebruiken
+    logoTiny[cur] = 1;
+    var rest = (el.getAttribute('data-alt') || '').split(' ').filter(function (u) { return u && !logoBad[u]; });
+    if (!rest.length) { el.setAttribute('data-final', '1'); el.removeAttribute('data-tiny'); acceptLogo(el); return; }
+    el.setAttribute('data-tiny', cur);
+    nextLogo(el);
   }, true);
 
   T.place = function (s) {

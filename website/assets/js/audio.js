@@ -234,7 +234,7 @@
   function updateSession() {
     if (!('mediaSession' in navigator) || !cur) return;
     try {
-      var art = T.logoUrl(cur.favicon);
+      var art = T.logoBest(cur);
       var base = new URL('../assets/img/', location.href).href;
       if (isEp(cur)) {
         var pa = T.logoUrl(cur.art);

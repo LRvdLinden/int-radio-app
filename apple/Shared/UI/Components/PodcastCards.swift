@@ -93,7 +93,8 @@ struct PodcastCard: View {
                 }
                 .overlay(alignment: .bottomTrailing) {
                     if library.isFollowing(podcast) {
-                        Image(systemName: "checkmark")
+                        // favoriet (zelfde opslag als volgen)
+                        Image(systemName: "heart.fill")
                             .font(.system(size: tvScaled(11), weight: .heavy))
                             .foregroundStyle(.white)
                             .frame(width: tvScaled(24), height: tvScaled(24))
@@ -118,7 +119,7 @@ struct PodcastCard: View {
     }
 }
 
-/// Knop rond een podcastkaart: tik = podcastpagina, contextmenu met Volgen
+/// Knop rond een podcastkaart: tik = podcastpagina, contextmenu met Favoriet
 struct PodcastCardButton: View {
     let podcast: Podcast
     var width: CGFloat? = Theme.cardWidth
@@ -148,11 +149,12 @@ struct PodcastContextMenu: View {
         Button { navigate(.podcast(podcast)) } label: {
             Label(L("podcast.open"), systemImage: "info.circle")
         }
+        // Favoriet (hartje, zoals bij zenders); opslag = gevolgde podcasts
         Button { library.toggleFollow(podcast) } label: {
             if library.isFollowing(podcast) {
-                Label(L("podcast.unfollow"), systemImage: "minus.circle")
+                Label(L("podcast.unfollow"), systemImage: "heart.slash")
             } else {
-                Label(L("podcast.follow"), systemImage: "plus.circle")
+                Label(L("action.favorite"), systemImage: "heart")
             }
         }
     }
@@ -183,8 +185,8 @@ struct PodcastRow: View {
                         .foregroundStyle(.white)
                         .lineLimit(1)
                     if library.isFollowing(podcast) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: tvScaled(11)))
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: tvScaled(10)))
                             .foregroundStyle(Theme.accent)
                             .accessibilityHidden(true)
                     }
@@ -209,11 +211,14 @@ struct PodcastRow: View {
 struct PodcastRowButton: View {
     let podcast: Podcast
     var rank: Int? = nil
+    /// Extra actie na tikken (bv. zoekopdracht onthouden)
+    var onOpen: (() -> Void)? = nil
     @Environment(\.navigate) private var navigate
 
     var body: some View {
         Button {
             Haptics.tap()
+            onOpen?()
             navigate(.podcast(podcast))
         } label: {
             PodcastRow(podcast: podcast, rank: rank)
@@ -437,6 +442,13 @@ struct EpisodeContextMenu: View {
         }
         Button { navigate(.podcast(episode.podcastStub)) } label: {
             Label(L("episode.goToPodcast"), systemImage: "square.stack")
+        }
+        Button { library.toggleFollow(episode.podcastStub) } label: {
+            if library.isFollowing(podcastId: episode.podcastId) {
+                Label(L("podcast.unfavoritePodcast"), systemImage: "heart.slash")
+            } else {
+                Label(L("podcast.favoritePodcast"), systemImage: "heart")
+            }
         }
         if library.position(for: episode.id)?.finished == true {
             Button { library.markFinished(episode, false) } label: {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Landkeuze: verplicht bij de eerste start, daarna via Instellingen of de landknop op Ontdek.
-/// Zoekveld, "Voorgesteld" (land van het toestel), "Alle landen" alfabetisch. tv: raster van landkaarten.
+/// Zoekveld, "Voorgesteld" (land van het toestel), "Alle landen" alfabetisch. tv: schermvullend raster van landrijen.
 struct CountryPickerView: View {
     var isFirstRun = false
 
@@ -11,6 +11,9 @@ struct CountryPickerView: View {
 
     @State private var state: LoadState<[Country]> = .idle
     @State private var query = ""
+    #if os(tvOS)
+    @FocusState private var focusedKey: String?
+    #endif
 
     var body: some View {
         content
@@ -19,17 +22,27 @@ struct CountryPickerView: View {
 
     @ViewBuilder private var content: some View {
         #if os(tvOS)
+        // Apple TV: schermvullend (fullScreenCover), raster van landrijen dat met de focus meescrolt;
+        // het huidige land is gemarkeerd en krijgt de focus; Menu sluit het scherm (systeemgedrag).
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 40) {
-                    header
-                    tvContent(for: filtered)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 40) {
+                        header
+                        tvContent(for: filtered)
+                    }
+                    .padding(.horizontal, Theme.edge)
+                    .padding(.vertical, 40)
                 }
-                .padding(.horizontal, Theme.edge)
-                .padding(.vertical, 40)
+                .scrollClipDisabled()
+                .searchable(text: $query, prompt: L("country.search"))
+                .screenBackground()
+                .onChange(of: state.value?.count ?? 0) { _, count in
+                    guard count > 0 else { return }
+                    focusCurrent(proxy)
+                }
+                .onAppear { if state.value != nil { focusCurrent(proxy) } }
             }
-            .searchable(text: $query, prompt: L("country.search"))
-            .screenBackground()
         }
         #else
         NavigationStack {
@@ -146,34 +159,45 @@ struct CountryPickerView: View {
             VStack(alignment: .leading, spacing: 30) {
                 if query.isEmpty, let suggested {
                     Text(L("country.suggested")).font(Theme.rowTitle).foregroundStyle(.white)
-                    countryGrid([suggested])
+                    countryGrid([suggested], prefix: "sug-")
                 }
                 Text(L("country.all")).font(Theme.rowTitle).foregroundStyle(.white)
-                countryGrid(list)
+                if list.isEmpty {
+                    Text(L("search.noResults")).font(Theme.body).foregroundStyle(Theme.secondary)
+                } else {
+                    countryGrid(list, prefix: "all-")
+                }
             }
         }
     }
 
-    private func countryGrid(_ list: [Country]) -> some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 40), count: 5), spacing: 40) {
+    private func countryGrid(_ list: [Country], prefix: String) -> some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
             ForEach(list) { c in
+                let key = prefix + c.code
                 Button { choose(c) } label: {
-                    VStack(spacing: 10) {
-                        Text(c.flag.isEmpty ? "🏳️" : c.flag).font(.system(size: 80))
-                        Text(c.localizedName).font(.system(size: 26, weight: .bold)).foregroundStyle(.white).lineLimit(1)
-                        Text(L("stations.count", formattedNumber(c.stationCount)))
-                            .font(.system(size: 20)).foregroundStyle(Theme.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 28)
-                    .background(library.countryCode == c.code ? Theme.elevated : Theme.surface,
-                                in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
-                    .focusRing()
+                    TVCountryRow(country: c, isCurrent: library.countryCode == c.code)
                 }
-                .cardButton()
+                .buttonStyle(TVRowButtonStyle())
+                .focused($focusedKey, equals: key)
+                .id(key)
+                .accessibilityLabel(c.localizedName + ", " + L("stations.count", formattedNumber(c.stationCount)))
+                .accessibilityAddTraits(library.countryCode == c.code ? .isSelected : [])
             }
         }
         .focusSection()
+    }
+
+    /// Huidig land in beeld scrollen en de focus erop zetten
+    private func focusCurrent(_ proxy: ScrollViewProxy) {
+        guard query.isEmpty, let code = library.countryCode, all.contains(where: { $0.code == code }) else { return }
+        let key = "all-" + code
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            proxy.scrollTo(key, anchor: .center)
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            focusedKey = key
+        }
     }
     #endif
 
@@ -221,3 +245,39 @@ struct CountryPickerView: View {
         dismiss()
     }
 }
+
+#if os(tvOS)
+/// Apple TV: één landrij (vlag, naam, aantal zenders, ✓ bij het huidige land)
+private struct TVCountryRow: View {
+    let country: Country
+    let isCurrent: Bool
+    @Environment(\.tvFocused) private var focused
+
+    var body: some View {
+        HStack(spacing: 18) {
+            Text(country.flag.isEmpty ? "🏳️" : country.flag).font(.system(size: 50))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(country.localizedName)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(isCurrent ? Theme.accent : .white)
+                    .lineLimit(1)
+                Text(L("stations.count", formattedNumber(country.stationCount)))
+                    .font(.system(size: 21))
+                    .foregroundStyle(Theme.secondary)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 8)
+            if isCurrent {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(Theme.accent)
+            }
+        }
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(isCurrent && !focused ? Theme.surface : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .contentShape(Rectangle())
+    }
+}
+#endif

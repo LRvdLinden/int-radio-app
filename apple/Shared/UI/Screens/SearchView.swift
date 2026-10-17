@@ -160,9 +160,8 @@ struct SearchView: View {
                         .padding(.horizontal, Theme.edge)
                         .padding(.bottom, tvScaled(6))
                     ForEach(list) { s in
-                        StationRowButton(station: s, queue: list)
+                        StationRowButton(station: s, queue: list, onPlay: { library.addSearch(trimmed) })
                             .padding(.horizontal, Theme.edge)
-                            .simultaneousGesture(TapGesture().onEnded { library.addSearch(trimmed) })
                         Divider().overlay(Theme.stroke).padding(.leading, Theme.edge + Theme.rowArt + tvScaled(12))
                     }
                 }

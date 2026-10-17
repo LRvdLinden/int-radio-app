@@ -34,7 +34,7 @@
 "browse.top100" = "Top 100 wereldwijd";
 "browse.worldMap" = "Wereldkaart";
 "carplay.loading" = "Laden…";
-"carplay.podcastsHint" = "Volg podcasts op je iPhone om ze hier te vinden";
+"carplay.podcastsHint" = "Zet podcasts op je iPhone in je favorieten om ze hier te vinden";
 "carplay.popular" = "Populair";
 "common.no" = "Nee";
 "common.yes" = "Ja";
@@ -87,7 +87,7 @@
 "library.emptyFavorites" = "Nog geen favorieten";
 "library.emptyFavoritesHint" = "Tik op het hartje bij een zender om hem hier te bewaren";
 "library.emptyPodcasts" = "Nog geen podcasts";
-"library.emptyPodcastsHint" = "Volg een podcast om hem hier te zien, met nieuwe afleveringen op Ontdek";
+"library.emptyPodcastsHint" = "Tik op het hartje bij een podcast om hem hier te bewaren, met nieuwe afleveringen op Ontdek";
 "library.emptyRecent" = "Nog niets beluisterd";
 "library.emptyRecentHint" = "Zenders die je beluistert verschijnen hier";
 "library.favorites" = "Favorieten";
@@ -152,8 +152,10 @@
 "player.volume" = "Volume";
 "podcast.episodeCount" = "%ld afleveringen";
 "podcast.episodes" = "Afleveringen";
-"podcast.follow" = "Volgen";
-"podcast.following" = "Volgend";
+"podcast.favoritePodcast" = "Podcast aan favorieten toevoegen";
+"podcast.unfavoritePodcast" = "Podcast uit favorieten verwijderen";
+"podcast.follow" = "Favoriet";
+"podcast.following" = "In favorieten";
 "podcast.less" = "Minder";
 "podcast.more" = "Meer";
 "podcast.noEpisodes" = "Geen afleveringen";
@@ -163,9 +165,9 @@
 "podcast.sort" = "Sorteren";
 "podcast.sortNewest" = "Nieuwste";
 "podcast.sortOldest" = "Oudste";
-"podcast.unfollow" = "Niet meer volgen";
+"podcast.unfollow" = "Uit favorieten verwijderen";
 "podcasts.errorTitle" = "Podcasts niet bereikbaar";
-"podcasts.following" = "Podcasts die je volgt";
+"podcasts.following" = "Favoriete podcasts";
 "podcasts.none" = "Geen podcasts gevonden";
 "podcasts.noneHint" = "Probeer een ander genre of zoek een podcast.";
 "podcasts.title" = "Podcasts";

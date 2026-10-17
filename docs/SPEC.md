@@ -25,7 +25,14 @@ Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (
 - Zendercover ("StationArt"): vierkant. Achtergrond = verloop van twee kleuren afgeleid van een hash van de zendernaam (palet hieronder), daarop het logo (`favicon`) gecentreerd op 62% met 8% binnenmarge op een witte, afgeronde tegel als het logo transparant/klein is; geen logo of laden mislukt → **monogram** (eerste 1–2 letters, heavy rounded, wit). Paletten (begin, eind):
   `#FF5A1F→#FFB020`, `#7C3AED→#DB2777`, `#0EA5E9→#22D3EE`, `#10B981→#84CC16`, `#F43F5E→#FB923C`, `#6366F1→#06B6D4`, `#EAB308→#F97316`, `#14B8A6→#3B82F6`.
 - Equalizer-animatie (4 staafjes, accent) bij de zender die nu speelt — in kaarten, lijsten, miniplayer.
+- **Logo-bronnen** (zo veel mogelijk echte zendericonen), in volgorde; één helper per platform (Apple `LogoSources`/`LogoResolver`, Android `data/LogoSources.kt`, web `T.logoCandidates(s)`):
+  1. `favicon` uit Radio Browser (http → eerst https; Apple/Android proberen daarna het originele http-adres);
+  2. leeg, mislukt of kleiner dan **48 px** breed → domein van `homepage` via Google: `https://www.google.com/s2/favicons?domain=<host>&sz=256` (kleiner dan 48 px = mislukt; Google geeft dan een globe van 16 px);
+  3. dan `https://icons.duckduckgo.com/ip3/<host>.ico` (zelfde maatcontrole);
+  4. anders het monogram. Een klein favicon (< 48 px) wordt alleen gebruikt als 2 en 3 niets opleveren.
+  Mislukte URL's en het gevonden logo per zender worden in het geheugen onthouden (afbeeldingen zelf in de bestaande beeldcache: Apple URLCache, Android Coil-schijfcache), zodat er bij scrollen niet steeds opnieuw geprobeerd wordt. Geldt ook voor CarPlay, widgets (verkleinde logo's), de mediasessie en Android Auto (beste bekende bron). Eigen User-Agent niet naar de favicondiensten; web met `referrerpolicy="no-referrer"`. Vermeld in de privacyverklaring.
 - tvOS / Android TV: focus = 1.08× schalen + schaduw + witte 3px rand; nooit grijze systeemvlakken.
+- **Apple TV (focus engine)**: elk bedienbaar element is een `Button` met een tv-stijl (`TVLiftStyle`, `TVRowButtonStyle` voor lijstrijen, `AccentButtonStyle`/`SecondaryButtonStyle`); geen tik-gebaren of `Menu`'s (keuzes via `confirmationDialog`, bv. slaaptimer en snelheid); horizontale rijen met `.focusSection()` en `.scrollClipDisabled()`. Landkeuze (eerste start, Ontdek en Instellingen) schermvullend (`fullScreenCover`): raster van landrijen met zoeken (`.searchable`), het huidige land gemarkeerd en met focus; Menu sluit. Regio's en talen: eigen lijsten met focusvlak (huidige regio krijgt de focus). Instellingen: systeemrijen, ook Versie/links focusbaar zodat je tot onderaan kunt scrollen. Speler: afspelen/pauze krijgt de focus, Play/Pause-knop van de afstandsbediening werkt, Menu sluit. Rasterpagina's: Alles afspelen/Maak mijn regio als knoppen boven het raster (geen werkbalk). Kaart: niet bedienbaar met de afstandsbediening (geen focus op stippen); kiezen via de lijst links.
 
 ## 2. Databron: Radio Browser
 
@@ -188,11 +195,12 @@ Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account,
 
 ### Plek in de app
 - **Bladeren**: nieuwe grote tegel **Podcasts** (bovenaan, naast Lokaal) → podcastoverzicht.
-- **Ontdek**: rij **Populaire podcasts in {land}** (na Trending) en, als je podcasts volgt, **Nieuwe afleveringen** (laatste aflevering van elke gevolgde podcast, nieuwste eerst) en **Verder luisteren** voor half beluisterde afleveringen.
+- **Ontdek**: rij **Populaire podcasts in {land}** (na Trending) en, als je favoriete podcasts hebt, **Nieuwe afleveringen** (laatste aflevering van elke favoriete podcast, nieuwste eerst) en **Verder luisteren** voor half beluisterde afleveringen.
 - **Podcastoverzicht** (vanuit Bladeren): toplijst van je land (genummerd 1–50), genre-tegels, zoeken.
 - **Zoeken**: segment **Zenders · Podcasts** bovenaan; bij Podcasts zoekt het in iTunes.
-- **Bibliotheek**: segmenten **Favorieten · Podcasts · Recent**. Podcasts = gevolgde podcasts (raster) + gedownloade/half beluisterde afleveringen bovenaan als "Verder luisteren".
-- **Podcastpagina**: grote art, titel, maker, genre, aantal afleveringen, knop **Volgen/Volgend**, beschrijving (uitklapbaar), **Speel nieuwste**, lijst afleveringen (datum, duur, titel, korte omschrijving, voortgangsbalkje als je al luisterde, ✓ als beluisterd) met sorteren Nieuwste/Oudste.
+- **Bibliotheek**: segmenten **Favorieten · Podcasts · Recent**. Podcasts = **Favoriete podcasts** (raster, hartje op de kaart) + gedownloade/half beluisterde afleveringen bovenaan als "Verder luisteren".
+- **Favoriet** (zoals bij zenders): een podcast zet je met het **hartje** in je favorieten: knop **Favoriet / In favorieten** (EN *Favourite / In favourites*; Android EN *Favorite / In favorites*), `heart`/`heart.fill` in de accentkleur. Plekken: podcastpagina (in de knoppenrij; op tv krijgt hij bij openen de focus), speler voor afleveringen (de podcast van de aflevering; iPhone/Android-telefoon naast de titel/rechtsboven, elders in de actierij), contextmenu (lang indrukken) op podcastkaarten en -rijen en op afleveringen. Opslag = de bestaande lijst gevolgde podcasts (Apple ook iCloud KV), dus niets verandert voor wie al podcasts volgde.
+- **Podcastpagina**: grote art, titel, maker, genre, aantal afleveringen, **Speel nieuwste**, **Favoriet**, beschrijving (uitklapbaar), lijst afleveringen (datum, duur, titel, korte omschrijving, voortgangsbalkje als je al luisterde, ✓ als beluisterd) met sorteren Nieuwste/Oudste.
 - **Afleveringspagina** (tik op aflevering): titel, podcast, datum, duur, volledige omschrijving, Afspelen.
 
 ### Speler voor afleveringen (zelfde speler, andere modus)
@@ -204,7 +212,7 @@ Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account,
 - tvOS en Android TV: podcasts in Bladeren en Bibliotheek; speler met tijdbalk (op tvOS met swipe/klik-links/rechts = 15/30 s).
 
 ### Opslag
-- Gevolgde podcasts (id, naam, maker, art, feedUrl) en afspeelposities (episodeId → seconden, duur, beluisterd) lokaal; Apple ook via iCloud KV (zoals favorieten). Max 500 posities (oudste eruit).
+- Favoriete (gevolgde) podcasts (id, naam, maker, art, feedUrl) en afspeelposities (episodeId → seconden, duur, beluisterd) lokaal; Apple ook via iCloud KV (zoals favorieten). Max 500 posities (oudste eruit).
 
 ---
 

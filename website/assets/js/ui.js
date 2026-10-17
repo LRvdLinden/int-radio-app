@@ -112,7 +112,7 @@
     opts = opts || {};
     return '<a class="card podc" href="#/podcast/' + encodeURIComponent(p.id) + '">' +
       (opts.rank ? '<span class="num' + (opts.rank <= 3 ? ' t3' : '') + '">' + opts.rank + '</span>' : '') +
-      '<span class="pbtn">' + T.podArt(p) + '</span><span class="meta"><b>' + esc(p.name) + '</b><small>' + esc(p.artist || p.genre || '') + '</small></span></a>';
+      '<span class="pbtn">' + T.podArt(p) + (T.store.isFollowing(p.id) ? '<span class="pfav" aria-hidden="true">' + I('heartf') + '</span>' : '') + '</span><span class="meta"><b>' + esc(p.name) + '</b><small>' + esc(p.artist || p.genre || '') + '</small></span></a>';
   };
   T.ui.podRow = function (title, arr, opts) {
     opts = opts || {};
@@ -132,7 +132,7 @@
       return '<a class="li pli" href="#/podcast/' + encodeURIComponent(p.id) + '"><span class="main">' +
         (rk ? '<span class="rk' + (rk <= 3 ? ' t3' : '') + '">' + rk + '</span>' : '') + T.podArt(p, 'sm') +
         '<span class="tx"><b>' + esc(p.name) + '</b><small>' + esc([p.artist, p.genre].filter(Boolean).join(' · ')) + '</small></span>' +
-        (T.store.isFollowing(p.id) ? '<span class="fol">' + I('check') + '</span>' : '') + I('chev', 'ic chev') + '</span></a>';
+        (T.store.isFollowing(p.id) ? '<span class="fol" title="' + esc(t('pod.following')) + '">' + I('heartf') + '</span>' : '') + I('chev', 'ic chev') + '</span></a>';
     }).join('') + '</div>';
   };
   // voortgang van een aflevering: { pct, left, done }
@@ -384,7 +384,7 @@
     var s = T.player.current; if (!s) return;
     if (T.player.isEpisode) return renderFullEp(s);
     full.classList.remove('epf');
-    var st = T.player.state, p = T.pal(s.name), fav = T.store.isFav(s.id), logo = T.logoUrl(s.favicon);
+    var st = T.player.state, p = T.pal(s.name), fav = T.store.isFav(s.id), logo = T.logoBest(s);
     var end = T.player.sleepEnd, left = end ? Math.max(1, Math.ceil((end - Date.now()) / 60000)) : 0;
     full.style.setProperty('--a', p[0]); full.style.setProperty('--b', p[1]);
     full.classList.toggle('on', st === 'playing');
@@ -414,7 +414,7 @@
   function renderFullEp(s) {
     var st = T.player.state, p = T.pal(s.pname || s.title), u = T.logoUrl(s.art);
     var end = T.player.sleepEnd, left = end ? Math.max(1, Math.ceil((end - Date.now()) / 60000)) : 0, eoe = T.player.sleepEoe;
-    var d = T.player.duration, tm = T.player.time, vol = T.player.volume;
+    var d = T.player.duration, tm = T.player.time, vol = T.player.volume, pfav = T.store.isFollowing(s.pid);
     full.style.setProperty('--a', p[0]); full.style.setProperty('--b', p[1]);
     full.classList.toggle('on', st === 'playing');
     full.classList.add('epf');
@@ -427,7 +427,9 @@
       '<span class="ttl">' + esc(t('pod.title')) + '</span>' +
       '<a class="iconbtn" href="' + epHref + '" data-act="closefull-nav" aria-label="' + esc(t('pod.info')) + '">' + I('info') + '</a></div>' +
       '<div class="fart">' + T.podArt({ name: s.pname, art: s.art }, 'lg') + '</div>' +
-      '<div class="fmeta"><div class="tx"><h2 title="' + esc(s.title) + '">' + esc(s.title) + '</h2><p><a href="#/podcast/' + encodeURIComponent(s.pid) + '" data-act="closefull-nav">' + esc(s.pname || '') + '</a></p></div></div>' +
+      '<div class="fmeta"><div class="tx"><h2 title="' + esc(s.title) + '">' + esc(s.title) + '</h2><p><a href="#/podcast/' + encodeURIComponent(s.pid) + '" data-act="closefull-nav">' + esc(s.pname || '') + '</a></p></div>' +
+      // favoriet: de podcast van deze aflevering (zelfde opslag als volgen)
+      '<button class="rbtn" type="button" data-act="podfav" aria-pressed="' + pfav + '" aria-label="' + esc(t(pfav ? 'pod.fav.remove' : 'pod.fav.add')) + '">' + I(pfav ? 'heartf' : 'heart') + '</button></div>' +
       '<div class="seekw"><input type="range" class="seek" min="0" max="' + Math.max(1, Math.round(d)) + '" step="1" value="' + Math.round(tm) + '" data-act="seek" aria-label="' + esc(t('pod.seek')) + '" style="--p:' + pct() + '%">' +
       '<div class="times"><span data-tm>' + T.clock(tm) + '</span><span data-tl>-' + T.clock(Math.max(0, d - tm)) + '</span></div></div>' + err +
       '<div class="ctl ep"><button class="c sm" type="button" data-act="prev" aria-label="' + esc(t('pod.prev')) + '">' + I('prev') + '</button>' +

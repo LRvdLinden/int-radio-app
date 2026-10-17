@@ -137,9 +137,8 @@ struct PodcastSearchResults: View {
                             .padding(.horizontal, Theme.edge)
                             .padding(.bottom, tvScaled(6))
                         ForEach(list) { p in
-                            PodcastRowButton(podcast: p)
+                            PodcastRowButton(podcast: p, onOpen: { library.addSearch(query) })
                                 .padding(.horizontal, Theme.edge)
-                                .simultaneousGesture(TapGesture().onEnded { library.addSearch(query) })
                             Divider().overlay(Theme.stroke).padding(.leading, Theme.edge + Theme.rowArt + tvScaled(12))
                         }
                     }

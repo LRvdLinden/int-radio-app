@@ -1,5 +1,13 @@
 package nl.lrvdlinden.tunr.ui
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
+import android.graphics.drawable.BitmapDrawable
+import coil.request.ImageRequest
+import coil.size.Precision
+import nl.lrvdlinden.tunr.data.LogoSources
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -137,12 +145,26 @@ fun StationArt(
 ) {
     val name = station?.displayName ?: "Tunr"
     val (c1, c2) = T.palette(name)
-    var failed by remember(station?.uuid, overrideUrl) { mutableStateOf(false) }
-    var loaded by remember(station?.uuid, overrideUrl) { mutableStateOf(false) }
-    val logo = overrideUrl ?: station?.favicon?.trim()?.takeIf { it.startsWith("http") }
+    val key = station?.uuid
+    // logo-bronnen (favicon → Google → DuckDuckGo op het domein), zie LogoSources; momentopname per zender
+    val candidates = remember(key, station?.favicon, station?.homepage) {
+        if (station == null) emptyList()
+        else LogoSources.resolved(station.uuid)?.let { listOf(it) }
+            ?: LogoSources.candidates(station).filter { !LogoSources.isFailed(it) && !LogoSources.isTiny(it) }
+    }
+    val tinyKnown = remember(key) { station?.let { s -> LogoSources.candidates(s).firstOrNull { LogoSources.isTiny(it) && !LogoSources.isFailed(it) } } }
+    var attempt by remember(key, overrideUrl) { mutableIntStateOf(0) }
+    var tinyFallback by remember(key) { mutableStateOf(tinyKnown) }
+    var failed by remember(key, overrideUrl) { mutableStateOf(false) }
+    var loaded by remember(key, overrideUrl) { mutableStateOf(false) }
+    var boxPx by remember { mutableIntStateOf(0) }
+    val isFinal = overrideUrl != null || attempt >= candidates.size
+    val logo = overrideUrl ?: candidates.getOrNull(attempt) ?: tinyFallback
+    val context = LocalContext.current
     Box(
         modifier
             .aspectRatio(1f)
+            .onSizeChanged { boxPx = it.width }
             .clip(RoundedCornerShape(radius))
             .background(Brush.linearGradient(listOf(c1, c2))),
         contentAlignment = Alignment.Center
@@ -151,14 +173,46 @@ fun StationArt(
             Monogram(name)
         } else {
             // logo of albumhoes vult het hele vlak, zonder extra witte tegel eromheen;
-            // tot het geladen is staat het monogram op het verloop
+            // tot het geladen (en goedgekeurd) is staat het monogram op het verloop
             if (!loaded) Monogram(name)
+            val request = remember(logo) {
+                ImageRequest.Builder(context).data(logo).precision(Precision.INEXACT).build()
+            }
             AsyncImage(
-                model = logo, contentDescription = null, contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                onState = {
-                    if (it is AsyncImagePainter.State.Success) loaded = true
-                    if (it is AsyncImagePainter.State.Error) failed = true
+                model = request, contentDescription = null, contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize().alpha(if (loaded) 1f else 0f),
+                onState = { st ->
+                    if (overrideUrl != null) {
+                        if (st is AsyncImagePainter.State.Success) loaded = true
+                        if (st is AsyncImagePainter.State.Error) failed = true
+                        return@AsyncImage
+                    }
+                    when (st) {
+                        is AsyncImagePainter.State.Success -> {
+                            val d = st.result.drawable
+                            val w = (d as? BitmapDrawable)?.bitmap?.width ?: d.intrinsicWidth
+                            // kleine weergave (miniplayer): een groot logo kan verkleind binnenkomen
+                            val min = if (boxPx > 0) minOf(LogoSources.MIN_PX, (boxPx * 0.9f).toInt()) else LogoSources.MIN_PX
+                            when {
+                                logo == tinyFallback && isFinal -> loaded = true
+                                w >= min -> { station?.let { LogoSources.markResolved(it.uuid, logo) }; loaded = true }
+                                LogoSources.isService(logo) || w < 8 -> { LogoSources.markFailed(logo); attempt++ }
+                                else -> {
+                                    // klein favicon: laatste redmiddel als de diensten niets hebben
+                                    LogoSources.markTiny(logo)
+                                    if (tinyFallback == null) tinyFallback = logo
+                                    attempt++
+                                }
+                            }
+                        }
+                        is AsyncImagePainter.State.Error -> {
+                            LogoSources.markFailed(logo)
+                            if (logo == tinyFallback) { tinyFallback = null; failed = true }
+                            else if (attempt < candidates.size) attempt++
+                            else failed = true
+                        }
+                        else -> {}
+                    }
                 }
             )
         }
@@ -584,6 +638,7 @@ fun PillButton(
     primary: Boolean = true,
     small: Boolean = false,
     focusRequester: FocusRequester? = null,
+    iconTint: Color = Color.White,
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(Dims.buttonRadius)
@@ -596,7 +651,7 @@ fun PillButton(
         horizontalArrangement = Arrangement.Center
     ) {
         if (icon != null) {
-            Icon(icon, null, tint = Color.White, modifier = Modifier.size(if (small) 16.dp else 20.dp))
+            Icon(icon, null, tint = iconTint, modifier = Modifier.size(if (small) 16.dp else 20.dp))
             Spacer(Modifier.width(6.dp))
         }
         Text(text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = if (small) 13.sp else 15.sp, maxLines = 1)

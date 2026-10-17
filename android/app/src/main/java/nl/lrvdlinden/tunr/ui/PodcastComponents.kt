@@ -24,6 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.ChildCare
 import androidx.compose.material.icons.rounded.Computer
 import androidx.compose.material.icons.rounded.FitnessCenter
@@ -42,6 +45,8 @@ import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.SportsSoccer
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -148,9 +153,24 @@ fun PodcastCard(
     onClick: () -> Unit = { Nav.podcast(podcast) },
 ) {
     val shape = RoundedCornerShape(Dims.cardRadius)
+    val followed by Library.followedPodcasts.collectAsState()
+    val favorite = followed.any { it.id == podcast.id }
+    var menu by remember { mutableStateOf(false) }
     Column(if (width == Dp.Unspecified) modifier.fillMaxWidth() else modifier.width(width)) {
-        Box(Modifier.fillMaxWidth().aspectRatio(1f).tvClickable(shape, focusRequester = focusRequester, onClick = onClick)) {
+        Box(
+            Modifier.fillMaxWidth().aspectRatio(1f)
+                .tvClickable(shape, focusRequester = focusRequester, onLongClick = { menu = true }, onClick = onClick)
+        ) {
+            PodcastMenu(podcast, menu, onDismiss = { menu = false })
             PodcastArt(podcast.artwork, podcast.displayName, Modifier.fillMaxSize(), radius = Dims.cardRadius)
+            if (favorite) {
+                // favoriet (zelfde opslag als volgen)
+                Icon(
+                    Icons.Rounded.Favorite, stringResource(R.string.following), tint = Color.White,
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp).clip(CircleShape)
+                        .background(T.accent).padding(5.dp).size(if (Device.isTV) 16.dp else 14.dp)
+                )
+            }
             if (number != null) {
                 Text(
                     "$number", style = heading(if (Device.isTV) 18.sp else 16.sp),
@@ -167,6 +187,25 @@ fun PodcastCard(
     }
 }
 
+/** Contextmenu (lang indrukken) voor een podcast: bekijken en favoriet (hartje), zoals bij zenders */
+@Composable
+fun PodcastMenu(podcast: Podcast, expanded: Boolean, onDismiss: () -> Unit) {
+    val followed by Library.followedPodcasts.collectAsState()
+    val favorite = followed.any { it.id == podcast.id }
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss, containerColor = T.elevated) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.open_podcast), color = T.text) },
+            leadingIcon = { Icon(Icons.Rounded.Info, null, tint = T.text) },
+            onClick = { onDismiss(); Nav.podcast(podcast) }
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(if (favorite) R.string.remove_favorite else R.string.add_favorite), color = T.text) },
+            leadingIcon = { Icon(if (favorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder, null, tint = T.accent) },
+            onClick = { onDismiss(); Library.toggleFollow(podcast) }
+        )
+    }
+}
+
 /** Rij in een lijst: (nummer), art 56, naam, maker · genre, pijltje */
 @Composable
 fun PodcastRow(
@@ -178,12 +217,15 @@ fun PodcastRow(
 ) {
     val followed by Library.followedPodcasts.collectAsState()
     val following = followed.any { it.id == podcast.id }
+    var menu by remember { mutableStateOf(false) }
     Row(
         modifier.fillMaxWidth()
-            .tvClickable(RoundedCornerShape(12.dp), scale = 1.03f, focusRequester = focusRequester, onClick = onClick)
+            .tvClickable(RoundedCornerShape(12.dp), scale = 1.03f, focusRequester = focusRequester,
+                onLongClick = { menu = true }, onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        PodcastMenu(podcast, menu, onDismiss = { menu = false })
         if (number != null) {
             Text("$number", style = heading(16.sp, T.secondary), modifier = Modifier.width(34.dp), textAlign = TextAlign.Center)
         }
@@ -197,7 +239,7 @@ fun PodcastRow(
         }
         if (following) {
             Spacer(Modifier.width(8.dp))
-            Icon(Icons.Rounded.CheckCircle, stringResource(R.string.following), tint = T.accent, modifier = Modifier.size(18.dp))
+            Icon(Icons.Rounded.Favorite, stringResource(R.string.following), tint = T.accent, modifier = Modifier.size(16.dp))
         }
         Spacer(Modifier.width(4.dp))
         Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null, tint = T.secondary)

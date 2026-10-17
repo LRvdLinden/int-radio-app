@@ -11,9 +11,16 @@ struct MainView: View {
     var body: some View {
         layout
             .modifier(PlayerPresentation())
+            #if os(tvOS)
+            // Apple TV: schermvullend (een blad is op tv te klein voor ~200 landen)
+            .fullScreenCover(isPresented: $app.showCountryPicker) {
+                CountryPickerView()
+            }
+            #else
             .sheet(isPresented: $app.showCountryPicker) {
                 CountryPickerView()
             }
+            #endif
             #if os(iOS)
             .sheet(isPresented: $app.showSettings) {
                 NavigationStack {

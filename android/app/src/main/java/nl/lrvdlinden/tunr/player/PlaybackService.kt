@@ -40,6 +40,7 @@ import nl.lrvdlinden.tunr.Brand
 import nl.lrvdlinden.tunr.LocaleHelper
 import nl.lrvdlinden.tunr.MainActivity
 import nl.lrvdlinden.tunr.R
+import nl.lrvdlinden.tunr.data.LogoSources
 import nl.lrvdlinden.tunr.data.Artwork
 import nl.lrvdlinden.tunr.data.Episode
 import nl.lrvdlinden.tunr.data.EpisodeCache
@@ -295,7 +296,7 @@ class PlaybackService : MediaLibraryService() {
             art?.let { putString(Extras.NP_ART, it) }
         }
         val name = station?.displayName ?: old.station?.toString() ?: old.title?.toString() ?: ""
-        val stationArt = station?.favicon?.takeIf { it.startsWith("http") }
+        val stationArt = station?.let { LogoSources.best(it) }
         val meta = old.buildUpon()
             // ExoPlayer legt de ruwe ICY-titel er toch over (title); daarom de zendernaam als artiest-regel
             .setTitle(np?.line ?: name)

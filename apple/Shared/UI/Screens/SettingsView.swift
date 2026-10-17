@@ -28,8 +28,13 @@ struct SettingsView: View {
                 Button(L("action.clear"), role: .destructive) { library.clearFavorites() }
                 Button(L("action.cancel"), role: .cancel) {}
             }
+            #if os(tvOS)
+            // Apple TV: schermvullende landkeuze (Menu sluit)
+            .fullScreenCover(isPresented: $showCountry) { CountryPickerView() }
+            #else
             // eigen blad (Instellingen kan zelf al een blad zijn, of op de Mac een apart venster)
             .sheet(isPresented: $showCountry) { CountryPickerView() }
+            #endif
     }
 
     private var form: some View {
@@ -41,13 +46,18 @@ struct SettingsView: View {
                         Spacer()
                         if let code = library.countryCode {
                             Text(Country.flag(for: code) + " " + Country.localizedName(code: code, fallback: library.countryName))
-                                .foregroundStyle(Theme.secondary)
+                                .modifier(SecondaryText())
                         }
-                        Image(systemName: "chevron.right").font(.system(size: tvScaled(12), weight: .semibold)).foregroundStyle(Theme.secondary)
+                        Image(systemName: "chevron.right").font(.system(size: tvScaled(12), weight: .semibold)).modifier(SecondaryText())
                     }
                     .contentShape(Rectangle())
                 }
+                #if os(tvOS)
+                // systeemstijl: dezelfde focus als de keuzelijsten en schakelaars eronder
+                .buttonStyle(.automatic)
+                #else
                 .buttonStyle(.plain)
+                #endif
 
                 Picker(selection: $localizer.override) {
                     Text(L("settings.languageSystem")).tag("")
@@ -119,10 +129,12 @@ struct SettingsView: View {
             }
 
             Section {
-                HStack {
-                    settingLabel(L("settings.version"), symbol: "info.circle")
-                    Spacer()
-                    Text(Brand.versionText).foregroundStyle(Theme.secondary).monospacedDigit()
+                tvFocusableRow {
+                    HStack {
+                        settingLabel(L("settings.version"), symbol: "info.circle")
+                        Spacer()
+                        Text(Brand.versionText).modifier(SecondaryText()).monospacedDigit()
+                    }
                 }
                 linkRow(L("settings.website"), symbol: "safari", url: Brand.website)
                 linkRow(L("settings.privacy"), symbol: "hand.raised", url: Brand.privacy)
@@ -146,24 +158,44 @@ struct SettingsView: View {
         .screenBackground()
     }
 
-    private func settingLabel(_ title: String, symbol: String, tint: Color = .white) -> some View {
+    private func settingLabel(_ title: String, symbol: String, tint: Color? = nil) -> some View {
         HStack(spacing: tvScaled(12)) {
             Image(systemName: symbol)
                 .font(.system(size: tvScaled(14), weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: tvScaled(28), height: tvScaled(28))
                 .background(Theme.gradient, in: RoundedRectangle(cornerRadius: tvScaled(7), style: .continuous))
-            Text(title).foregroundStyle(tint)
+            settingTitle(title, tint: tint)
         }
+    }
+
+    /// Titel: wit (iPhone/iPad/Mac). Apple TV: systeemkleur, zodat de tekst op het witte focusvlak donker wordt.
+    @ViewBuilder private func settingTitle(_ title: String, tint: Color?) -> some View {
+        #if os(tvOS)
+        if let tint { Text(title).foregroundStyle(tint) } else { Text(title) }
+        #else
+        Text(title).foregroundStyle(tint ?? .white)
+        #endif
+    }
+
+    /// Apple TV: rijen zonder actie toch focusbaar maken, zodat je met de afstandsbediening tot onderaan kunt scrollen
+    @ViewBuilder private func tvFocusableRow<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        #if os(tvOS)
+        Button {} label: { content() }
+        #else
+        content()
+        #endif
     }
 
     @ViewBuilder private func linkRow(_ title: String, symbol: String, url: URL) -> some View {
         #if os(tvOS)
-        // geen browser op Apple TV: alleen het adres tonen
-        HStack {
-            settingLabel(title, symbol: symbol)
-            Spacer()
-            Text(url.host ?? url.absoluteString).foregroundStyle(Theme.secondary)
+        // geen browser op Apple TV: alleen het adres tonen (wel focusbaar, anders kun je er niet naartoe scrollen)
+        tvFocusableRow {
+            HStack {
+                settingLabel(title, symbol: symbol)
+                Spacer()
+                Text(url.host ?? url.absoluteString).modifier(SecondaryText())
+            }
         }
         #else
         Button { openURL(url) } label: {
@@ -175,6 +207,17 @@ struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        #endif
+    }
+}
+
+/// Grijze bijtekst: Theme.secondary; Apple TV: hiërarchische systeemkleur (leesbaar op het witte focusvlak)
+private struct SecondaryText: ViewModifier {
+    func body(content: Content) -> some View {
+        #if os(tvOS)
+        content.foregroundStyle(.secondary)
+        #else
+        content.foregroundStyle(Theme.secondary)
         #endif
     }
 }

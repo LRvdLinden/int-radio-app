@@ -500,7 +500,13 @@ struct MapExplorerView: View {
                     #endif
                     Spacer()
                 }
-                if let s = model.selected { selectedCard(s).padding(Theme.edge) }
+                if let s = model.selected {
+                    selectedCard(s)
+                        .padding(Theme.edge)
+                        #if os(tvOS)
+                        .focusSection()
+                        #endif
+                }
             }
         }
         #else
@@ -547,8 +553,18 @@ struct MapExplorerView: View {
 
     // MARK: Kaart
 
+    /// Apple TV: de kaart zelf is niet bedienbaar met de afstandsbediening (geen focus, geen pannen);
+    /// je kiest via de lijst links, die de kaart centreert, en de knoppen bovenaan.
+    private var mapInteraction: MapInteractionModes {
+        #if os(tvOS)
+        return []
+        #else
+        return .all
+        #endif
+    }
+
     private var map: some View {
-        Map(position: $camera) {
+        Map(position: $camera, interactionModes: mapInteraction) {
             ForEach(model.clusters) { cluster in
                 Annotation("", coordinate: cluster.coordinate, anchor: .center) {
                     annotationView(cluster)
@@ -582,6 +598,18 @@ struct MapExplorerView: View {
     }
 
     @ViewBuilder private func annotationView(_ cluster: MapCluster) -> some View {
+        #if os(tvOS)
+        // Apple TV: stippen zijn geen knoppen (honderden focusdoelen op de kaart werken niet met de afstandsbediening)
+        if cluster.count == 1, let s = cluster.stations.first {
+            GlowDot(isPlaying: player.station?.id == s.id && player.state == .playing,
+                    isSelected: model.selected?.id == s.id)
+                .accessibilityHidden(true)
+        } else {
+            ClusterBubble(count: cluster.count,
+                          containsPlaying: cluster.stations.contains { $0.id == player.station?.id })
+                .accessibilityHidden(true)
+        }
+        #else
         if cluster.count == 1, let s = cluster.stations.first {
             Button { select(s) } label: {
                 GlowDot(isPlaying: player.station?.id == s.id && player.state == .playing,
@@ -597,6 +625,7 @@ struct MapExplorerView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(L("map.cluster", cluster.count))
         }
+        #endif
     }
 
     // MARK: Knoppen

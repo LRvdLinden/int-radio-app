@@ -20,6 +20,8 @@ final class WidgetSync {
     private var logoTask: Task<Void, Never>?
     /// Logo's die deze sessie niet te laden waren (niet steeds opnieuw proberen)
     private var failedLogos = Set<String>()
+    /// zender-id → logo-bronnen (favicon, daarna Google/DuckDuckGo op het domein; zie LogoSources)
+    private var logoCandidates: [String: [URL]] = [:]
 
     private init() {}
 
@@ -61,6 +63,10 @@ final class WidgetSync {
         }
         snap.favorites = lib.favorites.prefix(WidgetBridge.maxStations).map(Self.widgetStation)
         snap.recents = lib.recents.prefix(WidgetBridge.maxStations).map(Self.widgetStation)
+        for st in [p.station].compactMap({ $0 }) + lib.favorites.prefix(WidgetBridge.maxStations)
+            + lib.recents.prefix(WidgetBridge.maxStations) {
+            logoCandidates[st.id] = st.logoCandidates
+        }
         snap.language = Localizer.shared.language
 
         guard snap != lastSnapshot else { return }
@@ -123,8 +129,12 @@ final class WidgetSync {
             seen.insert(s.id)
             wanted.append(s)
         }
+        let candidates = logoCandidates
+        let urls: (WidgetStation) -> [URL] = { s in
+            candidates[s.id] ?? (s.logoURL.flatMap { URL(string: $0) }.map { [$0] } ?? [])
+        }
         let missing = wanted.filter { s in
-            s.logoURL != nil && !failedLogos.contains(s.id) && !WidgetBridge.hasLogo(for: s.id)
+            !urls(s).isEmpty && !failedLogos.contains(s.id) && !WidgetBridge.hasLogo(for: s.id)
         }
         let keep = seen
         logoTask?.cancel()
@@ -132,8 +142,7 @@ final class WidgetSync {
             var added: [String] = []
             for s in missing {
                 if Task.isCancelled { return }
-                guard let raw = s.logoURL, let url = URL(string: raw) else { continue }
-                if let png = await WidgetLogoMaker.makePNG(from: url) {
+                if let png = await WidgetLogoMaker.makePNG(fromCandidates: urls(s)) {
                     WidgetBridge.writeLogo(png, for: s.id)
                     added.append(s.id)
                 } else {
@@ -154,11 +163,46 @@ final class WidgetSync {
 /// Download + verkleinen naar max. ~120 px (PNG) met ImageIO; werkt op iOS en macOS.
 enum WidgetLogoMaker {
     static func makePNG(from url: URL, maxPixel: Int = 120) async -> Data? {
+        guard let data = await download(url) else { return nil }
+        return downscale(data, maxPixel: maxPixel)
+    }
+
+    /// Eerste bron die een logo van minstens `LogoSources.minPixels` breed geeft; een kleiner favicon alleen als
+    /// de favicondiensten niets hebben (Google geeft een globe van 16 px als hij niets weet).
+    static func makePNG(fromCandidates urls: [URL], maxPixel: Int = 120) async -> Data? {
+        var tiny: Data?
+        for url in urls {
+            if Task.isCancelled { return nil }
+            guard let data = await download(url) else { continue }
+            let width = largestWidth(data)
+            if CGFloat(width) >= LogoSources.minPixels {
+                if let png = downscale(data, maxPixel: maxPixel) { return png }
+            } else if width > 0, tiny == nil, !LogoSources.isFallbackService(url) {
+                tiny = data
+            }
+        }
+        return tiny.flatMap { downscale($0, maxPixel: maxPixel) }
+    }
+
+    private static func download(_ url: URL) async -> Data? {
         var req = URLRequest(url: url, timeoutInterval: 12)
-        req.setValue(Brand.userAgent, forHTTPHeaderField: "User-Agent")
+        if !LogoSources.isFallbackService(url) {
+            req.setValue(Brand.userAgent, forHTTPHeaderField: "User-Agent")
+        }
         guard let (data, response) = try? await URLSession.shared.data(for: req) else { return nil }
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) { return nil }
-        return downscale(data, maxPixel: maxPixel)
+        return data
+    }
+
+    /// Breedste afbeelding in de data (pixels; 0 = geen afbeelding)
+    static func largestWidth(_ data: Data) -> Int {
+        guard let src = CGImageSourceCreateWithData(data as CFData, nil) else { return 0 }
+        var widest = 0
+        for i in 0..<CGImageSourceGetCount(src) {
+            let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [CFString: Any]
+            widest = max(widest, (props?[kCGImagePropertyPixelWidth] as? Int) ?? 0)
+        }
+        return widest
     }
 
     static func downscale(_ data: Data, maxPixel: Int) -> Data? {

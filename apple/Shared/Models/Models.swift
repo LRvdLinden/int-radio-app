@@ -113,10 +113,15 @@ struct Station: Codable, Identifiable, Hashable, Sendable {
         return URL(string: url)
     }
 
+    /// Logo uit Radio Browser (`favicon`), zoals opgegeven. Voor weergave: `logoCandidates` (met terugval).
     var logoURL: URL? {
         guard !favicon.isEmpty, favicon.hasPrefix("http") else { return nil }
         return URL(string: favicon)
     }
+
+    /// Logo-bronnen in volgorde (favicon, Google- en DuckDuckGo-favicondienst op het domein van de homepage);
+    /// zie `LogoSources`.
+    var logoCandidates: [URL] { LogoSources.candidates(for: self) }
 
     var homepageURL: URL? {
         guard !homepage.isEmpty, homepage.hasPrefix("http") else { return nil }

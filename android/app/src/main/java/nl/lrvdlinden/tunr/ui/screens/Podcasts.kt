@@ -29,9 +29,9 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Podcasts
@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -319,15 +320,17 @@ private fun PodcastHeader(p: Podcast, episodes: List<Episode>?, description: Str
             PillButton(
                 stringResource(if (isNewestPlaying) R.string.pause else R.string.play_latest),
                 if (isNewestPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                focusRequester = playFocus
             ) {
                 if (newest == null) return@PillButton
                 if (currentEp?.id == newest.id) RadioController.togglePlay() else RadioController.playEpisode(newest, episodes.orEmpty())
             }
+            // Favoriet (hartje, zoals bij zenders); zelfde opslag als "volgen". TV: krijgt als eerste de focus.
             PillButton(
                 stringResource(if (following) R.string.following else R.string.follow),
-                if (following) Icons.Rounded.Check else Icons.Rounded.Add,
-                primary = false
+                if (following) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                primary = false,
+                focusRequester = playFocus,
+                iconTint = if (following) T.accent else Color.White,
             ) { Library.toggleFollow(p) }
         }
         if (!description.isNullOrBlank()) {

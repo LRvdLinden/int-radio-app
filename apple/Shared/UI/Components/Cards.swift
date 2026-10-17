@@ -196,12 +196,15 @@ struct StationRowButton: View {
     var rank: Int? = nil
     var onRemove: (() -> Void)? = nil
     var removeTitle: String = ""
+    /// Extra actie na tikken (bv. zoekopdracht onthouden)
+    var onPlay: (() -> Void)? = nil
 
     @EnvironmentObject private var player: RadioPlayer
 
     var body: some View {
         Button {
             Haptics.tap()
+            onPlay?()
             player.play(station, queue: queue)
         } label: {
             StationRow(station: station, rank: rank)

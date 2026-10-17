@@ -203,6 +203,15 @@
         if (T.ui.libRender) T.ui.libRender();
         break;
       }
+      case 'podfav': { // aflevering in de volledige speler: de podcast als favoriet
+        if (!cur || !T.player.isEpisode) break;
+        var pon = T.store.toggleFollow({ id: cur.pid, name: cur.pname || '', art: cur.art || '' });
+        T.ui.toast(T.t(pon ? 'pod.toast.follow' : 'pod.toast.unfollow', { n: cur.pname || '' }));
+        if (T.ui.isFullOpen()) T.ui.renderFull();
+        if (T.ui.podRefresh) T.ui.podRefresh();
+        if (T.ui.libRender) T.ui.libRender();
+        break;
+      }
       case 'eplay': {
         var ex = episodeFrom(a); if (!ex) return;
         if (T.player.isCurrent(ex.e.id) && (T.player.state === 'playing' || T.player.state === 'loading')) T.player.pause();

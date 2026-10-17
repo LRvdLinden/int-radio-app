@@ -400,9 +400,10 @@ final class RadioPlayer: ObservableObject {
     }
 
     private func loadStationImage() {
-        guard let s = station, let url = s.logoURL else { return }
+        guard let s = station, !s.logoCandidates.isEmpty else { return }
         Task { [weak self] in
-            let img = await ImageLoader.shared.load(url)
+            // logo met terugval (favicon → Google/DuckDuckGo op het domein), zie LogoSources
+            let img = await LogoResolver.shared.image(for: s)
             guard let self, self.station?.id == s.id, self.artworkURL == nil, let img else { return }
             self.nowPlayingImage = img
             self.updateNowPlaying()
