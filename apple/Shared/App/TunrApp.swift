@@ -16,6 +16,8 @@ struct TunrApp: App {
         Brand.configurePlatform()
         // build 9: taal, slaaptimer en automatisch verder spelen via iCloud
         SettingsSync.shared.start()
+        // anonieme gebruiksping (max. 1× per 12 uur; uit te zetten in Instellingen)
+        StatsPing.shared.pingIfDue()
     }
 
     var body: some Scene {
@@ -41,6 +43,7 @@ struct TunrApp: App {
         .onChange(of: phase) { _, p in
             if p == .active {
                 Task { await library.refreshFavorites() }
+                StatsPing.shared.pingIfDue()
             }
         }
 

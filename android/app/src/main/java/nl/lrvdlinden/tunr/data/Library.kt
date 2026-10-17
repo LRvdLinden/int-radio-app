@@ -20,6 +20,8 @@ data class Settings(
     /** Standaard slaaptimer in minuten (0 = uit) */
     val defaultSleepMinutes: Int = 0,
     val autoplayLast: Boolean = false,
+    /** Anonieme gebruiksstatistieken (standaard aan; zie Stats) */
+    val shareStats: Boolean = true,
 ) {
     companion object { const val SYSTEM = "system" }
 }

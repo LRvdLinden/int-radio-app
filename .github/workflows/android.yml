@@ -1,9 +1,9 @@
 name: Android
 
 # Bouwt de Android-app (telefoon, tablet, Android TV en Android Auto in één APK) bij elke push die android/ raakt.
-# Als de build slaagt en dit buildnummer nog niet bestaat:
-#   - APK in de repo: versions/android/<versie>/build-<N>/Tunr-<versie>-build<N>.apk
-#   - GitHub-release "Android 1.0.0 (build N)" met de APK als download.
+# Als de build slaagt: de APK (Tunr-<versie>-build<N>.apk) naar beheer.tunr.online (tab Downloads), via
+# tools/beheer_upload.sh uit tunr-beheer. Nooit op GitHub (geen repo, geen release, geen artefact).
+# Secrets: FTP_SERVER, BEHEER_FTP_USERNAME, BEHEER_FTP_PASSWORD (zonder: overslaan met een waarschuwing).
 # Ondertekening: met de eigen release-sleutel uit de secrets TUNR_KEYSTORE_BASE64, TUNR_KEYSTORE_PASSWORD
 # (en optioneel TUNR_KEY_ALIAS, TUNR_KEY_PASSWORD). Zonder die secrets met android/ci-debug.keystore,
 # zodat elke APK in elk geval met dezelfde sleutel is getekend en updates over elkaar heen installeren.
@@ -82,26 +82,31 @@ jobs:
           git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "android $GITHUB_SHA [skip ci]"
           git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" ci-logs-android
 
-      - name: APK in de repo en als GitHub-release
+      # beheer_upload.sh werkt het manifest bij; dezelfde build wordt vervangen, dus gewoon elke keer uploaden.
+      - name: APK naar beheer.tunr.online (Downloads)
         if: github.event_name != 'pull_request'
         working-directory: .
         env:
-          GH_TOKEN: ${{ github.token }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.BEHEER_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.BEHEER_FTP_PASSWORD }}
         run: |
+          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
+            echo "::warning::Secrets BEHEER_FTP_USERNAME/BEHEER_FTP_PASSWORD (of FTP_SERVER) ontbreken: APK niet naar beheer.tunr.online geüpload."
+            exit 0
+          fi
           V=$(grep -m1 '^TUNR_VERSION=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
           B=$(grep -m1 '^TUNR_BUILD=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
-          APK=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
-          DIR="versions/android/$V/build-$B"; OUT="$DIR/Tunr-$V-build$B.apk"; TAG="android-v$V-build$B"
-          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
-          if [ -f "$OUT" ]; then echo "$OUT bestaat al: niets te doen"; exit 0; fi
-          mkdir -p "$DIR"; cp "$APK" "$OUT"; ls -lh "$OUT"
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add "$OUT"
-          git commit -m "Android $V build $B: APK [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done
-          NOTES=$(awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60)
-          gh release create "$TAG" "$OUT" --target "${GITHUB_REF_NAME}" \
-            --title "Android $V (build $B)" \
-            --notes "${NOTES:-Tunr voor Android, Android TV en Android Auto — versie $V, build $B.}" \
-            || gh release upload "$TAG" "$OUT" --clobber
+          SRC=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
+          APK="$RUNNER_TEMP/Tunr-$V-build$B.apk"
+          cp "$SRC" "$APK"; ls -lh "$APK"
+          awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
+          [ -s "$RUNNER_TEMP/notes.md" ] || echo "Tunr voor Android, Android TV en Android Auto — versie $V, build $B." > "$RUNNER_TEMP/notes.md"
+          # upload-script uit tunr-beheer (openbaar, anoniem op te halen); ftps.sh alleen als het er is
+          TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"
+          RAW="https://raw.githubusercontent.com/LRvdLinden/tunr-beheer/main/tools"
+          curl -fsSL --retry 3 "$RAW/beheer_upload.sh" -o "$TOOLS/beheer_upload.sh"
+          curl -fsSL --retry 3 "$RAW/ftps.sh" -o "$TOOLS/ftps.sh" || { echo "geen tools/ftps.sh in tunr-beheer (niet nodig)"; rm -f "$TOOLS/ftps.sh"; }
+          chmod +x "$TOOLS"/*.sh
+          bash "$TOOLS/beheer_upload.sh" android "$APK" "$V" "$B" "$RUNNER_TEMP/notes.md"
+          echo "- APK build $B → beheer.tunr.online (Downloads)" >> $GITHUB_STEP_SUMMARY

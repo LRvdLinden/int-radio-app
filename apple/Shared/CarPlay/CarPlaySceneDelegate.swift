@@ -26,6 +26,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
                                   didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
+        // voor de anonieme statistieken: "ooit CarPlay gebruikt"
+        UserDefaults.standard.set(true, forKey: StatsKey.carplayUsed)
         MainActor.assumeIsolated { self.connect() }
     }
 

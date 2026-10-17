@@ -15,6 +15,14 @@ object Brand {
     const val TERMS = "https://tunr.online/voorwaarden/"
     const val RADIO_BROWSER = "https://www.radio-browser.info"
 
+    /**
+     * Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
+     * (`https://<project-ref>.supabase.co`) en publishable key (`sb_publishable_…`). Openbaar, mag in de repo.
+     * Zolang de URL leeg is, stuurt de app geen ping.
+     */
+    const val STATS_URL = "https://vbhkewgyujzgbukkbtml.supabase.co"
+    const val STATS_KEY = ""
+
     /** Versie zonder buildnummer, zoals in de User-Agent ("Tunr/1.0.0") */
     val version: String get() = BuildConfig.VERSION_NAME
 

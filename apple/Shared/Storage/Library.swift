@@ -7,6 +7,7 @@ enum SettingsKey {
     static let language = Localizer.key                     // "", "nl", "en"
     static let defaultSleep = "settings.defaultSleepMinutes" // Int: 0 = uit, 15, 30, 60
     static let autoplayLast = "settings.autoplayLast"        // Bool, standaard uit
+    static let shareStats = "settings.shareStats"            // Bool, standaard aan; per apparaat (niet via iCloud)
 }
 
 /// Bibliotheek van de gebruiker: favorieten, recent, recente zoekopdrachten, gekozen land en lokale regio.

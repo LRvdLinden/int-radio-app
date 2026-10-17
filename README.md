@@ -26,9 +26,11 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 
 | | |
 |---|---|
-| **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Apple … — Xcode-project* → zip uitpakken → `Tunr/Tunr.xcodeproj` openen. Ook in [`versions/apple/`](versions/apple) |
-| **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | [Releases](https://github.com/LRvdLinden/int-radio-app/releases) → *Android …* → `Tunr-1.0.0-build<N>.apk`. Ook in [`versions/android/`](versions/android) |
+| **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | Alleen via het beheerdashboard **BeheerTunr** ([beheer.tunr.online](https://beheer.tunr.online) of de BeheerTunr-app) → tab **Downloads** (inloggen vereist) → zip uitpakken → `Tunr/Tunr.xcodeproj` openen |
+| **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>.apk` |
 | **Website en webspeler** | [tunr.online](https://tunr.online) · [tunr.online/web](https://tunr.online/web/) |
+
+Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): de workflows *Apple* en *Android* zetten ze na een geslaagde build via FTPS op beheer.tunr.online.
 
 ## Screenshots
 
@@ -79,7 +81,6 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 | [`website/`](website) | Website (NL/EN) en webspeler |
 | [`docs/`](docs) | [`SPEC.md`](docs/SPEC.md) (functionele spec en huisstijl), changelog, screenshots |
 | [`tools/`](tools) | Tune, iconen en changelog |
-| [`versions/`](versions) | Xcode-zip en APK per build |
 
 Werkafspraken staan in [`CLAUDE.md`](CLAUDE.md).
 

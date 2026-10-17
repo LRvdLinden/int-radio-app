@@ -208,6 +208,9 @@
 "settings.defaultSleep" = "Default sleep timer";
 "settings.general" = "General";
 "settings.icloudFooter" = "Favourites, recent stations, podcasts, listening positions and your settings sync via iCloud between your iPhone, iPad, Mac and Apple TV.";
+"settings.privacySection" = "Privacy";
+"settings.shareStats" = "Anonymous usage statistics";
+"settings.shareStatsFooter" = "No personal data. Only the device type, app version, the country and language you chose in Tunr and a random install number are sent, at most twice a day, so we can see how many people use Tunr on which devices.";
 "settings.introMusic" = "Intro music";
 "settings.language" = "Language";
 "settings.languageSystem" = "System";

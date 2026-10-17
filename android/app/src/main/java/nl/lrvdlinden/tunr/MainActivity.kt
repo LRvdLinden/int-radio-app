@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import nl.lrvdlinden.tunr.data.Stats
 import nl.lrvdlinden.tunr.player.RadioController
 import nl.lrvdlinden.tunr.ui.AppState
 import nl.lrvdlinden.tunr.ui.TunrRoot
@@ -43,6 +44,12 @@ class MainActivity : ComponentActivity() {
                 TunrRoot()
             }
         }
+    }
+
+    /** Bij starten en terugkomen naar de voorgrond: anonieme ping (max. 1× per 12 uur, zie Stats). */
+    override fun onResume() {
+        super.onResume()
+        Stats.pingIfDue(applicationContext)
     }
 
     /** Android 13+: toestemming voor de mediamelding (één keer vragen, niet op tv). */

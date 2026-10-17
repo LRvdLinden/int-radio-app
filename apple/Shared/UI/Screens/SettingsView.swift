@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Instellingen: Land, Taal, Intromuziek, Slaaptimer standaard, Automatisch verder spelen,
-/// Recent/Favorieten wissen (met bevestiging), Over.
+/// Recent/Favorieten wissen (met bevestiging), Anonieme gebruiksstatistieken, Over.
 struct SettingsView: View {
     @EnvironmentObject private var app: AppState
     @EnvironmentObject private var library: Library
@@ -10,6 +10,7 @@ struct SettingsView: View {
 
     @AppStorage(SettingsKey.defaultSleep) private var defaultSleep = 0
     @AppStorage(SettingsKey.autoplayLast) private var autoplayLast = false
+    @AppStorage(SettingsKey.shareStats) private var shareStats = true
     @State private var confirmRecents = false
     @State private var confirmFavorites = false
     @State private var showCountry = false
@@ -85,6 +86,19 @@ struct SettingsView: View {
                 Text(L("settings.data"))
             } footer: {
                 Text(L("settings.icloudFooter"))
+            }
+
+            Section {
+                Toggle(isOn: $shareStats) {
+                    settingLabel(L("settings.shareStats"), symbol: "chart.bar")
+                }
+                .onChange(of: shareStats) { _, on in
+                    if on { StatsPing.shared.pingIfDue() }
+                }
+            } header: {
+                Text(L("settings.privacySection"))
+            } footer: {
+                Text(L("settings.shareStatsFooter"))
             }
 
             Section {

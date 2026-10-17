@@ -113,6 +113,7 @@ Open community-database, geen sleutel nodig.
 - **Slaaptimer standaard** (uit/15/30/60)
 - **Automatisch verder spelen bij opstarten** (laatste zender, standaard uit)
 - **Recent wissen**, **Favorieten wissen** (met bevestiging)
+- **Privacy → Anonieme gebruiksstatistieken** (standaard aan, per apparaat, niet via iCloud), met uitleg eronder: geen persoonsgegevens, alleen type apparaat, app-versie, gekozen land/taal en een willekeurig installatienummer. Aan = max. 1× per 12 uur een ping bij starten/terugkomen (contract: `tunr-beheer/docs/CONTRACT.md`); uit = niets. Webspeler idem; de homepage pingt niet.
 - **Over**: versie + build, link naar de website, privacy, voorwaarden, "Zendergegevens: Radio Browser (community)" met link `https://www.radio-browser.info`.
 
 ## 5. Platform-details

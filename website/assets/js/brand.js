@@ -8,7 +8,11 @@ window.TUNR = {
   radioBrowser: 'https://www.radio-browser.info',
   // App-links: leeg tot de apps in de winkels staan ("Binnenkort").
   appStore: '',
-  googlePlay: ''
+  googlePlay: '',
+  // Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
+  // ('https://<project-ref>.supabase.co') en publishable key ('sb_publishable_…'). Openbaar, mag in de repo.
+  // Zolang de URL leeg is, stuurt de webspeler geen ping.
+  stats: { url: 'https://vbhkewgyujzgbukkbtml.supabase.co', key: '' }
 };
 
 // Woordmerk (TunrLogo) als HTML, voor plekken die met JS worden opgebouwd.

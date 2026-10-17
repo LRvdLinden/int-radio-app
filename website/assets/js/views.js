@@ -636,6 +636,9 @@
         '<button type="button" id="cr"><span class="rico" style="--a:#14B8A6;--b:#3B82F6">' + I('clock') + '</span><span class="lab danger">' + esc(t('set.clearR')) + '</span><span class="cnt">' + T.store.recents().length + '</span></button>' +
         '<button type="button" id="cf"><span class="rico" style="--a:#F43F5E;--b:#FB923C">' + I('heart') + '</span><span class="lab danger">' + esc(t('set.clearF')) + '</span><span class="cnt">' + T.store.favorites().length + '</span></button>' +
         '</div></section>' +
+        '<section class="sec"><div class="sech"><h2>' + esc(t('set.privacyH')) + '</h2></div><div class="rows">' +
+        '<button type="button" id="st" role="switch" aria-checked="' + T.store.shareStats + '"><span class="rico" style="--a:#8B5CF6;--b:#EC4899">' + I('info') + '</span><span class="lab">' + esc(t('set.stats')) + '<small>' + esc(t('set.stats.p')) + '</small></span><span class="switch" aria-hidden="true"></span></button>' +
+        '</div></section>' +
         '<section class="sec"><div class="sech"><h2>' + esc(t('set.about')) + '</h2></div><div class="rows">' +
         '<div class="row"><span class="rico">' + I('radio') + '</span><span class="lab">Tunr</span><span class="val">' + esc(t('set.version')) + ' ' + esc(window.TUNR.version) + '</span></div>' +
         '<a href="../"><span class="lab">' + esc(t('set.site')) + '</span>' + I('chev', 'chev') + '</a>' +
@@ -648,6 +651,11 @@
     el.onclick = function (e) {
       var l = e.target.closest('[data-lang]');
       if (l) { T.store.lang = l.getAttribute('data-lang'); return; } // store-event tekent alles opnieuw
+      if (e.target.closest('#st')) {
+        T.store.shareStats = !T.store.shareStats;
+        if (T.store.shareStats && T.stats) T.stats.pingIfDue();
+        render(); return;
+      }
       if (e.target.closest('#cr')) T.ui.confirm(t('set.confirmR'), t('lib.clear'), function () { T.store.clearRecents(); T.ui.toast(t('set.done')); render(); });
       if (e.target.closest('#cf')) T.ui.confirm(t('set.confirmF'), t('lib.clear'), function () { T.store.clearFavs(); T.ui.toast(t('set.done')); render(); });
     };

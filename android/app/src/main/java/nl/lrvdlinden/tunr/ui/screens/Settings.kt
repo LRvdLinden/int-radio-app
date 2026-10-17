@@ -51,6 +51,7 @@ import nl.lrvdlinden.tunr.LocaleHelper
 import nl.lrvdlinden.tunr.R
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.data.Settings
+import nl.lrvdlinden.tunr.data.Stats
 import nl.lrvdlinden.tunr.data.flagEmoji
 import nl.lrvdlinden.tunr.data.localizedCountryName
 import nl.lrvdlinden.tunr.ui.Dims
@@ -95,6 +96,18 @@ fun SettingsScreen(onClose: (() -> Unit)?) {
                 Group(stringResource(R.string.settings_library)) {
                     SettingRow(stringResource(R.string.clear_recents), null, destructive = true) { dialog = "recents" }
                     SettingRow(stringResource(R.string.clear_favorites), null, destructive = true) { dialog = "favorites" }
+                }
+            }
+            item {
+                Column {
+                    Group(stringResource(R.string.settings_privacy)) {
+                        SwitchRow(stringResource(R.string.share_stats), settings.shareStats) { v ->
+                            Library.updateSettings { it.copy(shareStats = v) }
+                            if (v) Stats.pingIfDue(context)
+                        }
+                    }
+                    Text(stringResource(R.string.share_stats_footer), color = T.secondary, fontSize = 12.sp, lineHeight = 16.sp,
+                        modifier = Modifier.widthIn(max = 720.dp).padding(start = 4.dp, end = 4.dp, top = 8.dp))
                 }
             }
             item {

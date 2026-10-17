@@ -17,6 +17,12 @@ enum Brand {
     static let terms = URL(string: "https://tunr.online/voorwaarden/")!
     static let radioBrowser = URL(string: "https://www.radio-browser.info")!
 
+    /// Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
+    /// (`https://<project-ref>.supabase.co`) en publishable key (`sb_publishable_…`). Openbaar, mag in de repo.
+    /// Zolang de URL leeg is, stuurt de app geen ping.
+    static let statsURL = "https://vbhkewgyujzgbukkbtml.supabase.co"
+    static let statsKey = ""
+
     /// "iOS", "iPadOS", "tvOS" of "macOS"; wordt bij het starten ingevuld (zie `configurePlatform`).
     static var platformName: String = {
         #if os(tvOS)

@@ -208,6 +208,9 @@
 "settings.defaultSleep" = "Slaaptimer standaard";
 "settings.general" = "Algemeen";
 "settings.icloudFooter" = "Favorieten, recente zenders, podcasts, waar je was gebleven en je instellingen worden via iCloud gedeeld tussen je iPhone, iPad, Mac en Apple TV.";
+"settings.privacySection" = "Privacy";
+"settings.shareStats" = "Anonieme gebruiksstatistieken";
+"settings.shareStatsFooter" = "Geen persoonsgegevens. Alleen het type apparaat, de app-versie, het land en de taal die je in Tunr koos en een willekeurig installatienummer worden verstuurd, hooguit twee keer per dag, zodat we zien hoeveel mensen Tunr op welke apparaten gebruiken.";
 "settings.introMusic" = "Intromuziek";
 "settings.language" = "Taal";
 "settings.languageSystem" = "Systeem";

@@ -51,6 +51,7 @@ import nl.lrvdlinden.tunr.data.Podcast
 import nl.lrvdlinden.tunr.data.PodcastApi
 import nl.lrvdlinden.tunr.data.RadioBrowser
 import nl.lrvdlinden.tunr.data.Station
+import nl.lrvdlinden.tunr.data.Stats
 import nl.lrvdlinden.tunr.data.localizedCountryName
 
 /**
@@ -314,8 +315,11 @@ class PlaybackService : MediaLibraryService() {
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
             params: MediaLibraryService.LibraryParams?,
-        ): ListenableFuture<LibraryResult<MediaItem>> =
-            Futures.immediateFuture(LibraryResult.ofItem(folderItem(ROOT, getString(R.string.app_name), MediaMetadata.MEDIA_TYPE_FOLDER_MIXED), params))
+        ): ListenableFuture<LibraryResult<MediaItem>> {
+            // voor de anonieme statistieken: "ooit Android Auto gebruikt"
+            if (browser.packageName == Stats.ANDROID_AUTO_PACKAGE) Stats.markAndroidAutoUsed(this@PlaybackService)
+            return Futures.immediateFuture(LibraryResult.ofItem(folderItem(ROOT, getString(R.string.app_name), MediaMetadata.MEDIA_TYPE_FOLDER_MIXED), params))
+        }
 
         override fun onGetItem(
             session: MediaLibrarySession,

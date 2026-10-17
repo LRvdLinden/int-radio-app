@@ -28,6 +28,9 @@
     set lang(v) { try { if (v === 'system') localStorage.removeItem('tunr.lang'); else localStorage.setItem('tunr.lang', v); } catch (e) {} emit('lang'); },
     // build 9: de intromuziek speelt altijd (geen instelling meer)
     get intro() { return true; },
+    // anonieme gebruiksstatistieken (standaard aan; zie stats.js)
+    get shareStats() { return read('shareStats', true) !== false; },
+    set shareStats(v) { write('shareStats', !!v); emit('shareStats'); },
     get volume() { var v = read('volume', 1); return typeof v === 'number' ? Math.min(1, Math.max(0, v)) : 1; },
     set volume(v) { write('volume', v); },
 

@@ -142,6 +142,9 @@
     <!-- Instellingen -->
     <string name="settings_general">Algemeen</string>
     <string name="settings_library">Bibliotheek</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="share_stats">Anonieme gebruiksstatistieken</string>
+    <string name="share_stats_footer">Geen persoonsgegevens. Alleen het type apparaat, de app-versie, het land en de taal die je in Tunr koos en een willekeurig installatienummer worden verstuurd, hooguit twee keer per dag, zodat we zien hoeveel mensen Tunr op welke apparaten gebruiken.</string>
     <string name="country">Land</string>
     <string name="language">Taal</string>
     <string name="language_system">Systeem</string>
