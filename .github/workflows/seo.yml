@@ -1,0 +1,36 @@
+# SEO-rapport van tunr.online met DataForSEO (tools/seo_report.py): zoekvolumes, suggesties, Google top 10,
+# eigen rankings en een on-page-controle. Het rapport komt op de branch seo-reports (report.md + report.json),
+# niet op main. Secrets: DATAFORSEO_LOGIN, DATAFORSEO_PASSWORD (API-gegevens van app.dataforseo.com).
+name: SEO
+
+on:
+  workflow_dispatch:
+  # elke maand een nieuw rapport
+  schedule:
+    - cron: '41 5 3 * *'
+
+permissions:
+  contents: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Rapport maken (DataForSEO)
+        env:
+          DATAFORSEO_LOGIN: ${{ secrets.DATAFORSEO_LOGIN }}
+          DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
+        run: |
+          if [ -z "$DATAFORSEO_LOGIN" ] || [ -z "$DATAFORSEO_PASSWORD" ]; then
+            echo "::warning::Secrets DATAFORSEO_LOGIN / DATAFORSEO_PASSWORD ontbreken: geen rapport."; exit 0
+          fi
+          python3 tools/seo_report.py "$RUNNER_TEMP/seo"
+          cat "$RUNNER_TEMP/seo/report.md" >> "$GITHUB_STEP_SUMMARY"
+          cd "$RUNNER_TEMP/seo"
+          git init -q && git checkout -q -b seo-reports
+          git add report.md report.json
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "SEO-rapport $(date -u +%F) [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" seo-reports
+          echo "::notice::SEO-rapport staat op de branch seo-reports"
