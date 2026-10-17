@@ -24,6 +24,8 @@ jobs:
   build:
     runs-on: macos-15
     timeout-minutes: 45
+    outputs:
+      ok: ${{ steps.ok.outputs.ok }}
     defaults:
       run:
         working-directory: apple
@@ -92,37 +94,10 @@ jobs:
 
       # Complete Xcode-project als zip naar beheer.tunr.online/builds (alleen als alles slaagt).
       # beheer_upload.sh werkt het manifest bij; dezelfde build wordt vervangen, dus gewoon elke keer uploaden.
-      - name: Xcode-zip naar beheer.tunr.online (Downloads)
+      - name: Klaar voor de Xcode-zip?
+        id: ok
         if: github.event_name != 'pull_request' && steps.ios.outcome == 'success' && steps.tvos.outcome == 'success' && steps.macos.outcome == 'success'
-        working-directory: .
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.BEHEER_FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.BEHEER_FTP_PASSWORD }}
-        run: |
-          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
-            echo "::warning::Secrets BEHEER_FTP_USERNAME/BEHEER_FTP_PASSWORD (of FTP_SERVER) ontbreken: Xcode-zip niet naar beheer.tunr.online geüpload."
-            exit 0
-          fi
-          V=$(grep -m1 'MARKETING_VERSION' apple/project.yml | grep -o '[0-9][0-9.]*')
-          B=$(grep -m1 'CURRENT_PROJECT_VERSION' apple/project.yml | grep -o '[0-9]\+')
-          ZIP="$RUNNER_TEMP/Tunr-$V-build$B-Xcode.zip"
-          # uitpakken geeft één map "Tunr" met Tunr.xcodeproj erin: dubbelklikken en bouwen
-          rm -rf "$RUNNER_TEMP/pkg" "$ZIP" && mkdir -p "$RUNNER_TEMP/pkg"
-          rsync -a --exclude 'build/' --exclude 'xcuserdata/' --exclude '.DS_Store' --exclude '*.log' --exclude 'destinations.txt' apple/ "$RUNNER_TEMP/pkg/Tunr/"
-          (cd "$RUNNER_TEMP/pkg" && zip -qry "$ZIP" Tunr)
-          unzip -l "$ZIP" | grep -m1 'Tunr.xcodeproj/project.pbxproj'
-          ls -lh "$ZIP"
-          awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
-          [ -s "$RUNNER_TEMP/notes.md" ] || echo "Compleet Xcode-project voor iPhone, iPad, Mac en Apple TV (+ CarPlay). Uitpakken en Tunr/Tunr.xcodeproj openen." > "$RUNNER_TEMP/notes.md"
-          # upload-script uit tunr-beheer (openbaar, anoniem op te halen); ftps.sh alleen als het er is
-          TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"
-          RAW="https://raw.githubusercontent.com/LRvdLinden/tunr-beheer/main/tools"
-          curl -fsSL --retry 3 "$RAW/beheer_upload.sh" -o "$TOOLS/beheer_upload.sh"
-          curl -fsSL --retry 3 "$RAW/ftps.sh" -o "$TOOLS/ftps.sh" || { echo "geen tools/ftps.sh in tunr-beheer (niet nodig)"; rm -f "$TOOLS/ftps.sh"; }
-          chmod +x "$TOOLS"/*.sh
-          bash "$TOOLS/beheer_upload.sh" apple "$ZIP" "$V" "$B" "$RUNNER_TEMP/notes.md"
-          echo "- Xcode-zip build $B → beheer.tunr.online (Downloads)" >> $GITHUB_STEP_SUMMARY
+        run: echo "ok=true" >> "$GITHUB_OUTPUT"
 
       # Log op de branch ci-logs (latest.txt), zodat fouten en bestemmingen ook buiten GitHub te lezen zijn
       - name: Build-rapport op branch ci-logs
@@ -156,3 +131,47 @@ jobs:
       - name: Status
         if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success' || steps.macos.outcome != 'success'
         run: exit 1
+
+  # Xcode-zip uploaden vanaf Ubuntu (FTPS vanaf macOS-runners lukt niet). De zip is de map apple/ met het
+  # door de job build gecommitte Tunr.xcodeproj, dus er hoeft niets tussen de jobs te worden doorgegeven.
+  upload:
+    needs: build
+    if: needs.build.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: lftp installeren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp rsync zip >/dev/null
+      - name: Xcode-zip naar beheer.tunr.online (Downloads)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.BEHEER_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.BEHEER_FTP_PASSWORD }}
+        run: |
+          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
+            echo "::warning::Secrets BEHEER_FTP_USERNAME/BEHEER_FTP_PASSWORD (of FTP_SERVER) ontbreken: Xcode-zip niet naar beheer.tunr.online geüpload."
+            exit 0
+          fi
+          V=$(grep -m1 'MARKETING_VERSION' apple/project.yml | grep -o '[0-9][0-9.]*')
+          B=$(grep -m1 'CURRENT_PROJECT_VERSION' apple/project.yml | grep -o '[0-9]\+')
+          ZIP="$RUNNER_TEMP/Tunr-$V-build$B-Xcode.zip"
+          # uitpakken geeft één map "Tunr" met Tunr.xcodeproj erin: dubbelklikken en bouwen
+          rm -rf "$RUNNER_TEMP/pkg" "$ZIP" && mkdir -p "$RUNNER_TEMP/pkg"
+          rsync -a --exclude 'build/' --exclude 'xcuserdata/' --exclude '.DS_Store' --exclude '*.log' --exclude 'destinations.txt' apple/ "$RUNNER_TEMP/pkg/Tunr/"
+          (cd "$RUNNER_TEMP/pkg" && zip -qry "$ZIP" Tunr)
+          unzip -l "$ZIP" | grep -m1 'Tunr.xcodeproj/project.pbxproj'
+          ls -lh "$ZIP"
+          awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
+          [ -s "$RUNNER_TEMP/notes.md" ] || echo "Compleet Xcode-project voor iPhone, iPad, Mac en Apple TV (+ CarPlay). Uitpakken en Tunr/Tunr.xcodeproj openen." > "$RUNNER_TEMP/notes.md"
+          # upload-script uit tunr-beheer (openbaar, anoniem op te halen); ftps.sh alleen als het er is
+          TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"
+          RAW="https://raw.githubusercontent.com/LRvdLinden/tunr-beheer/main/tools"
+          curl -fsSL --retry 3 "$RAW/beheer_upload.sh" -o "$TOOLS/beheer_upload.sh"
+          curl -fsSL --retry 3 "$RAW/ftps.sh" -o "$TOOLS/ftps.sh" || { echo "geen tools/ftps.sh in tunr-beheer (niet nodig)"; rm -f "$TOOLS/ftps.sh"; }
+          chmod +x "$TOOLS"/*.sh
+          bash "$TOOLS/beheer_upload.sh" apple "$ZIP" "$V" "$B" "$RUNNER_TEMP/notes.md"
+          echo "- Xcode-zip build $B → beheer.tunr.online (Downloads)" >> $GITHUB_STEP_SUMMARY
+
