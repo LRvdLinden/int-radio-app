@@ -105,6 +105,8 @@ class PlaybackService : MediaLibraryService() {
         )
         session = MediaLibrarySession.Builder(this, RadioPlayer(exo), LibraryCallback())
             .setSessionActivity(open)
+            // kleine logo's gecentreerd op hun eigen achtergrond i.p.v. opgerekt (SPEC §1, LogoLook)
+            .setBitmapLoader(LogoBitmapLoader(this))
             .build()
     }
 

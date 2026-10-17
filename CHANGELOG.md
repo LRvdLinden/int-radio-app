@@ -4,6 +4,19 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 22
+_2026-10-18_
+
+**Verbeterd**
+
+- Nieuwe logobron: het grote app-icoon van de website van de zender, naast de App Store-iconen. _(Alle apps)_  
+  <sub>New logo source: the large app icon of the station's website, alongside App Store icons.</sub>
+
+**Opgelost**
+
+- Zenderlogo's zijn niet meer wazig: kleine logo's worden niet meer opgeblazen maar scherp in het midden getoond, op een effen achtergrond in de kleur van het logo (geen regenboogverloop meer). _(Alle apps)_  
+  <sub>Station logos are no longer blurry: small logos are no longer stretched but shown sharp in the centre, on a solid background in the logo's colour (no more rainbow gradient).</sub>
+
 ## Build 21
 _2026-10-17_
 

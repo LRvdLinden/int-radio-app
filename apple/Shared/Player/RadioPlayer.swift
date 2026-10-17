@@ -403,7 +403,8 @@ final class RadioPlayer: ObservableObject {
         guard let s = station, LogoSources.mayHaveLogo(s) else { return }
         Task { [weak self] in
             // logo met terugval (App Store-icoon → Google → favicon → DuckDuckGo), zie LogoSources
-            let img = await LogoResolver.shared.image(for: s)
+            // vierkant, klein logo gecentreerd op zijn eigen achtergrond (SPEC §1)
+            let img = await LogoResolver.shared.composedImage(for: s, pixels: 600)
             guard let self, self.station?.id == s.id, self.artworkURL == nil, let img else { return }
             self.nowPlayingImage = img
             self.updateNowPlaying()

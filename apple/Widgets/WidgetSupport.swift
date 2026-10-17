@@ -96,9 +96,11 @@ struct StationLogoView: View {
         ZStack {
             WidgetTheme.palette(for: station.displayName)
             if let image = loadImage() {
+                // vierkante PNG met het logo al op zijn eigen achtergrond (WidgetLogoMaker in de app)
                 Image(decorative: image, scale: 1)
                     .resizable()
                     .interpolation(.high)
+                    .antialiased(true)
                     .aspectRatio(contentMode: .fill)
             } else {
                 Text(station.monogram)

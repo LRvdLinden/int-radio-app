@@ -9,6 +9,11 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import nl.lrvdlinden.tunr.data.IconMap
 import nl.lrvdlinden.tunr.data.LogoSources
+import nl.lrvdlinden.tunr.data.LogoLook
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.graphics.drawable.toBitmap
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -135,8 +140,10 @@ fun FrequencyBar(modifier: Modifier = Modifier, needleAt: Float = 0.58f) {
 // MARK: zendercover
 
 /**
- * Vierkante zendercover: het logo vult de hele tegel (geen witte tegel eromheen); tijdens laden, zonder logo
- * of als laden mislukt: verloop uit het palet (hash van de naam) met monogram.
+ * Vierkante zendercover (SPEC §1): een groot logo vult de hele tegel; een klein logo staat gecentreerd (hooguit 2×
+ * zijn eigen pixelmaat en hooguit 62% van de tegel, nooit opgerekt), altijd op een effen achtergrond uit het logo
+ * zelf ([LogoLook]). Tijdens laden, zonder logo of als laden mislukt: verloop uit het palet (hash van de naam) met
+ * monogram.
  */
 @Composable
 fun StationArt(
@@ -159,11 +166,13 @@ fun StationArt(
         else LogoSources.resolved(station.uuid)?.let { listOf(it) }
             ?: LogoSources.candidates(station).filter { !LogoSources.isFailed(it) && !LogoSources.isTiny(it) }
     }
-    val tinyKnown = remember(key, mapReady) { station?.let { s -> LogoSources.candidates(s).firstOrNull { LogoSources.isTiny(it) && !LogoSources.isFailed(it) } } }
+    val tinyKnown = remember(key, mapReady) { station?.let { s -> LogoSources.bestTiny(s) } }
     var attempt by remember(key, overrideUrl) { mutableIntStateOf(0) }
     var tinyFallback by remember(key) { mutableStateOf(tinyKnown) }
     var failed by remember(key, overrideUrl) { mutableStateOf(false) }
     var loaded by remember(key, overrideUrl) { mutableStateOf(false) }
+    // goedgekeurd logo met zijn weergave (maat + achtergrond)
+    var shown by remember(key, overrideUrl) { mutableStateOf<Pair<ImageBitmap, LogoLook>?>(null) }
     var boxPx by remember { mutableIntStateOf(0) }
     val isFinal = overrideUrl != null || attempt >= candidates.size
     val logo = overrideUrl ?: if (!mapReady) null else candidates.getOrNull(attempt) ?: tinyFallback
@@ -176,11 +185,13 @@ fun StationArt(
             .background(Brush.linearGradient(listOf(c1, c2))),
         contentAlignment = Alignment.Center
     ) {
-        if (logo == null || failed) {
+        val current = shown
+        if (overrideUrl == null && current != null) {
+            LogoTile(current.first, current.second)
+        } else if (logo == null || failed) {
             Monogram(name)
         } else {
-            // logo of albumhoes vult het hele vlak, zonder extra witte tegel eromheen;
-            // tot het geladen (en goedgekeurd) is staat het monogram op het verloop
+            // tot het logo geladen (en goedgekeurd) is staat het monogram op het verloop
             if (!loaded) Monogram(name)
             val request = remember(logo) {
                 ImageRequest.Builder(context).data(logo).precision(Precision.INEXACT)
@@ -190,6 +201,7 @@ fun StationArt(
             }
             AsyncImage(
                 model = request, contentDescription = null, contentScale = ContentScale.Crop,
+                filterQuality = FilterQuality.High,
                 modifier = Modifier.fillMaxSize().alpha(if (loaded) 1f else 0f),
                 onState = { st ->
                     if (overrideUrl != null) {
@@ -200,35 +212,73 @@ fun StationArt(
                     when (st) {
                         is AsyncImagePainter.State.Success -> {
                             val d = st.result.drawable
-                            val w = (d as? BitmapDrawable)?.bitmap?.width ?: d.intrinsicWidth
+                            val bmp = (d as? BitmapDrawable)?.bitmap ?: runCatching { d.toBitmap() }.getOrNull()
+                            val px = if (bmp != null) maxOf(bmp.width, bmp.height) else maxOf(d.intrinsicWidth, d.intrinsicHeight)
                             // kleine weergave (miniplayer): een groot logo kan verkleind binnenkomen;
-                            // de diensten laden op ware grootte en moeten hun minimum halen (Google 96, DuckDuckGo 48)
-                            val min = when {
-                                LogoSources.isService(logo) -> LogoSources.minPx(logo)
-                                boxPx > 0 -> minOf(LogoSources.MIN_PX, (boxPx * 0.9f).toInt())
-                                else -> LogoSources.MIN_PX
+                            // de diensten laden op ware grootte. Goed = 96 px (grootste zijde); kleiner alleen als
+                            // laatste redmiddel (Google nooit, DuckDuckGo vanaf 48)
+                            val good = when {
+                                LogoSources.isService(logo) -> LogoSources.GOOD_PX
+                                boxPx > 0 -> minOf(LogoSources.GOOD_PX, (boxPx * 0.9f).toInt())
+                                else -> LogoSources.GOOD_PX
+                            }
+                            val isResolved = station != null && LogoSources.resolved(station.uuid) == logo
+                            val accept: () -> Unit = {
+                                station?.let { LogoSources.markResolved(it.uuid, logo) }
+                                if (bmp != null) shown = bmp.asImageBitmap() to LogoLook.of(logo, bmp)
+                                loaded = true
                             }
                             when {
-                                logo == tinyFallback && isFinal -> loaded = true
-                                w >= min -> { station?.let { LogoSources.markResolved(it.uuid, logo) }; loaded = true }
-                                LogoSources.isService(logo) || w < 8 -> { LogoSources.markFailed(logo); attempt++ }
+                                isResolved || (logo == tinyFallback && isFinal) -> accept()
+                                px >= good -> accept()
+                                px < 8 || !LogoSources.acceptableSmall(logo, px) -> { LogoSources.markFailed(logo); attempt++ }
                                 else -> {
-                                    // klein favicon: laatste redmiddel als de diensten niets hebben
-                                    LogoSources.markTiny(logo)
-                                    if (tinyFallback == null) tinyFallback = logo
-                                    attempt++
+                                    // klein logo: laatste redmiddel (het grootste) als de rest niets beters heeft
+                                    LogoSources.markTiny(logo, px)
+                                    val bestSmall = station?.let { LogoSources.bestTiny(it) } ?: logo
+                                    tinyFallback = bestSmall
+                                    // laatste bron en zelf het grootste kleine logo: meteen gebruiken (dezelfde URL
+                                    // zou niet opnieuw laden)
+                                    if (attempt + 1 >= candidates.size && bestSmall == logo) accept() else attempt++
                                 }
                             }
                         }
                         is AsyncImagePainter.State.Error -> {
                             LogoSources.markFailed(logo)
-                            if (logo == tinyFallback) { tinyFallback = null; failed = true }
+                            if (logo == tinyFallback) {
+                                tinyFallback = station?.let { LogoSources.bestTiny(it) }
+                                if (tinyFallback == null) failed = true
+                            }
                             else if (attempt < candidates.size) attempt++
                             else failed = true
                         }
                         else -> {}
                     }
                 }
+            )
+        }
+    }
+}
+
+/** Eén logo in de tegel volgens [LogoLook]: groot = vullen (crop), klein = gecentreerd en fit, op een effen vlak */
+@Composable
+private fun BoxScope.LogoTile(image: ImageBitmap, look: LogoLook) {
+    androidx.compose.foundation.layout.BoxWithConstraints(
+        Modifier.matchParentSize().background(Color(look.background)),
+        contentAlignment = Alignment.Center
+    ) {
+        val density = LocalDensity.current
+        val tilePx = with(density) { minOf(maxWidth, maxHeight).toPx() }
+        if (look.isLarge(tilePx)) {
+            androidx.compose.foundation.Image(
+                bitmap = image, contentDescription = null, modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop, filterQuality = FilterQuality.High
+            )
+        } else {
+            val box = with(density) { look.smallBox(tilePx).toDp() }
+            androidx.compose.foundation.Image(
+                bitmap = image, contentDescription = null, modifier = Modifier.size(box),
+                contentScale = ContentScale.Fit, filterQuality = FilterQuality.High
             )
         }
     }

@@ -4,6 +4,9 @@ Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (
 
 ---
 
+
+> Logoweergave (build 22): grote logo's (kleinste zijde ≥ 0,75 × tegel of ≥ 160 px) vullen de tegel; kleine logo's staan gecentreerd, aspect-fit, max. 2× hun eigen pixelgrootte en max. 62% van de tegel, op een effen achtergrond uit het logo (gemiddelde randkleur als de rand dekkend is, anders wit of #16161A). Verloop + letters alleen zonder logo.
+
 ## 1. Huisstijl
 
 | Token | Waarde | Gebruik |

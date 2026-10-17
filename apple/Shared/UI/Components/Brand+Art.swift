@@ -60,8 +60,8 @@ struct FrequencyBar: View {
 
 // MARK: - Zendercover
 
-/// Vierkante zendercover: verloop uit de naam-hash, het logo (favicon of terugval via het domein van de zender),
-/// of een monogram als er geen logo is of het laden mislukt.
+/// Vierkante zendercover: het logo (App Store-icoon, favicon of terugval via het domein van de zender) op zijn eigen
+/// effen achtergrond, of het verloop uit de naam-hash met een monogram als er geen logo is of het laden mislukt.
 struct StationArt: View {
     let station: Station
     var cornerRadius: CGFloat = Theme.cardRadius
@@ -77,8 +77,9 @@ struct StationArt: View {
                 if let overrideURL {
                     RemoteImage(url: overrideURL, contentMode: .fill) { monogram(side) }
                 } else {
-                    // build 4: het logo vult de hele tegel, zonder extra witte tegel of rand eromheen.
-                    // Logo met terugval: App Store-icoon → Google → favicon → DuckDuckGo → monogram (LogoSources)
+                    // Logo met terugval: App Store-icoon → Google → favicon → DuckDuckGo → monogram (LogoSources).
+                    // Groot logo vult de tegel; klein logo gecentreerd, niet opgerekt, op een effen achtergrond
+                    // uit het logo zelf (LogoLook). Het verloop blijft alleen zichtbaar zonder logo.
                     StationLogoImage(station: station) { monogram(side) }
                 }
             }
@@ -104,51 +105,88 @@ struct StationArt: View {
 }
 
 /// Zenderlogo via LogoResolver (probeert de bronnen uit `LogoSources` na elkaar), met een eigen terugval.
+/// Weergave volgens `LogoLook` (SPEC §1): groot logo vult de tegel, klein logo gecentreerd (hooguit 2× zijn eigen
+/// pixelmaat, hooguit 62% van de tegel), altijd op een effen achtergrond uit het logo zelf (dekt het verloop af).
 struct StationLogoImage<Fallback: View>: View {
     let station: Station
     let fallback: () -> Fallback
 
-    @State private var image: PlatformImage?
+    @Environment(\.displayScale) private var displayScale
+    @State private var art: LogoArt?
     @State private var failed: Bool
 
     init(station: Station, @ViewBuilder fallback: @escaping () -> Fallback) {
         self.station = station
         self.fallback = fallback
-        _image = State(initialValue: LogoResolver.shared.cachedImage(for: station))
+        _art = State(initialValue: LogoResolver.shared.cachedArt(for: station))
         _failed = State(initialValue: LogoResolver.shared.knownMissing(station) || !LogoSources.mayHaveLogo(station))
     }
 
     var body: some View {
-        ZStack {
-            if let image {
-                Image(platformImage: image)
-                    .resizable()
-                    .interpolation(.high)
-                    .aspectRatio(contentMode: .fill)
-                    .transition(.opacity)
-            } else {
-                fallback().opacity(failed ? 1 : 0.55)
+        GeometryReader { geo in
+            let side = min(geo.size.width, geo.size.height)
+            ZStack {
+                if let art {
+                    LogoTile(art: art, side: side, scale: displayScale)
+                        .transition(.opacity)
+                } else {
+                    fallback().opacity(failed ? 1 : 0.55)
+                }
             }
+            .frame(width: geo.size.width, height: geo.size.height)
         }
         .task(id: station.id) {
-            if let hit = LogoResolver.shared.cachedImage(for: station) {
-                image = hit
+            if let hit = LogoResolver.shared.cachedArt(for: station) {
+                art = hit
                 failed = false
                 return
             }
-            image = nil
+            art = nil
             guard LogoSources.mayHaveLogo(station), !LogoResolver.shared.knownMissing(station) else {
                 failed = true
                 return
             }
             failed = false
-            let loaded = await LogoResolver.shared.image(for: station)
+            let loaded = await LogoResolver.shared.art(for: station)
             guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.2)) {
-                image = loaded
+                art = loaded
                 failed = loaded == nil
             }
         }
+    }
+}
+
+/// Eén logo in een vierkante tegel van `side` punten (zie `LogoLook`)
+struct LogoTile: View {
+    let art: LogoArt
+    let side: CGFloat
+    let scale: CGFloat
+
+    var body: some View {
+        let s = max(scale, 1)
+        let tilePixels = side * s
+        ZStack {
+            art.look.color
+            if art.look.isLarge(tilePixels: tilePixels) {
+                Image(platformImage: art.image)
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: side, height: side)
+                    .clipped()
+            } else {
+                let box = art.look.smallBox(tilePixels: tilePixels) / s
+                Image(platformImage: art.image)
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: box, height: box)
+            }
+        }
+        .frame(width: side, height: side)
     }
 }
 
@@ -179,6 +217,7 @@ struct RemoteImage<Fallback: View, Decorated: View>: View {
                     Image(platformImage: image)
                         .resizable()
                         .interpolation(.high)
+                        .antialiased(true)
                         .aspectRatio(contentMode: contentMode)
                 ))
                 .transition(.opacity)

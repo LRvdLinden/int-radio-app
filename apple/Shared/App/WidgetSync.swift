@@ -165,28 +165,31 @@ final class WidgetSync {
     }
 }
 
-/// Download + verkleinen naar max. ~120 px (PNG) met ImageIO; werkt op iOS en macOS.
+/// Download + vierkant logo van ~120 px (PNG) met ImageIO; werkt op iOS en macOS. Zelfde regels als StationArt
+/// (SPEC §1): groot logo vult het vierkant, klein logo gecentreerd (hooguit 2× zijn eigen maat, hooguit 62%) op een
+/// effen achtergrond die uit het logo zelf komt (`LogoLook`), nooit opgerekt.
 enum WidgetLogoMaker {
     static func makePNG(from url: URL, maxPixel: Int = 120) async -> Data? {
         guard let data = await download(url) else { return nil }
-        return downscale(data, maxPixel: maxPixel)
+        return render(data, side: maxPixel)
     }
 
-    /// Eerste bron die een logo van minstens `LogoSources.requiredPixels(for:)` breed geeft (Google 96, de rest 48); een
-    /// kleiner favicon/app-icoon alleen als niets anders werkt (Google geeft een globe van 16 px als hij niets weet).
+    /// Eerste bron van minstens `LogoSources.goodPixels` (96 px); anders het grootste kleinere logo dat mag
+    /// (`LogoSources.acceptableSmall`: Google nooit onder 96, DuckDuckGo niet onder 48).
     static func makePNG(fromCandidates urls: [URL], maxPixel: Int = 120) async -> Data? {
-        var tiny: Data?
+        var best: (data: Data, pixels: Int)?
         for url in urls {
             if Task.isCancelled { return nil }
             guard let data = await download(url) else { continue }
-            let width = largestWidth(data)
-            if CGFloat(width) >= LogoSources.requiredPixels(for: url) {
-                if let png = downscale(data, maxPixel: maxPixel) { return png }
-            } else if width > 0, tiny == nil, !LogoSources.isFallbackService(url) {
-                tiny = data
+            let size = largestSize(data)
+            let pixels = max(size.width, size.height)
+            if CGFloat(pixels) >= LogoSources.goodPixels {
+                if let png = render(data, side: maxPixel) { return png }
+            } else if LogoSources.acceptableSmall(url, pixels: CGFloat(pixels)), pixels > (best?.pixels ?? 0) {
+                best = (data, pixels)
             }
         }
-        return tiny.flatMap { downscale($0, maxPixel: maxPixel) }
+        return best.flatMap { render($0.data, side: maxPixel) }
     }
 
     private static func download(_ url: URL) async -> Data? {
@@ -201,42 +204,61 @@ enum WidgetLogoMaker {
 
     /// Breedste afbeelding in de data (pixels; 0 = geen afbeelding)
     static func largestWidth(_ data: Data) -> Int {
-        guard let src = CGImageSourceCreateWithData(data as CFData, nil) else { return 0 }
-        var widest = 0
+        largestSize(data).width
+    }
+
+    /// Maat van de breedste afbeelding in de data (pixels; 0 = geen afbeelding)
+    static func largestSize(_ data: Data) -> (width: Int, height: Int) {
+        guard let src = CGImageSourceCreateWithData(data as CFData, nil) else { return (0, 0) }
+        var widest = (width: 0, height: 0)
         for i in 0..<CGImageSourceGetCount(src) {
             let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [CFString: Any]
-            widest = max(widest, (props?[kCGImagePropertyPixelWidth] as? Int) ?? 0)
+            let w = (props?[kCGImagePropertyPixelWidth] as? Int) ?? 0
+            let h = (props?[kCGImagePropertyPixelHeight] as? Int) ?? 0
+            if w > widest.width { widest = (w, h) }
         }
         return widest
     }
 
-    static func downscale(_ data: Data, maxPixel: Int) -> Data? {
+    /// Vierkante PNG van `side` px: het logo (grootste formaat in de data, max. 512 px) volgens `LogoLook`
+    static func render(_ data: Data, side: Int) -> Data? {
         guard let src = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
         let count = CGImageSourceGetCount(src)
         guard count > 0 else { return nil }
         // .ico e.d. bevatten meerdere formaten: het grootste nemen
         var best = 0
         var bestWidth = 0
+        var bestHeight = 0
         for i in 0..<count {
             let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [CFString: Any]
             let w = (props?[kCGImagePropertyPixelWidth] as? Int) ?? 0
             if w > bestWidth {
                 bestWidth = w
+                bestHeight = (props?[kCGImagePropertyPixelHeight] as? Int) ?? 0
                 best = i
             }
         }
+        // grote afbeeldingen eerst verkleinen (geheugen); kleine blijven op hun eigen maat
+        let longest = max(bestWidth, bestHeight)
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixel,
+            kCGImageSourceThumbnailMaxPixelSize: max(1, min(512, longest > 0 ? longest : 512)),
         ]
-        guard let thumb = CGImageSourceCreateThumbnailAtIndex(src, best, options as CFDictionary) else { return nil }
+        guard let image = CGImageSourceCreateThumbnailAtIndex(src, best, options as CFDictionary)
+                ?? CGImageSourceCreateImageAtIndex(src, best, nil) else { return nil }
+        // maat van het origineel (niet van de verkleinde kopie) bepaalt groot/klein
+        let props = CGImageSourceCopyPropertiesAtIndex(src, best, nil) as? [CFString: Any]
+        let ow = (props?[kCGImagePropertyPixelWidth] as? Int) ?? image.width
+        let oh = (props?[kCGImagePropertyPixelHeight] as? Int) ?? image.height
+        let look = LogoLook.analyze(image, pixelSize: CGSize(width: ow, height: oh))
+        guard let square = look.compose(image, side: side) else { return nil }
         let out = NSMutableData()
         guard let dest = CGImageDestinationCreateWithData(out as CFMutableData, UTType.png.identifier as CFString, 1, nil) else {
             return nil
         }
-        CGImageDestinationAddImage(dest, thumb, nil)
+        CGImageDestinationAddImage(dest, square, nil)
         guard CGImageDestinationFinalize(dest) else { return nil }
         return out as Data
     }

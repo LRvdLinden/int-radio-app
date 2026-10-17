@@ -219,13 +219,95 @@
   }
 
   // ---------- zenderlogo's met terugval ----------
-  // 1. App Store-icoon uit de tabel; 2. Google-favicondienst op het domein van de homepage (sz=256), alleen vanaf
-  // 96 px (dan is het meestal het apple-touch-icon van de site); 3. favicon uit Radio Browser (http → https);
-  // 4. DuckDuckGo-favicondienst (vanaf 48 px); 5. monogram. Een klein favicon/app-icoon alleen als laatste
-  // redmiddel, van de diensten nooit. Mislukte URL's onthouden we deze sessie.
-  var LOGO_MIN = 48, LOGO_MIN_GOOGLE = 96, logoBad = {}, logoTiny = {}, logoGood = {};
+  // 1. App Store-icoon uit de tabel; 2. Google-favicondienst op het domein van de homepage (sz=256); 3. favicon uit
+  // Radio Browser (http → https); 4. DuckDuckGo-favicondienst; 5. monogram. De eerste bron van minstens 96 px
+  // (grootste zijde) wint; kleinere logo's alleen als laatste redmiddel (het grootste), Google onder 96 px en
+  // DuckDuckGo onder 48 px nooit. Mislukte URL's en het gekozen logo per zender onthouden we deze sessie.
+  var LOGO_GOOD = 96, LOGO_MIN = 48, LOGO_MIN_GOOGLE = 96, logoBad = {}, logoTiny = {}, logoGood = {}, logoLook = {};
   function isLogoService(u) { return /^https:\/\/(www\.google\.com\/s2\/favicons|icons\.duckduckgo\.com\/ip3\/)/i.test(u); }
-  function logoMin(u) { return /^https:\/\/www\.google\.com\/s2\/favicons/i.test(u) ? LOGO_MIN_GOOGLE : LOGO_MIN; }
+  // mag een klein logo (grootste zijde px) als terugval? Google nooit onder 96, DuckDuckGo niet onder 48
+  function logoSmallOk(u, px) {
+    if (!(px >= 8)) return false;
+    if (/^https:\/\/www\.google\.com\/s2\/favicons/i.test(u)) return px >= LOGO_MIN_GOOGLE;
+    if (/^https:\/\/icons\.duckduckgo\.com\/ip3\//i.test(u)) return px >= LOGO_MIN;
+    return true;
+  }
+  // grootste bekende kleine logo uit een lijst
+  function bestTiny(list) {
+    var best = '', bp = 0;
+    list.forEach(function (u) { if (logoTiny[u] > bp && !logoBad[u]) { best = u; bp = logoTiny[u]; } });
+    return best;
+  }
+
+  // ---------- weergave van een logo (SPEC §1) ----------
+  // Groot logo (kleinste zijde ≥ 0,75 × tegel in pixels of ≥ 160 px) vult de tegel (object-fit: cover); klein logo
+  // gecentreerd (contain), hooguit 2× zijn eigen pixelmaat en hooguit 62% van de tegel. Altijd op een effen
+  // achtergrond uit het logo zelf: dekkende randpixels → hun gemiddelde kleur; transparant → wit bij een donker/
+  // gekleurd logo, #16161A bij een licht/wit logo. Pixels lezen kan alleen met CORS: een verborgen probe-afbeelding
+  // met crossOrigin; lukt dat niet (of gooit getImageData), dan wit. Per URL onthouden.
+  var LOGO_SURFACE = '#16161a', LOGO_WHITE = '#ffffff';
+  function hex2(n) { n = Math.max(0, Math.min(255, Math.round(n))); return (n < 16 ? '0' : '') + n.toString(16); }
+  function lookFromPixels(d) {
+    var n = 24, edgeT = 0, edgeO = 0, er = 0, eg = 0, eb = 0, solid = 0, light = 0;
+    for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) {
+      var i = (y * n + x) * 4, a = d[i + 3] / 255, r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+      if (x === 0 || y === 0 || x === n - 1 || y === n - 1) {
+        edgeT++;
+        if (a >= 0.9) { edgeO++; er += r; eg += g; eb += b; }
+      }
+      if (a >= 0.5) {
+        solid++;
+        var lum = 0.2126 * r + 0.7152 * g + 0.0722 * b, sat = Math.max(r, g, b) - Math.min(r, g, b);
+        if (lum > 0.78 && sat < 0.2) light++;
+      }
+    }
+    if (edgeT && edgeO >= 0.75 * edgeT) return '#' + hex2(er / edgeO * 255) + hex2(eg / edgeO * 255) + hex2(eb / edgeO * 255);
+    return solid && light > 0.6 * solid ? LOGO_SURFACE : LOGO_WHITE;
+  }
+  var lookWait = {};
+  function probeLook(url) {
+    if (logoLook[url] || lookWait[url]) return;
+    lookWait[url] = 1;
+    var done = function (bg) {
+      delete lookWait[url];
+      logoLook[url] = bg;
+      // al getekende covers met dit logo bijwerken
+      var imgs = document.querySelectorAll('.art img.logo[data-lk]');
+      for (var i = 0; i < imgs.length; i++) {
+        if (imgs[i].getAttribute('data-cur') === url && imgs[i].parentNode) imgs[i].parentNode.style.background = bg;
+      }
+    };
+    var im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.referrerPolicy = 'no-referrer';
+    im.decoding = 'async';
+    im.onload = function () {
+      var bg = LOGO_WHITE;
+      try {
+        var c = document.createElement('canvas'); c.width = 24; c.height = 24;
+        var cx = c.getContext('2d');
+        cx.imageSmoothingEnabled = true;
+        cx.drawImage(im, 0, 0, 24, 24);
+        bg = lookFromPixels(cx.getImageData(0, 0, 24, 24).data);
+      } catch (e) { bg = LOGO_WHITE; }
+      done(bg);
+    };
+    im.onerror = function () { done(LOGO_WHITE); };
+    im.src = url;
+  }
+  // maat en achtergrond toepassen op een goedgekeurd logo
+  function applyLook(el, url) {
+    var lt = el.parentNode, a = el.closest('.art');
+    if (!lt) return;
+    var w = el.naturalWidth || 0, h = el.naturalHeight || 0, dpr = window.devicePixelRatio || 1;
+    var tilePx = (a ? a.clientWidth : 0) * dpr, mn = Math.min(w, h), mx = Math.max(w, h);
+    var large = mn >= 160 || (tilePx > 0 && mn >= 0.75 * tilePx);
+    lt.classList.toggle('sm', !large);
+    if (large) { el.style.width = ''; el.style.height = ''; }
+    else { var box = 'min(62%, ' + Math.max(1, Math.round(2 * mx / dpr)) + 'px)'; el.style.width = box; el.style.height = box; }
+    lt.style.background = logoLook[url] || LOGO_WHITE;
+    if (!logoLook[url]) probeLook(url);
+  }
   // domein van de homepage ("https://www.npo.nl/radio2" → "www.npo.nl"), of ''
   T.logoHost = function (hp) {
     hp = String(hp || '').trim();
@@ -259,8 +341,8 @@
     if (s && s.id) artReg[s.id] = s;
     var p = T.pal(s.name), all = T.logoCandidates(s);
     var good = logoGood[s.id] && !logoBad[logoGood[s.id]] ? logoGood[s.id] : '';
-    // te kleine favicons pas als laatste redmiddel
-    var tiny = all.filter(function (u) { return logoTiny[u]; })[0] || '';
+    // kleine logo's pas als laatste redmiddel (het grootste)
+    var tiny = bestTiny(all);
     var list = good ? [good] : all.filter(function (u) { return !logoTiny[u]; });
     var first = list[0] || tiny;
     return '<span class="art ' + (cls || '') + '" style="--a:' + p[0] + ';--b:' + p[1] + '" aria-hidden="true"' +
@@ -272,7 +354,11 @@
       '<span class="eq"><i></i><i></i><i></i><i></i></span></span>';
   };
   function dropLogo(el) { var lt = el.parentNode; if (lt && lt.parentNode) lt.parentNode.classList.remove('has-logo'); if (lt) lt.remove(); }
-  function acceptLogo(el) { var a = el.closest('.art'); if (a) a.classList.add('has-logo'); }
+  function acceptLogo(el) {
+    var a = el.closest('.art');
+    if (el.hasAttribute('data-lk')) applyLook(el, el.getAttribute('data-cur') || el.src);
+    if (a) a.classList.add('has-logo');
+  }
   // volgende bron proberen; op = monogram (of het kleine favicon als laatste redmiddel)
   function nextLogo(el) {
     var alts = (el.getAttribute('data-alt') || '').split(' ').filter(function (u) { return u && !logoBad[u]; });
@@ -297,15 +383,26 @@
       acceptLogo(el);
       return;
     }
-    var cur = el.getAttribute('data-cur') || '', w = el.naturalWidth;
-    if (el.hasAttribute('data-final')) { if (w >= 8) { acceptLogo(el); } else { logoBad[cur] = 1; dropLogo(el); } return; }
-    if (w >= logoMin(cur)) { logoGood[el.getAttribute('data-lk')] = cur; acceptLogo(el); return; }
-    if (isLogoService(cur) || w < 8) { logoBad[cur] = 1; nextLogo(el); return; }
-    // klein favicon: bewaren als laatste redmiddel; zijn er geen andere bronnen meer, dan meteen gebruiken
-    logoTiny[cur] = 1;
+    var cur = el.getAttribute('data-cur') || '', lk = el.getAttribute('data-lk'), w = el.naturalWidth;
+    var px = Math.max(el.naturalWidth || 0, el.naturalHeight || 0);
+    // al gekozen voor deze zender, of het laatste redmiddel: gebruiken
+    if ((lk && logoGood[lk] === cur && px >= 8) || el.hasAttribute('data-final')) {
+      if (w >= 8) { if (lk) logoGood[lk] = cur; acceptLogo(el); } else { logoBad[cur] = 1; if (lk && logoGood[lk] === cur) delete logoGood[lk]; dropLogo(el); }
+      return;
+    }
+    if (px >= LOGO_GOOD) { if (lk) logoGood[lk] = cur; acceptLogo(el); return; }
+    if (!logoSmallOk(cur, px)) { logoBad[cur] = 1; nextLogo(el); return; }
+    // klein logo: bewaren als laatste redmiddel (het grootste); zijn er geen andere bronnen meer, dan het grootste
+    logoTiny[cur] = px;
     var rest = (el.getAttribute('data-alt') || '').split(' ').filter(function (u) { return u && !logoBad[u]; });
-    if (!rest.length) { el.setAttribute('data-final', '1'); el.removeAttribute('data-tiny'); acceptLogo(el); return; }
-    el.setAttribute('data-tiny', cur);
+    var prev = el.getAttribute('data-tiny') || '', best = bestTiny(prev ? [prev, cur] : [cur]);
+    if (!rest.length) {
+      if (best === cur) { el.setAttribute('data-final', '1'); el.removeAttribute('data-tiny'); if (lk) logoGood[lk] = cur; acceptLogo(el); return; }
+      el.setAttribute('data-tiny', best);
+      nextLogo(el);
+      return;
+    }
+    el.setAttribute('data-tiny', best);
     nextLogo(el);
   }, true);
 

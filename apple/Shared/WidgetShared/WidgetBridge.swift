@@ -75,7 +75,9 @@ enum WidgetBridge {
     private static let snapshotKey = "widget.snapshot"
     private static let languageKey = "widget.language"
     private static let pendingKey = "widget.pendingCommand"
-    private static let logoFolder = "WidgetLogos"
+    /// "2": logo's op hun eigen achtergrond, niet opgerekt (oude map "WidgetLogos" wordt opgeruimd)
+    private static let logoFolder = "WidgetLogos2"
+    private static let legacyLogoFolders = ["WidgetLogos"]
 
     static var defaults: UserDefaults? { UserDefaults(suiteName: appGroup) }
 
@@ -116,6 +118,9 @@ enum WidgetBridge {
         let dir = base.appendingPathComponent(logoFolder, isDirectory: true)
         if !FileManager.default.fileExists(atPath: dir.path) {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            for old in legacyLogoFolders {
+                try? FileManager.default.removeItem(at: base.appendingPathComponent(old, isDirectory: true))
+            }
         }
         return dir
     }
