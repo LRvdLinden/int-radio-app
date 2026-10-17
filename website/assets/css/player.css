@@ -417,7 +417,7 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 .maptop .cnt{font-size:12.5px;font-weight:700;color:var(--sec);background:#16161ad9;padding:7px 12px;border-radius:999px;border:1px solid var(--stroke);backdrop-filter:blur(10px);white-space:nowrap}
 /* zoeken op de kaart (SPEC §9): glazen pil zoals de segmentknop, accentring bij focus */
 .maptop.sopen{z-index:1100}
-.msearch{position:relative;flex:0 1 340px;min-width:0;height:42px;display:flex;align-items:center;border-radius:999px;background:#16161aeb;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid #ffffff22;box-shadow:0 10px 30px -10px #000;transition:border-color .15s,box-shadow .15s}
+.msearch{position:relative;z-index:2;flex:0 1 340px;min-width:0;height:42px;display:flex;align-items:center;border-radius:999px;background:#16161aeb;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid #ffffff22;box-shadow:0 10px 30px -10px #000;transition:border-color .15s,box-shadow .15s}
 .msearch:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px #ff5a1f45,0 10px 30px -10px #000}
 .msearch .mi{width:18px;height:18px;margin-left:14px;flex:none;color:var(--sec)}
 .msearch:focus-within .mi{color:var(--accent2)}

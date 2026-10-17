@@ -236,7 +236,7 @@
     var cnt = wrap && wrap.querySelector('.cnt');
     if (!cnt) return;
     if (mode === 'place' && place) cnt.textContent = !data.length ? t('map.s.empty', { p: place.name }) : data.length === 1 ? t('map.s.around1', { p: place.name }) : t('map.s.around', { n: T.num(data.length), p: place.name });
-    else cnt.textContent = data.length ? t('map.count', { n: T.num(data.length) }) : t('map.none');
+    else cnt.textContent = data.length === 1 ? t('map.count1') : data.length ? t('map.count', { n: T.num(data.length) }) : t('map.none');
   }
 
   // kaartje met de gekozen zender + de 7 dichtstbijzijnde (vegen)
@@ -423,7 +423,7 @@
       if (ld) ld.hidden = true;
       data = r.a;
       engine.setData(data);
-      if (r.country) { mode = 'country'; viewCC = p.cc === own ? null : p.cc; place = null; updateSeg(); }
+      if (r.country && data.length) { mode = 'country'; viewCC = p.cc === own ? null : p.cc; place = null; updateSeg(); }
       setCount();
       if (!data.length) return;
       var byDist = data.slice().sort(function (x, y) { return dist(p, x) - dist(p, y); });
@@ -500,7 +500,12 @@
           if (my !== qSeq) return;
           busy = false;
           var names = cs.map(function (c) { return fold(c.name); }), codes = cs.map(function (c) { return c.cc; });
-          ps = ps.filter(function (p) { return !(p.country && codes.indexOf(p.cc) >= 0) && !(names.indexOf(fold(p.name)) >= 0 && !p.sub); }).slice(0, 6);
+          var seen = {};
+          ps = ps.filter(function (p) {
+            var key = fold(p.name) + '|' + fold(p.sub) + '|' + p.cc;
+            if (seen[key]) return false; seen[key] = 1; // bv. stad én provincie Utrecht met dezelfde tekst
+            return !(p.country && codes.indexOf(p.cc) >= 0) && !(names.indexOf(fold(p.name)) >= 0 && !p.sub);
+          }).slice(0, 6);
           render([{ title: t('map.s.countries'), items: cs }, { title: t('map.s.places'), items: ps }], q);
           if (wantEnter) { wantEnter = false; if (items[0]) choose(items[0]); }
         });

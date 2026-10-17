@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import Combine
 
 /// Eén stip of cluster op de kaart
 struct MapCluster: Identifiable, Equatable {
@@ -163,21 +164,13 @@ final class MapModel: ObservableObject {
 // MARK: - Zoeken op de kaart (SPEC §9)
 
 /// Een suggestie onder het zoekveld van de kaart
-enum MapSuggestion: Identifiable {
+enum MapSuggestion {
     /// Land uit de landenlijst van Radio Browser
     case country(Country)
     /// Plaats uit de geocoder van Apple (nog niet opgelost naar een coördinaat)
     case place(MKLocalSearchCompletion)
     /// Al opgelost (recente zoekopdracht of directe geocode na Enter)
     case item(MapSearchItem)
-
-    var id: String {
-        switch self {
-        case .country(let c): return "c|" + c.code
-        case .place(let p): return "p|" + p.title + "|" + p.subtitle
-        case .item(let i): return "i|" + i.id
-        }
-    }
 }
 
 /// Focus van het zoekveld en (Apple TV) de recente zoekopdrachten eronder
@@ -233,7 +226,9 @@ final class MapSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDe
     var hasQuery: Bool { trimmed.count >= 2 }
 
     /// Alle suggesties in volgorde: eerst landen, dan plaatsen
-    var suggestions: [MapSuggestion] { countries.map { .country($0) } + places.map { .place($0) } }
+    var suggestions: [MapSuggestion] {
+        countries.map { MapSuggestion.country($0) } + places.map { MapSuggestion.place($0) }
+    }
 
     var showsNoResults: Bool {
         hasQuery && !isSearching && searchedQuery == trimmed && countries.isEmpty && places.isEmpty
@@ -424,17 +419,30 @@ final class MapSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDe
 
 /// Kaart (SPEC §6): donkere wereldkaart met gloeiende stippen, clusters, kaartje onderaan, "Wereld" en "Willekeurig".
 /// Apple TV en Mac: lijst met zenders in beeld links, kaart rechts; selecteren centreert de kaart.
+/// Zoeken op de kaart (SPEC §9): zoekveld "Zoek een land of plaats" met suggesties (landen + plaatsen, recent).
+/// iPhone: zoekveld op een eigen regel boven de knoppen; iPad/Mac: in de bovenbalk; Apple TV: boven de lijst.
 struct MapExplorerView: View {
     @EnvironmentObject private var app: AppState
     @EnvironmentObject private var library: Library
     @EnvironmentObject private var player: RadioPlayer
     @Environment(\.navigate) private var navigate
     @StateObject private var model = MapModel()
+    @StateObject private var search = MapSearchModel()
+    @FocusState private var searchFocus: MapSearchFocus?
     @State private var camera: MapCameraPosition = .automatic
     @State private var cardQueue: [Station] = []
     @State private var didFocus = false
+    /// Land dat via zoeken getoond wordt (tijdelijk; het land in Instellingen verandert niet)
+    @State private var tempCountry: String?
+    /// Plaats die via zoeken gekozen is
+    @State private var placeItem: MapSearchItem?
+    /// Eigen land bij de vorige `.task`, om een gewijzigd land te herkennen
+    @State private var lastHome: String?
 
     private var country: String { library.countryCode ?? "NL" }
+    /// Het land waarvan de kaart nu de zenders toont
+    private var activeCountry: String { tempCountry ?? country }
+    private var searchActive: Bool { tempCountry != nil || placeItem != nil }
 
     var body: some View {
         layout
@@ -445,12 +453,22 @@ struct MapExplorerView: View {
             .navigationTitle(L("tab.map"))
             #endif
             .task(id: country) {
+                if let last = lastHome, last != country {
+                    // eigen land gewijzigd: tijdelijke zoekweergave vervalt
+                    tempCountry = nil
+                    placeItem = nil
+                }
+                lastHome = country
                 if app.mapWantsWorld {
                     app.mapWantsWorld = false
                     model.world = true
+                    tempCountry = nil
+                    placeItem = nil
                     didFocus = false
                 }
-                await model.load(country: country, world: model.world)
+                if placeItem == nil {
+                    await model.load(country: activeCountry, world: model.world)
+                }
                 if !didFocus {
                     didFocus = true
                     focusOnData()
@@ -470,8 +488,16 @@ struct MapExplorerView: View {
                 .frame(width: sideWidth)
             ZStack(alignment: .bottom) {
                 map
-                VStack {
-                    controls
+                VStack(alignment: .leading, spacing: 8) {
+                    #if os(macOS)
+                    controls(includeSearch: true)
+                    if showsPanel {
+                        suggestionPanel
+                            .padding(.horizontal, Theme.edge)
+                    }
+                    #else
+                    controls(includeSearch: false)
+                    #endif
                     Spacer()
                 }
                 if let s = model.selected { selectedCard(s).padding(Theme.edge) }
@@ -480,10 +506,27 @@ struct MapExplorerView: View {
         #else
         ZStack(alignment: .bottom) {
             map.ignoresSafeArea(edges: .top)
-            VStack {
-                controls
+            VStack(alignment: .leading, spacing: 8) {
+                if DeviceKind.isPhone {
+                    searchField
+                        .padding(.horizontal, Theme.edge)
+                        .padding(.top, 10)
+                    if showsPanel {
+                        suggestionPanel
+                            .padding(.horizontal, Theme.edge)
+                    } else {
+                        controls(includeSearch: false, topPadding: 0)
+                    }
+                } else {
+                    controls(includeSearch: true)
+                    if showsPanel {
+                        suggestionPanel
+                            .padding(.horizontal, Theme.edge)
+                    }
+                }
                 Spacer()
             }
+            .animation(.easeOut(duration: 0.15), value: showsPanel)
             if let s = model.selected {
                 bottomCards(s)
                     .padding(.bottom, player.hasMedia ? 4 : 12)
@@ -518,6 +561,12 @@ struct MapExplorerView: View {
         .onMapCameraChange(frequency: .onEnd) { ctx in
             model.regionChanged(ctx.region)
         }
+        #if os(iOS)
+        .simultaneousGesture(TapGesture().onEnded {
+            // tik op de kaart: toetsenbord en suggesties dicht
+            if searchFocus != nil { searchFocus = nil }
+        })
+        #endif
         .overlay {
             if model.isLoading {
                 ProgressView()
@@ -525,7 +574,7 @@ struct MapExplorerView: View {
                     .padding(tvScaled(18))
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             } else if model.failed {
-                ErrorRetryView { Task { await model.load(country: country, world: model.world, force: true) } }
+                ErrorRetryView { retryLoad() }
                     .background(Theme.surface.opacity(0.92), in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
             }
         }
@@ -552,46 +601,333 @@ struct MapExplorerView: View {
 
     // MARK: Knoppen
 
+    private var homeName: String { Country.localizedName(code: country, fallback: country) }
+
     /// "Wereld", of (als de wereld al getoond wordt) de knop terug naar het eigen land
     private var scopeTitle: String {
         guard model.world else { return L("map.world") }
-        let name = Country.localizedName(code: country, fallback: country)
-        return Country.flag(for: country) + " " + name
+        return Country.flag(for: country) + " " + homeName
     }
 
-    private var controls: some View {
+    /// Landknop tijdens een zoekweergave: het gezochte land (of de gekozen plaats)
+    private var searchScopeTitle: String {
+        if let p = placeItem {
+            return (p.flag.isEmpty ? "📍" : p.flag) + " " + p.displayTitle
+        }
+        let code = tempCountry ?? country
+        return Country.flag(for: code) + " " + Country.localizedName(code: code, fallback: code)
+    }
+
+    /// iPhone tijdens een zoekweergave: "Wereld" en "Willekeurig" alleen als icoon (anders past de balk niet)
+    private var compactButtons: Bool {
+        #if os(iOS)
+        return DeviceKind.isPhone && searchActive
+        #else
+        return false
+        #endif
+    }
+
+    private func controls(includeSearch: Bool, topPadding: CGFloat = 10) -> some View {
         HStack(spacing: tvScaled(10)) {
             #if os(iOS)
-            Text(L("tab.map"))
-                .font(.rounded(22, .black))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.6), radius: 6)
+            if !compactButtons {
+                Text(L("tab.map"))
+                    .font(.rounded(22, .black))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.6), radius: 6)
+                    .lineLimit(1)
+            }
             #endif
-            Spacer()
-            Button { setWorld(!model.world) } label: {
-                Label(scopeTitle, systemImage: model.world ? "location" : "globe")
+            #if !os(tvOS)
+            if includeSearch {
+                searchField
+                    .frame(maxWidth: searchFieldWidth)
+            }
+            #endif
+            Spacer(minLength: 0)
+            if searchActive {
+                Button { setWorld(false) } label: {
+                    HStack(spacing: tvScaled(6)) {
+                        Text(searchScopeTitle).lineLimit(1)
+                        Image(systemName: "xmark")
+                            .font(.system(size: tvScaled(11), weight: .heavy))
+                    }
                     .font(.system(size: tvScaled(14), weight: .bold))
                     .padding(.horizontal, tvScaled(14))
                     .padding(.vertical, tvScaled(9))
+                }
+                .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+                .accessibilityHint(L("a11y.mapBackHome", homeName))
+
+                Button { setWorld(true) } label: {
+                    pillLabel(L("map.world"), systemImage: "globe", iconOnly: compactButtons)
+                }
+                .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+                .accessibilityLabel(L("map.world"))
+            } else {
+                Button { setWorld(!model.world) } label: {
+                    pillLabel(scopeTitle, systemImage: model.world ? "location" : "globe")
+                }
+                .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+                .accessibilityHint(L("a11y.mapWorldHint"))
             }
-            .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
-            .accessibilityHint(L("a11y.mapWorldHint"))
 
             Button { Task { await rollDice() } } label: {
-                Label(L("map.random"), systemImage: "dice.fill")
-                    .font(.system(size: tvScaled(14), weight: .bold))
-                    .padding(.horizontal, tvScaled(14))
-                    .padding(.vertical, tvScaled(9))
+                pillLabel(L("map.random"), systemImage: "dice.fill", iconOnly: compactButtons)
                     .symbolEffect(.bounce, value: model.rolling)
             }
             .buttonStyle(AccentButtonStyle(cornerRadius: tvScaled(20)))
             .disabled(model.rolling)
+            .accessibilityLabel(L("map.random"))
         }
         .padding(.horizontal, Theme.edge)
-        .padding(.top, tvScaled(10))
+        .padding(.top, tvScaled(topPadding))
         #if os(tvOS)
         .focusSection()
         #endif
+    }
+
+    @ViewBuilder private func pillLabel(_ title: String, systemImage: String, iconOnly: Bool = false) -> some View {
+        Group {
+            if iconOnly {
+                Label(title, systemImage: systemImage).labelStyle(.iconOnly)
+            } else {
+                Label(title, systemImage: systemImage)
+            }
+        }
+        .lineLimit(1)
+        .font(.system(size: tvScaled(14), weight: .bold))
+        .padding(.horizontal, tvScaled(14))
+        .padding(.vertical, tvScaled(9))
+    }
+
+    // MARK: Zoekveld en suggesties (SPEC §9)
+
+    private var searchFieldWidth: CGFloat {
+        #if os(macOS)
+        return 280
+        #else
+        return 340
+        #endif
+    }
+
+    /// Suggestiepaneel zichtbaar (iPhone/iPad/Mac): veld heeft focus en er is iets te tonen
+    private var showsPanel: Bool {
+        guard searchFocus != nil else { return false }
+        return search.hasQuery || (search.query.isEmpty && !library.recentMapSearches.isEmpty)
+    }
+
+    #if !os(tvOS)
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: searchFontSize, weight: .semibold))
+                .foregroundStyle(Theme.secondary)
+            TextField(L("map.search.prompt"), text: $search.query)
+                .textFieldStyle(.plain)
+                .font(.system(size: searchFontSize, weight: .medium))
+                .foregroundStyle(.white)
+                .focused($searchFocus, equals: .field)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                #if os(iOS)
+                .textInputAutocapitalization(.words)
+                .onKeyPress(.escape) {
+                    clearSearch()
+                    return .handled
+                }
+                #elseif os(macOS)
+                .onExitCommand { clearSearch() }
+                #endif
+                .onSubmit { Task { await chooseFirst() } }
+                .accessibilityLabel(L("a11y.mapSearch"))
+            if search.resolving {
+                ProgressView().smallControl()
+            } else if !search.query.isEmpty {
+                Button { clearSearch() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: searchFontSize))
+                        .foregroundStyle(Theme.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L("action.clear"))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, searchVerticalPadding)
+        .background {
+            ZStack {
+                Capsule().fill(.ultraThinMaterial)
+                Capsule().fill(Theme.elevated.opacity(0.75))
+            }
+        }
+        .overlay(Capsule().strokeBorder(searchFocus == .field ? Theme.accent.opacity(0.8) : Theme.stroke, lineWidth: 1))
+        .shadow(color: .black.opacity(0.35), radius: 10, y: 4)
+        .environment(\.colorScheme, .dark)
+    }
+
+    private var searchFontSize: CGFloat {
+        #if os(macOS)
+        return 13
+        #else
+        return 16
+        #endif
+    }
+
+    private var searchVerticalPadding: CGFloat {
+        #if os(macOS)
+        return 7
+        #else
+        return 10
+        #endif
+    }
+
+    /// Paneel onder het zoekveld; scrollt pas als het niet past
+    private var suggestionPanel: some View {
+        ViewThatFits(in: .vertical) {
+            panelContent
+            ScrollView { panelContent }
+        }
+        .frame(maxWidth: 440, maxHeight: 380, alignment: .top)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(Theme.elevated.opacity(0.85))
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).strokeBorder(Theme.stroke, lineWidth: 1))
+        .shadow(color: .black.opacity(0.45), radius: 18, y: 8)
+        .environment(\.colorScheme, .dark)
+        .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+
+    private var panelContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if search.query.isEmpty {
+                recentGroup
+            } else {
+                suggestionGroups
+            }
+        }
+        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    #endif
+
+    /// Landen en plaatsen bij de zoekterm
+    @ViewBuilder private var suggestionGroups: some View {
+        if !search.countries.isEmpty {
+            groupHeader(L("map.search.countries"))
+            ForEach(search.countries) { c in
+                suggestionRow(flag: c.flag, icon: "flag", title: c.localizedName,
+                              subtitle: L("stations.count", formattedNumber(c.stationCount))) {
+                    choose(.country(c))
+                }
+            }
+        }
+        if !search.places.isEmpty || search.isSearching {
+            groupHeader(L("map.search.places"), loading: search.isSearching)
+            ForEach(search.places, id: \.self) { p in
+                suggestionRow(flag: Country.flag(for: search.countryCode(for: p)), icon: "mappin.circle",
+                              title: p.title, subtitle: p.subtitle) {
+                    choose(.place(p))
+                }
+            }
+        }
+        if search.showsNoResults {
+            Text(L("map.search.noResults", search.trimmed))
+                .font(Theme.body)
+                .foregroundStyle(Theme.secondary)
+                .padding(.horizontal, tvScaled(14))
+                .padding(.vertical, tvScaled(12))
+        }
+    }
+
+    /// Recente kaartzoekopdrachten (max 5)
+    @ViewBuilder private var recentGroup: some View {
+        if !library.recentMapSearches.isEmpty {
+            groupHeader(L("map.search.recent"), actionTitle: L("action.clear")) {
+                withAnimation { library.clearMapSearches() }
+            }
+            ForEach(library.recentMapSearches) { item in
+                suggestionRow(flag: item.flag, icon: "clock.arrow.circlepath", title: item.displayTitle,
+                              subtitle: item.kind == .country
+                                ? L("stations.count", formattedNumber(item.stationCount))
+                                : item.subtitle) {
+                    choose(.item(item))
+                }
+                #if os(tvOS)
+                .focused($searchFocus, equals: .recent(item.id))
+                #endif
+            }
+        }
+    }
+
+    private func groupHeader(_ title: String, loading: Bool = false, actionTitle: String? = nil,
+                             action: (() -> Void)? = nil) -> some View {
+        HStack(spacing: tvScaled(8)) {
+            Text(title.uppercased())
+                .font(.system(size: tvScaled(11), weight: .heavy))
+                .tracking(0.6)
+                .foregroundStyle(Theme.secondary)
+            if loading {
+                ProgressView().smallControl()
+            }
+            Spacer(minLength: 0)
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .font(.system(size: tvScaled(12), weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+                    #if os(tvOS)
+                    .buttonStyle(TVLiftStyle(scale: 1.05, border: false))
+                    #else
+                    .buttonStyle(.plain)
+                    #endif
+            }
+        }
+        .padding(.horizontal, tvScaled(14))
+        .padding(.top, tvScaled(10))
+        .padding(.bottom, tvScaled(4))
+    }
+
+    private func suggestionRow(flag: String, icon: String, title: String, subtitle: String,
+                               action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: tvScaled(10)) {
+                Group {
+                    if flag.isEmpty {
+                        Image(systemName: icon)
+                            .font(.system(size: tvScaled(16), weight: .semibold))
+                            .foregroundStyle(Theme.secondary)
+                    } else {
+                        Text(flag).font(.system(size: tvScaled(20)))
+                    }
+                }
+                .frame(width: tvScaled(28))
+                VStack(alignment: .leading, spacing: tvScaled(1)) {
+                    Text(title)
+                        .font(.system(size: tvScaled(15), weight: .semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                    if !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(Theme.caption)
+                            .foregroundStyle(Theme.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, tvScaled(14))
+            .padding(.vertical, tvScaled(7))
+            .contentShape(Rectangle())
+            #if os(tvOS)
+            .background(RowFocusBackground())
+            #endif
+        }
+        .plainTVButton()
+        .accessibilityLabel(subtitle.isEmpty ? title : title + ", " + subtitle)
     }
 
     // MARK: Kaartje onderaan (iPhone/iPad): horizontaal swipen = dichtstbijzijnde zenders
@@ -685,46 +1021,104 @@ struct MapExplorerView: View {
     #if os(tvOS) || os(macOS)
     private var sideList: some View {
         VStack(alignment: .leading, spacing: tvScaled(8)) {
-            Text(L("map.inView"))
-                .font(Theme.rowTitle)
-                .foregroundStyle(.white)
+            #if os(tvOS)
+            tvSearchField
                 .padding(.horizontal, tvScaled(16))
                 .padding(.top, tvScaled(14))
-            Text(L("stations.count", formattedNumber(model.visibleStations.count)))
-                .font(Theme.caption)
-                .foregroundStyle(Theme.secondary)
-                .padding(.horizontal, tvScaled(16))
-            ScrollView {
-                LazyVStack(spacing: tvScaled(2)) {
-                    ForEach(model.visibleStations) { s in
-                        Button { select(s, recenter: true) } label: {
-                            StationRow(station: s)
-                                .padding(.horizontal, tvScaled(10))
-                                .background {
-                                    #if os(tvOS)
-                                    RowFocusBackground()
-                                    #else
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .fill(model.selected?.id == s.id ? Theme.elevated : Color.clear)
-                                    #endif
-                                }
-                        }
-                        #if os(tvOS)
-                        .buttonStyle(TVLiftStyle(scale: 1.03, border: false))
-                        #else
-                        .buttonStyle(.plain)
-                        #endif
-                        .contextMenu { StationContextMenu(station: s, queue: model.visibleStations) }
-                    }
-                }
-                .padding(.horizontal, tvScaled(6))
-                .padding(.vertical, tvScaled(8))
+            if search.hasQuery {
+                tvSuggestionList
+            } else {
+                stationList
             }
-            #if os(tvOS)
-            .focusSection()
+            #else
+            stationList
             #endif
         }
         .background(Theme.surface)
+    }
+
+    @ViewBuilder private var stationList: some View {
+        Text(L("map.inView"))
+            .font(Theme.rowTitle)
+            .foregroundStyle(.white)
+            .padding(.horizontal, tvScaled(16))
+            .padding(.top, tvScaled(14))
+        Text(L("stations.count", formattedNumber(model.visibleStations.count)))
+            .font(Theme.caption)
+            .foregroundStyle(Theme.secondary)
+            .padding(.horizontal, tvScaled(16))
+        ScrollView {
+            LazyVStack(spacing: tvScaled(2)) {
+                #if os(tvOS)
+                // recente kaartzoekopdrachten zolang het (lege) zoekveld of een van deze rijen focus heeft
+                if search.query.isEmpty, searchFocus != nil, !library.recentMapSearches.isEmpty {
+                    VStack(alignment: .leading, spacing: 0) { recentGroup }
+                        .padding(.bottom, tvScaled(8))
+                }
+                #endif
+                ForEach(model.visibleStations) { s in
+                    Button { select(s, recenter: true) } label: {
+                        StationRow(station: s)
+                            .padding(.horizontal, tvScaled(10))
+                            .background {
+                                #if os(tvOS)
+                                RowFocusBackground()
+                                #else
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(model.selected?.id == s.id ? Theme.elevated : Color.clear)
+                                #endif
+                            }
+                    }
+                    #if os(tvOS)
+                    .buttonStyle(TVLiftStyle(scale: 1.03, border: false))
+                    #else
+                    .buttonStyle(.plain)
+                    #endif
+                    .contextMenu { StationContextMenu(station: s, queue: model.visibleStations) }
+                }
+            }
+            .padding(.horizontal, tvScaled(6))
+            .padding(.vertical, tvScaled(8))
+        }
+        #if os(tvOS)
+        .focusSection()
+        #endif
+    }
+    #endif
+
+    #if os(tvOS)
+    /// Apple TV: het zoekveld opent het systeemtoetsenbord; de suggesties verschijnen daarna als lijst
+    private var tvSearchField: some View {
+        HStack(spacing: tvScaled(10)) {
+            TextField(L("map.search.prompt"), text: $search.query)
+                .focused($searchFocus, equals: .field)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .accessibilityLabel(L("a11y.mapSearch"))
+            if search.resolving {
+                ProgressView()
+            } else if !search.query.isEmpty {
+                Button { clearSearch() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: tvScaled(14), weight: .bold))
+                        .padding(tvScaled(10))
+                }
+                .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+                .accessibilityLabel(L("action.clear"))
+            }
+        }
+        .focusSection()
+    }
+
+    private var tvSuggestionList: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: tvScaled(2)) {
+                suggestionGroups
+            }
+            .padding(.horizontal, tvScaled(6))
+            .padding(.vertical, tvScaled(8))
+        }
+        .focusSection()
     }
     #endif
 
@@ -737,6 +1131,9 @@ struct MapExplorerView: View {
 
     private func select(_ s: Station, recenter: Bool = false) {
         Haptics.tap()
+        #if !os(tvOS)
+        searchFocus = nil
+        #endif
         cardQueue = model.nearest(to: s)
         model.selected = s
         if recenter, let c = s.coordinate {
@@ -758,12 +1155,23 @@ struct MapExplorerView: View {
         }
     }
 
+    /// Wereld aan/uit; beide eindigen de tijdelijke zoekweergave (uit = terug naar het eigen land)
     private func setWorld(_ world: Bool) {
+        tempCountry = nil
+        placeItem = nil
         model.world = world
         model.selected = nil
         Task {
             await model.load(country: country, world: world)
             focusOnData()
+        }
+    }
+
+    private func retryLoad() {
+        if let p = placeItem {
+            Task { await loadPlace(p) }
+        } else {
+            Task { await model.load(country: activeCountry, world: model.world, force: true) }
         }
     }
 
@@ -787,6 +1195,95 @@ struct MapExplorerView: View {
                                     longitudeDelta: min(max((lons[hi] - lons[lo]) * 1.5, 1.5), 80))
         withAnimation(.easeInOut(duration: 0.8)) {
             camera = .region(MKCoordinateRegion(center: center, span: span))
+        }
+    }
+
+    // MARK: Zoeken: kiezen
+
+    private func clearSearch() {
+        search.clear()
+        searchFocus = nil
+    }
+
+    /// Enter: eerste suggestie (zonder resultaat blijft het veld open met "Niets gevonden")
+    private func chooseFirst() async {
+        guard search.hasQuery else { return }
+        #if os(tvOS)
+        // Apple TV: na het toetsenbord eerst de suggesties tonen
+        return
+        #else
+        if let first = await search.firstSuggestion() {
+            choose(first)
+        } else if search.hasQuery {
+            searchFocus = .field
+        }
+        #endif
+    }
+
+    private func choose(_ suggestion: MapSuggestion) {
+        Haptics.tap()
+        switch suggestion {
+        case .country(let c):
+            showCountry(.country(c))
+        case .item(let item):
+            if item.kind == .country { showCountry(item) } else { showPlace(item) }
+        case .place(let p):
+            searchFocus = nil
+            Task {
+                guard let item = await search.resolve(p) else { return }
+                showPlace(item)
+            }
+        }
+    }
+
+    /// Land gekozen: zenders van dat land, kaart erop; de landknop toont dat land tijdelijk
+    private func showCountry(_ item: MapSearchItem) {
+        library.addMapSearch(item)
+        search.clear()
+        searchFocus = nil
+        placeItem = nil
+        tempCountry = item.countryCode == country ? nil : item.countryCode
+        model.world = false
+        model.selected = nil
+        let code = item.countryCode
+        Task {
+            await model.load(country: code, world: false)
+            guard placeItem == nil, activeCountry == code else { return }
+            focusOnData()
+        }
+    }
+
+    /// Plaats gekozen: erheen vliegen (±25 km), zenders in de buurt laden en het kaartje openen
+    private func showPlace(_ item: MapSearchItem) {
+        guard let c = item.coordinate else { return }
+        library.addMapSearch(item)
+        search.clear()
+        searchFocus = nil
+        placeItem = item
+        tempCountry = item.countryCode.isEmpty ? nil : item.countryCode
+        model.world = false
+        model.selected = nil
+        let region = MKCoordinateRegion(center: c, latitudinalMeters: 25_000, longitudinalMeters: 25_000)
+        withAnimation(.easeInOut(duration: 1.2)) {
+            camera = .region(region)
+        }
+        // meteen bijwerken: clustering en kaartje rekenen met de nieuwe zoom
+        model.regionChanged(region)
+        Task { await loadPlace(item) }
+    }
+
+    private func loadPlace(_ item: MapSearchItem) async {
+        guard let c = item.coordinate else { return }
+        let result = await model.loadNear(c, countryCode: item.countryCode)
+        guard let result, placeItem?.id == item.id, let nearest = model.nearestStation(to: c) else { return }
+        // dichtstbijzijnde zender + 7 in de buurt
+        cardQueue = model.nearest(to: nearest, limit: 8)
+        model.selected = nearest
+        if result == .country, let sc = nearest.coordinate {
+            // niets binnen 150 km: naar de dichtstbijzijnde zender in het land
+            withAnimation(.easeInOut(duration: 1.0)) {
+                camera = .camera(MapCamera(centerCoordinate: sc, distance: 180_000))
+            }
         }
     }
 
