@@ -204,3 +204,22 @@ Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account,
 
 ### Opslag
 - Gevolgde podcasts (id, naam, maker, art, feedUrl) en afspeelposities (episodeId → seconden, duur, beluisterd) lokaal; Apple ook via iCloud KV (zoals favorieten). Max 500 posities (oudste eruit).
+
+---
+
+## 9. Zoeken op de kaart (alle apps en de webspeler) — nieuw
+
+Bovenaan de Kaart een **zoekveld** "Zoek een land of plaats" (EN "Search a country or place"), naast de knoppen {land} · Wereld · Willekeurig (telefoon: zoekveld op een eigen regel erboven).
+
+- **Suggesties tijdens het typen** (debounce 300 ms, vanaf 2 tekens), in twee groepen:
+  1. **Landen**: uit de landenlijst van Radio Browser (al in cache), match op de gelokaliseerde én de Engelse naam en op de landcode; vlag + naam + "1.234 zenders". Max 5.
+  2. **Plaatsen**: geocoder van het platform (zie onder): naam + regio/land met vlag. Max 6.
+- **Kies je een land** → de kaart toont de zenders van dát land (zelfde query als de landmodus, `countrycode=XX&has_geo_info=true`, limit 500) en past de kaart erop aan; de landknop in de balk toont dan dat land (tijdelijk, het gekozen land in Instellingen verandert niet). Terug naar je eigen land met de landknop.
+- **Kies je een plaats** → de kaart vliegt erheen (zoom ±25 km), laadt de zenders in de buurt: `GET /json/stations/search?geo_lat=<lat>&geo_long=<lon>&geo_distance=50000&has_geo_info=true&hidebroken=true&order=clickcount&reverse=true&limit=300`. Leeg → straal 150 km; nog leeg → de zenders van het land van die plaats. Daarna opent het kaartje onderaan met de dichtstbijzijnde zender + 7 in de buurt (zelfde kaartje als bij tikken op een stip).
+- Enter zonder suggestie kiezen = eerste suggestie. Escape/× = veld leeg en suggesties dicht. Lege resultaten: "Niets gevonden voor “…”".
+- Recente kaartzoekopdrachten (max 5) als suggesties zolang het veld leeg is en focus heeft.
+
+**Geocoders (geen extra sleutels):**
+- **Apple** (iOS, iPadOS, macOS, tvOS): `MKLocalSearchCompleter` met `resultTypes = .address` voor suggesties en `MKLocalSearch` om een gekozen suggestie op te lossen naar coördinaat + `placemark.countryCode`. tvOS: SwiftUI `.searchable` met dezelfde suggesties als lijst.
+- **Android**: `android.location.Geocoder.getFromLocationName(q, 6)` op een achtergrondthread (API 33+: de callback-variant); niet beschikbaar of leeg → **Nominatim** `https://nominatim.openstreetmap.org/search?q=<q>&format=jsonv2&limit=6&addressdetails=1&accept-language=<taal>` met de User-Agent van de app, max 1 aanvraag per seconde (debounce regelt dat).
+- **Web**: met Apple Maps (`mapkit.Search`/`autocomplete` + `search`) als die geladen is; met de Leaflet-terugval **Nominatim** (zelfde URL; de browser stuurt de Referer, geen eigen User-Agent mogelijk).
