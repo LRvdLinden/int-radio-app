@@ -646,7 +646,6 @@
         '<a href="../"><span class="lab">' + esc(t('set.site')) + '</span>' + I('chev', 'chev') + '</a>' +
         '<a href="../privacy/"><span class="lab">' + esc(t('set.privacy')) + '</span>' + I('chev', 'chev') + '</a>' +
         '<a href="../voorwaarden/"><span class="lab">' + esc(t('set.terms')) + '</span>' + I('chev', 'chev') + '</a>' +
-        '<a href="' + esc(window.TUNR.repo) + '" target="_blank" rel="noopener"><span class="lab">' + esc(t('set.source')) + '</span>' + I('ext', 'chev') + '</a>' +
         '<a href="https://www.radio-browser.info" target="_blank" rel="noopener"><span class="rico" style="--a:#10B981;--b:#84CC16">' + I('wave') + '</span><span class="lab">' + esc(t('set.credit')) + '<small>' + esc(t('set.credit.p')) + '</small></span>' + I('ext', 'chev') + '</a>' +
         '</div></section></div>';
     }

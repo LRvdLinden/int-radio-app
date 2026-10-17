@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 23
+_2026-10-18_
+
+**Verbeterd**
+
+- Geen GitHub-links meer op de website en in de webspeler; vragen en meldingen via info@tunr.online. _(Website)_  
+  <sub>No more GitHub links on the website and in the web player; questions and reports via info@tunr.online.</sub>
+
 ## Build 22
 _2026-10-18_
 

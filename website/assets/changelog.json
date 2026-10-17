@@ -754,6 +754,20 @@
           "en": "New logo source: the large app icon of the station's website, alongside App Store icons."
         }
       ]
+    },
+    {
+      "build": 23,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Geen GitHub-links meer op de website en in de webspeler; vragen en meldingen via info@tunr.online.",
+          "en": "No more GitHub links on the website and in the web player; questions and reports via info@tunr.online."
+        }
+      ]
     }
   ]
 }
