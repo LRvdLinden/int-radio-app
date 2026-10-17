@@ -21,7 +21,7 @@ object Brand {
      * Zolang de URL leeg is, stuurt de app geen ping.
      */
     const val STATS_URL = "https://vbhkewgyujzgbukkbtml.supabase.co"
-    const val STATS_KEY = ""
+    const val STATS_KEY = "sb_publishable_0Fp86h5uCovv00KReb3Pvg_lTH7TwU6"
 
     /** Versie zonder buildnummer, zoals in de User-Agent ("Tunr/1.0.0") */
     val version: String get() = BuildConfig.VERSION_NAME

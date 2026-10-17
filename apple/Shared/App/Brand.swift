@@ -21,7 +21,7 @@ enum Brand {
     /// (`https://<project-ref>.supabase.co`) en publishable key (`sb_publishable_…`). Openbaar, mag in de repo.
     /// Zolang de URL leeg is, stuurt de app geen ping.
     static let statsURL = "https://vbhkewgyujzgbukkbtml.supabase.co"
-    static let statsKey = ""
+    static let statsKey = "sb_publishable_0Fp86h5uCovv00KReb3Pvg_lTH7TwU6"
 
     /// "iOS", "iPadOS", "tvOS" of "macOS"; wordt bij het starten ingevuld (zie `configurePlatform`).
     static var platformName: String = {

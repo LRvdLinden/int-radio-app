@@ -12,7 +12,7 @@ window.TUNR = {
   // Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
   // ('https://<project-ref>.supabase.co') en publishable key ('sb_publishable_…'). Openbaar, mag in de repo.
   // Zolang de URL leeg is, stuurt de webspeler geen ping.
-  stats: { url: 'https://vbhkewgyujzgbukkbtml.supabase.co', key: '' }
+  stats: { url: 'https://vbhkewgyujzgbukkbtml.supabase.co', key: 'sb_publishable_0Fp86h5uCovv00KReb3Pvg_lTH7TwU6' }
 };
 
 // Woordmerk (TunrLogo) als HTML, voor plekken die met JS worden opgebouwd.
