@@ -95,6 +95,11 @@
     <string name="map_world">Wereld</string>
     <string name="map_random">Willekeurig</string>
     <string name="map_attribution" translatable="false">© OpenStreetMap-bijdragers © CARTO</string>
+    <string name="map_search_placeholder">Zoek een land of plaats</string>
+    <string name="map_search_countries">Landen</string>
+    <string name="map_search_places">Plaatsen</string>
+    <string name="map_search_searching">Zoeken…</string>
+    <string name="map_search_none">Niets gevonden voor “%1$s”</string>
     <string name="show_on_map">Op de kaart</string>
 
     <!-- Zenderdetail -->

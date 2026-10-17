@@ -28,6 +28,10 @@ data class Settings(
 @Serializable
 data class SelectedCountry(val code: String, val name: String)
 
+/** Recente kaartzoekopdracht (SPEC §9): een land ([place] null) of een plaats */
+@Serializable
+data class MapRecent(val label: String, val countryCode: String = "", val place: MapPlace? = null)
+
 /**
  * Bibliotheek: favorieten, recent (30), recente zoekopdrachten (8), land, lokale regio en instellingen.
  * Lokaal in SharedPreferences als JSON (volledige zender, zodat de lijsten offline werken).
@@ -44,9 +48,11 @@ object Library {
     private const val KEY_PODCASTS = "followed_podcasts"
     private const val KEY_PROGRESS = "episode_progress"
     private const val KEY_SPEED = "playback_speed"
+    private const val KEY_MAP_SEARCHES = "map_searches"
 
     private const val MAX_RECENTS = 30
     private const val MAX_SEARCHES = 8
+    private const val MAX_MAP_SEARCHES = 5
     /** Max. bewaarde afspeelposities (oudste eruit, SPEC §8) */
     private const val MAX_PROGRESS = 500
 
@@ -55,6 +61,7 @@ object Library {
     private val stationList = ListSerializer(Station.serializer())
     private val podcastList = ListSerializer(Podcast.serializer())
     private val progressList = ListSerializer(EpisodeProgress.serializer())
+    private val mapSearchList = ListSerializer(MapRecent.serializer())
 
     private val _favorites = MutableStateFlow<List<Station>>(emptyList())
     val favorites: StateFlow<List<Station>> = _favorites.asStateFlow()
@@ -64,6 +71,10 @@ object Library {
 
     private val _searches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches: StateFlow<List<String>> = _searches.asStateFlow()
+
+    /** Recente kaartzoekopdrachten (max 5, nieuwste eerst) */
+    private val _mapSearches = MutableStateFlow<List<MapRecent>>(emptyList())
+    val mapSearches: StateFlow<List<MapRecent>> = _mapSearches.asStateFlow()
 
     private val _country = MutableStateFlow<SelectedCountry?>(null)
     val country: StateFlow<SelectedCountry?> = _country.asStateFlow()
@@ -95,6 +106,7 @@ object Library {
         _favorites.value = read(KEY_FAVORITES, stationList) ?: emptyList()
         _recents.value = read(KEY_RECENTS, stationList) ?: emptyList()
         _searches.value = read(KEY_SEARCHES, ListSerializer(String.serializer())) ?: emptyList()
+        _mapSearches.value = read(KEY_MAP_SEARCHES, mapSearchList) ?: emptyList()
         _country.value = read(KEY_COUNTRY, SelectedCountry.serializer())
         _region.value = prefs.getString(KEY_REGION, null)
         _settings.value = read(KEY_SETTINGS, Settings.serializer()) ?: Settings()
@@ -172,6 +184,19 @@ object Library {
     fun clearSearches() {
         _searches.value = emptyList()
         write(KEY_SEARCHES, ListSerializer(String.serializer()), emptyList())
+    }
+
+    // MARK: zoeken op de kaart (SPEC §9)
+
+    fun addMapSearch(r: MapRecent) {
+        val same: (MapRecent) -> Boolean = { it.label.equals(r.label, ignoreCase = true) && it.countryCode == r.countryCode }
+        _mapSearches.value = (listOf(r) + _mapSearches.value.filterNot(same)).take(MAX_MAP_SEARCHES)
+        write(KEY_MAP_SEARCHES, mapSearchList, _mapSearches.value)
+    }
+
+    fun clearMapSearches() {
+        _mapSearches.value = emptyList()
+        write(KEY_MAP_SEARCHES, mapSearchList, emptyList())
     }
 
     // MARK: land en regio

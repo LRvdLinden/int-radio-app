@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
@@ -34,6 +36,7 @@ import androidx.compose.material.icons.rounded.Casino
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.Place
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,6 +61,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,7 +77,12 @@ import kotlinx.coroutines.launch
 import nl.lrvdlinden.tunr.Brand
 import nl.lrvdlinden.tunr.Device
 import nl.lrvdlinden.tunr.R
+import nl.lrvdlinden.tunr.data.Library
+import nl.lrvdlinden.tunr.data.MapPlace
+import nl.lrvdlinden.tunr.data.MapRecent
 import nl.lrvdlinden.tunr.data.RadioBrowser
+import nl.lrvdlinden.tunr.data.flagEmoji
+import nl.lrvdlinden.tunr.data.localizedCountryName
 import nl.lrvdlinden.tunr.data.Station
 import nl.lrvdlinden.tunr.player.RadioController
 import nl.lrvdlinden.tunr.ui.AppState
@@ -87,6 +96,7 @@ import nl.lrvdlinden.tunr.ui.PillButton
 import nl.lrvdlinden.tunr.ui.StationArt
 import nl.lrvdlinden.tunr.ui.T
 import nl.lrvdlinden.tunr.ui.heading
+import nl.lrvdlinden.tunr.ui.isWide
 import nl.lrvdlinden.tunr.ui.rememberInitialFocus
 import nl.lrvdlinden.tunr.ui.rememberLoad
 import nl.lrvdlinden.tunr.ui.stationCount
@@ -104,6 +114,9 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.io.File
 import kotlin.math.PI
+import kotlin.math.asin
+import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.ln
@@ -126,6 +139,28 @@ private object MapMemory {
     var zoom: Double = 0.0
     var forCountry: String? = null
     var world: Boolean = false
+    /** Bron waarvoor de camera al passend is gemaakt (zie [sourceKey]) */
+    var key: String? = null
+    /** Tijdelijk gekozen land via zoeken (SPEC §9); het land in Instellingen verandert niet */
+    var override: String? = null
+    /** Gekozen plaats via zoeken */
+    var place: MapPlace? = null
+}
+
+/** Welke zenders de kaart toont: wereld, rond een plaats of een land */
+private fun sourceKey(world: Boolean, place: MapPlace?, cc: String): String = when {
+    world -> "world"
+    place != null -> "near:${place.lat},${place.lon}"
+    else -> "cc:$cc"
+}
+
+/** Zenders voor de bron; rond een plaats 50 km, dan 150 km, dan het land van die plaats (SPEC §9) */
+private suspend fun loadMapStations(world: Boolean, place: MapPlace?, cc: String): List<Station> = when {
+    world -> RadioBrowser.geoStations(null)
+    place != null -> RadioBrowser.nearStations(place.lat, place.lon, 50_000)
+        .ifEmpty { RadioBrowser.nearStations(place.lat, place.lon, 150_000) }
+        .ifEmpty { place.countryCode.takeIf { it.length == 2 }?.let { RadioBrowser.geoStations(it) } ?: emptyList() }
+    else -> RadioBrowser.geoStations(cc)
 }
 
 private fun configureOsmdroid(context: Context) {
@@ -151,8 +186,14 @@ fun MapScreen() {
     val density = LocalDensity.current.density
     val scope = rememberCoroutineScope()
     val cc = currentCountryCode()
-    var world by remember { mutableStateOf(MapMemory.world && MapMemory.forCountry == cc) }
-    val load = rememberLoad(cc, world) { RadioBrowser.geoStations(if (world) null else cc) }
+    val restore = MapMemory.forCountry == cc
+    var world by remember { mutableStateOf(MapMemory.world && restore) }
+    /** Tijdelijk land en gekozen plaats (zoeken op de kaart, SPEC §9) */
+    var overrideCc by remember { mutableStateOf(if (restore) MapMemory.override else null) }
+    var place by remember { mutableStateOf(if (restore) MapMemory.place else null) }
+    val shownCc = overrideCc ?: cc
+    val source = sourceKey(world, place, shownCc)
+    val load = rememberLoad(source) { loadMapStations(world, place, shownCc) }
     val extra = remember { mutableStateListOf<Station>() }
     val stations: List<Station> = remember(load.value, extra.size) {
         val base = load.value.orEmpty()
@@ -208,20 +249,34 @@ fun MapScreen() {
             MapMemory.zoom = map.zoomLevelDouble
             MapMemory.world = world
             MapMemory.forCountry = cc
+            MapMemory.override = overrideCc
+            MapMemory.place = place
             map.onPause()
             map.onDetach()
         }
     }
 
-    // Eerste keer (of ander land / Wereld): kaart passend maken op de zenders
-    LaunchedEffect(load.value, world, cc) {
+    /** Zoeken: dichtstbijzijnde zender bij de plaats kiezen (kaartje onderaan opent) */
+    fun openNearest(p: MapPlace, list: List<Station>) {
+        val first = nearestTo(p.lat, p.lon, list, 1).firstOrNull() ?: return
+        selected = first
+        // Niets in de buurt (terugval op het land): naar die zender vliegen
+        if (distanceKm(p.lat, p.lon, first.geoLat!!, first.geoLong!!) > 150.0) {
+            map.controller.animateTo(GeoPoint(first.geoLat!!, first.geoLong!!), 9.0, 1000L)
+        }
+    }
+
+    // Eerste keer (of ander land / Wereld / plaats): kaart passend maken op de zenders
+    LaunchedEffect(load.value, source) {
         val list = load.value ?: return@LaunchedEffect
-        if (MapMemory.forCountry == cc && MapMemory.world == world && MapMemory.center != null) return@LaunchedEffect
+        if (MapMemory.key == source && MapMemory.center != null) return@LaunchedEffect
+        MapMemory.key = source
         MapMemory.forCountry = cc; MapMemory.world = world
-        if (world || list.size < 2) {
-            map.controller.animateTo(GeoPoint(30.0, 10.0), 2.6, 900L)
-        } else {
-            fitTo(map, list)
+        val p = place
+        when {
+            p != null -> openNearest(p, list)
+            world || list.size < 2 -> map.controller.animateTo(GeoPoint(30.0, 10.0), 2.6, 900L)
+            else -> fitTo(map, list)
         }
         MapMemory.center = GeoPoint(map.mapCenter.latitude, map.mapCenter.longitude)
     }
@@ -300,10 +355,58 @@ fun MapScreen() {
         }
     }
 
+    /** Terug naar je eigen land (landknop), of opnieuw passend maken als dat al getoond wordt */
+    fun showOwnCountry() {
+        val same = !world && place == null && overrideCc == null
+        world = false; place = null; overrideCc = null; selected = null
+        if (same) load.value?.let { if (it.size >= 2) fitTo(map, it) }
+    }
+
+    fun chooseCountry(code: String, label: String) {
+        val c = code.trim().uppercase()
+        if (c.length != 2) return
+        Library.addMapSearch(MapRecent(label, c))
+        val newOverride = c.takeIf { it != cc }
+        val same = !world && place == null && overrideCc == newOverride
+        world = false; place = null; overrideCc = newOverride; selected = null
+        if (same) load.value?.let { if (it.size >= 2) fitTo(map, it) }
+    }
+
+    fun choosePlace(p: MapPlace) {
+        Library.addMapSearch(MapRecent(p.name, p.countryCode, p))
+        val same = !world && place == p
+        world = false; overrideCc = null; selected = null; place = p
+        map.controller.animateTo(GeoPoint(p.lat, p.lon), 11.0, 1400L)
+        if (same) load.value?.let { openNearest(p, it) }
+    }
+
+    fun handleSuggestion(sug: MapSuggestion) {
+        when (sug) {
+            is MapSuggestion.CountryItem -> chooseCountry(sug.country.code, sug.country.localizedName)
+            is MapSuggestion.PlaceItem -> choosePlace(sug.place)
+            is MapSuggestion.RecentItem -> sug.recent.place?.let { choosePlace(it) }
+                ?: chooseCountry(sug.recent.countryCode, sug.recent.label)
+        }
+    }
+
+    // Enter / eerste suggestie: de zoektoestand maakt zichzelf daarna leeg
+    val search = rememberMapSearchState { handleSuggestion(it) }
+    val focusManager = LocalFocusManager.current
+    val chooseAndClose: (MapSuggestion) -> Unit = { handleSuggestion(it); search.clear(); focusManager.clearFocus() }
+    val panelVisible = mapSearchPanelVisible(search)
+
     val controls: @Composable () -> Unit = {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically
+        ) {
+            val p = place
+            Chip(
+                if (p != null) p.name else "${flagEmoji(shownCc)} ${localizedCountryName(shownCc, shownCc)}".trim(),
+                selected = !world, icon = if (p != null) Icons.Rounded.Place else null,
+            ) { showOwnCountry() }
             Chip(stringResource(R.string.map_world), selected = world, icon = Icons.Rounded.Public) {
-                world = !world; selected = null
+                world = !world; place = null; overrideCc = null; selected = null
             }
             Row(
                 Modifier.tvClickable(CircleShape, scale = 1.06f) { random() }.background(T.surface).padding(horizontal = 14.dp, vertical = 8.dp),
@@ -320,7 +423,14 @@ fun MapScreen() {
 
     if (Device.isTV) {
         Row(Modifier.fillMaxSize().background(T.bg)) {
-            TvStationList(stations, load.failed, load.retry, controls) { s, focusOnly ->
+            val tvSearch: @Composable () -> Unit = {
+                MapSearchField(search, onChoose = { handleSuggestion(it) })
+                if (panelVisible) {
+                    Spacer(Modifier.height(6.dp))
+                    MapSearchPanel(search, chooseAndClose, maxHeight = 300.dp)
+                }
+            }
+            TvStationList(stations, load.failed, load.retry, tvSearch, controls) { s, focusOnly ->
                 selected = s
                 map.controller.animateTo(GeoPoint(s.geoLat!!, s.geoLong!!), map.zoomLevelDouble.coerceAtLeast(9.0), 700L)
                 if (!focusOnly) RadioController.play(s, listOf(s) + nearest(s, stations, 12))
@@ -337,9 +447,33 @@ fun MapScreen() {
         Box(Modifier.fillMaxSize().background(T.bg)) {
             AndroidView(factory = { map }, modifier = Modifier.fillMaxSize())
             Column(Modifier.statusBarsPadding().padding(horizontal = Dims.edge, vertical = 10.dp)) {
-                Text(stringResource(R.string.tab_map), style = heading(26.sp))
-                Spacer(Modifier.height(8.dp))
-                controls()
+                if (isWide()) {
+                    // Tablet: zoekveld in de bovenbalk, naast de knoppen
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text(stringResource(R.string.tab_map), style = heading(26.sp), modifier = Modifier.padding(top = 6.dp))
+                        Spacer(Modifier.width(16.dp))
+                        Column(Modifier.weight(1f, fill = false).widthIn(min = 200.dp, max = 420.dp)) {
+                            MapSearchField(search, onChoose = { handleSuggestion(it) })
+                            if (panelVisible) {
+                                Spacer(Modifier.height(6.dp))
+                                MapSearchPanel(search, chooseAndClose, maxHeight = 420.dp)
+                            }
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Box(Modifier.padding(top = 4.dp)) { controls() }
+                    }
+                } else {
+                    // Telefoon: zoekveld op een eigen regel boven de knoppen
+                    Text(stringResource(R.string.tab_map), style = heading(26.sp))
+                    Spacer(Modifier.height(8.dp))
+                    MapSearchField(search, onChoose = { handleSuggestion(it) })
+                    if (panelVisible) {
+                        Spacer(Modifier.height(6.dp))
+                        MapSearchPanel(search, chooseAndClose, maxHeight = 340.dp)
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    controls()
+                }
                 if (load.failed && stations.isEmpty()) {
                     Spacer(Modifier.height(8.dp))
                     ErrorRetry(compact = true, onRetry = load.retry)
@@ -355,7 +489,9 @@ fun MapScreen() {
             ) {
                 val s = selected
                 if (s != null) {
-                    val near = remember(s.uuid, stations) { listOf(s) + nearest(s, stations, 12) }
+                    // Na zoeken op een plaats: de dichtstbijzijnde zender + 7 in de buurt (SPEC §9)
+                    val nearCount = if (place != null) 7 else 12
+                    val near = remember(s.uuid, stations, nearCount) { listOf(s) + nearest(s, stations, nearCount) }
                     NearbyPager(near, onDismiss = { selected = null }) { focus ->
                         map.controller.animateTo(GeoPoint(focus.geoLat!!, focus.geoLong!!), map.zoomLevelDouble, 500L)
                     }
@@ -444,6 +580,7 @@ private fun TvStationList(
     stations: List<Station>,
     failed: Boolean,
     retry: () -> Unit,
+    search: @Composable () -> Unit,
     controls: @Composable () -> Unit,
     onSelect: (Station, focusOnly: Boolean) -> Unit,
 ) {
@@ -451,6 +588,8 @@ private fun TvStationList(
     val first = rememberInitialFocus(key = list.isNotEmpty())
     Column(Modifier.width(360.dp).fillMaxHeight().padding(start = 24.dp, top = 24.dp, end = 12.dp)) {
         Text(stringResource(R.string.tab_map), style = heading(30.sp))
+        Spacer(Modifier.height(10.dp))
+        search()
         Spacer(Modifier.height(10.dp))
         controls()
         Spacer(Modifier.height(10.dp))
@@ -531,6 +670,23 @@ private fun cluster(stations: List<Station>, map: MapView, density: Float): List
     return bins.values.map { list ->
         Cluster(list.map { it.geoLat!! }.average(), list.map { it.geoLong!! }.average(), list)
     }
+}
+
+/** De [n] zenders het dichtst bij een punt (benadering, prima voor sorteren) */
+private fun nearestTo(lat: Double, lon: Double, all: List<Station>, n: Int): List<Station> {
+    val k = cos(lat * PI / 180.0)
+    return all.asSequence().filter { it.hasGeo }
+        .map { it to ((it.geoLat!! - lat).pow(2) + ((it.geoLong!! - lon) * k).pow(2)) }
+        .sortedBy { it.second }.take(n).map { it.first }.toList()
+}
+
+/** Afstand in km (haversine) */
+private fun distanceKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val r = PI / 180.0
+    val dLat = (lat2 - lat1) * r
+    val dLon = (lon2 - lon1) * r
+    val a = sin(dLat / 2).pow(2) + cos(lat1 * r) * cos(lat2 * r) * sin(dLon / 2).pow(2)
+    return 2 * 6371.0 * asin(sqrt(a.coerceIn(0.0, 1.0)))
 }
 
 /** De [n] dichtstbijzijnde zenders (benadering, prima voor sorteren) */

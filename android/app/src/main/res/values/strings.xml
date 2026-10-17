@@ -97,6 +97,11 @@
     <string name="map_world">World</string>
     <string name="map_random">Random</string>
     <string name="map_attribution" translatable="false">© OpenStreetMap contributors © CARTO</string>
+    <string name="map_search_placeholder">Search a country or place</string>
+    <string name="map_search_countries">Countries</string>
+    <string name="map_search_places">Places</string>
+    <string name="map_search_searching">Searching…</string>
+    <string name="map_search_none">Nothing found for “%1$s”</string>
     <string name="show_on_map">Show on map</string>
 
     <!-- Zenderdetail -->

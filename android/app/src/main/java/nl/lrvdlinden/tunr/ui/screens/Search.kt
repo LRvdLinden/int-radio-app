@@ -90,6 +90,8 @@ fun SearchField(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
     onSubmit: () -> Unit = {},
+    onFocusChange: (Boolean) -> Unit = {},
+    onClear: (() -> Unit)? = null,
 ) {
     var focused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -116,12 +118,12 @@ fun SearchField(
                 keyboardActions = KeyboardActions(onSearch = { onSubmit(); focusManager.clearFocus() }),
                 modifier = Modifier.fillMaxWidth()
                     .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
-                    .onFocusChanged { focused = it.isFocused }
+                    .onFocusChanged { focused = it.isFocused; onFocusChange(it.isFocused) }
             )
         }
         if (value.isNotEmpty()) {
             Icon(Icons.Rounded.Close, stringResource(R.string.clear), tint = T.secondary,
-                modifier = Modifier.size(22.dp).tvClickable(RoundedCornerShape(11.dp)) { onChange("") })
+                modifier = Modifier.size(22.dp).tvClickable(RoundedCornerShape(11.dp)) { if (onClear != null) onClear() else onChange("") })
         }
     }
 }

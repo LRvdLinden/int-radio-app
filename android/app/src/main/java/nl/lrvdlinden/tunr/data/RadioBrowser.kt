@@ -222,6 +222,17 @@ object RadioBrowser {
             .filter { it.hasGeo }
     }
 
+    /** Zenders binnen [distanceMeters] van een punt (zoeken op de kaart, SPEC §9), top 300 op populariteit */
+    suspend fun nearStations(lat: Double, lon: Double, distanceMeters: Int): List<Station> {
+        val params = listOf(
+            "geo_lat" to String.format(java.util.Locale.US, "%.4f", lat),
+            "geo_long" to String.format(java.util.Locale.US, "%.4f", lon),
+            "geo_distance" to "$distanceMeters",
+            "has_geo_info" to "true",
+        ) + base("clickcount", 300)
+        return stations(params).filter { it.hasGeo }
+    }
+
     /** Willekeurige zender wereldwijd (met geo, zodat de kaart erheen kan vliegen) */
     suspend fun randomStation(): Station? {
         val params = listOf("has_geo_info" to "true", "hidebroken" to "true", "order" to "random", "limit" to "20")
