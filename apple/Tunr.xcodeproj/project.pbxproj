@@ -43,6 +43,7 @@
 		A1AE7DF10FE1D3900AC4D90B /* ShareLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4818CB644743420120C40C6E /* ShareLinks.swift */; };
 		A6AFCE55135200F1A8BE0862 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A06EB56A8369D95923B4DD /* Navigation.swift */; };
 		A710CD544731291B39B61954 /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F64632FBA964CF13FE8C366 /* Cards.swift */; };
+		A86C9EA1880E4E2AA5C79C14 /* ScreenshotMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D786DE7682E4DC6FD102BB25 /* ScreenshotMode.swift */; };
 		AAA84398B71254613645DF7B /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B211D0140C7CDBADAB4AA48 /* DiscoverView.swift */; };
 		ABCBD2868DDF846FBD92A2C8 /* Brand+Art.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AF8FE9CC0562561750ACB2 /* Brand+Art.swift */; };
 		ACBE2C937674753465A30B3B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B266D3D6DC4574EDAB825310 /* Stats.swift */; };
@@ -134,6 +135,7 @@
 		D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
 		D624D6B1ABBC01F25723A8D2 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		D6FC12E5690936CC217EE90A /* NowPlayingWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingWidget.swift; sourceTree = "<group>"; };
+		D786DE7682E4DC6FD102BB25 /* ScreenshotMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMode.swift; sourceTree = "<group>"; };
 		E412B5FCD06FF41EFC8F350A /* Tunr.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tunr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA696855F97CEC76514DBDAC /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunrApp.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */,
 				32B8AC08C664824F797D1EF2 /* LiveActivityController.swift */,
 				78A06EB56A8369D95923B4DD /* Navigation.swift */,
+				D786DE7682E4DC6FD102BB25 /* ScreenshotMode.swift */,
 				4818CB644743420120C40C6E /* ShareLinks.swift */,
 				EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */,
 				A52F01A9E6A2FC28F1059B36 /* WidgetSync.swift */,
@@ -497,6 +500,7 @@
 				1557C582EDFC5D3D3099F759 /* PodcastsHomeView.swift in Sources */,
 				0386BEE23C644575C4E9444D /* RadioBrowser.swift in Sources */,
 				2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */,
+				A86C9EA1880E4E2AA5C79C14 /* ScreenshotMode.swift in Sources */,
 				1996F80AC404DA7C9DF005E2 /* SearchView.swift in Sources */,
 				AD2F83CB53DFE1812CF24278 /* SettingsSync.swift in Sources */,
 				D0B25D77D3484300B7E9D9D6 /* SettingsView.swift in Sources */,
@@ -691,7 +695,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -760,7 +764,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
