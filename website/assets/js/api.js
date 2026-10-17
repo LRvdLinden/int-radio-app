@@ -153,6 +153,9 @@
     return cached('s:' + key, 30 * MIN, '/json/stations/search?' + qs, list).then(remember);
   }
   var enc = encodeURIComponent;
+  function geoOnly(a) {
+    return a.filter(function (s) { return s.lat != null && s.lon != null && isFinite(s.lat) && isFinite(s.lon) && Math.abs(s.lat) <= 85 && Math.abs(s.lon) <= 180 && !(s.lat === 0 && s.lon === 0); });
+  }
 
   T.api = {
     server: function () { return servers ? servers[0] : null; },
@@ -201,9 +204,12 @@
     language: function (name) { return stations('lang:' + name, 'language=' + enc(name) + '&languageExact=true&order=clickcount&reverse=true&limit=100'); },
     top100: function () { return stations('top100', 'order=clickcount&reverse=true&limit=100'); },
     geo: function (cc) {
-      return stations(cc ? 'geo:' + cc : 'geo:world', (cc ? 'countrycode=' + enc(cc) + '&limit=500' : 'limit=1500') + '&has_geo_info=true&order=clickcount&reverse=true').then(function (a) {
-        return a.filter(function (s) { return s.lat != null && s.lon != null && isFinite(s.lat) && isFinite(s.lon) && Math.abs(s.lat) <= 85 && Math.abs(s.lon) <= 180 && !(s.lat === 0 && s.lon === 0); });
-      });
+      return stations(cc ? 'geo:' + cc : 'geo:world', (cc ? 'countrycode=' + enc(cc) + '&limit=500' : 'limit=1500') + '&has_geo_info=true&order=clickcount&reverse=true').then(geoOnly);
+    },
+    // zenders binnen km kilometer van een punt (kaart: zoeken op plaats, SPEC §9)
+    near: function (lat, lon, km) {
+      var la = (+lat).toFixed(3), lo = (+lon).toFixed(3);
+      return stations('near:' + la + ':' + lo + ':' + km, 'geo_lat=' + la + '&geo_long=' + lo + '&geo_distance=' + Math.round(km * 1000) + '&has_geo_info=true&order=clickcount&reverse=true&limit=300').then(geoOnly);
     },
     click: function (id) { get('/json/url/' + enc(id)).catch(function () {}); }
   };

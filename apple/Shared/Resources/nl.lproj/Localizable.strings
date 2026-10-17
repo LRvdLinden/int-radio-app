@@ -1,6 +1,8 @@
 /* Tunr — Nederlands */
 
 "a11y.changeCountry" = "Land: %@. Land wijzigen";
+"a11y.mapBackHome" = "Terug naar %@";
+"a11y.mapSearch" = "Zoek een land of plaats op de kaart";
 "a11y.mapWorldHint" = "Wisselt tussen je land en de hele wereld";
 "a11y.nowPlaying" = "Speelt nu";
 "a11y.openPlayer" = "Speler openen";
@@ -103,6 +105,11 @@
 "map.cluster" = "%ld zenders";
 "map.inView" = "In beeld";
 "map.random" = "Willekeurig";
+"map.search.countries" = "Landen";
+"map.search.noResults" = "Niets gevonden voor “%@”";
+"map.search.places" = "Plaatsen";
+"map.search.prompt" = "Zoek een land of plaats";
+"map.search.recent" = "Recent";
 "map.world" = "Wereld";
 "menu.playback" = "Afspelen";
 "pgenre.business" = "Zakelijk";

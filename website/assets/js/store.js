@@ -65,6 +65,14 @@
       r.unshift(q); write('searches', r.slice(0, 8)); emit('searches');
     },
     clearSearches: function () { write('searches', []); emit('searches'); },
+    // recente kaartzoekopdrachten (max 5): { k: 'c', cc, name } of { k: 'p', name, sub, cc, lat, lon }
+    mapSearches: function () { var r = read('mapSearches', []); return Array.isArray(r) ? r : []; },
+    addMapSearch: function (it) {
+      if (!it || !it.name) return;
+      var key = function (x) { return x.k === 'c' ? 'c:' + x.cc : 'p:' + String(x.name).toLowerCase() + ':' + (+x.lat).toFixed(2) + ':' + (+x.lon).toFixed(2); };
+      var r = T.store.mapSearches().filter(function (x) { return x && key(x) !== key(it); });
+      r.unshift(it); write('mapSearches', r.slice(0, 5));
+    },
     get searchWorld() { return read('searchWorld', false); },
     set searchWorld(v) { write('searchWorld', !!v); },
 

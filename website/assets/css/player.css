@@ -415,6 +415,32 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 .maptop .sp{flex:1}
 .maptop .cnt:empty{display:none}
 .maptop .cnt{font-size:12.5px;font-weight:700;color:var(--sec);background:#16161ad9;padding:7px 12px;border-radius:999px;border:1px solid var(--stroke);backdrop-filter:blur(10px);white-space:nowrap}
+/* zoeken op de kaart (SPEC §9): glazen pil zoals de segmentknop, accentring bij focus */
+.maptop.sopen{z-index:1100}
+.msearch{position:relative;flex:0 1 340px;min-width:0;height:42px;display:flex;align-items:center;border-radius:999px;background:#16161aeb;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid #ffffff22;box-shadow:0 10px 30px -10px #000;transition:border-color .15s,box-shadow .15s}
+.msearch:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px #ff5a1f45,0 10px 30px -10px #000}
+.msearch .mi{width:18px;height:18px;margin-left:14px;flex:none;color:var(--sec)}
+.msearch:focus-within .mi{color:var(--accent2)}
+.msearch input{flex:1;min-width:0;height:100%;padding:0 6px 0 10px;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:15px;font-weight:600}
+.msearch input::placeholder{color:var(--dim);font-weight:500;opacity:1}
+.msearch .clr{flex:none;width:30px;height:30px;margin-right:6px;border-radius:50%;display:grid;place-items:center;background:#ffffff14;color:var(--sec)}
+.msearch .clr:hover{background:#ffffff26;color:#fff}
+.msearch .clr svg{width:14px;height:14px}
+.msug{position:absolute;left:0;top:calc(100% + 8px);width:max(100%,320px);max-height:min(430px,62vh);overflow-y:auto;overscroll-behavior:contain;list-style:none;margin:0;padding:6px;border-radius:18px;background:#16161af7;backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border:1px solid #ffffff22;box-shadow:0 24px 60px -16px #000;animation:msug .16s ease-out}
+@keyframes msug{from{opacity:0;transform:translateY(-4px)}}
+.msug .gh{padding:10px 10px 5px;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.msug .gh:first-child{padding-top:6px}
+.msug [role=option]{display:flex;align-items:center;gap:12px;min-height:48px;padding:7px 10px;border-radius:12px;cursor:pointer}
+.msug [role=option].on{background:#ffffff12;box-shadow:inset 0 0 0 1px #ff5a1f70}
+.msug .fl{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#ffffff0e;font-size:19px;line-height:1}
+.msug .fl svg{width:17px;height:17px;color:var(--accent2)}
+.msug .tx{flex:1;min-width:0}
+.msug b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msug small{display:block;margin-top:1px;font-size:12.5px;color:var(--sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msug .rc{flex:none;width:16px;height:16px;color:var(--dim)}
+.msug .busy,.msug .none{display:flex;align-items:center;gap:10px;padding:12px;font-size:14px;color:var(--sec)}
+.msug .busy svg{width:16px;height:16px;color:var(--accent)}
+.seg button.tmp{box-shadow:inset 0 0 0 1px #ff5a1f80}
 .dicebtn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px 0 12px;border-radius:999px;background:var(--btn);font-weight:800;font-size:14.5px;box-shadow:0 12px 30px -10px #ff5a1fc0;white-space:nowrap}
 .dicebtn svg{width:22px;height:22px;transition:transform .5s}
 .dicebtn:hover svg{transform:rotate(90deg)}
@@ -543,6 +569,9 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
   .maptop .sp{display:none}
   .maptop .cnt{order:3;flex-basis:auto}
   .dicebtn{position:absolute;right:0;top:44px}
+  .msearch{order:-1;flex:1 1 100%}
+  .msug{width:100%}
+  .maptop .msearch~.dicebtn{top:94px}
   .leaflet-control-zoom{display:none}
   .maptop .seg button{padding:0 12px}
   .leaflet-control-zoom{margin-top:96px!important}

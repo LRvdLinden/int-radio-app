@@ -1,6 +1,8 @@
 /* Tunr — English */
 
 "a11y.changeCountry" = "Country: %@. Change country";
+"a11y.mapBackHome" = "Back to %@";
+"a11y.mapSearch" = "Search the map for a country or place";
 "a11y.mapWorldHint" = "Switches between your country and the whole world";
 "a11y.nowPlaying" = "Now playing";
 "a11y.openPlayer" = "Open player";
@@ -103,6 +105,11 @@
 "map.cluster" = "%ld stations";
 "map.inView" = "In view";
 "map.random" = "Random";
+"map.search.countries" = "Countries";
+"map.search.noResults" = "Nothing found for “%@”";
+"map.search.places" = "Places";
+"map.search.prompt" = "Search a country or place";
+"map.search.recent" = "Recent";
 "map.world" = "World";
 "menu.playback" = "Playback";
 "pgenre.business" = "Business";

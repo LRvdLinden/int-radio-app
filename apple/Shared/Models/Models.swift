@@ -267,6 +267,45 @@ struct LocalRegion: Codable, Hashable, Sendable {
     var name: String
 }
 
+// MARK: - Kaart-zoekopdracht
+
+/// Een gekozen land of plaats op de kaart (SPEC §9); bewaard als recente kaartzoekopdracht (max 5).
+/// Een plaats bewaart zijn coördinaat, zodat hij later zonder geocoder opnieuw gekozen kan worden.
+struct MapSearchItem: Codable, Identifiable, Hashable, Sendable {
+    enum Kind: String, Codable, Sendable { case country, place }
+
+    var kind: Kind
+    /// Land: Engelse naam (weergave gelokaliseerd via de code); plaats: naam ("Berlijn")
+    var title: String
+    /// Plaats: regio/land ("Duitsland"); land: leeg
+    var subtitle: String
+    /// ISO 3166-1 ("DE"); kan leeg zijn bij een plaats
+    var countryCode: String
+    /// Alleen bij een land
+    var stationCount: Int
+    var latitude: Double?
+    var longitude: Double?
+
+    var id: String { kind.rawValue + "|" + countryCode + "|" + title.lowercased() + "|" + subtitle.lowercased() }
+
+    var coordinate: CLLocationCoordinate2D? {
+        guard let latitude, let longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    var flag: String { Country.flag(for: countryCode) }
+
+    /// Naam in de taal van de app
+    var displayTitle: String {
+        kind == .country ? Country.localizedName(code: countryCode, fallback: title) : title
+    }
+
+    static func country(_ c: Country) -> MapSearchItem {
+        MapSearchItem(kind: .country, title: c.name, subtitle: "", countryCode: c.code, stationCount: c.stationCount,
+                      latitude: nil, longitude: nil)
+    }
+}
+
 // MARK: - Taal
 
 struct LanguageInfo: Codable, Identifiable, Hashable, Sendable {

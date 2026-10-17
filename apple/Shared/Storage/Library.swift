@@ -20,10 +20,13 @@ final class Library: ObservableObject {
     static let maxSearches = 8
     static let maxPositions = 500
     static let maxRecentEpisodes = 40
+    static let maxMapSearches = 5
 
     @Published private(set) var favorites: [Station] = []
     @Published private(set) var recents: [Station] = []
     @Published private(set) var recentSearches: [String] = []
+    /// Recente kaartzoekopdrachten (landen en plaatsen, max 5, nieuwste eerst)
+    @Published private(set) var recentMapSearches: [MapSearchItem] = []
     /// Gekozen land (ISO-code), nil = nog niet gekozen (landkeuze tonen)
     @Published private(set) var countryCode: String?
     /// Engelse landnaam (voor /json/states)
@@ -48,7 +51,8 @@ final class Library: ObservableObject {
         static let podcastsStamp = "lib.podcasts.stamp"
         static let positions = "lib.episodePositions"
         static let episodes = "lib.recentEpisodes"
-        static let all = [favorites, recents, searches, country, countryName, region, podcasts, positions, episodes]
+        static let mapSearches = "lib.mapSearches"
+        static let all = [favorites, recents, searches, country, countryName, region, podcasts, positions, episodes, mapSearches]
     }
 
     private let defaults = UserDefaults.standard
@@ -78,6 +82,7 @@ final class Library: ObservableObject {
         favorites = decode([Station].self, defaults.data(forKey: K.favorites)) ?? []
         recents = decode([Station].self, defaults.data(forKey: K.recents)) ?? []
         recentSearches = defaults.stringArray(forKey: K.searches) ?? []
+        recentMapSearches = decode([MapSearchItem].self, defaults.data(forKey: K.mapSearches)) ?? []
         countryCode = defaults.string(forKey: K.country)
         countryName = defaults.string(forKey: K.countryName) ?? ""
         localRegion = decode(LocalRegion.self, defaults.data(forKey: K.region))
@@ -142,6 +147,14 @@ final class Library: ObservableObject {
                     recentSearches = Array(merged.prefix(Self.maxSearches))
                     defaults.set(recentSearches, forKey: K.searches)
                 }
+            case K.mapSearches:
+                guard let remote = decode([MapSearchItem].self, cloud.data(forKey: K.mapSearches)) else { continue }
+                // samenvoegen: lokaal eerst, dan de rest uit iCloud
+                var merged = recentMapSearches
+                let ids = Set(recentMapSearches.map(\.id))
+                merged += remote.filter { !ids.contains($0.id) }
+                recentMapSearches = Array(merged.prefix(Self.maxMapSearches))
+                defaults.set(try? JSONEncoder().encode(recentMapSearches), forKey: K.mapSearches)
             case K.country:
                 // alleen overnemen als hier nog niets gekozen is (een ander toestel kan in een ander land staan)
                 if countryCode == nil, let code = cloud.string(forKey: K.country), !code.isEmpty {
@@ -273,6 +286,20 @@ final class Library: ObservableObject {
         recentSearches = []
         defaults.set(recentSearches, forKey: K.searches)
         cloud.set(recentSearches, forKey: K.searches)
+    }
+
+    // MARK: - Recent gezocht op de kaart
+
+    func addMapSearch(_ item: MapSearchItem) {
+        var list = recentMapSearches.filter { $0.id != item.id }
+        list.insert(item, at: 0)
+        recentMapSearches = Array(list.prefix(Self.maxMapSearches))
+        save(K.mapSearches, try? JSONEncoder().encode(recentMapSearches))
+    }
+
+    func clearMapSearches() {
+        recentMapSearches = []
+        save(K.mapSearches, try? JSONEncoder().encode(recentMapSearches))
     }
 
     // MARK: - Land en regio

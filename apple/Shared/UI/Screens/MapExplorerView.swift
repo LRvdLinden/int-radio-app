@@ -24,22 +24,79 @@ final class MapModel: ObservableObject {
 
     private(set) var region: MKCoordinateRegion?
     private var loadedKey: String?
+    /// Telt elke laadactie; een trager, ouder antwoord overschrijft zo nooit een nieuwer
+    private var generation = 0
 
     func load(country: String, world: Bool, force: Bool = false) async {
         let key = world ? "world" : country
         guard force || loadedKey != key else { return }
         loadedKey = key
+        generation += 1
+        let gen = generation
         isLoading = true
         failed = false
         do {
             let list = try await RadioBrowser.shared.geoStations(country: world ? nil : country)
+            guard gen == generation else { return }
             stations = list
             recluster()
         } catch {
+            guard gen == generation else { return }
             failed = true
             loadedKey = nil
         }
         isLoading = false
+    }
+
+    /// Hoe ver `loadNear` moest zoeken
+    enum NearbyResult { case near, wide, country, empty }
+
+    /// Zenders rond een plaats (SPEC §9): binnen 50 km, anders 150 km, anders het land van de plaats.
+    /// `nil` = mislukt of ingehaald door een nieuwere laadactie.
+    func loadNear(_ c: CLLocationCoordinate2D, countryCode: String) async -> NearbyResult? {
+        loadedKey = String(format: "geo|%.3f|%.3f", c.latitude, c.longitude)
+        generation += 1
+        let gen = generation
+        isLoading = true
+        failed = false
+        world = false
+        let api = RadioBrowser.shared
+        do {
+            var result = NearbyResult.near
+            var list = try await api.geoStations(latitude: c.latitude, longitude: c.longitude, distance: 50_000)
+            if list.isEmpty {
+                guard gen == generation else { return nil }
+                result = .wide
+                list = try await api.geoStations(latitude: c.latitude, longitude: c.longitude, distance: 150_000)
+            }
+            if list.isEmpty, !countryCode.isEmpty {
+                guard gen == generation else { return nil }
+                result = .country
+                list = try await api.geoStations(country: countryCode)
+            }
+            guard gen == generation else { return nil }
+            stations = list
+            recluster()
+            isLoading = false
+            return list.isEmpty ? .empty : result
+        } catch {
+            guard gen == generation else { return nil }
+            failed = true
+            loadedKey = nil
+            isLoading = false
+            return nil
+        }
+    }
+
+    /// De zender die het dichtst bij een punt ligt
+    func nearestStation(to c: CLLocationCoordinate2D) -> Station? {
+        stations
+            .compactMap { s -> (Station, Double)? in
+                guard let sc = s.coordinate else { return nil }
+                return (s, Self.distance(c, sc))
+            }
+            .min { $0.1 < $1.1 }?
+            .0
     }
 
     func regionChanged(_ r: MKCoordinateRegion) {
@@ -100,6 +157,268 @@ final class MapModel: ObservableObject {
         let dLat = a.latitude - b.latitude
         let dLon = (a.longitude - b.longitude) * cos(a.latitude * .pi / 180)
         return dLat * dLat + dLon * dLon
+    }
+}
+
+// MARK: - Zoeken op de kaart (SPEC §9)
+
+/// Een suggestie onder het zoekveld van de kaart
+enum MapSuggestion: Identifiable {
+    /// Land uit de landenlijst van Radio Browser
+    case country(Country)
+    /// Plaats uit de geocoder van Apple (nog niet opgelost naar een coördinaat)
+    case place(MKLocalSearchCompletion)
+    /// Al opgelost (recente zoekopdracht of directe geocode na Enter)
+    case item(MapSearchItem)
+
+    var id: String {
+        switch self {
+        case .country(let c): return "c|" + c.code
+        case .place(let p): return "p|" + p.title + "|" + p.subtitle
+        case .item(let i): return "i|" + i.id
+        }
+    }
+}
+
+/// Focus van het zoekveld en (Apple TV) de recente zoekopdrachten eronder
+enum MapSearchFocus: Hashable {
+    case field
+    case recent(String)
+}
+
+/// Opgeloste plaats uit MKLocalSearch (Sendable, zodat hij veilig uit de callback komt)
+private struct ResolvedPlace: Sendable {
+    let latitude: Double
+    let longitude: Double
+    let countryCode: String
+    let name: String
+    let region: String
+}
+
+/// Suggesties tijdens het typen (debounce 300 ms, vanaf 2 tekens): landen uit de (gecachete) landenlijst van
+/// Radio Browser en plaatsen uit `MKLocalSearchCompleter` (`.address`). Een gekozen plaats wordt met
+/// `MKLocalSearch` opgelost naar coördinaat + landcode.
+@MainActor
+final class MapSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+    @Published var query = "" {
+        didSet { if query != oldValue { schedule() } }
+    }
+    @Published private(set) var countries: [Country] = []
+    @Published private(set) var places: [MKLocalSearchCompletion] = []
+    /// Debounce of geocoder loopt nog
+    @Published private(set) var isSearching = false
+    /// Een gekozen plaats wordt opgelost
+    @Published private(set) var resolving = false
+    /// De zoekterm waarvoor `countries` en `places` gelden
+    @Published private(set) var searchedQuery = ""
+
+    static let maxCountries = 5
+    static let maxPlaces = 6
+
+    private let completer: MKLocalSearchCompleter
+    private var debounce: Task<Void, Never>?
+    private var allCountries: [Country] = []
+    /// Genormaliseerde landnamen (app-taal, systeemtaal, Engels, Radio Browser) → ISO-code
+    private var nameIndex: [String: String] = [:]
+    private var running: [MKLocalSearch] = []
+
+    override init() {
+        completer = MKLocalSearchCompleter()
+        super.init()
+        completer.delegate = self
+        completer.resultTypes = .address
+    }
+
+    var trimmed: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
+    var hasQuery: Bool { trimmed.count >= 2 }
+
+    /// Alle suggesties in volgorde: eerst landen, dan plaatsen
+    var suggestions: [MapSuggestion] { countries.map { .country($0) } + places.map { .place($0) } }
+
+    var showsNoResults: Bool {
+        hasQuery && !isSearching && searchedQuery == trimmed && countries.isEmpty && places.isEmpty
+    }
+
+    func clear() {
+        query = ""
+    }
+
+    // MARK: Zoeken
+
+    private func schedule() {
+        debounce?.cancel()
+        let q = trimmed
+        guard q.count >= 2 else {
+            completer.cancel()
+            countries = []
+            places = []
+            searchedQuery = ""
+            isSearching = false
+            return
+        }
+        isSearching = true
+        debounce = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard !Task.isCancelled, let self else { return }
+            await self.ensureCountries()
+            guard !Task.isCancelled, self.trimmed == q else { return }
+            self.countries = self.matchCountries(q)
+            self.searchedQuery = q
+            if self.completer.queryFragment == q {
+                // zelfde term als de vorige keer: de completer meldt zich dan niet opnieuw
+                self.completerUpdated()
+            } else {
+                self.places = []
+                self.completer.queryFragment = q
+            }
+        }
+    }
+
+    private func ensureCountries() async {
+        guard allCountries.isEmpty else { return }
+        let list = (try? await RadioBrowser.shared.countries()) ?? []
+        guard allCountries.isEmpty, !list.isEmpty else { return }
+        allCountries = list
+        var index: [String: String] = [:]
+        let locales = [Localizer.shared.locale, Locale.current, Locale(identifier: "en_US"), Locale(identifier: "nl_NL")]
+        for c in list {
+            index[Self.norm(c.name)] = c.code
+            for l in locales {
+                if let n = l.localizedString(forRegionCode: c.code) { index[Self.norm(n)] = c.code }
+            }
+        }
+        nameIndex = index
+    }
+
+    /// Match op gelokaliseerde naam, Engelse naam en landcode; beste match eerst, dan meeste zenders
+    private func matchCountries(_ q: String) -> [Country] {
+        let nq = Self.norm(q)
+        let code = q.uppercased()
+        var scored: [(country: Country, score: Int)] = []
+        for c in allCountries {
+            let local = Self.norm(c.localizedName)
+            let english = Self.norm(c.name)
+            let score: Int
+            if (q.count == 2 && c.code == code) || local == nq || english == nq {
+                score = 0
+            } else if local.hasPrefix(nq) || english.hasPrefix(nq) {
+                score = 1
+            } else if local.contains(" " + nq) || english.contains(" " + nq) || local.contains("-" + nq) {
+                score = 2
+            } else if nq.count >= 3, local.contains(nq) || english.contains(nq) {
+                score = 3
+            } else {
+                continue
+            }
+            scored.append((c, score))
+        }
+        scored.sort { $0.score != $1.score ? $0.score < $1.score : $0.country.stationCount > $1.country.stationCount }
+        return scored.prefix(Self.maxCountries).map { $0.country }
+    }
+
+    /// Kleine letters, zonder accenten en zonder "the " (Radio Browser: "The Netherlands")
+    static func norm(_ s: String) -> String {
+        var t = s.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if t.hasPrefix("the ") { t.removeFirst(4) }
+        return t
+    }
+
+    /// Landcode bij een plaatssuggestie, geraden uit het laatste deel van de ondertitel ("Noord-Holland, Nederland")
+    func countryCode(for p: MKLocalSearchCompletion) -> String {
+        for text in [p.subtitle, p.title] {
+            guard let last = text.split(separator: ",").last else { continue }
+            if let code = nameIndex[Self.norm(String(last))] { return code }
+        }
+        return ""
+    }
+
+    // MARK: MKLocalSearchCompleterDelegate
+
+    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        Task { @MainActor [weak self] in self?.completerUpdated() }
+    }
+
+    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        Task { @MainActor [weak self] in self?.completerFailed() }
+    }
+
+    private func completerUpdated() {
+        guard completer.queryFragment == trimmed, hasQuery else { return }
+        places = Array(completer.results.filter { !$0.title.isEmpty }.prefix(Self.maxPlaces))
+        searchedQuery = trimmed
+        isSearching = false
+    }
+
+    private func completerFailed() {
+        guard completer.queryFragment == trimmed else { return }
+        places = []
+        searchedQuery = trimmed
+        isSearching = false
+    }
+
+    // MARK: Oplossen
+
+    /// Een plaatssuggestie oplossen naar coördinaat + landcode
+    func resolve(_ p: MKLocalSearchCompletion) async -> MapSearchItem? {
+        let request = MKLocalSearch.Request(completion: p)
+        request.resultTypes = .address
+        guard let found = await run(request) else { return nil }
+        let code = found.countryCode.isEmpty ? countryCode(for: p) : found.countryCode
+        return MapSearchItem(kind: .place, title: p.title, subtitle: p.subtitle, countryCode: code, stationCount: 0,
+                             latitude: found.latitude, longitude: found.longitude)
+    }
+
+    /// Enter zonder suggestie te kiezen: de eerste suggestie (zo nodig meteen gezocht, zonder debounce)
+    func firstSuggestion() async -> MapSuggestion? {
+        let q = trimmed
+        guard q.count >= 2 else { return nil }
+        if searchedQuery == q, !isSearching, let first = suggestions.first { return first }
+        debounce?.cancel()
+        await ensureCountries()
+        guard trimmed == q else { return nil }
+        countries = matchCountries(q)
+        if let c = countries.first { return .country(c) }
+        if completer.queryFragment == q, let p = completer.results.first(where: { !$0.title.isEmpty }) { return .place(p) }
+        // nog geen plaatsen: direct geocoderen
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = q
+        request.resultTypes = .address
+        let found = await run(request)
+        guard trimmed == q else { return nil }
+        guard let found else {
+            places = []
+            searchedQuery = q
+            isSearching = false
+            return nil
+        }
+        return .item(MapSearchItem(kind: .place, title: found.name.isEmpty ? q : found.name, subtitle: found.region,
+                                   countryCode: found.countryCode, stationCount: 0,
+                                   latitude: found.latitude, longitude: found.longitude))
+    }
+
+    private func run(_ request: MKLocalSearch.Request) async -> ResolvedPlace? {
+        let search = MKLocalSearch(request: request)
+        running.append(search)
+        resolving = true
+        let found: ResolvedPlace? = await withCheckedContinuation { cont in
+            search.start { response, _ in
+                guard let item = response?.mapItems.first else {
+                    cont.resume(returning: nil)
+                    return
+                }
+                let pm = item.placemark
+                let region = [pm.administrativeArea, pm.country].compactMap { $0 }.filter { !$0.isEmpty }
+                cont.resume(returning: ResolvedPlace(latitude: pm.coordinate.latitude,
+                                                     longitude: pm.coordinate.longitude,
+                                                     countryCode: (pm.isoCountryCode ?? "").uppercased(),
+                                                     name: item.name ?? pm.locality ?? "",
+                                                     region: region.joined(separator: ", ")))
+            }
+        }
+        running.removeAll { $0 === search }
+        resolving = !running.isEmpty
+        return found
     }
 }
 
