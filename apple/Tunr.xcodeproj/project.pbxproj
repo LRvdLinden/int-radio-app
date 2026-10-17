@@ -33,6 +33,7 @@
 		A710CD544731291B39B61954 /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F64632FBA964CF13FE8C366 /* Cards.swift */; };
 		AAA84398B71254613645DF7B /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B211D0140C7CDBADAB4AA48 /* DiscoverView.swift */; };
 		ABCBD2868DDF846FBD92A2C8 /* Brand+Art.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76AF8FE9CC0562561750ACB2 /* Brand+Art.swift */; };
+		ACBE2C937674753465A30B3B /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B266D3D6DC4574EDAB825310 /* Stats.swift */; };
 		AD2F83CB53DFE1812CF24278 /* SettingsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164A240C07605C0B5378E68C /* SettingsSync.swift */; };
 		B08869B6D2E13B95CD05AE96 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08AFD0AC63492179E7D66BFB /* CarPlaySceneDelegate.swift */; };
 		BA155AAB7179D6990D355F70 /* CountryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB13927D9EE43267041CD5FE /* CountryPickerView.swift */; };
@@ -70,6 +71,7 @@
 		A2438D34C1231D4473CB47A3 /* EpisodePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodePlayerView.swift; sourceTree = "<group>"; };
 		A4B478945886F5F7771730D9 /* ArtworkLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLookup.swift; sourceTree = "<group>"; };
 		B0417683AE134B8ED1591B69 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		B266D3D6DC4574EDAB825310 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		B8950762D8116B82EA57B2C2 /* PodcastCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCards.swift; sourceTree = "<group>"; };
 		CB13927D9EE43267041CD5FE /* CountryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerView.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 			children = (
 				6633117DC4DABCDCCE1A0EB9 /* Library.swift */,
 				164A240C07605C0B5378E68C /* SettingsSync.swift */,
+				B266D3D6DC4574EDAB825310 /* Stats.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -355,6 +358,7 @@
 				6078071F87F48ABB9E8238AA /* SplashView.swift in Sources */,
 				9918C1D760C6BB6839770EB5 /* StationDetailView.swift in Sources */,
 				E0057F93AFAE528DBD2DFDAE /* StationGridView.swift in Sources */,
+				ACBE2C937674753465A30B3B /* Stats.swift in Sources */,
 				3E1CC6E67A72766170E1300D /* Theme.swift in Sources */,
 				21E0E242F7B5065DA33F9936 /* TunrApp.swift in Sources */,
 			);
@@ -455,7 +459,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -524,7 +528,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
