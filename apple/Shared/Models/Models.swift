@@ -119,7 +119,7 @@ struct Station: Codable, Identifiable, Hashable, Sendable {
         return URL(string: favicon)
     }
 
-    /// Logo-bronnen in volgorde (favicon, Google- en DuckDuckGo-favicondienst op het domein van de homepage);
+    /// Logo-bronnen in volgorde (App Store-icoon als de tabel al geladen is, Google, favicon, DuckDuckGo);
     /// zie `LogoSources`.
     var logoCandidates: [URL] { LogoSources.candidates(for: self) }
 

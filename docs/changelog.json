@@ -697,6 +697,27 @@
           "en": "Apple TV: grey buttons (favourite, website, played) were invisible when focused."
         }
       ]
+    },
+    {
+      "build": 21,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Mooiere zenderlogo's: Tunr toont nu eerst het app-icoon van de zender uit de App Store, daarna het grote icoon van de website van de zender, en pas dan het logo uit Radio Browser.",
+          "en": "Nicer station logos: Tunr now shows the station's App Store app icon first, then the large icon of the station's website, and only then the Radio Browser logo."
+        }
+      ]
     }
   ]
 }

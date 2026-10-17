@@ -196,8 +196,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                 }
                 completion()
             }
-            if !s.logoCandidates.isEmpty {
-                // logo met terugval (favicon → Google/DuckDuckGo op het domein), zie LogoSources
+            if LogoSources.mayHaveLogo(s) {
+                // logo met terugval (App Store-icoon → Google → favicon → DuckDuckGo), zie LogoSources
                 Task { @MainActor in
                     if let img = await LogoResolver.shared.image(for: s) { item.setImage(img) }
                 }

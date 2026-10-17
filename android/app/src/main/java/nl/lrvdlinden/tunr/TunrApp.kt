@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import nl.lrvdlinden.tunr.data.Http
+import nl.lrvdlinden.tunr.data.IconMap
 import nl.lrvdlinden.tunr.data.Library
 import nl.lrvdlinden.tunr.data.PodcastApi
 import nl.lrvdlinden.tunr.data.RadioBrowser
@@ -26,6 +27,7 @@ class TunrApp : Application(), ImageLoaderFactory {
         super.onCreate()
         Device.init(this)
         RadioBrowser.init(this)
+        IconMap.init(this)
         Library.init(this)
         PodcastApi.init(this)
     }

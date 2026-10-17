@@ -142,12 +142,90 @@
     if (location.protocol === 'https:') u = u.replace(/^http:/i, 'https:'); // gemengde inhoud vermijden
     return u;
   };
+  // ---------- App Store-iconen (SPEC §1) ----------
+  // Vaste tabel per land, gemaakt door tools/make_station_icons.py (workflow Icons): assets/data/icons/<CC>.json
+  // (zenders zonder land: _world.json) = {"u": {stationuuid: url}, "n": {naamsleutel: url}}. Pas geladen als een
+  // zender uit dat land getoond wordt; bewaard in localStorage (7 dagen). Komt een tabel binnen nadat een
+  // zendercover al getekend is, dan wordt die cover opnieuw gemaakt (zie iconUpgrade).
+  var ICON_BASE = (function () {
+    try { var cs = document.currentScript; return new URL('../data/icons/', (cs && cs.src) || location.href).href; }
+    catch (e) { return '/assets/data/icons/'; }
+  })();
+  var ICON_TTL = 7 * 864e5, IK = 'tunr.icons:', iconTabs = {}, iconWait = {}, iconRetry = {}, artReg = {};
+  // naamsleutel, gelijk aan norm_key in tools/make_station_icons.py (en Apple/Android): NFKD, accenten weg,
+  // kleine letters, alleen letters en decimale cijfers
+  T.iconKey = function (name) {
+    return String(name || '').normalize('NFKD').replace(/\p{Mn}/gu, '').toLowerCase().replace(/[^\p{L}\p{Nd}]/gu, '');
+  };
+  function iconFile(s) { var cc = String((s && s.cc) || '').toUpperCase(); return /^[A-Z]{2}$/.test(cc) ? cc : '_world'; }
+  function iconReady(f) { return !!iconTabs[f] || (iconRetry[f] || 0) > Date.now(); }
+  function iconLoad(f) {
+    if (iconReady(f)) return Promise.resolve();
+    if (iconWait[f]) return iconWait[f];
+    var stale = null;
+    try {
+      var raw = localStorage.getItem(IK + f);
+      if (raw) {
+        var o = JSON.parse(raw);
+        if (o && o.v && o.e > Date.now()) { iconTabs[f] = o.v; return Promise.resolve(); }
+        if (o && o.v) stale = o.v;
+      }
+    } catch (e) {}
+    iconWait[f] = fetch(ICON_BASE + f + '.json').then(function (r) {
+      if (r.status === 404) return {}; // nog geen iconen voor dit land (1 dag onthouden)
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (t) {
+      t = t && typeof t === 'object' ? t : {};
+      iconTabs[f] = t;
+      var empty = !t.u && !t.n;
+      try { localStorage.setItem(IK + f, JSON.stringify({ e: Date.now() + (empty ? 864e5 : ICON_TTL), v: t })); } catch (e) {}
+    }, function () {
+      if (stale) iconTabs[f] = stale; else iconRetry[f] = Date.now() + 10 * 6e4;
+    }).then(function () { delete iconWait[f]; iconUpgrade(f); });
+    return iconWait[f];
+  }
+  // App Store-icoon van de zender als de tabel van het land er al is ('' = niet (of nog niet) bekend)
+  T.iconFor = function (s) {
+    var t = s && iconTabs[iconFile(s)];
+    if (!t) return '';
+    var u = (t.u && t.u[s.id]) || (t.n && t.n[T.iconKey(s.name)]) || '';
+    return /^https:\/\//i.test(u) ? u : '';
+  };
+  // wacht (max. 1,5 s) op de tabellen van een zenderlijst, zodat de eerste weergave al de App Store-iconen heeft;
+  // bij veel landen (kaart wereldwijd) niet wachten: dan laadt elke cover zijn land zelf
+  T.iconsReady = function (arr) {
+    var files = [];
+    (arr || []).forEach(function (s) { var f = iconFile(s); if (files.indexOf(f) < 0) files.push(f); });
+    if (!files.length || files.length > 3) return Promise.resolve(arr);
+    var all = Promise.all(files.map(iconLoad));
+    return Promise.race([all, new Promise(function (r) { setTimeout(r, 1500); })]).then(function () { return arr; }, function () { return arr; });
+  };
+  // tabel binnen: covers van zenders uit dat land met een App Store-icoon opnieuw maken
+  function iconUpgrade(f) {
+    var els = document.querySelectorAll('.art[data-st]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i], s = artReg[el.getAttribute('data-st')];
+      if (!s || iconFile(s) !== f) continue;
+      var ic = T.iconFor(s);
+      if (!ic || logoBad[ic] || logoGood[s.id] === ic) continue;
+      var im = el.querySelector('img.logo');
+      if (im && im.getAttribute('data-cur') === ic) continue;
+      delete logoGood[s.id];
+      var tmp = document.createElement('span');
+      tmp.innerHTML = T.art(s, el.getAttribute('data-cls') || '');
+      if (tmp.firstChild) el.replaceWith(tmp.firstChild);
+    }
+  }
+
   // ---------- zenderlogo's met terugval ----------
-  // 1. favicon uit Radio Browser (http → https); 2. Google-favicondienst op het domein van de homepage (sz=256);
-  // 3. DuckDuckGo-favicondienst; 4. monogram. Resultaten van de diensten kleiner dan 48 px = mislukt (Google geeft
-  // dan een globe van 16 px). Een klein favicon alleen als laatste redmiddel. Mislukte URL's onthouden we deze sessie.
-  var LOGO_MIN = 48, logoBad = {}, logoTiny = {}, logoGood = {};
+  // 1. App Store-icoon uit de tabel; 2. Google-favicondienst op het domein van de homepage (sz=256), alleen vanaf
+  // 96 px (dan is het meestal het apple-touch-icon van de site); 3. favicon uit Radio Browser (http → https);
+  // 4. DuckDuckGo-favicondienst (vanaf 48 px); 5. monogram. Een klein favicon/app-icoon alleen als laatste
+  // redmiddel, van de diensten nooit. Mislukte URL's onthouden we deze sessie.
+  var LOGO_MIN = 48, LOGO_MIN_GOOGLE = 96, logoBad = {}, logoTiny = {}, logoGood = {};
   function isLogoService(u) { return /^https:\/\/(www\.google\.com\/s2\/favicons|icons\.duckduckgo\.com\/ip3\/)/i.test(u); }
+  function logoMin(u) { return /^https:\/\/www\.google\.com\/s2\/favicons/i.test(u) ? LOGO_MIN_GOOGLE : LOGO_MIN; }
   // domein van de homepage ("https://www.npo.nl/radio2" → "www.npo.nl"), of ''
   T.logoHost = function (hp) {
     hp = String(hp || '').trim();
@@ -160,13 +238,12 @@
   };
   // alle bronnen in volgorde (zonder de URL's die deze sessie al mislukten)
   T.logoCandidates = function (s) {
-    var out = [], f = T.logoUrl(s && s.favicon), h = T.logoHost(s && s.homepage);
+    var out = [], ic = T.iconFor(s), f = T.logoUrl(s && s.favicon), h = T.logoHost(s && s.homepage);
+    if (ic) out.push(ic);
+    if (h) out.push('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(h) + '&sz=256');
     if (f) out.push(f);
-    if (h) {
-      out.push('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(h) + '&sz=256');
-      out.push('https://icons.duckduckgo.com/ip3/' + h + '.ico');
-    }
-    return out.filter(function (u) { return !logoBad[u]; });
+    if (h) out.push('https://icons.duckduckgo.com/ip3/' + h + '.ico');
+    return out.filter(function (u, i) { return !logoBad[u] && out.indexOf(u) === i; });
   };
   // beste bekende logo voor achtergronden en de mediasessie (een eerder geladen bron, anders de eerste kandidaat)
   T.logoBest = function (s) {
@@ -176,13 +253,18 @@
   };
   // cls: extra klassen (bijv. 'lg'); de equalizer staat altijd in de art en is alleen zichtbaar bij .is-playing
   T.art = function (s, cls) {
+    // tabel van het land nog niet geladen: nu laden (de cover wordt daarna zo nodig opnieuw gemaakt)
+    var ifile = iconFile(s);
+    if (!iconReady(ifile) && s && s.id) iconLoad(ifile);
+    if (s && s.id) artReg[s.id] = s;
     var p = T.pal(s.name), all = T.logoCandidates(s);
     var good = logoGood[s.id] && !logoBad[logoGood[s.id]] ? logoGood[s.id] : '';
     // te kleine favicons pas als laatste redmiddel
     var tiny = all.filter(function (u) { return logoTiny[u]; })[0] || '';
     var list = good ? [good] : all.filter(function (u) { return !logoTiny[u]; });
     var first = list[0] || tiny;
-    return '<span class="art ' + (cls || '') + '" style="--a:' + p[0] + ';--b:' + p[1] + '" aria-hidden="true">' +
+    return '<span class="art ' + (cls || '') + '" style="--a:' + p[0] + ';--b:' + p[1] + '" aria-hidden="true"' +
+      (s.id ? ' data-st="' + T.esc(s.id) + '" data-cls="' + T.esc(cls || '') + '"' : '') + '>' +
       '<span class="mono">' + T.esc(T.monogram(s.name)) + '</span>' +
       (first ? '<span class="lt"><img class="logo" src="' + T.esc(first) + '" data-lk="' + T.esc(s.id || '') + '" data-cur="' + T.esc(first) +
         '" data-alt="' + T.esc(list.slice(1).join(' ')) + '"' + (tiny && tiny !== first ? ' data-tiny="' + T.esc(tiny) + '"' : '') +
@@ -217,7 +299,7 @@
     }
     var cur = el.getAttribute('data-cur') || '', w = el.naturalWidth;
     if (el.hasAttribute('data-final')) { if (w >= 8) { acceptLogo(el); } else { logoBad[cur] = 1; dropLogo(el); } return; }
-    if (w >= LOGO_MIN) { logoGood[el.getAttribute('data-lk')] = cur; acceptLogo(el); return; }
+    if (w >= logoMin(cur)) { logoGood[el.getAttribute('data-lk')] = cur; acceptLogo(el); return; }
     if (isLogoService(cur) || w < 8) { logoBad[cur] = 1; nextLogo(el); return; }
     // klein favicon: bewaren als laatste redmiddel; zijn er geen andere bronnen meer, dan meteen gebruiken
     logoTiny[cur] = 1;

@@ -13,5 +13,7 @@ android/.kotlin/
 *.iml
 # Tools
 tools/*.wav
+tools/__pycache__/
+.icons-cache.json*
 node_modules/
 website/assets/js/mapkit-token.js

@@ -40,6 +40,7 @@ import nl.lrvdlinden.tunr.Brand
 import nl.lrvdlinden.tunr.LocaleHelper
 import nl.lrvdlinden.tunr.MainActivity
 import nl.lrvdlinden.tunr.R
+import nl.lrvdlinden.tunr.data.IconMap
 import nl.lrvdlinden.tunr.data.LogoSources
 import nl.lrvdlinden.tunr.data.Artwork
 import nl.lrvdlinden.tunr.data.Episode
@@ -450,6 +451,8 @@ class PlaybackService : MediaLibraryService() {
             else -> emptyList()
         }
         stations.forEach { lastLists[it.uuid] = stations }
+        // App Store-iconen (IconMap) eerst laden, zodat Android Auto meteen de mooie logo's krijgt
+        runCatching { IconMap.ensureFor(stations) }
         return stations.map { it.toMediaItem() }
     }
 

@@ -78,7 +78,7 @@ struct StationArt: View {
                     RemoteImage(url: overrideURL, contentMode: .fill) { monogram(side) }
                 } else {
                     // build 4: het logo vult de hele tegel, zonder extra witte tegel of rand eromheen.
-                    // Logo met terugval: favicon → Google/DuckDuckGo op het domein → monogram (LogoSources)
+                    // Logo met terugval: App Store-icoon → Google → favicon → DuckDuckGo → monogram (LogoSources)
                     StationLogoImage(station: station) { monogram(side) }
                 }
             }
@@ -115,7 +115,7 @@ struct StationLogoImage<Fallback: View>: View {
         self.station = station
         self.fallback = fallback
         _image = State(initialValue: LogoResolver.shared.cachedImage(for: station))
-        _failed = State(initialValue: LogoResolver.shared.knownMissing(station) || station.logoCandidates.isEmpty)
+        _failed = State(initialValue: LogoResolver.shared.knownMissing(station) || !LogoSources.mayHaveLogo(station))
     }
 
     var body: some View {
@@ -137,7 +137,7 @@ struct StationLogoImage<Fallback: View>: View {
                 return
             }
             image = nil
-            guard !station.logoCandidates.isEmpty, !LogoResolver.shared.knownMissing(station) else {
+            guard LogoSources.mayHaveLogo(station), !LogoResolver.shared.knownMissing(station) else {
                 failed = true
                 return
             }

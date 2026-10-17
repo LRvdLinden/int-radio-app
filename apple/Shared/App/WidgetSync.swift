@@ -20,8 +20,8 @@ final class WidgetSync {
     private var logoTask: Task<Void, Never>?
     /// Logo's die deze sessie niet te laden waren (niet steeds opnieuw proberen)
     private var failedLogos = Set<String>()
-    /// zender-id → logo-bronnen (favicon, daarna Google/DuckDuckGo op het domein; zie LogoSources)
-    private var logoCandidates: [String: [URL]] = [:]
+    /// zender-id → zender, voor de logo-bronnen (App Store-icoon, Google, favicon, DuckDuckGo; zie LogoSources)
+    private var logoStations: [String: Station] = [:]
 
     private init() {}
 
@@ -65,7 +65,7 @@ final class WidgetSync {
         snap.recents = lib.recents.prefix(WidgetBridge.maxStations).map(Self.widgetStation)
         for st in [p.station].compactMap({ $0 }) + lib.favorites.prefix(WidgetBridge.maxStations)
             + lib.recents.prefix(WidgetBridge.maxStations) {
-            logoCandidates[st.id] = st.logoCandidates
+            logoStations[st.id] = st
         }
         snap.language = Localizer.shared.language
 
@@ -129,12 +129,11 @@ final class WidgetSync {
             seen.insert(s.id)
             wanted.append(s)
         }
-        let candidates = logoCandidates
-        let urls: (WidgetStation) -> [URL] = { s in
-            candidates[s.id] ?? (s.logoURL.flatMap { URL(string: $0) }.map { [$0] } ?? [])
-        }
+        let stations = logoStations
+        let plain: (WidgetStation) -> [URL] = { s in s.logoURL.flatMap { URL(string: $0) }.map { [$0] } ?? [] }
         let missing = wanted.filter { s in
-            !urls(s).isEmpty && !failedLogos.contains(s.id) && !WidgetBridge.hasLogo(for: s.id)
+            let possible = stations[s.id].map { LogoSources.mayHaveLogo($0) } ?? !plain(s).isEmpty
+            return possible && !failedLogos.contains(s.id) && !WidgetBridge.hasLogo(for: s.id)
         }
         let keep = seen
         logoTask?.cancel()
@@ -142,7 +141,13 @@ final class WidgetSync {
             var added: [String] = []
             for s in missing {
                 if Task.isCancelled { return }
-                if let png = await WidgetLogoMaker.makePNG(fromCandidates: urls(s)) {
+                let urls: [URL]
+                if let st = stations[s.id] {
+                    urls = await LogoSources.resolveCandidates(for: st)
+                } else {
+                    urls = plain(s)
+                }
+                if let png = await WidgetLogoMaker.makePNG(fromCandidates: urls) {
                     WidgetBridge.writeLogo(png, for: s.id)
                     added.append(s.id)
                 } else {
@@ -167,15 +172,15 @@ enum WidgetLogoMaker {
         return downscale(data, maxPixel: maxPixel)
     }
 
-    /// Eerste bron die een logo van minstens `LogoSources.minPixels` breed geeft; een kleiner favicon alleen als
-    /// de favicondiensten niets hebben (Google geeft een globe van 16 px als hij niets weet).
+    /// Eerste bron die een logo van minstens `LogoSources.requiredPixels(for:)` breed geeft (Google 96, de rest 48); een
+    /// kleiner favicon/app-icoon alleen als niets anders werkt (Google geeft een globe van 16 px als hij niets weet).
     static func makePNG(fromCandidates urls: [URL], maxPixel: Int = 120) async -> Data? {
         var tiny: Data?
         for url in urls {
             if Task.isCancelled { return nil }
             guard let data = await download(url) else { continue }
             let width = largestWidth(data)
-            if CGFloat(width) >= LogoSources.minPixels {
+            if CGFloat(width) >= LogoSources.requiredPixels(for: url) {
                 if let png = downscale(data, maxPixel: maxPixel) { return png }
             } else if width > 0, tiny == nil, !LogoSources.isFallbackService(url) {
                 tiny = data

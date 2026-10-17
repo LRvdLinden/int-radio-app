@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 21
+_2026-10-17_
+
+**Verbeterd**
+
+- Mooiere zenderlogo's: Tunr toont nu eerst het app-icoon van de zender uit de App Store, daarna het grote icoon van de website van de zender, en pas dan het logo uit Radio Browser. _(Alle apps)_  
+  <sub>Nicer station logos: Tunr now shows the station's App Store app icon first, then the large icon of the station's website, and only then the Radio Browser logo.</sub>
+
 ## Build 20
 _2026-10-17_
 

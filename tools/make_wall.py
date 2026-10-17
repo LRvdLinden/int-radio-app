@@ -6,11 +6,18 @@ houdt alleen nette, (bijna) vierkante logo's van minstens 96 px over en schrijft
 website/assets/img/wall/ plus de lijst naar website/assets/js/wall.js. De site laadt daarna alleen die vaste
 bestanden: geen live ophalen, geen geflikker. Opnieuw maken: workflow Website met "Hero-logo's vernieuwen".
 
+Voorkeur: het app-icoon uit de App Store (zelfde match als tools/make_station_icons.py; eerst de vaste tabel
+website/assets/data/icons/<CC>.json, anders hooguit LIVE_MAX keer zelf iTunes vragen), daarna het favicon uit
+Radio Browser.
+
 Gebruik: python3 tools/make_wall.py [aantal]   (standaard 76 = alle tegels behalve die van Tunr)
 """
 import io, json, os, random, sys, urllib.request, urllib.parse
 
 from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import make_station_icons as icons  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_IMG = os.path.join(ROOT, 'website', 'assets', 'img', 'wall')
@@ -19,6 +26,41 @@ UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
 WANT = int(sys.argv[1]) if len(sys.argv) > 1 else 76
 NL_SHARE = 30
 SIZE = 192
+ICON_DIR = os.path.join(ROOT, 'website', 'assets', 'data', 'icons')
+LIVE_MAX = int(os.environ.get('WALL_ITUNES_MAX', '60'))  # live iTunes-verzoeken (≈ 3,2 s per stuk)
+_maps, _live = {}, {'n': 0, 'itunes': None}
+
+
+def icon_map(cc):
+    """Vaste tabel met App Store-iconen voor een land (of {} als die er niet is)."""
+    cc = cc or '_world'
+    if cc not in _maps:
+        try:
+            with open(os.path.join(ICON_DIR, cc + '.json'), encoding='utf-8') as fh:
+                _maps[cc] = json.load(fh)
+        except Exception:
+            _maps[cc] = {}
+    return _maps[cc]
+
+
+def app_icon(s):
+    """URL van het App Store-icoon van de zender, of ''."""
+    cc = (s.get('countrycode') or '').upper()
+    m = icon_map(cc)
+    url = (m.get('u') or {}).get(s.get('stationuuid') or '') or (m.get('n') or {}).get(icons.norm_key(s.get('name')))
+    if url:
+        return url
+    if _live['n'] >= LIVE_MAX:
+        return ''
+    _live['n'] += 1
+    if _live['itunes'] is None:
+        _live['itunes'] = icons.Itunes(3.2)
+    try:
+        return icons.lookup(_live['itunes'], s.get('name') or '', cc, s.get('homepage') or '', us_fallback=False)
+    except Exception as e:
+        print('iTunes mislukt:', e)
+        _live['n'] = LIVE_MAX  # niet blijven proberen
+        return ''
 
 
 def get(url, timeout=20):
@@ -108,7 +150,13 @@ def main():
             if not name or not k or k in seen:
                 continue
             seen.add(k)
-            res = logo((s.get('favicon') or '').strip())
+            # eerst het (mooiere) app-icoon uit de App Store, dan het favicon uit Radio Browser
+            res = None
+            ai = app_icon(s)
+            if ai:
+                res = logo(ai)
+            if not res:
+                res = logo((s.get('favicon') or '').strip())
             if not res:
                 continue
             data, h = res
@@ -136,7 +184,7 @@ def main():
             fh.write(data)
         items.append({'n': name, 'p': place, 'i': fn})
     with open(OUT_JS, 'w', encoding='utf-8') as fh:
-        fh.write('// Gemaakt door tools/make_wall.py: vaste zenderlogo\'s voor de hero (bron: Radio Browser).\n')
+        fh.write('// Gemaakt door tools/make_wall.py: vaste zenderlogo\'s voor de hero (bron: App Store-iconen en Radio Browser).\n')
         fh.write('window.TUNR_WALL = ' + json.dumps(items, ensure_ascii=False, separators=(',', ':')) + ';\n')
     print(f'{len(items)} logo\'s geschreven')
 

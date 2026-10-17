@@ -1,0 +1,87 @@
+name: Icons
+
+# Mooie zendericonen: per populaire zender het app-icoon uit de App Store (iTunes Search API, zonder sleutel).
+# tools/make_station_icons.py zoekt rustig (≈ 20 verzoeken per minuut) en gaat elke run verder waar de vorige
+# stopte; de cache staat op de branch icons-data. Uitvoer: website/assets/data/icons/<CC>.json (+ _world.json),
+# gecommit naar main; daarna start deze workflow de workflow Website, zodat tunr.online de nieuwe tabel serveert.
+on:
+  workflow_dispatch:
+    inputs:
+      budget:
+        description: "Tijdsbudget voor iTunes-verzoeken (minuten)"
+        default: "330"
+      offline:
+        description: "Geen iTunes-verzoeken, alleen de uitvoer opnieuw maken uit de cache"
+        type: boolean
+        default: false
+  schedule:
+    - cron: '23 2 * * 0'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: icons
+  cancel-in-progress: false
+
+jobs:
+  icons:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Tests (offline)
+        run: |
+          python3 -m py_compile tools/make_station_icons.py tools/test_station_icons.py
+          python3 tools/test_station_icons.py
+
+      - name: Cache ophalen (branch icons-data)
+        run: |
+          if git fetch -q --depth 1 origin icons-data 2>/dev/null && git show FETCH_HEAD:cache.json > "$RUNNER_TEMP/icons-cache.json" 2>/dev/null; then
+            echo "cache: $(wc -c < "$RUNNER_TEMP/icons-cache.json") bytes"
+          else
+            echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons-cache.json"
+            echo "nog geen cache: begin bij nul"
+          fi
+
+      - name: App-iconen zoeken
+        timeout-minutes: 340
+        run: |
+          B="${{ inputs.budget }}"; [ -n "$B" ] || B=330
+          python3 tools/make_station_icons.py --cache "$RUNNER_TEMP/icons-cache.json" --budget-min "$B" \
+            ${{ inputs.offline && '--offline' || '' }}
+
+      # cache altijd bewaren (ook als de stap hierboven stopte), zodat de volgende run verdergaat
+      - name: Cache bewaren (branch icons-data)
+        if: always()
+        run: |
+          [ -s "$RUNNER_TEMP/icons-cache.json" ] || exit 0
+          mkdir -p "$RUNNER_TEMP/data" && cp "$RUNNER_TEMP/icons-cache.json" "$RUNNER_TEMP/data/cache.json"
+          cd "$RUNNER_TEMP/data"
+          git init -q && git checkout -q -b icons-data
+          git add cache.json && git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "icons cache $GITHUB_RUN_ID [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" icons-data
+
+      - name: Tabel in de repo zetten
+        id: commit
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add -A website/assets/data/icons
+          if git diff --cached --quiet; then echo "iconen ongewijzigd"; exit 0; fi
+          echo "files: $(ls website/assets/data/icons | wc -l), $(du -sh website/assets/data/icons | cut -f1)"
+          git commit -qm "Zendericonen uit de App Store bijgewerkt (tools/make_station_icons.py) [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "changed=1" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Iconen niet gepusht"; exit 1
+
+      - name: Website opnieuw uploaden
+        if: steps.commit.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/actions/workflows/website.yml/dispatches" -f ref=main

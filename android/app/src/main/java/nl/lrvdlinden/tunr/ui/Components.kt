@@ -7,7 +7,9 @@ import androidx.compose.ui.platform.LocalContext
 import android.graphics.drawable.BitmapDrawable
 import coil.request.ImageRequest
 import coil.size.Precision
+import nl.lrvdlinden.tunr.data.IconMap
 import nl.lrvdlinden.tunr.data.LogoSources
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -146,20 +148,25 @@ fun StationArt(
     val name = station?.displayName ?: "Tunr"
     val (c1, c2) = T.palette(name)
     val key = station?.uuid
-    // logo-bronnen (favicon → Google → DuckDuckGo op het domein), zie LogoSources; momentopname per zender
-    val candidates = remember(key, station?.favicon, station?.homepage) {
-        if (station == null) emptyList()
+    // logo-bronnen (App Store-icoon → Google → favicon → DuckDuckGo), zie LogoSources; momentopname per zender.
+    // Eerst de icoontabel van het land (IconMap) afwachten, zodat het App Store-icoon voorgaat.
+    val mapVersion by IconMap.version.collectAsState()
+    // (mapVersion lezen = opnieuw tekenen zodra een tabel klaar is)
+    val mapReady = mapVersion >= 0 && (station == null || overrideUrl != null || IconMap.isReady(station))
+    LaunchedEffect(key) { station?.let { IconMap.ensureFor(listOf(it)) } }
+    val candidates = remember(key, station?.favicon, station?.homepage, mapReady) {
+        if (station == null || !mapReady) emptyList()
         else LogoSources.resolved(station.uuid)?.let { listOf(it) }
             ?: LogoSources.candidates(station).filter { !LogoSources.isFailed(it) && !LogoSources.isTiny(it) }
     }
-    val tinyKnown = remember(key) { station?.let { s -> LogoSources.candidates(s).firstOrNull { LogoSources.isTiny(it) && !LogoSources.isFailed(it) } } }
+    val tinyKnown = remember(key, mapReady) { station?.let { s -> LogoSources.candidates(s).firstOrNull { LogoSources.isTiny(it) && !LogoSources.isFailed(it) } } }
     var attempt by remember(key, overrideUrl) { mutableIntStateOf(0) }
     var tinyFallback by remember(key) { mutableStateOf(tinyKnown) }
     var failed by remember(key, overrideUrl) { mutableStateOf(false) }
     var loaded by remember(key, overrideUrl) { mutableStateOf(false) }
     var boxPx by remember { mutableIntStateOf(0) }
     val isFinal = overrideUrl != null || attempt >= candidates.size
-    val logo = overrideUrl ?: candidates.getOrNull(attempt) ?: tinyFallback
+    val logo = overrideUrl ?: if (!mapReady) null else candidates.getOrNull(attempt) ?: tinyFallback
     val context = LocalContext.current
     Box(
         modifier
@@ -176,7 +183,10 @@ fun StationArt(
             // tot het geladen (en goedgekeurd) is staat het monogram op het verloop
             if (!loaded) Monogram(name)
             val request = remember(logo) {
-                ImageRequest.Builder(context).data(logo).precision(Precision.INEXACT).build()
+                ImageRequest.Builder(context).data(logo).precision(Precision.INEXACT)
+                    // favicondiensten: echte maat nodig voor de minimumcontrole (Google ≥ 96 px); ze zijn klein
+                    .apply { if (overrideUrl == null && LogoSources.isService(logo)) this.size(coil.size.Size.ORIGINAL) }
+                    .build()
             }
             AsyncImage(
                 model = request, contentDescription = null, contentScale = ContentScale.Crop,
@@ -191,8 +201,13 @@ fun StationArt(
                         is AsyncImagePainter.State.Success -> {
                             val d = st.result.drawable
                             val w = (d as? BitmapDrawable)?.bitmap?.width ?: d.intrinsicWidth
-                            // kleine weergave (miniplayer): een groot logo kan verkleind binnenkomen
-                            val min = if (boxPx > 0) minOf(LogoSources.MIN_PX, (boxPx * 0.9f).toInt()) else LogoSources.MIN_PX
+                            // kleine weergave (miniplayer): een groot logo kan verkleind binnenkomen;
+                            // de diensten laden op ware grootte en moeten hun minimum halen (Google 96, DuckDuckGo 48)
+                            val min = when {
+                                LogoSources.isService(logo) -> LogoSources.minPx(logo)
+                                boxPx > 0 -> minOf(LogoSources.MIN_PX, (boxPx * 0.9f).toInt())
+                                else -> LogoSources.MIN_PX
+                            }
                             when {
                                 logo == tinyFallback && isFinal -> loaded = true
                                 w >= min -> { station?.let { LogoSources.markResolved(it.uuid, logo) }; loaded = true }

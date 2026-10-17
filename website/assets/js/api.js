@@ -147,10 +147,12 @@
     });
     return out;
   }
+  // App Store-iconen van de landen in de lijst eerst laden (strings.js, T.iconsReady), max. 1,5 s
+  function withIcons(arr) { return T.iconsReady ? T.iconsReady(arr) : arr; }
   function remember(arr) { (arr || []).forEach(function (s) { if (s && s.id && !known[s.id]) known[s.id] = s; }); return arr; }
   function stations(key, params) {
     var qs = 'hidebroken=true&' + params;
-    return cached('s:' + key, 30 * MIN, '/json/stations/search?' + qs, list).then(remember);
+    return cached('s:' + key, 30 * MIN, '/json/stations/search?' + qs, list).then(remember).then(withIcons);
   }
   var enc = encodeURIComponent;
   function geoOnly(a) {
@@ -176,7 +178,7 @@
     trending: function (cc) { return stations('trend:' + cc, 'countrycode=' + enc(cc) + '&order=clicktrend&reverse=true&limit=60&offset=0'); },
     genre: function (cc, tag) { return stations('tag:' + cc + ':' + tag, (cc ? 'countrycode=' + enc(cc) + '&' : '') + 'tag=' + enc(tag) + '&tagExact=true&order=clickcount&reverse=true&limit=60&offset=0'); },
     search: function (q, cc) {
-      return get('/json/stations/search?name=' + enc(q) + (cc ? '&countrycode=' + enc(cc) : '') + '&hidebroken=true&order=clickcount&reverse=true&limit=60').then(list).then(remember);
+      return get('/json/stations/search?name=' + enc(q) + (cc ? '&countrycode=' + enc(cc) : '') + '&hidebroken=true&order=clickcount&reverse=true&limit=60').then(list).then(remember).then(withIcons);
     },
     byUuids: function (ids) {
       if (!ids.length) return Promise.resolve([]);

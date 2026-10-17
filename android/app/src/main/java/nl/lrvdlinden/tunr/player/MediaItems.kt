@@ -86,7 +86,7 @@ fun Station.toMediaItem(): MediaItem {
         .setArtist(genresLine.ifEmpty { placeLine() })
         .setSubtitle(placeLine())
         .setStation(displayName)
-        // logo met terugval (favicon → Google/DuckDuckGo op het domein), zie LogoSources
+        // logo met terugval (App Store-icoon → Google → favicon → DuckDuckGo), zie LogoSources
         .setArtworkUri(LogoSources.best(this)?.let { Uri.parse(it) })
         .setIsPlayable(true)
         .setIsBrowsable(false)
