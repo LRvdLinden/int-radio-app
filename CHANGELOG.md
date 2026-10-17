@@ -4,6 +4,19 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 16
+_2026-10-17_
+
+**Nieuw**
+
+- Cookiemelding met keuze (Accepteren of Alleen noodzakelijk) en een cookieknop linksonder om je keuze later te wijzigen; ook via Cookie-instellingen onderaan elke pagina. _(Website)_  
+  <sub>Cookie notice with a choice (Accept or Necessary only) and a cookie button in the bottom left to change it later; also via Cookie settings at the bottom of every page.</sub>
+
+**Verbeterd**
+
+- De zenderlogo's in de hero van de homepage staan nu vast en laden direct, zonder geflikker. _(Website)_  
+  <sub>The station logos in the homepage hero are now fixed and load instantly, without flickering.</sub>
+
 ## Build 15
 _2026-10-17_
 

@@ -70,7 +70,9 @@
       .catch(function () { return 0; });
   }
 
-  function enabled() { return !!(T.store && T.store.shareStats); }
+  // pas na een keuze in de cookiemelding (consent.js): "Accepteren" zet shareStats aan, "Alleen noodzakelijk" uit
+  function consented() { return !!(window.TunrConsent && window.TunrConsent.get()); }
+  function enabled() { return consented() && !!(T.store && T.store.shareStats); }
 
   function pingIfDue() {
     var cfg = (window.TUNR && window.TUNR.stats) || {};
@@ -107,5 +109,6 @@
 
   T.stats = { pingIfDue: pingIfDue };
   pingIfDue();
+  document.addEventListener('tunr:consent', function () { pingIfDue(); });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') pingIfDue(); });
 })();

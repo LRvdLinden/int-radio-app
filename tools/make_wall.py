@@ -47,6 +47,13 @@ def key(name):
     return ''.join(ch for ch in name.lower() if ch.isalnum())[:12]
 
 
+def dhash(im):
+    """Kleine vingerafdruk van het plaatje, om bijna dezelfde logo's (zelfde omroep, andere stream) over te slaan."""
+    g = im.convert('L').resize((9, 8), Image.LANCZOS)
+    px = list(g.getdata())
+    return sum(1 << i for i in range(64) if px[(i // 8) * 9 + i % 8] > px[(i // 8) * 9 + i % 8 + 1])
+
+
 def logo(url):
     """Logo als vierkante WebP-bytes, of None als het niet bruikbaar is."""
     if not url.lower().startswith(('http://', 'https://')) or url.lower().split('?')[0].endswith('.ico'):
@@ -73,7 +80,7 @@ def logo(url):
             return None
         buf = io.BytesIO()
         sq.save(buf, 'WEBP', quality=82, method=6)
-        return buf.getvalue()
+        return buf.getvalue(), dhash(sq)
     return None
 
 
@@ -89,7 +96,7 @@ def main():
     if not world:
         sys.exit('Radio Browser niet bereikbaar')
 
-    seen, picked = set(), []
+    seen, picked, hashes = set(), [], []
 
     def take(lst, n):
         got = 0
@@ -101,9 +108,13 @@ def main():
             if not name or not k or k in seen:
                 continue
             seen.add(k)
-            data = logo((s.get('favicon') or '').strip())
-            if not data:
+            res = logo((s.get('favicon') or '').strip())
+            if not res:
                 continue
+            data, h = res
+            if any(bin(h ^ o).count('1') <= 10 for o in hashes):
+                continue
+            hashes.append(h)
             place = ', '.join(x for x in [(s.get('state') or '').strip(), (s.get('country') or '').strip()] if x)
             picked.append((name, place, data))
             got += 1

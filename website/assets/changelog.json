@@ -545,6 +545,28 @@
           "en": "Privacy policy and FAQ describe the anonymous statistics."
         }
       ]
+    },
+    {
+      "build": 16,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Cookiemelding met keuze (Accepteren of Alleen noodzakelijk) en een cookieknop linksonder om je keuze later te wijzigen; ook via Cookie-instellingen onderaan elke pagina.",
+          "en": "Cookie notice with a choice (Accept or Necessary only) and a cookie button in the bottom left to change it later; also via Cookie settings at the bottom of every page."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "De zenderlogo's in de hero van de homepage staan nu vast en laden direct, zonder geflikker.",
+          "en": "The station logos in the homepage hero are now fixed and load instantly, without flickering."
+        }
+      ]
     }
   ]
 }

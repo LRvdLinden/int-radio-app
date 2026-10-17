@@ -18,7 +18,7 @@
     'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Listen now',
     'nav.menu': 'Menu',
     'foot.tag': 'All the world\'s radio and podcasts. On every screen.',
-    'foot.web': 'Web player', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.info': 'Info', 'foot.more': 'More',
+    'foot.web': 'Web player', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.cookies': 'Cookie settings', 'foot.info': 'Info', 'foot.more': 'More',
     'foot.disc': 'Tunr doesn\'t host any radio streams or podcasts: every station and episode plays directly from the broadcaster\'s or creator\'s server. Station data: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community database); podcast data: Apple\'s public podcast directory. Apple, iPhone, iPad, Mac, Apple TV and CarPlay are trademarks of Apple Inc. Android, Android TV, Android Auto, Google TV and Google Play are trademarks of Google LLC, Fire TV of Amazon.com, Inc.',
     'foot.version': 'version'
   };
