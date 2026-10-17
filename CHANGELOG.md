@@ -4,6 +4,16 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 11
+_2026-10-17_
+
+**Nieuw**
+
+- Zoeken op de kaart: typ een land of plaats en de kaart gaat erheen. Bij een land zie je de zenders van dat land, bij een plaats de zenders in de buurt (binnen 50 km, anders breder) met de dichtstbijzijnde zender in het kaartje. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Search on the map: type a country or place and the map goes there. A country shows its stations, a place shows nearby stations (within 50 km, otherwise wider) with the nearest station in the card.</sub>
+- De laatste vijf kaartzoekopdrachten staan klaar als je het zoekveld opent; op Apple gaan ze via iCloud mee. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Your last five map searches are ready when you open the search field; on Apple they sync via iCloud.</sub>
+
 ## Build 10
 _2026-10-17_
 

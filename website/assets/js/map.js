@@ -79,7 +79,7 @@
       showsZoomControl: true,
       showsUserLocationControl: false,
       isRotationEnabled: false,
-      padding: new mapkit.Padding(70, 16, 16, 16)
+      padding: new mapkit.Padding(window.innerWidth < 900 ? 124 : 70, 16, 16, 16)
     });
     var anns = [], els = {};
     function dotFactory(id) {
