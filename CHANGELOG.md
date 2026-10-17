@@ -4,6 +4,19 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 15
+_2026-10-17_
+
+**Nieuw**
+
+- Anonieme gebruiksstatistieken: alleen type apparaat, app-versie, gekozen land en taal en een willekeurig installatienummer. Geen naam, e-mail of IP-adres. Uit te zetten in Instellingen → Privacy. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
+  <sub>Anonymous usage statistics: only device type, app version, chosen country and language and a random install number. No name, e-mail or IP address. Turn off in Settings → Privacy.</sub>
+
+**Verbeterd**
+
+- Privacyverklaring en veelgestelde vragen beschrijven de anonieme statistieken. _(Website)_  
+  <sub>Privacy policy and FAQ describe the anonymous statistics.</sub>
+
 ## Build 14
 _2026-10-17_
 

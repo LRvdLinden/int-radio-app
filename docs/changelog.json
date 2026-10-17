@@ -517,6 +517,34 @@
           "en": "The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile."
         }
       ]
+    },
+    {
+      "build": 15,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Anonieme gebruiksstatistieken: alleen type apparaat, app-versie, gekozen land en taal en een willekeurig installatienummer. Geen naam, e-mail of IP-adres. Uit te zetten in Instellingen → Privacy.",
+          "en": "Anonymous usage statistics: only device type, app version, chosen country and language and a random install number. No name, e-mail or IP address. Turn off in Settings → Privacy."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Privacyverklaring en veelgestelde vragen beschrijven de anonieme statistieken.",
+          "en": "Privacy policy and FAQ describe the anonymous statistics."
+        }
+      ]
     }
   ]
 }
