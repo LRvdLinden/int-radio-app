@@ -208,6 +208,8 @@
 "settings.defaultSleep" = "Default sleep timer";
 "settings.general" = "General";
 "settings.icloudFooter" = "Favourites, recent stations, podcasts, listening positions and your settings sync via iCloud between your iPhone, iPad, Mac and Apple TV.";
+"settings.liveActivity" = "Live Activity while playing";
+"settings.liveActivityFooter" = "Shows the station and song in the Dynamic Island and on the Lock Screen (and on your Apple Watch and in CarPlay), with play/pause and stop.";
 "settings.privacySection" = "Privacy";
 "settings.shareStats" = "Anonymous usage statistics";
 "settings.shareStatsFooter" = "No personal data. Only the device type, app version, the country and language you chose in Tunr and a random install number are sent, at most twice a day, so we can see how many people use Tunr on which devices.";
@@ -238,3 +240,12 @@
 "time.hours" = "%ld hr";
 "time.hoursMinutes" = "%ld hr %ld min";
 "time.minutes" = "%ld min";
+
+/* App Intents (widgets, Bedieningspaneel, Live Activity): de sleutel is de Engelse tekst */
+"Play Station" = "Play Station";
+"Plays a radio station in Tunr." = "Plays a radio station in Tunr.";
+"Station ID" = "Station ID";
+"Play or Pause Tunr" = "Play or Pause Tunr";
+"Plays or pauses the radio in Tunr." = "Plays or pauses the radio in Tunr.";
+"Stop Tunr" = "Stop Tunr";
+"Playing" = "Playing";

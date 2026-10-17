@@ -1,0 +1,27 @@
+/* Tunr widgets, Control Center and Live Activity (English) */
+"widget.nowPlaying.name" = "Now Playing";
+"widget.nowPlaying.description" = "The station you're listening to, with play and pause.";
+"widget.favorites.name" = "Favourites";
+"widget.favorites.description" = "Your favourite stations: tap one to start listening.";
+"widget.favorites.empty" = "No favourites yet";
+"widget.favorites.emptyHint" = "Tap the heart on a station in Tunr.";
+"widget.live" = "LIVE";
+"widget.paused" = "PAUSED";
+"widget.nothing" = "Nothing playing";
+"widget.openApp" = "Open Tunr to start listening.";
+"widget.play" = "Play";
+"widget.pause" = "Pause";
+"widget.stop" = "Stop";
+"control.title" = "Tunr";
+"control.description" = "Play or pause the radio in Tunr.";
+"control.playing" = "Playing";
+"control.paused" = "Paused";
+
+/* App Intents: key = English text */
+"Play Station" = "Play Station";
+"Plays a radio station in Tunr." = "Plays a radio station in Tunr.";
+"Station ID" = "Station ID";
+"Play or Pause Tunr" = "Play or Pause Tunr";
+"Plays or pauses the radio in Tunr." = "Plays or pauses the radio in Tunr.";
+"Stop Tunr" = "Stop Tunr";
+"Playing" = "Playing";

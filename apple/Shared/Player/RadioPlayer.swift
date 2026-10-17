@@ -277,10 +277,19 @@ final class RadioPlayer: ObservableObject {
 
     /// Laatste zender opnieuw laden (Instellingen → automatisch verder spelen)
     func resumeLastIfWanted() {
-        guard UserDefaults.standard.bool(forKey: SettingsKey.autoplayLast), station == nil,
+        guard UserDefaults.standard.bool(forKey: SettingsKey.autoplayLast) else { return }
+        playLastStation()
+    }
+
+    /// Laatst gespeelde zender opnieuw afspelen als er nu niets geladen is (ook vanuit een widget of het
+    /// Bedieningspaneel). `false` = er was geen laatste zender (of er speelt al iets).
+    @discardableResult
+    func playLastStation() -> Bool {
+        guard station == nil, episode == nil,
               let data = UserDefaults.standard.data(forKey: "player.last"),
-              let s = try? JSONDecoder().decode(Station.self, from: data) else { return }
+              let s = try? JSONDecoder().decode(Station.self, from: data) else { return false }
         play(s, queue: Library.shared.favorites.contains(s) ? Library.shared.favorites : [s])
+        return true
     }
 
     // MARK: - Status

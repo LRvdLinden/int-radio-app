@@ -592,6 +592,46 @@
           "en": "Share button in the episode player."
         }
       ]
+    },
+    {
+      "build": 18,
+      "date": "2026-10-17",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos"
+          ],
+          "nl": "Widgets: \"Nu speelt\" (met afspelen/pauze) en \"Favorieten\" (tik op een zender om te luisteren) voor het beginscherm, het toegangsscherm en de Mac.",
+          "en": "Widgets: \"Now Playing\" (with play/pause) and \"Favourites\" (tap a station to listen) for the Home Screen, Lock Screen and Mac."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios"
+          ],
+          "nl": "Live Activity tijdens het luisteren: zender en nummer in de Dynamic Island en op het toegangsscherm, met afspelen/pauze en stop (uit te zetten in Instellingen).",
+          "en": "Live Activity while listening: station and track in the Dynamic Island and on the Lock Screen, with play/pause and stop (can be turned off in Settings)."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios"
+          ],
+          "nl": "Knop in het Bedieningspaneel (iOS 18) om Tunr af te spelen of te pauzeren.",
+          "en": "Control Center button (iOS 18) to play or pause Tunr."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "carplay"
+          ],
+          "nl": "Op iOS 26 verschijnen de widget \"Nu speelt\" en de Live Activity ook in CarPlay.",
+          "en": "On iOS 26 the \"Now Playing\" widget and the Live Activity also appear in CarPlay."
+        }
+      ]
     }
   ]
 }

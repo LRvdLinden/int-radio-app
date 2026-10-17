@@ -11,6 +11,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.defaultSleep) private var defaultSleep = 0
     @AppStorage(SettingsKey.autoplayLast) private var autoplayLast = false
     @AppStorage(SettingsKey.shareStats) private var shareStats = true
+    @AppStorage(SettingsKey.liveActivity) private var liveActivity = true
     @State private var confirmRecents = false
     @State private var confirmFavorites = false
     @State private var showCountry = false
@@ -69,8 +70,24 @@ struct SettingsView: View {
                 Toggle(isOn: $autoplayLast) {
                     settingLabel(L("settings.autoplay"), symbol: "play.circle")
                 }
+                #if os(iOS) && canImport(ActivityKit)
+                // Live Activity (Dynamic Island, vergrendelscherm): alleen iPhone, per apparaat
+                if DeviceKind.isPhone {
+                    Toggle(isOn: $liveActivity) {
+                        settingLabel(L("settings.liveActivity"), symbol: "iphone.radiowaves.left.and.right")
+                    }
+                    .onChange(of: liveActivity) { _, _ in
+                        LiveActivityController.shared.sync()
+                    }
+                }
+                #endif
             } header: {
                 Text(L("settings.playback"))
+            } footer: {
+                // alleen iPhone (Live Activity); elders blijft de voettekst leeg
+                if DeviceKind.isPhone {
+                    Text(L("settings.liveActivityFooter"))
+                }
             }
 
             Section {

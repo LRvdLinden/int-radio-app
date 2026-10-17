@@ -4,6 +4,20 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 18
+_2026-10-17_
+
+**Nieuw**
+
+- Widgets: "Nu speelt" (met afspelen/pauze) en "Favorieten" (tik op een zender om te luisteren) voor het beginscherm, het toegangsscherm en de Mac. _(iPhone, iPad, Mac)_  
+  <sub>Widgets: "Now Playing" (with play/pause) and "Favourites" (tap a station to listen) for the Home Screen, Lock Screen and Mac.</sub>
+- Live Activity tijdens het luisteren: zender en nummer in de Dynamic Island en op het toegangsscherm, met afspelen/pauze en stop (uit te zetten in Instellingen). _(iPhone)_  
+  <sub>Live Activity while listening: station and track in the Dynamic Island and on the Lock Screen, with play/pause and stop (can be turned off in Settings).</sub>
+- Knop in het Bedieningspaneel (iOS 18) om Tunr af te spelen of te pauzeren. _(iPhone)_  
+  <sub>Control Center button (iOS 18) to play or pause Tunr.</sub>
+- Op iOS 26 verschijnen de widget "Nu speelt" en de Live Activity ook in CarPlay. _(CarPlay)_  
+  <sub>On iOS 26 the "Now Playing" widget and the Live Activity also appear in CarPlay.</sub>
+
 ## Build 17
 _2026-10-17_
 

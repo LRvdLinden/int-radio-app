@@ -15,7 +15,7 @@ settings:
     SWIFT_VERSION: "5.9"
     # Versie blijft 1.0.0; alleen het buildnummer gaat omhoog (zie CLAUDE.md)
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "17"
+    CURRENT_PROJECT_VERSION: "18"
     # Team van Léon van der Linden; automatisch ondertekenen voor iOS, tvOS en macOS
     DEVELOPMENT_TEAM: EU3UY476T6
     CODE_SIGN_STYLE: Automatic
@@ -26,8 +26,14 @@ targets:
     # Eén target voor iPhone/iPad (iOS), Apple TV (tvOS) en de Mac (native macOS, geen Catalyst)
     supportedDestinations: [iOS, tvOS, macOS]
     sources:
-      # alle Swift-code, Assets.xcassets en Resources (Localizable.strings, tunr_tune.m4a)
+      # alle Swift-code, Assets.xcassets en Resources (Localizable.strings, tunr_tune.m4a);
+      # Shared/WidgetShared wordt ook in TunrWidgets gecompileerd (widgets, intents, Live Activity-gegevens)
       - path: Shared
+    dependencies:
+      # Widgets, Bedieningspaneel-knop en Live Activity: alleen in de iPhone/iPad- en Mac-build (niet op Apple TV)
+      - target: TunrWidgets
+        embed: true
+        destinationFilters: [iOS, macOS]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: nl.lrvdlinden.tunr
@@ -79,6 +85,44 @@ targets:
         "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
         "CODE_SIGN_IDENTITY[sdk=macosx*]": "Apple Development"
+
+  # Widgets (beginscherm, vergrendelscherm, CarPlay iOS 26), Bedieningspaneel-knop (iOS 18) en de Live Activity
+  # "Nu speelt" (Dynamic Island, vergrendelscherm, Apple Watch Smart Stack). Zit ingebed in Tunr (iOS en macOS).
+  # Versie en buildnummer komen uit settings.base bovenaan (dus altijd gelijk aan de app).
+  TunrWidgets:
+    type: app-extension
+    supportedDestinations: [iOS, macOS]
+    sources:
+      # gedeeld met de app: App Group-brug, App Intents en de Live Activity-gegevens
+      - path: Shared/WidgetShared
+      # alleen de extensie: widgets, Live Activity-weergave, Bedieningspaneel, eigen Localizable.strings
+      - path: Widgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nl.lrvdlinden.tunr.widgets
+        PRODUCT_NAME: TunrWidgets
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Config/Info-Widgets.plist
+        CODE_SIGN_IDENTITY: "Apple Development"
+        "CODE_SIGN_IDENTITY[sdk=macosx*]": "Apple Development"
+        # App Group group.nl.lrvdlinden.tunr (iOS) / EU3UY476T6.nl.lrvdlinden.tunr (Mac, team-prefix)
+        CODE_SIGN_ENTITLEMENTS: Config/TunrWidgets-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": Config/TunrWidgets-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": Config/TunrWidgets-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Config/TunrWidgets-macOS.entitlements
+        # in de gedeelde bestanden: `#if WIDGET_EXTENSION` = extensie, anders de app
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) WIDGET_EXTENSION"
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        "TARGETED_DEVICE_FAMILY[sdk=iphone*]": "1,2"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+        "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+        "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
 
 # Gedeeld scheme (staat in Tunr.xcodeproj/xcshareddata): bovenin Xcode kies je hiermee iPhone, iPad, Mac of Apple TV
 schemes:

@@ -1,0 +1,27 @@
+/* Tunr-widgets, Bedieningspaneel en Live Activity (Nederlands) */
+"widget.nowPlaying.name" = "Nu speelt";
+"widget.nowPlaying.description" = "De zender waar je naar luistert, met afspelen en pauze.";
+"widget.favorites.name" = "Favorieten";
+"widget.favorites.description" = "Je favoriete zenders: tik erop en luister meteen.";
+"widget.favorites.empty" = "Nog geen favorieten";
+"widget.favorites.emptyHint" = "Tik in Tunr op het hartje bij een zender.";
+"widget.live" = "LIVE";
+"widget.paused" = "GEPAUZEERD";
+"widget.nothing" = "Er speelt niets";
+"widget.openApp" = "Open Tunr om te luisteren.";
+"widget.play" = "Afspelen";
+"widget.pause" = "Pauze";
+"widget.stop" = "Stop";
+"control.title" = "Tunr";
+"control.description" = "Speel de radio in Tunr af of pauzeer hem.";
+"control.playing" = "Speelt";
+"control.paused" = "Gepauzeerd";
+
+/* App Intents: sleutel = Engelse tekst */
+"Play Station" = "Zender afspelen";
+"Plays a radio station in Tunr." = "Speelt een radiozender af in Tunr.";
+"Station ID" = "Zender-ID";
+"Play or Pause Tunr" = "Tunr afspelen of pauzeren";
+"Plays or pauses the radio in Tunr." = "Speelt de radio in Tunr af of pauzeert hem.";
+"Stop Tunr" = "Tunr stoppen";
+"Playing" = "Speelt";

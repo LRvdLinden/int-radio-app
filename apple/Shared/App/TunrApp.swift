@@ -18,6 +18,15 @@ struct TunrApp: App {
         SettingsSync.shared.start()
         // anonieme gebruiksping (max. 1× per 12 uur; uit te zetten in Instellingen)
         StatsPing.shared.pingIfDue()
+        #if os(iOS) || os(macOS)
+        // widgets, Bedieningspaneel en App Intents (App Group, zie WidgetSync.swift)
+        TunrIntentHandler.ensureAppHandler()
+        WidgetSync.shared.start()
+        #endif
+        #if os(iOS) && canImport(ActivityKit)
+        // Live Activity "Nu speelt" (Dynamic Island, vergrendelscherm)
+        LiveActivityController.shared.start()
+        #endif
     }
 
     var body: some Scene {
@@ -32,6 +41,10 @@ struct TunrApp: App {
                 .environment(\.locale, localizer.locale)
                 .preferredColorScheme(.dark)
                 .tint(Theme.accent)
+                #if os(iOS) || os(macOS)
+                // widgets: tunr://station/<id>, tunr://player
+                .onOpenURL { url in TunrDeepLink.handle(url, app: app) }
+                #endif
                 #if os(macOS)
                 .frame(minWidth: 900, minHeight: 600)
                 #endif
@@ -44,6 +57,9 @@ struct TunrApp: App {
             if p == .active {
                 Task { await library.refreshFavorites() }
                 StatsPing.shared.pingIfDue()
+                #if os(iOS) || os(macOS)
+                WidgetSync.shared.handlePendingCommand()
+                #endif
             }
         }
 
