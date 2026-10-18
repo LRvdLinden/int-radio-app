@@ -46,7 +46,15 @@ LAYOUT = {
         ("appstore", "tunr/en/appletv-brand/*.png", "Apple/Apple TV - Top Shelf & Icons", None),
         ("appstore", "tunr/en/icon-1024.png", "Apple/App Icon", "Tunr-app-icon-1024.png"),
     ],
-    # later bv.: "Android": [("playstore", "tunr/en/phone/*.png", "Android/Phone", None), ...]
+    "Android": [
+        ("playstore", "tunr/en/phone/*.png", "Android/Phone", None),
+        ("playstore", "tunr/en/tablet-7/*.png", "Android/Tablet 7-inch", None),
+        ("playstore", "tunr/en/tablet-10/*.png", "Android/Tablet 10-inch", None),
+        ("playstore", "tunr/en/tv/*.png", "Android/Android TV", None),
+        ("playstore", "tunr/en/icon-512.png", "Android/App Icon", "Tunr-play-icon-512.png"),
+        ("playstore", "tunr/en/feature-graphic-1024x500.png", "Android/Google Play", None),
+        ("playstore", "tunr/en/tv-banner-1280x720.png", "Android/Google Play", None),
+    ],
     "Promo": [
         ("appstore", "tunr/en/promo/header-*.png", "Promo", None),
         ("appstore", "tunr/en/promo/search-results-*.png", "Promo", None),
@@ -55,13 +63,17 @@ LAYOUT = {
     ],
 }
 # onderdelen die een platform zijn (komen in presskit.json → platforms)
-PLATFORMS = ["Apple"]
-PLATFORM_NAMES = {"Apple": "iPhone, iPad, Mac, Apple TV (App Store)"}
+PLATFORMS = ["Apple", "Android"]
+PLATFORM_NAMES = {"Apple": "iPhone, iPad, Mac, Apple TV (App Store)",
+                  "Android": "Phone, tablet, Android TV (Google Play)"}
+# deze platforms moeten bestanden hebben (anders stopt het script); de rest komt mee zodra de map er is
+REQUIRED = ["Apple"]
 
 
 def collect(appstore: pathlib.Path):
     """[(naam in de zip, bronbestand)], gesorteerd; plus waarschuwingen. Stopt als een platform leeg is."""
-    roots = {"appstore": appstore, "repo": root}
+    # playstore/ staat naast appstore/ in tunr-beheer (Google Play-afbeeldingen, tools/make_playstore_media.py)
+    roots = {"appstore": appstore, "playstore": appstore.parent / "playstore", "repo": root}
     out, warn, per_section = {}, [], {}
     for section, rules in LAYOUT.items():
         n = 0
@@ -78,7 +90,7 @@ def collect(appstore: pathlib.Path):
                 out[arc] = pathlib.Path(f)
                 n += 1
         per_section[section] = n
-    for p in PLATFORMS:
+    for p in REQUIRED:
         if not per_section.get(p):
             raise SystemExit(f"Onderdeel {p} heeft geen bestanden: klopt --appstore ({appstore})?")
     return sorted(out.items()), warn, [p for p in PLATFORMS if per_section.get(p)]
