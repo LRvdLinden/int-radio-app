@@ -15,7 +15,7 @@ settings:
     SWIFT_VERSION: "5.9"
     # Versie blijft 1.0.0; alleen het buildnummer gaat omhoog (zie CLAUDE.md)
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "25"
+    CURRENT_PROJECT_VERSION: "26"
     # Team van Léon van der Linden; automatisch ondertekenen voor iOS, tvOS en macOS
     DEVELOPMENT_TEAM: EU3UY476T6
     CODE_SIGN_STYLE: Automatic
@@ -53,16 +53,14 @@ targets:
         "INFOPLIST_FILE[sdk=macosx*]": Config/Info-macOS.plist
 
         # Entitlements per SDK.
-        # CarPlay: zodra Apple de entitlement com.apple.developer.carplay-audio heeft toegekend
-        # (aanvragen via developer.apple.com/contact/carplay) zet je hieronder
-        #   TUNR_CARPLAY: "YES"
-        #   TUNR_IOS_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements
-        # De code en de CarPlay-scene zitten er al in; zonder entitlement bouwt en draait de app gewoon.
-        TUNR_CARPLAY: "NO"
-        TUNR_IOS_ENTITLEMENTS: Config/Tunr-iOS.entitlements
-        CODE_SIGN_ENTITLEMENTS: Config/Tunr-iOS.entitlements
+        # CarPlay: Apple heeft de entitlement com.apple.developer.carplay-audio (CarPlay Audio App) op 18-10-2026
+        # aan het account toegekend. Hij staat aan op de App ID nl.lrvdlinden.tunr (managed capability).
+        # Terug naar zonder CarPlay: TUNR_IOS_ENTITLEMENTS = Config/Tunr-iOS.entitlements.
+        TUNR_CARPLAY: "YES"
+        TUNR_IOS_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements
+        CODE_SIGN_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements
         "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": $(TUNR_IOS_ENTITLEMENTS)
-        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": Config/Tunr-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": $(TUNR_IOS_ENTITLEMENTS)
         "CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]": Config/Tunr-tvOS.entitlements
         "CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]": Config/Tunr-tvOS.entitlements
         "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Config/Tunr-macOS.entitlements

@@ -19,7 +19,7 @@ Tunr is een wereldwijde radio-app (werknaam) voor **iPhone, iPad, Mac, Apple TV,
   - Android (+ Android TV): `TUNR_BUILD` in `android/gradle.properties`.
   - Website: geen buildnummer in een bestand; telt mee via de changelog (`web`).
 - Wijzig het Xcode-project via `apple/project.yml` (niet in Xcode zelf): de workflow maakt `Tunr.xcodeproj` opnieuw en commit hem.
-- CarPlay: code en scene zitten erin; de entitlement `com.apple.developer.carplay-audio` staat in `apple/Config/Tunr-CarPlay.entitlements` en wordt pas gebruikt zodra Apple hem heeft toegekend: zet dan in `apple/project.yml` `TUNR_IOS_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements` (staat als commentaar klaar) (aanvragen via developer.apple.com/contact/carplay).
+- CarPlay: de entitlement `com.apple.developer.carplay-audio` (CarPlay Audio App) is door Apple toegekend en staat aan: `apple/project.yml` gebruikt `TUNR_IOS_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements` (App Group + iCloud + CarPlay). Op developer.apple.com moet bij de App ID `nl.lrvdlinden.tunr` onder *Additional Capabilities* "CarPlay Audio App" aan staan (managed capability).
 - Bundle-/application-id: `nl.lrvdlinden.tunr`. Apple Team ID: `EU3UY476T6` (automatisch ondertekenen).
 - Bij elke build:
   - een item in `docs/changelog.json` (per punt `type` = `new`/`improved`/`fixed`, `platforms` uit `ios`, `ipados`, `macos`, `tvos`, `carplay`, `android`, `androidtv`, `web`, en tekst in `nl` en `en`);

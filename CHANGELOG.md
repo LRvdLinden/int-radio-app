@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 26
+_2026-10-18_
+
+**Nieuw**
+
+- CarPlay staat aan: Apple heeft Tunr goedgekeurd als CarPlay-audio-app. Favorieten, recent, lokale en populaire zenders en podcasts direct op het scherm in de auto. _(CarPlay)_  
+  <sub>CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen.</sub>
+
 ## Build 25
 _2026-10-18_
 

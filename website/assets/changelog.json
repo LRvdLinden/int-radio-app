@@ -799,6 +799,20 @@
           "en": "iPhone: the \"Listen\" and \"Info\" buttons on the featured station in Discover no longer break onto two lines."
         }
       ]
+    },
+    {
+      "build": 26,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "carplay"
+          ],
+          "nl": "CarPlay staat aan: Apple heeft Tunr goedgekeurd als CarPlay-audio-app. Favorieten, recent, lokale en populaire zenders en podcasts direct op het scherm in de auto.",
+          "en": "CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen."
+        }
+      ]
     }
   ]
 }
