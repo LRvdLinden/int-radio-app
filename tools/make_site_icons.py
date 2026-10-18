@@ -16,13 +16,24 @@ Per website (host van `homepage`, één keer per host):
    bij ≥ 4 sites zonder gemeenschappelijke naam voorkomt is een standaardicoon en wordt overal geweigerd);
 3. alleen https: een http-icoon telt alleen als hetzelfde adres via https ook klopt.
 
-Cache per host (`site-cache.json` op de branch icons-data): treffers na 120 dagen en missers na 60 dagen opnieuw.
+Daarna (tools/store_icons.py; tijdsbudget verdeeld 55 % websites / 18 % store-links / 27 % Play-zoeken):
+4. store-links op dezelfde homepage (smart app banner, App Store- en Play-links) → exact het App Store-icoon (iTunes
+   lookup, ≥ 3 s ertussen, max. 600) of het Google Play-icoon (app-pagina, og:image, ≥ 2 s ertussen);
+5. Google Play-zoekfunctie (`--play true|false`) voor de top 100 per land + top 1000 wereldwijd zonder App Store-
+   of Play-icoon, met dezelfde zekere naammatch als make_station_icons.py.
+Per zender: App Store-app van de website > Play-app van de website > Play-zoekresultaat > website-icoon.
+
+Cache per host (`site-cache.json` op de branch icons-data, met de gevonden store-links): treffers na 120 dagen en
+missers na 60 dagen opnieuw (items zonder "sl" = nog zonder store-links bekeken: opnieuw). Store-cache
+`play-cache.json` (zie tools/store_icons.py): missers na 30 dagen, treffers na 120 dagen opnieuw.
 Uitvoer: dezelfde tabellen als make_station_icons.py (website/assets/data/icons/<CC>.json), samengevoegd via
-tools/merge_icon_tables.py: een App Store-icoon gaat altijd voor; er verdwijnt niets.
+tools/merge_icon_tables.py: App Store > Google Play > website; er verdwijnt niets.
 
 Gebruik:
-    python3 tools/make_site_icons.py [--cache pad] [--budget-min 40] [--countries 80] [--per-country 300]
-                                     [--world 3000] [--workers 32] [--out map] [--offline] [--limit N]
+    python3 tools/make_site_icons.py [--cache pad] [--play-cache pad] [--budget-min 46] [--play true|false]
+                                     [--countries 80] [--per-country 300] [--world 3000] [--workers 32]
+                                     [--store-max 600] [--play-max 300] [--existing map] [--out map]
+                                     [--offline] [--limit N]
 """
 import argparse, io, ipaddress, json, os, re, signal, socket, sys, threading, time, urllib.error, urllib.parse
 import urllib.request, warnings
@@ -33,6 +44,7 @@ from html.parser import HTMLParser
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import make_station_icons as ms  # noqa: E402
 import merge_icon_tables as mt  # noqa: E402
+import store_icons as st  # noqa: E402
 
 ROOT = ms.ROOT
 OUT_DIR = ms.OUT_DIR
@@ -400,9 +412,10 @@ def verify(fetcher, url, generic=()):
 
 
 def find_icon(fetcher, homepage, generic=()):
-    """{'u': url, 'h': vingerafdruk, 'via': soort} of {'u': '', 'r': reden}."""
+    """{'u': url, 'h': vingerafdruk, 'via': soort} of {'u': '', 'r': reden}; altijd met 'sl': 1 (store-links
+    bekeken) en, als de pagina ze heeft, 'ios' (App Store-id's) en 'gp' (Play-pakketten) voor tools/store_icons.py."""
     start = page_url(homepage)
-    cands, final = [], start
+    cands, final, links = [], start, {}
     try:
         final, ctype, data = fetcher.get(start, MAX_HTML, accept='text/html,application/xhtml+xml,*/*;q=0.5',
                                          truncate=True)
@@ -412,6 +425,7 @@ def find_icon(fetcher, homepage, generic=()):
     else:
         reason = 'no-candidates'
     if html:
+        links = {k: v for k, v in st.store_links(html).items() if v}
         html_icons, manifest = html_candidates(html, final)
         man_icons = []
         if manifest:
@@ -432,9 +446,9 @@ def find_icon(fetcher, homepage, generic=()):
         tried += 1
         url, fp = verify(fetcher, c['url'], generic)
         if url:
-            return {'u': url, 'h': fp, 'via': c['kind']}
+            return {'u': url, 'h': fp, 'via': c['kind'], 'sl': 1, **links}
         reason = fp or reason
-    return {'u': '', 'r': reason}
+    return {'u': '', 'r': reason, 'sl': 1, **links}
 
 
 # ---------------------------------------------------------------- standaardiconen herkennen
@@ -465,6 +479,8 @@ def find_generic(items, names_by_host, min_hosts=GENERIC_HOSTS, brand_share=0.6)
 # ---------------------------------------------------------------- cache en uitvoer
 
 def is_fresh(entry, today):
+    if not entry.get('sl'):
+        return False  # nog zonder store-links bekeken (van voor tools/store_icons.py): opnieuw
     try:
         d = datetime.strptime(entry.get('d', ''), '%Y-%m-%d').date()
     except Exception:
@@ -489,24 +505,44 @@ def save_cache(path, items, generic):
 
 
 def site_groups(groups):
-    """host → {'homepage', 'names'}; hosts van platforms en gedeelde hosts (te veel zendernamen) vallen af."""
+    """host → {'homepage', 'names', 'keys'}; hosts van platforms en gedeelde hosts (te veel zendernamen) vallen
+    af. In volgorde van populariteit (groups is al gesorteerd)."""
     hosts = {}
     for (cc, k), g in groups.items():
         h = site_host(g['homepage'])
         if not h or skip_host(h):
             continue
-        e = hosts.setdefault(h, {'homepage': g['homepage'], 'names': [], 'cores': set()})
+        e = hosts.setdefault(h, {'homepage': g['homepage'], 'names': [], 'cores': set(), 'keys': []})
         e['names'].append(g['name'])
         e['cores'].add(ms.core(g['name']) or k)
+        e['keys'].append((cc, k))
     return {h: e for h, e in hosts.items() if len(e['cores']) <= SHARED_HOST}
 
 
-def build_tables(groups, items, hosts):
+def store_icon(cc, k, g, host_entry, pcache):
+    """Store-icoon voor één zender (of ''): App Store-app waar zijn website naar linkt > Play-app waar zijn website
+    naar linkt > Play-zoekresultaat. Per zendernaam gecontroleerd met st.link_related (de cache bewaart de titel)."""
+    hp, name = g['homepage'], g['name']
+    he = host_entry or {}
+    for app_id in he.get('ios') or []:
+        e = pcache.get('ios:' + app_id) or {}
+        if e.get('u') and st.link_related(name, e.get('t'), hp, cc, e.get('s') or '', e.get('su') or '',
+                                          e.get('g') or 'Music'):
+            return e['u']
+    for pkg in he.get('gp') or []:
+        e = pcache.get('gp:' + pkg) or {}
+        if e.get('u') and st.link_related(name, e.get('t'), hp, cc, e.get('s') or ''):
+            return e['u']
+    return (pcache.get(f'q:{cc}|{k}') or {}).get('u') or ''
+
+
+def build_tables(groups, items, hosts, pcache=None):
+    pcache = pcache or {}
     files = {}
     for (cc, k), g in groups.items():
         h = site_host(g['homepage'])
         e = items.get(h) if h in hosts else None
-        url = (e or {}).get('u') or ''
+        url = store_icon(cc, k, g, e, pcache) or (e or {}).get('u') or ''
         if not url.startswith('https://'):
             continue
         f = files.setdefault(cc or '_world', {'u': {}, 'n': {}})
@@ -516,29 +552,192 @@ def build_tables(groups, items, hosts):
     return files
 
 
+def existing_rank(existing, cc, k, uuids):
+    """Beste soort bron (mt.url_rank) die deze zender al in de gepubliceerde tabellen heeft."""
+    t = existing.get(cc or '_world') or {}
+    urls = [(t.get('n') or {}).get(k)] + [(t.get('u') or {}).get(u) for u in uuids]
+    return max([mt.url_rank(u) for u in urls] or [0])
+
+
+def verify_store_image(fetcher, url):
+    """Store-iconen (mzstatic / play-lh): alleen https en een goed plaatje (geen URL-regels voor CMS'en)."""
+    if not url.startswith('https://'):
+        return False
+    try:
+        final, _, data = fetcher.get(url, MAX_IMG, accept='image/png,image/webp,image/jpeg,image/*;q=0.8')
+    except Exception:
+        return False
+    return final.startswith('https://') and check_image(data)[0]
+
+
+def resolve_store_links(fetcher, groups, hosts, items, pcache, existing, deadline, store_max=600,
+                        itunes_delay=3.0, play_delay=2.0):
+    """Fase 2: App Store-id's (iTunes lookup) en Play-pakketten (app-pagina) van de websites opzoeken, in twee
+    threads (één per dienst, elk met eigen tussenpozen). Alleen voor websites met een zender zonder App Store-icoon."""
+    today = date.today()
+    ios_todo, gp_todo = [], []
+    for h, e in hosts.items():
+        it = items.get(h) or {}
+        if not it.get('ios') and not it.get('gp'):
+            continue
+        cc = next((c for c, _ in e['keys'] if c), '')
+        ranks = [existing_rank(existing, c, k, groups[(c, k)]['uuids']) for c, k in e['keys']]
+        if min(ranks) >= 3:
+            continue
+        for app_id in it.get('ios') or []:
+            if not st.is_fresh(pcache.get('ios:' + app_id), today) and app_id not in {x for x, _ in ios_todo}:
+                ios_todo.append((app_id, cc))
+        # Play alleen als de App Store-links van deze site al zeker niets opleverden (anders volgende run)
+        ios_open = any((pcache.get('ios:' + i) or {}).get('u') or not st.is_fresh(pcache.get('ios:' + i), today)
+                       for i in it.get('ios') or [])
+        if min(ranks) >= 2 or ios_open:
+            continue
+        for pkg in it.get('gp') or []:
+            if not st.is_fresh(pcache.get('gp:' + pkg), today) and pkg not in {x for x, _ in gp_todo}:
+                gp_todo.append((pkg, cc))
+    print(f'store-links: {len(ios_todo)} App Store-id\'s en {len(gp_todo)} Play-pakketten op te zoeken')
+    verify = lambda u: verify_store_image(fetcher, u)
+    lock, stats = threading.Lock(), {'ios': 0, 'ios_hits': 0, 'gp': 0, 'gp_hits': 0}
+    day = today.isoformat()
+
+    def run(kind, todo, spacer, lookup, cap):
+        busy = 0
+        for key, cc in todo:
+            if fetcher.stop.is_set() or time.time() > deadline or stats[kind] >= cap:
+                return
+            try:
+                res = lookup(fetcher, spacer, key, cc, verify)
+            except urllib.error.HTTPError as e:
+                if e.code in st.BUSY:
+                    busy += 1
+                    print(f'  {kind}: HTTP {e.code}, rustiger aan')
+                    if busy >= 3:
+                        print(f'  {kind}: gestopt voor deze run')
+                        return
+                    spacer.delay *= 1.5
+                    fetcher.stop.wait(30)
+                    continue
+                res = {'u': '', 'r': f'http:{e.code}'}
+            except Exception as e:
+                if isinstance(e, Blocked) and str(e) == 'stop':
+                    return
+                continue  # tijdelijk (netwerk): niet cachen, volgende run opnieuw
+            res['d'] = day
+            with lock:
+                pcache[f'{kind}:{key}'] = res
+                stats[kind] += 1
+                stats[kind + '_hits'] += bool(res.get('u'))
+            if res.get('u'):
+                print(f'  + {kind} {key} {res.get("t", "")}')
+
+    threads = [threading.Thread(target=run, args=('ios', ios_todo, st.Spacer(itunes_delay), st.lookup_ios,
+                                                  store_max)),
+               threading.Thread(target=run, args=('gp', gp_todo, st.Spacer(play_delay), st.lookup_play_pkg,
+                                                  store_max))]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    print(f'store-links: {stats["ios"]} App Store-lookups ({stats["ios_hits"]} iconen), '
+          f'{stats["gp"]} Play-pagina\'s ({stats["gp_hits"]} iconen)')
+    return stats
+
+
+def play_candidates(groups, hosts, items, pcache, existing, per_country=100, world=1000):
+    """Fase 3: populaire zenders (top `per_country` per land + top `world` wereldwijd, op clickcount) zonder App
+    Store- of Play-icoon (gepubliceerd, of via de store-links van deze run) en zonder verse Play-zoekcache."""
+    today = date.today()
+    out, per_cc = [], {}
+    for i, ((cc, k), g) in enumerate(groups.items()):
+        per_cc[cc] = per_cc.get(cc, 0) + 1
+        if per_cc[cc] > per_country and i >= world:
+            continue
+        if st.is_fresh(pcache.get(f'q:{cc}|{k}'), today):
+            continue
+        c = ms.core(g['name'])
+        if ms.is_generic(c) and not (c.isdigit() and len(c) >= 3):
+            continue  # "Radio 1", "Jazz Radio": op naam alleen te onzeker in een zoekmachine ("Radio 538" mag)
+        if existing_rank(existing, cc, k, g['uuids']) >= 2:
+            continue
+        h = site_host(g['homepage'])
+        if mt.url_rank(store_icon(cc, k, g, items.get(h) if h in hosts else None, pcache)) >= 2:
+            continue
+        out.append((cc, k, g))
+    return out
+
+
+def search_play_all(fetcher, todo, pcache, deadline, play_max=300, delay=2.0):
+    spacer, done, hits, busy = st.Spacer(delay), 0, 0, 0
+    verify = lambda u: verify_store_image(fetcher, u)
+    day = date.today().isoformat()
+    print(f'Play-zoeken: {len(todo)} kandidaten (max. {play_max})')
+    for cc, k, g in todo:
+        if fetcher.stop.is_set() or time.time() > deadline or done >= play_max:
+            break
+        try:
+            res = st.search_play(fetcher, spacer, g['name'], cc, g['homepage'], verify)
+        except urllib.error.HTTPError as e:
+            if e.code in st.BUSY:
+                busy += 1
+                print(f'  Play: HTTP {e.code}')
+                if busy >= 2:
+                    print('  Play: gestopt voor deze run')
+                    break
+                spacer.delay *= 2
+                fetcher.stop.wait(60)
+                continue
+            res = {'u': '', 'r': f'http:{e.code}'}
+        except Exception:
+            continue
+        res['d'] = day
+        pcache[f'q:{cc}|{k}'] = res
+        done += 1
+        hits += bool(res.get('u'))
+        if res.get('u'):
+            print(f'  + play {cc or "--"} {g["name"]} → {res.get("p")}')
+    print(f'Play-zoeken: {done} gezocht, {hits} iconen')
+    return done, hits
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--cache', default=os.path.join(ROOT, '.site-icons-cache.json'))
-    ap.add_argument('--budget-min', type=float, default=40)
+    ap.add_argument('--play-cache', default=os.path.join(ROOT, '.play-icons-cache.json'),
+                    help='cache van tools/store_icons.py (App Store-id\'s, Play-pakketten, Play-zoekopdrachten)')
+    ap.add_argument('--budget-min', type=float, default=46, help='totaal (websites + store-links + Play-zoeken)')
+    ap.add_argument('--play', default='true', help='Play-zoekfunctie gebruiken (true/false)')
     ap.add_argument('--countries', type=int, default=80)
     ap.add_argument('--per-country', type=int, default=300)
     ap.add_argument('--world', type=int, default=3000)
     ap.add_argument('--workers', type=int, default=32)
+    ap.add_argument('--store-max', type=int, default=600, help='hooguit zoveel iTunes-lookups (en Play-pagina\'s)')
+    ap.add_argument('--play-max', type=int, default=300, help='hooguit zoveel Play-zoekopdrachten')
+    ap.add_argument('--play-per-country', type=int, default=100)
+    ap.add_argument('--play-world', type=int, default=1000)
+    ap.add_argument('--itunes-delay', type=float, default=3.0)
+    ap.add_argument('--play-delay', type=float, default=2.0)
+    ap.add_argument('--existing', default=OUT_DIR, help='gepubliceerde tabellen (wat er al een store-icoon heeft)')
     ap.add_argument('--limit', type=int, default=0, help='hooguit zoveel sites opzoeken (testen)')
     ap.add_argument('--offline', action='store_true')
     ap.add_argument('--out', default=OUT_DIR)
     a = ap.parse_args(argv)
+    play = str(a.play).strip().lower() not in ('false', '0', 'no', 'nee', 'off')
 
+    # tijdsbudget verdelen: websites, store-links (iTunes lookup + Play-pagina's), Play-zoeken
     start = time.time()
-    deadline = start + a.budget_min * 60
+    split = (0.55, 0.18, 0.27) if play else (0.75, 0.25, 0.0)
+    site_deadline = start + a.budget_min * 60 * split[0]
     items, generic = load_cache(a.cache)
-    print(f'site-cache: {len(items)} sites ({sum(1 for e in items.values() if e.get("u"))} met icoon)')
+    pcache = mt.load_items(a.play_cache)
+    existing = mt.load_dir(a.existing)
+    print(f'site-cache: {len(items)} sites ({sum(1 for e in items.values() if e.get("u"))} met icoon); '
+          f'play-cache: {len(pcache)} items ({sum(1 for e in pcache.values() if e.get("u"))} met icoon)')
     groups = ms.group(ms.popular_stations(a.countries, a.per_country, a.world))
     hosts = site_groups(groups)
     print(f'{len(groups)} zendernamen, {len(hosts)} websites')
 
-    stop = threading.Event()
-    signal.signal(signal.SIGTERM, lambda *_: stop.set())
+    stop, stop2 = threading.Event(), threading.Event()
+    signal.signal(signal.SIGTERM, lambda *_: (stop.set(), stop2.set()))
     today = date.today().isoformat()
     todo = [h for h in hosts if not is_fresh(items.get(h) or {}, date.today())]
     if a.limit:
@@ -551,7 +750,7 @@ def main(argv=None):
         ex = ThreadPoolExecutor(max_workers=a.workers)
         futs = {ex.submit(find_icon, fetcher, hosts[h]['homepage'], known): h for h in todo}
         try:
-            for fut in as_completed(futs, timeout=max(1, deadline - time.time())):
+            for fut in as_completed(futs, timeout=max(1, site_deadline - time.time())):
                 h = futs[fut]
                 try:
                     res = fut.result()
@@ -567,10 +766,10 @@ def main(argv=None):
                     save_cache(a.cache, items, generic)
                     print(f'{done}/{len(todo)} sites, {hits} iconen, {fetcher.calls} verzoeken, '
                           f'{(time.time() - start) / 60:.0f} min')
-                if stop.is_set() or time.time() > deadline:
+                if stop.is_set() or time.time() > site_deadline:
                     raise TimeoutError
         except (TimeoutError, FuturesTimeout):
-            print('tijd op: de volgende run gaat verder')
+            print('tijd op (websites): de volgende run gaat verder')
         finally:
             stop.set()
             ex.shutdown(wait=True, cancel_futures=True)
@@ -583,12 +782,33 @@ def main(argv=None):
     generic |= new_generic
     for h, e in items.items():
         if e.get('u') and any(hamming(e.get('h'), g) <= 4 for g in generic | DEFAULT_HASHES):
-            items[h] = {'u': '', 'r': 'generic', 'd': today, 'h': e.get('h')}
+            items[h] = dict(e, u='', r='generic', d=today)  # store-links blijven bewaard
     save_cache(a.cache, items, generic)
-    files = build_tables(groups, items, hosts)
+
+    # store-links van de websites (exacte App Store-id / Play-pakket) en de Play-zoekfunctie
+    if not a.offline and not stop2.is_set():
+        fetcher2 = Fetcher(stop=stop2)
+        store_deadline = time.time() + a.budget_min * 60 * split[1] + max(0, site_deadline - time.time())
+        resolve_store_links(fetcher2, groups, hosts, items, pcache, existing, store_deadline, a.store_max,
+                            a.itunes_delay, a.play_delay)
+        mt.save_items(a.play_cache, pcache)
+        if play and not stop2.is_set():
+            play_deadline = start + a.budget_min * 60
+            cands = play_candidates(groups, hosts, items, pcache, existing, a.play_per_country, a.play_world)
+            search_play_all(fetcher2, cands, pcache, play_deadline, a.play_max, a.play_delay)
+        stop2.set()
+    if a.play_cache:
+        mt.save_items(a.play_cache, pcache)
+
+    files = build_tables(groups, items, hosts, pcache)
     mt.merge_into_dir(a.out, site=files)
+    by = {}
+    for f in files.values():
+        for url in f['n'].values():
+            r = {3: 'App Store', 2: 'Play', 1: 'website'}[mt.url_rank(url)]
+            by[r] = by.get(r, 0) + 1
     total = sum(len(f['n']) for f in files.values())
-    print(f'klaar: {done} sites opgezocht ({hits} iconen) · {len(files)} bestanden · {total} namen met website-icoon')
+    print(f'klaar: {done} sites opgezocht ({hits} iconen) · {len(files)} bestanden · {total} namen met icoon {by}')
 
 
 if __name__ == '__main__':

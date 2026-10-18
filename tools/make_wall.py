@@ -7,7 +7,8 @@ website/assets/img/wall/ plus de lijst naar website/assets/js/wall.js. De site l
 bestanden: geen live ophalen, geen geflikker. Opnieuw maken: workflow Website met "Hero-logo's vernieuwen".
 
 Voorkeur: het app-icoon uit de vaste tabel website/assets/data/icons/<CC>.json (samengevoegd door
-tools/merge_icon_tables.py: App Store-icoon, anders het app-icoon van de eigen website van de zender); staat de
+tools/merge_icon_tables.py: App Store-icoon, anders Google Play-icoon, anders het app-icoon van de eigen website
+van de zender); staat de
 zender er niet in, dan hooguit LIVE_MAX keer zelf iTunes vragen (zelfde match als tools/make_station_icons.py);
 daarna het favicon uit Radio Browser.
 

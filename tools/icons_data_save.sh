@@ -3,6 +3,10 @@
 #
 #   GH_TOKEN=... tools/icons_data_save.sh "<bericht>" cache.json=/pad/a.json site-cache.json=/pad/b.json ...
 #
+# Caches: cache.json (App Store-zoekjob), site-cache.json (per website-host, met store-links) en play-cache.json
+# (tools/store_icons.py: App Store-id's, Play-pakketten, Play-zoekopdrachten); alles op *cache.json wordt
+# samengevoegd, andere bestanden (sources.json) overschreven.
+#
 # Haalt de nieuwste icons-data op, voegt *cache.json samen met tools/merge_icon_tables.py (per item de nieuwste
 # datum; niets verdwijnt), kopieert andere bestanden, en zet het resultaat terug als één commit (zonder
 # geschiedenis, zodat de branch klein blijft) met --force-with-lease: als iemand anders er net tussen pushte,

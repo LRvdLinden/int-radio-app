@@ -3,11 +3,14 @@ name: Icons
 # Mooie zendericonen, uit twee bronnen die naast elkaar draaien (docs/SPEC.md §1):
 # - appstore: per populaire zender het app-icoon uit de App Store (tools/make_station_icons.py, iTunes Search API
 #   zonder sleutel, ≈ 20 verzoeken per minuut; elke run gaat verder waar de vorige stopte, cache cache.json);
-# - site-icons: het app-icoon van de eigen website van de zender (manifest / apple-touch-icon;
-#   tools/make_site_icons.py, snel, ~40 minuten; cache site-cache.json).
-# Beide caches staan op de branch icons-data. De job publish voegt de tabellen samen (tools/merge_icon_tables.py:
-# App Store gaat voor, er verdwijnt nooit iets), zet website/assets/data/icons/<CC>.json op main en start de
-# workflow Website, zodat tunr.online de nieuwe tabellen serveert.
+# - site-icons: (tools/make_site_icons.py + tools/store_icons.py, ≤ 60 minuten, budget verdeeld) het app-icoon
+#   van de eigen website van de zender (manifest / apple-touch-icon; cache site-cache.json), de store-links op die
+#   website (smart app banner / App Store- en Play-links → exact App Store-icoon via iTunes lookup of Google
+#   Play-icoon) en, met invoer play = true, de Google Play-zoekfunctie voor populaire zenders zonder store-icoon
+#   (cache play-cache.json).
+# De caches staan op de branch icons-data. De job publish voegt de tabellen samen (tools/merge_icon_tables.py:
+# App Store > Google Play > website, er verdwijnt nooit iets), zet website/assets/data/icons/<CC>.json op main en
+# start de workflow Website, zodat tunr.online de nieuwe tabellen serveert.
 on:
   workflow_dispatch:
     inputs:
@@ -20,8 +23,12 @@ on:
         description: "Tijdsbudget voor iTunes-verzoeken (minuten)"
         default: "330"
       site_budget:
-        description: "Tijdsbudget voor website-iconen (minuten)"
-        default: "40"
+        description: "Tijdsbudget job site-icons in minuten (websites + store-links + Play-zoeken, max. 50)"
+        default: "46"
+      play:
+        description: "Google Play-zoekfunctie gebruiken (job site-icons)"
+        type: boolean
+        default: true
       offline:
         description: "Geen verzoeken, alleen de uitvoer opnieuw maken uit de caches"
         type: boolean
@@ -50,10 +57,12 @@ jobs:
       - name: Tests (offline)
         run: |
           python3 -m py_compile tools/make_station_icons.py tools/make_site_icons.py tools/merge_icon_tables.py \
-            tools/test_station_icons.py tools/test_site_icons.py tools/make_wall.py
+            tools/store_icons.py tools/test_station_icons.py tools/test_site_icons.py tools/test_store_icons.py \
+            tools/make_wall.py
           bash -n tools/icons_data_save.sh
           python3 tools/test_station_icons.py
           python3 tools/test_site_icons.py
+          python3 tools/test_store_icons.py
 
   appstore:
     needs: tests
@@ -118,25 +127,37 @@ jobs:
       - name: Cache ophalen (branch icons-data)
         run: |
           mkdir -p "$RUNNER_TEMP/icons/out/icons"
-          if git fetch -q --depth 1 origin icons-data 2>/dev/null && git show FETCH_HEAD:site-cache.json > "$RUNNER_TEMP/icons/out/site-cache.json" 2>/dev/null; then
-            echo "site-cache: $(wc -c < "$RUNNER_TEMP/icons/out/site-cache.json") bytes"
-          else
-            echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons/out/site-cache.json"
-            echo "nog geen site-cache: begin bij nul"
-          fi
+          git fetch -q --depth 1 origin icons-data 2>/dev/null || true
+          for f in site-cache.json play-cache.json; do
+            if git show FETCH_HEAD:$f > "$RUNNER_TEMP/icons/out/$f" 2>/dev/null; then
+              echo "$f: $(wc -c < "$RUNNER_TEMP/icons/out/$f") bytes"
+            else
+              echo '{"v":1,"items":{}}' > "$RUNNER_TEMP/icons/out/$f"
+              echo "nog geen $f: begin bij nul"
+            fi
+          done
 
-      - name: Website-iconen zoeken
-        timeout-minutes: 50
+      # websites, dan store-links (iTunes lookup ≥ 3 s, Play-pagina's ≥ 2 s), dan Play-zoeken (≥ 2 s); het budget
+      # wordt in het script verdeeld (55/18/27 %, zonder Play 75/25 %)
+      - name: Website- en store-iconen zoeken
+        timeout-minutes: 52
+        env:
+          PLAY: ${{ (github.event_name == 'workflow_dispatch' && !inputs.play) && 'false' || 'true' }}
         run: |
-          B="${{ inputs.site_budget }}"; [ -n "$B" ] || B=40
-          python3 tools/make_site_icons.py --cache "$RUNNER_TEMP/icons/out/site-cache.json" --budget-min "$B" \
+          B="${{ inputs.site_budget }}"; [ -n "$B" ] || B=46
+          [ "${B%.*}" -le 50 ] 2>/dev/null || B=50
+          python3 tools/make_site_icons.py --cache "$RUNNER_TEMP/icons/out/site-cache.json" \
+            --play-cache "$RUNNER_TEMP/icons/out/play-cache.json" --play "$PLAY" --budget-min "$B" \
             --out "$RUNNER_TEMP/icons/out/icons" ${{ inputs.offline && '--offline' || '' }}
 
-      - name: Cache bewaren (branch icons-data)
+      - name: Caches bewaren (branch icons-data)
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: tools/icons_data_save.sh "icons cache (websites) $GITHUB_RUN_ID" site-cache.json="$RUNNER_TEMP/icons/out/site-cache.json"
+        run: |
+          tools/icons_data_save.sh "icons cache (websites + stores) $GITHUB_RUN_ID" \
+            site-cache.json="$RUNNER_TEMP/icons/out/site-cache.json" \
+            play-cache.json="$RUNNER_TEMP/icons/out/play-cache.json"
 
       - name: Uitvoer doorgeven aan publish
         if: always()
@@ -171,7 +192,8 @@ jobs:
         run: |
           tools/icons_data_save.sh "icons caches $GITHUB_RUN_ID" \
             cache.json="$RUNNER_TEMP/icons/in/icons-appstore/cache.json" \
-            site-cache.json="$RUNNER_TEMP/icons/in/icons-site/site-cache.json"
+            site-cache.json="$RUNNER_TEMP/icons/in/icons-site/site-cache.json" \
+            play-cache.json="$RUNNER_TEMP/icons/in/icons-site/play-cache.json"
 
       # altijd vanaf de nieuwste main samenvoegen (ook een andere run kan net tabellen gecommit hebben);
       # merge_icon_tables.py verwijdert nooit iets uit de bestaande tabellen
@@ -188,7 +210,7 @@ jobs:
             git add -A website/assets/data/icons
             if git diff --cached --quiet; then echo "iconen ongewijzigd"; exit 0; fi
             echo "files: $(ls website/assets/data/icons | wc -l), $(du -sh website/assets/data/icons | cut -f1)"
-            git commit -qm "Zendericonen bijgewerkt (App Store + websites, tools/merge_icon_tables.py) [skip ci]"
+            git commit -qm "Zendericonen bijgewerkt (App Store + Google Play + websites, tools/merge_icon_tables.py) [skip ci]"
             if git push -q origin "HEAD:$BR"; then echo "changed=1" >> "$GITHUB_OUTPUT"; exit 0; fi
             echo "main veranderde tussendoor: opnieuw ($i)"
             sleep $((i * 10))

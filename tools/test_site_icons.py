@@ -180,7 +180,8 @@ class Images(unittest.TestCase):
             'https://a.fm/apple-touch-icon-precomposed.png': ('image/png', png(152, 152)),
         })
         res = si.find_icon(f, 'https://a.fm')
-        self.assertEqual(res, {'u': 'https://a.fm/apple-touch-icon-precomposed.png', 'h': res['h'], 'via': 'root'})
+        self.assertEqual(res, {'u': 'https://a.fm/apple-touch-icon-precomposed.png', 'h': res['h'], 'via': 'root',
+                               'sl': 1})
 
     def test_find_icon_miss(self):
         f = FakeFetcher({'https://b.fm': ('text/html', '<link rel="apple-touch-icon" href="/t.png">'),
@@ -203,10 +204,12 @@ class Generic(unittest.TestCase):
     def test_freshness(self):
         from datetime import date
         today = date(2026, 10, 17)
-        self.assertTrue(si.is_fresh({'u': '', 'd': '2026-09-01'}, today))
-        self.assertFalse(si.is_fresh({'u': '', 'd': '2026-08-01'}, today))
-        self.assertTrue(si.is_fresh({'u': 'x', 'd': '2026-07-01'}, today))
-        self.assertFalse(si.is_fresh({'u': 'x', 'd': '2026-06-01'}, today))
+        self.assertTrue(si.is_fresh({'u': '', 'd': '2026-09-01', 'sl': 1}, today))
+        self.assertFalse(si.is_fresh({'u': '', 'd': '2026-08-01', 'sl': 1}, today))
+        self.assertTrue(si.is_fresh({'u': 'x', 'd': '2026-07-01', 'sl': 1}, today))
+        self.assertFalse(si.is_fresh({'u': 'x', 'd': '2026-06-01', 'sl': 1}, today))
+        # van voor de store-links: opnieuw ophalen, ook als hij nog vers is
+        self.assertFalse(si.is_fresh({'u': 'x', 'd': '2026-10-01'}, today))
 
 
 APP = 'https://is1-ssl.mzstatic.com/image/thumb/a/256x256bb.png'

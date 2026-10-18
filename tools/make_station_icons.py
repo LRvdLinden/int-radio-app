@@ -13,8 +13,8 @@ vaste tabel die de apps en de webspeler van tunr.online halen.
    stopte; missers na 90 dagen en treffers na 180 dagen opnieuw;
 4. uitvoer: website/assets/data/icons/<CC>.json (+ _world.json voor zenders zonder land) =
    {"u": {stationuuid: url}, "n": {naamsleutel: url}}, samengevoegd met wat er al staat via
-   tools/merge_icon_tables.py (App Store-icoon gaat voor het website-icoon van tools/make_site_icons.py; er
-   verdwijnt niets).
+   tools/merge_icon_tables.py (App Store-icoon gaat voor het Google Play- en website-icoon van
+   tools/make_site_icons.py; er verdwijnt niets).
 
 Gebruik:
     python3 tools/make_station_icons.py [--cache pad] [--budget-min 330] [--countries 60] [--per-country 150]

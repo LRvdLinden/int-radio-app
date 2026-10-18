@@ -2,16 +2,18 @@
 """De zendericoon-tabellen samenvoegen: één plek voor de voorrang tussen de bronnen (workflow Icons, SPEC §1).
 
 Tabel: website/assets/data/icons/<CC>.json (+ _world.json) = {"u": {stationuuid: url}, "n": {naamsleutel: url}}.
-Twee bronnen schrijven dezelfde vorm:
-- tools/make_station_icons.py: het app-icoon uit de App Store (mzstatic.com), de mooiste bron;
-- tools/make_site_icons.py: het app-icoon van de eigen website van de zender (manifest / apple-touch-icon).
+Twee jobs schrijven dezelfde vorm:
+- tools/make_station_icons.py ("appstore"): het app-icoon uit de App Store via de iTunes-zoekfunctie (mzstatic.com);
+- tools/make_site_icons.py ("site"): per zender het beste van: het App Store-icoon van de app waar de website van
+  de zender naar linkt (smart app banner / App Store-link, exact via iTunes lookup; mzstatic.com), het Google
+  Play-icoon (Play-link op de website of Play-zoekfunctie; play-lh.googleusercontent.com) of het app-icoon van de
+  website zelf (manifest / apple-touch-icon).
 
-Voorrang per sleutel (uuid of naamsleutel), in `merge`:
-  1. App Store-icoon van deze run;
-  2. App Store-icoon dat al in de tabel stond;
-  3. website-icoon van deze run;
-  4. wat er al stond.
-Er verdwijnt nooit iets uit een bestaande tabel, en er worden geen bestanden verwijderd.
+De soort bron volgt uit de host van de URL (`url_rank`): App Store (mzstatic) > Google Play (play-lh) > website.
+Voorrang per sleutel (uuid of naamsleutel), in `merge`: de hoogste soort wint; bij gelijke soort wint de App
+Store-zoekjob van deze run, dan de site-job van deze run, dan wat er al stond. Een betere bron vervangt dus een
+slechtere voor dezelfde zender, nooit andersom. Er verdwijnt nooit iets uit een bestaande tabel, en er worden geen
+bestanden verwijderd.
 
 Gebruik (workflow Icons, job publish):
     python3 tools/merge_icon_tables.py tables --existing DIR [--appstore DIR] [--site DIR] --out DIR [--sources FILE]
@@ -20,12 +22,39 @@ Gebruik (workflow Icons, job publish):
 import argparse, json, os, sys, urllib.parse
 
 
-def is_appstore_url(url):
+def _host(url):
     try:
-        h = (urllib.parse.urlparse(str(url or '')).hostname or '').lower()
+        return (urllib.parse.urlparse(str(url or '')).hostname or '').lower()
     except ValueError:
-        return False
+        return ''
+
+
+def is_appstore_url(url):
+    h = _host(url)
     return h == 'mzstatic.com' or h.endswith('.mzstatic.com')
+
+
+def is_play_url(url):
+    return _host(url) == 'play-lh.googleusercontent.com'
+
+
+def url_rank(url):
+    """Soort bron van een icoon-URL: 3 = App Store, 2 = Google Play, 1 = website, 0 = leeg."""
+    if not url:
+        return 0
+    if is_appstore_url(url):
+        return 3
+    if is_play_url(url):
+        return 2
+    return 1
+
+
+# bronlabel (sources.json, alleen debug) per (herkomst, soort)
+_LABELS = {
+    ('a', 3): 'appstore', ('a', 2): 'appstore', ('a', 1): 'appstore',
+    ('s', 3): 'appstore-link', ('s', 2): 'play', ('s', 1): 'site',
+    ('e', 3): 'appstore-kept', ('e', 2): 'play-kept', ('e', 1): 'kept',
+}
 
 
 def empty():
@@ -52,7 +81,8 @@ def load_dir(path):
 
 def merge(existing=None, appstore=None, site=None):
     """Tabellen samenvoegen. Geeft (tabellen, bronnen); bronnen = {bestand: {"u"/"n": {sleutel: bron}}} met bron
-    "appstore", "appstore-kept", "site" of "kept" (alleen voor de cache/debug, niet in de openbare tabellen)."""
+    "appstore" (zoekjob), "appstore-link" (exacte App Store-app van de website), "play", "site", of
+    "appstore-kept" / "play-kept" / "kept" (stond er al). Alleen voor debug, niet in de openbare tabellen."""
     existing, appstore, site = existing or {}, appstore or {}, site or {}
     tables, sources = {}, {}
     for f in sorted(set(existing) | set(appstore) | set(site)):
@@ -61,15 +91,18 @@ def merge(existing=None, appstore=None, site=None):
         for sec in ('u', 'n'):
             keys = set(e.get(sec) or {}) | set(a.get(sec) or {}) | set(s.get(sec) or {})
             for k in keys:
-                av, ev, sv = (a.get(sec) or {}).get(k), (e.get(sec) or {}).get(k), (s.get(sec) or {}).get(k)
-                if av:
-                    t[sec][k], src[sec][k] = av, 'appstore'
-                elif ev and is_appstore_url(ev):
-                    t[sec][k], src[sec][k] = ev, 'appstore-kept'
-                elif sv:
-                    t[sec][k], src[sec][k] = sv, 'site'
-                elif ev:
-                    t[sec][k], src[sec][k] = ev, 'kept'
+                # (url, herkomst) in volgorde van voorkeur bij gelijke soort
+                cands = [((a.get(sec) or {}).get(k), 'a'), ((s.get(sec) or {}).get(k), 's'),
+                         ((e.get(sec) or {}).get(k), 'e')]
+                best, rank, origin = None, 0, ''
+                for url, o in cands:
+                    r = url_rank(url)
+                    if o == 'a' and r:
+                        r = 3  # de App Store-job levert alleen App Store-iconen
+                    if r > rank:
+                        best, rank, origin = url, r, o
+                if best:
+                    t[sec][k], src[sec][k] = best, _LABELS[(origin, rank)]
         if t['u'] or t['n']:
             tables[f], sources[f] = t, src
     return tables, sources
