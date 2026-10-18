@@ -63,12 +63,9 @@ struct WidgetSnapshot: Codable, Hashable {
 /// Opslag in de App Group: JSON in UserDefaults(suiteName:) plus verkleinde logo's (PNG, ~120 px) als bestanden,
 /// omdat widgets niet betrouwbaar afbeeldingen van internet kunnen laden.
 enum WidgetBridge {
-    #if os(macOS)
-    /// Mac: App Group met team-prefix (werkt op alle macOS-versies zonder extra profiel)
-    static let appGroup = "EU3UY476T6.nl.lrvdlinden.tunr"
-    #else
+    /// Eén App Group voor iPhone, iPad, Mac en Apple TV: de App ID nl.lrvdlinden.tunr is gedeeld door alle platforms,
+    /// dus Xcode registreert de groepen van alle entitlements-bestanden samen (alleen "group."-namen zijn toegestaan).
     static let appGroup = "group.nl.lrvdlinden.tunr"
-    #endif
 
     static let maxStations = 8
 

@@ -813,6 +813,23 @@
           "en": "CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen."
         }
       ]
+    },
+    {
+      "build": 27,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Ondertekenen in Xcode: één App Group (group.nl.lrvdlinden.tunr) voor alle Apple-platforms, zodat automatisch ondertekenen weer werkt.",
+          "en": "Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again."
+        }
+      ]
     }
   ]
 }

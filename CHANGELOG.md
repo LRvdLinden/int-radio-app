@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 27
+_2026-10-18_
+
+**Opgelost**
+
+- Ondertekenen in Xcode: één App Group (group.nl.lrvdlinden.tunr) voor alle Apple-platforms, zodat automatisch ondertekenen weer werkt. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again.</sub>
+
 ## Build 26
 _2026-10-18_
 
