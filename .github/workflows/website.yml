@@ -147,8 +147,8 @@ jobs:
           if [ -n "${DOMAIN:-}" ]; then
             curl -fsSL --max-time 20 "https://$DOMAIN/presskit/presskit.json" -o /tmp/presskit-prev.json 2>/dev/null || rm -f /tmp/presskit-prev.json
           fi
-          if ! { git clone -q --depth 1 --filter=blob:none --sparse https://github.com/LRvdLinden/tunr-beheer /tmp/tb \
-                 && git -C /tmp/tb sparse-checkout set appstore; }; then
+          # altijd branch main (de standaardbranch op GitHub kan iets anders zijn)
+          if ! git clone -q --depth 1 --branch main https://github.com/LRvdLinden/tunr-beheer /tmp/tb; then
             echo "::warning::tunr-beheer/appstore niet opgehaald: presskit niet bijgewerkt (de versie online blijft staan)"; exit 0
           fi
           prev=(); [ -s /tmp/presskit-prev.json ] && prev=(--previous /tmp/presskit-prev.json)
