@@ -4,6 +4,16 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 33 · versie 1.0.0
+_2026-10-18_
+
+**Verbeterd**
+
+- Nieuwe Top Shelf op Apple TV: als je Tunr op het Home Screen selecteert, zie je erachter een schuin raster van zenderlogo's met het Tunr-woordmerk. _(Apple TV)_  
+  <sub>New Top Shelf on Apple TV: when you select Tunr on the Home Screen, a tilted grid of station logos with the Tunr wordmark appears behind it.</sub>
+- Het app-icoon op Apple TV is weer het vertrouwde Tunr-icoon. _(Apple TV)_  
+  <sub>The Apple TV app icon is back to the familiar Tunr icon.</sub>
+
 ## Build 32 · versie 1.0.0
 _2026-10-18_
 

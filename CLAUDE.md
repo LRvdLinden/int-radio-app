@@ -14,7 +14,7 @@ Tunr is een wereldwijde radio-app (werknaam) voor **iPhone, iPad, Mac, Apple TV,
 
 ## Afspraken
 
-- Huidige versie: **1.0.0** (build 32 is de laatste 1.0.0). **De volgende build wordt versie 1.0.1**: in die commit `python3 tools/set_version.py 1.0.1` (zet de versie op alle plekken) en het changelog-item krijgt `"version": "1.0.1"`; daarna blijft 1.0.1 staan tot er weer een nieuwe versie wordt afgesproken. Elke build vanaf 1.0.1 heeft `"version"` in de changelog (zonder veld = 1.0.0). Het buildnummer gaat alleen omhoog voor de platforms die echt veranderen. Buildnummers zijn één doorlopende reeks: een nieuwe build krijgt het volgende vrije nummer (hoogste build in `docs/changelog.json` + 1).
+- Huidige versie: **1.0.0** (build 33 is de laatste 1.0.0). **De volgende build wordt versie 1.0.1**: in die commit `python3 tools/set_version.py 1.0.1` (zet de versie op alle plekken) en het changelog-item krijgt `"version": "1.0.1"`; daarna blijft 1.0.1 staan tot er weer een nieuwe versie wordt afgesproken. Elke build vanaf 1.0.1 heeft `"version"` in de changelog (zonder veld = 1.0.0). Het buildnummer gaat alleen omhoog voor de platforms die echt veranderen. Buildnummers zijn één doorlopende reeks: een nieuwe build krijgt het volgende vrije nummer (hoogste build in `docs/changelog.json` + 1).
   - Apple: `CURRENT_PROJECT_VERSION` in `apple/project.yml`.
   - Android (+ Android TV): `TUNR_BUILD` in `android/gradle.properties`.
   - Website: geen buildnummer in een bestand; telt mee via de changelog (`web`).

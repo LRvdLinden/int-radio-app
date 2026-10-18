@@ -915,6 +915,28 @@
           "en": "New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos."
         }
       ]
+    },
+    {
+      "build": 33,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Nieuwe Top Shelf op Apple TV: als je Tunr op het Home Screen selecteert, zie je erachter een schuin raster van zenderlogo's met het Tunr-woordmerk.",
+          "en": "New Top Shelf on Apple TV: when you select Tunr on the Home Screen, a tilted grid of station logos with the Tunr wordmark appears behind it."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Het app-icoon op Apple TV is weer het vertrouwde Tunr-icoon.",
+          "en": "The Apple TV app icon is back to the familiar Tunr icon."
+        }
+      ]
     }
   ]
 }

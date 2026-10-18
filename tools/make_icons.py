@@ -12,7 +12,7 @@ Uitvoer:
 - website/                       favicon, apple-touch-icon, PWA-iconen, og-image
 - docs/brand/                    icon.png, wordmark.png (README), wordmark-white.png + wordmark-dark.png (presskit)
 """
-import json, math, pathlib
+import json, math, pathlib, random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
@@ -218,87 +218,65 @@ def apple():
             save(top_shelf(w * f, h * f), brand / name / f"topshelf@{sc}.png")
 
 
-# Home Screen (Layered) van Apple TV: drie lagen voor het parallax-effect (voor → achter).
-TV_LAYERS = ("Front", "Middle", "Back")
-# zenderlogo's uit de hero van tunr.online (tools/make_wall.py), nette vierkante app-iconen
+# App-icoon van Apple TV (Home Screen, gelaagd): verloop achter, wit symbool voor.
+TV_LAYERS = ("Front", "Back")
+# zenderlogo's voor de Top Shelf, uit de hero van tunr.online (tools/make_wall.py): nette vierkante app-iconen
 TV_WALL = [3, 5, 1, 7, 9, 10, 35, 4, 6, 12, 11, 23, 13, 32, 39, 50, 66, 24, 46, 58, 34, 62, 59, 74, 30, 57, 29, 67,
            51, 37, 19, 48, 16, 63, 25, 72]
 
 
 def tv_layers(w, h):
-    """Achter: donker met oranje gloed. Midden: schuin raster van zendertegels dat naar het midden toe wegvalt.
-    Voor: het witte Tunr-symbool op een oranje schijf. Belangrijke inhoud binnen de veilige zone (midden)."""
-    S = 2  # supersampling
-    W, H = w * S, h * S
-    back = Image.new("RGBA", (W, H), BG + (255,))
-    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(glow).ellipse([W * 0.15, -H * 0.2, W * 0.85, H * 1.2], fill=ACCENT + (150,))
-    back.alpha_composite(glow.filter(ImageFilter.GaussianBlur(H * 0.22)))
+    back = fast_gradient(w, h).convert("RGBA")
+    front = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    s = int(h * 0.86)
+    front.alpha_composite(symbol(s), ((w - s) // 2, (h - s) // 2 + int(h * 0.03)))
+    return [front, back]
 
-    # midden: tegels op een groter vel, daarna gedraaid en bijgesneden
-    tile = int(H * 0.25); gap = int(tile * 0.16); r = int(tile * 0.22)
-    cols, rows = 11, 7
-    sheet = Image.new("RGBA", (cols * (tile + gap), rows * (tile + gap)), (0, 0, 0, 0))
+
+def station_wall(W, H, tile, angle=-14):
+    """Schuin raster van zendertegels (afgeronde app-iconen) dat het hele vlak vult."""
+    gap = int(tile * 0.16); r = int(tile * 0.22)
+    diag = int(math.hypot(W, H)) + tile * 2
+    cols, rows = diag // (tile + gap) + 2, diag // (tile + gap) + 2
+    sheet = Image.new("RGBA", (cols * (tile + gap) + tile, rows * (tile + gap)), (0, 0, 0, 0))
     wall = root / "website/assets/img/wall"
-    mask = Image.new("L", (tile, tile), 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, tile - 1, tile - 1], radius=r, fill=255)
+    mask = Image.new("L", (tile * 4, tile * 4), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, tile * 4 - 1, tile * 4 - 1], radius=r * 4, fill=255)
+    mask = mask.resize((tile, tile), Image.LANCZOS)
+    logos, grid = {}, {}
+    rnd = random.Random(7)  # vaste volgorde: elke run hetzelfde beeld
     for i in range(cols * rows):
-        n = TV_WALL[i % len(TV_WALL)]
-        logo = Image.open(wall / f"{n:02d}.webp").convert("RGBA").resize((tile, tile), Image.LANCZOS)
-        x, y = (i % cols) * (tile + gap) + ((tile + gap) // 2 if (i // cols) % 2 else 0), (i // cols) * (tile + gap)
-        sheet.paste(logo, (x, y), mask)
-    sheet = sheet.rotate(-14, resample=Image.BICUBIC, expand=True)
-    mid = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    mid.alpha_composite(sheet, ((W - sheet.size[0]) // 2, (H - sheet.size[1]) // 2))
-    # naar het midden toe vervagen en donkerder (ruimte voor het symbool), aan de randen vol zichtbaar
-    fade = Image.new("L", (W, H), 255)
-    ImageDraw.Draw(fade).ellipse([W * 0.5 - H * 0.62, H * 0.5 - H * 0.62, W * 0.5 + H * 0.62, H * 0.5 + H * 0.62], fill=40)
-    fade = fade.filter(ImageFilter.GaussianBlur(H * 0.16))
-    alpha = np.minimum(np.array(mid.getchannel("A")), np.array(fade))
-    mid.putalpha(Image.fromarray(alpha))
-    dim = Image.new("RGBA", (W, H), BG + (0,))
-    dim.putalpha(Image.fromarray((alpha * 0.28).astype("uint8")))
-    mid.alpha_composite(dim)
-
-    # voor: oranje schijf met schaduw en wit symbool
-    front = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = int(H * 0.62); cx, cy = W // 2, H // 2
-    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(sh).ellipse([cx - d / 2, cy - d / 2 + H * 0.03, cx + d / 2, cy + d / 2 + H * 0.03], fill=(0, 0, 0, 150))
-    front.alpha_composite(sh.filter(ImageFilter.GaussianBlur(H * 0.04)))
-    disc = fast_gradient(d, d).convert("RGBA")
-    dm = Image.new("L", (d * 4, d * 4), 0); ImageDraw.Draw(dm).ellipse([0, 0, d * 4 - 1, d * 4 - 1], fill=255)
-    front.paste(disc, (cx - d // 2, cy - d // 2), dm.resize((d, d), Image.LANCZOS))
-    sym = symbol(int(d * 0.84))
-    front.alpha_composite(sym, (cx - sym.size[0] // 2, cy - sym.size[1] // 2 + int(d * 0.02)))
-    return [im.resize((w, h), Image.LANCZOS) for im in (front, mid, back.convert("RGB").convert("RGBA"))]
-
-
-def tv_preview(w, h):
-    """Platte voorbeeldweergave van de lagen (README/presskit), met afgeronde hoeken zoals op het Home Screen."""
-    out = Image.new("RGBA", (w, h))
-    for im in reversed(tv_layers(w, h)):
-        out.alpha_composite(im)
+        row, col = divmod(i, cols)
+        near = {grid.get((row, col - 1)), grid.get((row, col - 2)), grid.get((row - 1, col - 1)), grid.get((row - 1, col)),
+                grid.get((row - 1, col + 1)), grid.get((row - 2, col))}
+        n = rnd.choice([x for x in TV_WALL if x not in near])  # geen dezelfde zender naast of boven elkaar
+        grid[(row, col)] = n
+        if n not in logos:
+            logos[n] = Image.open(wall / f"{n:02d}.webp").convert("RGBA").resize((tile, tile), Image.LANCZOS)
+        x = col * (tile + gap) + ((tile + gap) // 2 if row % 2 else 0)
+        sheet.paste(logos[n], (x, row * (tile + gap)), mask)
+    sheet = sheet.rotate(angle, resample=Image.BICUBIC, expand=True)
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    out.alpha_composite(sheet, ((W - sheet.size[0]) // 2, (H - sheet.size[1]) // 2))
     return out
 
 
 def top_shelf(w, h):
+    """Top Shelf (het beeld achter de iconen als Tunr op het Home Screen is geselecteerd): schuin raster van
+    zenderlogo's, donker verloop links met het Tunr-woordmerk, oranje gloed."""
     img = Image.new("RGBA", (w, h), BG + (255,))
-    # zachte gloed in accentkleur
+    img.alpha_composite(station_wall(w, h, tile=int(h * 0.22)))
+    # donker verloop: links (woordmerk) en onder (rij app-iconen van tvOS) donkerder, rechts de logo's vol in beeld
+    xs = np.linspace(0, 1, w)[None, :]; ys = np.linspace(0, 1, h)[:, None]
+    shade = np.clip(1.15 - xs * 1.6, 0.18, 0.94) + np.clip((ys - 0.7) * 1.2, 0, 0.35)
+    dark = Image.new("RGBA", (w, h), BG + (0,))
+    dark.putalpha(Image.fromarray((np.clip(shade, 0, 0.92) * 255).astype("uint8")))
+    img.alpha_composite(dark)
     glow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    gd = ImageDraw.Draw(glow)
-    gd.ellipse([w * 0.25, h * 0.1, w * 0.75, h * 1.2], fill=ACCENT + (110,))
-    glow = glow.filter(ImageFilter.GaussianBlur(h * 0.18))
-    img.alpha_composite(glow)
-    # golfringen
-    rings = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    rd = ImageDraw.Draw(rings)
-    cx, cy = w / 2, h * 0.5
-    for i, r in enumerate((h * 0.42, h * 0.62, h * 0.82, h * 1.02)):
-        rd.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 255, 255, 34 - i * 6), width=max(2, h // 240))
-    img.alpha_composite(rings)
-    wm = wordmark(int(h * 0.36))
-    img.alpha_composite(wm, ((w - wm.size[0]) // 2, int(h * 0.5 - wm.size[1] * 0.55)))
+    ImageDraw.Draw(glow).ellipse([-w * 0.15, -h * 0.4, w * 0.45, h * 1.1], fill=ACCENT + (70,))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(h * 0.25)))
+    wm = wordmark(int(h * 0.26))
+    img.alpha_composite(wm, (int(h * 0.16), int(h * 0.16)))
     return img.convert("RGB")
 
 
