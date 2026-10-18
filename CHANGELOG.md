@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 35 · versie 1.0.1
+_2026-10-18_
+
+**Verbeterd**
+
+- Top Shelf op Apple TV: het Tunr-woordmerk staat nu in het midden, met de zenderlogo's eromheen. _(Apple TV)_  
+  <sub>Apple TV Top Shelf: the Tunr wordmark now sits in the centre, surrounded by station logos.</sub>
+
 ## Build 34 · versie 1.0.1
 _2026-10-18_
 

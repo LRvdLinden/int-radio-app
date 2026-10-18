@@ -967,6 +967,21 @@
           "en": "Version 1.0.1."
         }
       ]
+    },
+    {
+      "build": 35,
+      "version": "1.0.1",
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Top Shelf op Apple TV: het Tunr-woordmerk staat nu in het midden, met de zenderlogo's eromheen.",
+          "en": "Apple TV Top Shelf: the Tunr wordmark now sits in the centre, surrounded by station logos."
+        }
+      ]
     }
   ]
 }
