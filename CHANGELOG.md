@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 38 · versie 1.0.1
+_2026-10-18_
+
+**Opgelost**
+
+- Kaart: de kaart toont weer gewone donkere kaarttegels, zonder watermerk "API key required". _(Android, Android TV)_  
+  <sub>Map: the map shows regular dark map tiles again, without the "API key required" watermark.</sub>
+
 ## Build 37 · versie 1.0.1
 _2026-10-18_
 

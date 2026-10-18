@@ -56,8 +56,11 @@ for s in $SCENES; do
     adb shell input keyevent KEYCODE_BACK; sleep 2
   fi
   # statusbalk opnieuw in demomodus (systemui kan die tussendoor loslaten)
-  demo enter; demo clock -e hhmm 0941; demo battery -e level 100 -e plugged false; demo notifications -e visible false
-  sleep 1
+  for _ in 1 2; do  # twee keer: op sommige toestellen pakt systemui de eerste keer niet
+    demo enter; demo clock -e hhmm 0941; demo battery -e level 100 -e plugged false
+    demo network -e wifi show -e level 4; demo notifications -e visible false
+    sleep 1
+  done
   adb exec-out screencap -p > "$RAW/$DEV-$s.png" || echo "::warning::$DEV-$s: geen opname"
   python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$RAW/$DEV-$s.png" 2>/dev/null \
     || echo "::warning::$DEV-$s: opname ongeldig"

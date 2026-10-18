@@ -1023,6 +1023,22 @@
           "en": "Screenshot mode hides the navigation bar and taskbar."
         }
       ]
+    },
+    {
+      "build": 38,
+      "version": "1.0.1",
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "android",
+            "androidtv"
+          ],
+          "nl": "Kaart: de kaart toont weer gewone donkere kaarttegels, zonder watermerk \"API key required\".",
+          "en": "Map: the map shows regular dark map tiles again, without the \"API key required\" watermark."
+        }
+      ]
     }
   ]
 }
