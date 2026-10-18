@@ -18,6 +18,8 @@ adb shell cmd uimode night yes || true
 # geen "… reageert niet"-meldingen in beeld (trage emulator)
 adb shell settings put global hide_error_dialogs 1 || true
 adb shell settings put global anr_show_background 0 || true
+# geen uitleg "Viewing full screen" als de app de navigatiebalk verbergt
+adb shell settings put secure immersive_mode_confirmations confirmed || true
 # taal: de emulator staat standaard op Engels (Verenigde Staten), zoals de App Store-afbeeldingen
 # statusbalk: demomodus
 adb shell settings put global sysui_demo_allowed 1 || true
@@ -49,6 +51,9 @@ for s in $SCENES; do
     sleep "$WAIT"
   fi
   adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+  # statusbalk opnieuw in demomodus (systemui kan die tussendoor loslaten)
+  demo enter; demo clock -e hhmm 0941; demo battery -e level 100 -e plugged false; demo notifications -e visible false
+  sleep 1
   adb exec-out screencap -p > "$RAW/$DEV-$s.png" || echo "::warning::$DEV-$s: geen opname"
   python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$RAW/$DEV-$s.png" 2>/dev/null \
     || echo "::warning::$DEV-$s: opname ongeldig"
