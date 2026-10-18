@@ -4,6 +4,19 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 37 · versie 1.0.1
+_2026-10-18_
+
+**Verbeterd**
+
+- Schermafbeeldingsmodus verbergt de navigatie- en taakbalk. _(Android, Android TV)_  
+  <sub>Screenshot mode hides the navigation bar and taskbar.</sub>
+
+**Opgelost**
+
+- Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel). _(Android, Android TV)_  
+  <sub>Map: CARTO map tiles work again without a watermark once the map key is set (CARTO now requires a key).</sub>
+
 ## Build 36 · versie 1.0.1
 _2026-10-18_
 

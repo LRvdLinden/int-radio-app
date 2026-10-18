@@ -998,6 +998,31 @@
           "en": "Screenshot mode for the Google Play images: the app opens straight into a chosen screen, with the Netherlands as country and no intro."
         }
       ]
+    },
+    {
+      "build": 37,
+      "version": "1.0.1",
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "android",
+            "androidtv"
+          ],
+          "nl": "Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel).",
+          "en": "Map: CARTO map tiles work again without a watermark once the map key is set (CARTO now requires a key)."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "android",
+            "androidtv"
+          ],
+          "nl": "Schermafbeeldingsmodus verbergt de navigatie- en taakbalk.",
+          "en": "Screenshot mode hides the navigation bar and taskbar."
+        }
+      ]
     }
   ]
 }

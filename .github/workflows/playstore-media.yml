@@ -45,6 +45,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: APK bouwen
+        env:
+          TUNR_CARTO_KEY: ${{ secrets.CARTO_KEY }}
         working-directory: android
         run: |
           set -o pipefail
@@ -53,6 +55,11 @@ jobs:
           APK=$(ls "$PWD"/app/build/outputs/apk/release/*.apk | head -1)
           echo "APK=$APK" >> $GITHUB_ENV
           echo "RAW=$RUNNER_TEMP/raw" >> $GITHUB_ENV
+          # zonder CARTO-sleutel heeft de kaart een watermerk: dan geen kaartscène
+          if [ -z "$TUNR_CARTO_KEY" ]; then
+            echo "::warning::Geen secret CARTO_KEY: kaartscène overgeslagen (CARTO-tegels met watermerk)"
+            echo "SCENES_PHONE=discover player search podcasts library" >> $GITHUB_ENV
+          fi
           ls -la "$APK"
 
       - name: KVM aanzetten (snelle emulator)
@@ -114,6 +121,7 @@ jobs:
 
       - name: Afbeeldingen opmaken
         run: |
+          set -o pipefail
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install -q pillow numpy
           # Inter (OFL) voor de koppen

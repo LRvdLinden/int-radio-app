@@ -20,7 +20,22 @@ root = pathlib.Path(__file__).resolve().parent.parent
 ACCENT = (0xFF, 0x5A, 0x1F)
 ACCENT2 = (0xFF, 0xB0, 0x20)
 BG = (0x0A, 0x0A, 0x0C)
-FONT = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
+
+
+def _find_font():
+    """Inter Display Black: systeemfonts, anders $TUNR_FONT_DIR (workflows halen Inter daar op)."""
+    import os
+    cands = [pathlib.Path("/usr/share/fonts/opentype/inter/InterDisplay-Black.otf")]
+    d = os.environ.get("TUNR_FONT_DIR")
+    if d and pathlib.Path(d).is_dir():
+        cands += sorted(pathlib.Path(d).rglob("InterDisplay-Black.otf")) + sorted(pathlib.Path(d).rglob("Inter-Black.otf"))
+    for c in cands:
+        if c.exists():
+            return str(c)
+    raise SystemExit("FOUT: lettertype Inter Display Black niet gevonden (zet TUNR_FONT_DIR)")
+
+
+FONT = _find_font()
 SS = 4  # supersampling
 
 

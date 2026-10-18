@@ -29,6 +29,9 @@ android {
         versionCode = buildNumber
         versionName = marketing
         vectorDrawables { useSupportLibrary = true }
+        // Sleutel voor de CARTO-kaarttegels (Kaart): uit het GitHub-secret CARTO_KEY (env TUNR_CARTO_KEY) of
+        // local.properties, nooit in de repo. Leeg = tegels zonder sleutel (dan zet CARTO er een watermerk op).
+        buildConfigField("String", "CARTO_KEY", "\"${key("TUNR_CARTO_KEY")}\"")
     }
 
     // Eigen release-sleutel: TUNR_KEYSTORE (pad), TUNR_KEYSTORE_PASSWORD, TUNR_KEY_ALIAS, TUNR_KEY_PASSWORD.

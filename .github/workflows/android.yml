@@ -60,6 +60,8 @@ jobs:
           fi
 
       - name: Build (release-APK)
+        env:
+          TUNR_CARTO_KEY: ${{ secrets.CARTO_KEY }}
         run: |
           set -o pipefail
           chmod +x gradlew

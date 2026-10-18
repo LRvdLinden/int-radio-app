@@ -41,6 +41,13 @@ class MainActivity : ComponentActivity() {
             AppState.resetForLaunch()
             ScreenshotMode.prepare()  // alleen met de extra tunr_screenshot (Play Store-afbeeldingen)
         }
+        // Schermafbeeldingen: navigatie-/taakbalk weg (geen app-iconen van het toestel in beeld)
+        if (ScreenshotMode.isActive) {
+            androidx.core.view.WindowCompat.getInsetsController(window, window.decorView).apply {
+                systemBarsBehavior = androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                hide(androidx.core.view.WindowInsetsCompat.Type.navigationBars())
+            }
+        }
         RadioController.connect(applicationContext)
         AppState.onReachedMain = { askNotificationPermission() }
 

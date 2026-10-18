@@ -15,6 +15,9 @@ adb shell settings put global window_animation_scale 0 || true
 adb shell settings put global transition_animation_scale 0 || true
 adb shell settings put global animator_duration_scale 0 || true
 adb shell cmd uimode night yes || true
+# geen "… reageert niet"-meldingen in beeld (trage emulator)
+adb shell settings put global hide_error_dialogs 1 || true
+adb shell settings put global anr_show_background 0 || true
 # taal: de emulator staat standaard op Engels (Verenigde Staten), zoals de App Store-afbeeldingen
 # statusbalk: demomodus
 adb shell settings put global sysui_demo_allowed 1 || true
@@ -37,6 +40,15 @@ for s in $SCENES; do
   sleep "$WAIT"
   [ "$s" = "player" ] && sleep 8   # stream + nu-speelt-titel + albumhoes
   [ "$s" = "map" ] && sleep 8      # kaarttegels
+  # eventuele systeemmelding sluiten en de app weer naar voren
+  if adb shell dumpsys window | grep -qiE "Application Not Responding|isn.t responding"; then
+    echo "::warning::$DEV-$s: ANR-melding, opnieuw"
+    adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+    adb shell input keyevent KEYCODE_BACK; sleep 2
+    adb shell am start -W -n "$ACT" --es tunr_screenshot "$s" >/dev/null || true
+    sleep "$WAIT"
+  fi
+  adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
   adb exec-out screencap -p > "$RAW/$DEV-$s.png" || echo "::warning::$DEV-$s: geen opname"
   python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$RAW/$DEV-$s.png" 2>/dev/null \
     || echo "::warning::$DEV-$s: opname ongeldig"

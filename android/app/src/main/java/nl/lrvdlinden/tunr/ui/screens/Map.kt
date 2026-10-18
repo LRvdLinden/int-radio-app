@@ -123,15 +123,24 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.tan
 
-/** CARTO "dark_all" (OpenStreetMap-gegevens), geen sleutel nodig. Attributie staat altijd in beeld. */
-private val CartoDark = XYTileSource(
+/**
+ * CARTO "dark_all" (OpenStreetMap-gegevens). Attributie staat altijd in beeld. CARTO vraagt sinds 2026 een sleutel
+ * (`?key=`, gratis tot 1M verzoeken/maand); die komt uit BuildConfig.CARTO_KEY (GitHub-secret CARTO_KEY).
+ */
+private val CartoDark = object : XYTileSource(
     "CartoDark", 0, 19, 256, ".png",
     arrayOf(
         "https://a.basemaps.cartocdn.com/dark_all/",
         "https://b.basemaps.cartocdn.com/dark_all/",
         "https://c.basemaps.cartocdn.com/dark_all/",
     )
-)
+) {
+    override fun getTileURLString(pMapTileIndex: Long): String {
+        val url = super.getTileURLString(pMapTileIndex)
+        val key = nl.lrvdlinden.tunr.BuildConfig.CARTO_KEY
+        return if (key.isBlank()) url else "$url?key=$key"
+    }
+}
 
 /** Laatste camera, zodat de kaart na een tabwissel op dezelfde plek terugkomt */
 private object MapMemory {
