@@ -4,6 +4,19 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 34 · versie 1.0.1
+_2026-10-18_
+
+**Verbeterd**
+
+- Versie 1.0.1. _(Alle apps)_  
+  <sub>Version 1.0.1.</sub>
+
+**Opgelost**
+
+- Top Shelf op Apple TV: het Tunr-woordmerk staat nu binnen het zichtbare deel en is goed leesbaar (tvOS toont het beeld schermvullend). _(Apple TV)_  
+  <sub>Apple TV Top Shelf: the Tunr wordmark now sits inside the visible area and is easy to read (tvOS shows the image full screen).</sub>
+
 ## Build 33 · versie 1.0.0
 _2026-10-18_
 

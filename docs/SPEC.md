@@ -44,7 +44,7 @@ Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (
 Open community-database, geen sleutel nodig.
 
 - **Servers**: `GET https://all.api.radio-browser.info/json/servers` → `[{"name":"de1.api.radio-browser.info", ...}]`. Kies willekeurig, bewaar de keuze voor de sessie, bij een fout de volgende. Terugval-lijst: `de1`, `de2`, `fi1` (`https://<x>.api.radio-browser.info`).
-- **User-Agent** altijd: `Tunr/1.0.0 (nl.lrvdlinden.tunr; <platform>)`.
+- **User-Agent** altijd: `Tunr/1.0.1 (nl.lrvdlinden.tunr; <platform>)`.
 - Endpoints (alle `GET`, JSON):
   - Landen: `/json/countries?hidebroken=true&order=name` → `[{name, iso_3166_1, stationcount}]`. Filter `stationcount >= 1` en lege codes eruit. Toon de **gelokaliseerde** landnaam (Locale / Intl.DisplayNames) en de vlag als emoji uit de ISO-code.
   - Zenders per land, populair: `/json/stations/search?countrycode=NL&hidebroken=true&order=clickcount&reverse=true&limit=60&offset=0`

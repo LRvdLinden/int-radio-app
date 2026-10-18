@@ -8,7 +8,7 @@ import UIKit
 enum Brand {
     static let name = "Tunr"
     static let bundleID = "nl.lrvdlinden.tunr"
-    static let version = "1.0.0"
+    static let version = "1.0.1"
 
     /// Website (tunr.online), privacy en voorwaarden (website/privacy en website/voorwaarden)
     static let website = URL(string: "https://tunr.online")!

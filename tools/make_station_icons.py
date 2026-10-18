@@ -31,7 +31,7 @@ import merge_icon_tables  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, 'website', 'assets', 'data', 'icons')
-UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
+UA = {'User-Agent': 'Tunr/1.0.1 (+https://tunr.online)'}
 ITUNES = 'https://itunes.apple.com/search'
 
 GENRES = {'Music', 'Entertainment', 'News', 'Sports', 'Lifestyle', 'Reference', 'Education'}

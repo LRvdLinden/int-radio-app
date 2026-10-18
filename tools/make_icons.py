@@ -263,20 +263,30 @@ def station_wall(W, H, tile, angle=-14):
 
 def top_shelf(w, h):
     """Top Shelf (het beeld achter de iconen als Tunr op het Home Screen is geselecteerd): schuin raster van
-    zenderlogo's, donker verloop links met het Tunr-woordmerk, oranje gloed."""
+    zenderlogo's met het Tunr-woordmerk. tvOS toont dit beeld schermvullend (16:9): de hoogte wordt het hele scherm,
+    links en rechts valt weg. Zichtbaar is alleen het midden, h × 16/9 breed; onderaan staat de rij app-iconen.
+    Woordmerk en donkere achtergrond staan daarom binnen dat zichtbare deel, linksboven."""
     img = Image.new("RGBA", (w, h), BG + (255,))
     img.alpha_composite(station_wall(w, h, tile=int(h * 0.22)))
-    # donker verloop: links (woordmerk) en onder (rij app-iconen van tvOS) donkerder, rechts de logo's vol in beeld
-    xs = np.linspace(0, 1, w)[None, :]; ys = np.linspace(0, 1, h)[:, None]
-    shade = np.clip(1.15 - xs * 1.6, 0.18, 0.94) + np.clip((ys - 0.7) * 1.2, 0, 0.35)
+    vis_w = min(w, int(h * 16 / 9)); x0 = (w - vis_w) // 2  # zichtbaar deel bij schermvullend
+    # zacht donker verloop over het zichtbare deel: links/boven (woordmerk) donker, rechts de logo's helder
+    xs = np.clip((np.arange(w) - x0) / vis_w, 0, 1)[None, :]; ys = np.linspace(0, 1, h)[:, None]
+    shade = np.clip(0.80 - xs * 1.25, 0.12, 0.80) + np.clip(0.30 - ys * 0.6, 0, 0.30) * (1 - xs)
     dark = Image.new("RGBA", (w, h), BG + (0,))
-    dark.putalpha(Image.fromarray((np.clip(shade, 0, 0.92) * 255).astype("uint8")))
+    dark.putalpha(Image.fromarray((np.clip(shade, 0, 0.9) * 255).astype("uint8")))
     img.alpha_composite(dark)
+    # woordmerk linksboven in het zichtbare deel, met een donkere zachte vlek erachter (leesbaar op elk logo)
+    wm = wordmark(int(h * 0.27))
+    wx, wy = x0 + int(vis_w * 0.065), int(h * 0.10)
+    blob = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    pad = int(h * 0.10)
+    ImageDraw.Draw(blob).rounded_rectangle([wx - pad, wy - pad, wx + wm.size[0] + pad, wy + wm.size[1] + pad],
+                                           radius=pad, fill=BG + (235,))
+    img.alpha_composite(blob.filter(ImageFilter.GaussianBlur(pad * 0.8)))
     glow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    ImageDraw.Draw(glow).ellipse([-w * 0.15, -h * 0.4, w * 0.45, h * 1.1], fill=ACCENT + (70,))
-    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(h * 0.25)))
-    wm = wordmark(int(h * 0.26))
-    img.alpha_composite(wm, (int(h * 0.16), int(h * 0.16)))
+    ImageDraw.Draw(glow).ellipse([wx - h * 0.3, wy - h * 0.5, wx + wm.size[0] + h * 0.3, wy + h * 0.6], fill=ACCENT + (55,))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(h * 0.2)))
+    img.alpha_composite(wm, (wx, wy))
     return img.convert("RGB")
 
 

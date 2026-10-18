@@ -937,6 +937,36 @@
           "en": "The Apple TV app icon is back to the familiar Tunr icon."
         }
       ]
+    },
+    {
+      "build": 34,
+      "version": "1.0.1",
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Top Shelf op Apple TV: het Tunr-woordmerk staat nu binnen het zichtbare deel en is goed leesbaar (tvOS toont het beeld schermvullend).",
+          "en": "Apple TV Top Shelf: the Tunr wordmark now sits inside the visible area and is easy to read (tvOS shows the image full screen)."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Versie 1.0.1.",
+          "en": "Version 1.0.1."
+        }
+      ]
     }
   ]
 }
