@@ -13,6 +13,7 @@ Uitvoer:
 - docs/brand/                    icon.png, wordmark.png (README), wordmark-white.png + wordmark-dark.png (presskit)
 """
 import json, math, pathlib
+import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 root = pathlib.Path(__file__).resolve().parent.parent
@@ -196,26 +197,18 @@ def apple():
         {"filename": "Top Shelf Image.imageset", "idiom": "tv", "role": "top-shelf-image", "size": "1920x720"},
     ], "info": INFO})
 
-    def tv_layers(w, h):
-        back = fast_gradient(w, h)
-        front = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        s = int(h * 0.86)
-        front.alpha_composite(symbol(s), ((w - s) // 2, (h - s) // 2 + int(h * 0.03)))
-        return back, front
-
     for stack, scales in (("App Icon - App Store.imagestack", {"1x": (1280, 768)}),
                           ("App Icon.imagestack", {"1x": (400, 240), "2x": (800, 480)})):
-        write_json(brand / stack / "Contents.json", {"layers": [{"filename": "Front.imagestacklayer"},
-                                                                 {"filename": "Back.imagestacklayer"}], "info": INFO})
-        for layer in ("Front", "Back"):
+        write_json(brand / stack / "Contents.json", {"layers": [{"filename": f"{l}.imagestacklayer"} for l in TV_LAYERS],
+                                                     "info": INFO})
+        for layer in TV_LAYERS:
             write_json(brand / stack / f"{layer}.imagestacklayer/Contents.json", {"info": INFO})
             write_json(brand / stack / f"{layer}.imagestacklayer/Content.imageset/Contents.json", {
                 "images": [{"filename": f"{layer.lower()}@{sc}.png", "idiom": "tv", "scale": sc} for sc in scales],
                 "info": INFO})
         for sc, (w, h) in scales.items():
-            back, front = tv_layers(w, h)
-            save(back, brand / stack / f"Back.imagestacklayer/Content.imageset/back@{sc}.png")
-            save(front, brand / stack / f"Front.imagestacklayer/Content.imageset/front@{sc}.png")
+            for layer, img in zip(TV_LAYERS, tv_layers(w, h)):
+                save(img, brand / stack / f"{layer}.imagestacklayer/Content.imageset/{layer.lower()}@{sc}.png")
 
     for name, (w, h) in (("Top Shelf Image.imageset", (1920, 720)), ("Top Shelf Image Wide.imageset", (2320, 720))):
         write_json(brand / name / "Contents.json", {"images": [
@@ -223,6 +216,70 @@ def apple():
             {"filename": "topshelf@2x.png", "idiom": "tv", "scale": "2x"}], "info": INFO})
         for sc, f in (("1x", 1), ("2x", 2)):
             save(top_shelf(w * f, h * f), brand / name / f"topshelf@{sc}.png")
+
+
+# Home Screen (Layered) van Apple TV: drie lagen voor het parallax-effect (voor → achter).
+TV_LAYERS = ("Front", "Middle", "Back")
+# zenderlogo's uit de hero van tunr.online (tools/make_wall.py), nette vierkante app-iconen
+TV_WALL = [3, 5, 1, 7, 9, 10, 35, 4, 6, 12, 11, 23, 13, 32, 39, 50, 66, 24, 46, 58, 34, 62, 59, 74, 30, 57, 29, 67,
+           51, 37, 19, 48, 16, 63, 25, 72]
+
+
+def tv_layers(w, h):
+    """Achter: donker met oranje gloed. Midden: schuin raster van zendertegels dat naar het midden toe wegvalt.
+    Voor: het witte Tunr-symbool op een oranje schijf. Belangrijke inhoud binnen de veilige zone (midden)."""
+    S = 2  # supersampling
+    W, H = w * S, h * S
+    back = Image.new("RGBA", (W, H), BG + (255,))
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).ellipse([W * 0.15, -H * 0.2, W * 0.85, H * 1.2], fill=ACCENT + (150,))
+    back.alpha_composite(glow.filter(ImageFilter.GaussianBlur(H * 0.22)))
+
+    # midden: tegels op een groter vel, daarna gedraaid en bijgesneden
+    tile = int(H * 0.25); gap = int(tile * 0.16); r = int(tile * 0.22)
+    cols, rows = 11, 7
+    sheet = Image.new("RGBA", (cols * (tile + gap), rows * (tile + gap)), (0, 0, 0, 0))
+    wall = root / "website/assets/img/wall"
+    mask = Image.new("L", (tile, tile), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, tile - 1, tile - 1], radius=r, fill=255)
+    for i in range(cols * rows):
+        n = TV_WALL[i % len(TV_WALL)]
+        logo = Image.open(wall / f"{n:02d}.webp").convert("RGBA").resize((tile, tile), Image.LANCZOS)
+        x, y = (i % cols) * (tile + gap) + ((tile + gap) // 2 if (i // cols) % 2 else 0), (i // cols) * (tile + gap)
+        sheet.paste(logo, (x, y), mask)
+    sheet = sheet.rotate(-14, resample=Image.BICUBIC, expand=True)
+    mid = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    mid.alpha_composite(sheet, ((W - sheet.size[0]) // 2, (H - sheet.size[1]) // 2))
+    # naar het midden toe vervagen en donkerder (ruimte voor het symbool), aan de randen vol zichtbaar
+    fade = Image.new("L", (W, H), 255)
+    ImageDraw.Draw(fade).ellipse([W * 0.5 - H * 0.62, H * 0.5 - H * 0.62, W * 0.5 + H * 0.62, H * 0.5 + H * 0.62], fill=40)
+    fade = fade.filter(ImageFilter.GaussianBlur(H * 0.16))
+    alpha = np.minimum(np.array(mid.getchannel("A")), np.array(fade))
+    mid.putalpha(Image.fromarray(alpha))
+    dim = Image.new("RGBA", (W, H), BG + (0,))
+    dim.putalpha(Image.fromarray((alpha * 0.28).astype("uint8")))
+    mid.alpha_composite(dim)
+
+    # voor: oranje schijf met schaduw en wit symbool
+    front = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = int(H * 0.62); cx, cy = W // 2, H // 2
+    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).ellipse([cx - d / 2, cy - d / 2 + H * 0.03, cx + d / 2, cy + d / 2 + H * 0.03], fill=(0, 0, 0, 150))
+    front.alpha_composite(sh.filter(ImageFilter.GaussianBlur(H * 0.04)))
+    disc = fast_gradient(d, d).convert("RGBA")
+    dm = Image.new("L", (d * 4, d * 4), 0); ImageDraw.Draw(dm).ellipse([0, 0, d * 4 - 1, d * 4 - 1], fill=255)
+    front.paste(disc, (cx - d // 2, cy - d // 2), dm.resize((d, d), Image.LANCZOS))
+    sym = symbol(int(d * 0.84))
+    front.alpha_composite(sym, (cx - sym.size[0] // 2, cy - sym.size[1] // 2 + int(d * 0.02)))
+    return [im.resize((w, h), Image.LANCZOS) for im in (front, mid, back.convert("RGB").convert("RGBA"))]
+
+
+def tv_preview(w, h):
+    """Platte voorbeeldweergave van de lagen (README/presskit), met afgeronde hoeken zoals op het Home Screen."""
+    out = Image.new("RGBA", (w, h))
+    for im in reversed(tv_layers(w, h)):
+        out.alpha_composite(im)
+    return out
 
 
 def top_shelf(w, h):

@@ -901,6 +901,20 @@
           "en": "Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip."
         }
       ]
+    },
+    {
+      "build": 32,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "tvos"
+          ],
+          "nl": "Nieuw Apple TV-icoon op het Home Screen: drie lagen met parallax, het Tunr-symbool zweeft boven een raster van zenderlogo's.",
+          "en": "New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos."
+        }
+      ]
     }
   ]
 }

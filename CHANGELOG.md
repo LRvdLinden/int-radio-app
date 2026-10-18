@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 32
+_2026-10-18_
+
+**Verbeterd**
+
+- Nieuw Apple TV-icoon op het Home Screen: drie lagen met parallax, het Tunr-symbool zweeft boven een raster van zenderlogo's. _(Apple TV)_  
+  <sub>New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos.</sub>
+
 ## Build 31
 _2026-10-18_
 

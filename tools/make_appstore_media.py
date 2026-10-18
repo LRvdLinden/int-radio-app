@@ -20,7 +20,7 @@ Uitvoer (PNG, zonder alfakanaal, exact de maten van App Store Connect):
   <out>/raw/...                     de originele opnames
 Een verkeerde maat of een alfakanaal = foutmelding (exit 1).
 """
-import argparse, math, os, pathlib, shutil, sys, tempfile
+import argparse, json, math, os, pathlib, shutil, sys, tempfile
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -342,16 +342,22 @@ def icon_1024():
 
 
 def stack(name, scale):
-    """Lagen van een tvOS-imagestack (Back onder, Front erop) samengevoegd."""
+    """Lagen van een tvOS-imagestack (volgorde uit Contents.json: voor → achter) samengevoegd."""
     base = BRAND / f"{name}.imagestack"
     out = None
-    for layer in ("Back", "Front"):
+    for layer in stack_layers(name)[::-1]:
         f = base / f"{layer}.imagestacklayer/Content.imageset/{layer.lower()}@{scale}x.png"
         if not f.exists():
             raise SystemExit(f"FOUT: {f} ontbreekt in de Apple TV-merkafbeeldingen")
         im = Image.open(f).convert("RGBA")
         out = im if out is None else Image.alpha_composite(out, im.resize(out.size, Image.LANCZOS))
     return flatten(out)
+
+
+def stack_layers(name):
+    """Namen van de lagen van een imagestack, voor → achter (bv. Front, Middle, Back)."""
+    meta = json.loads((BRAND / f"{name}.imagestack/Contents.json").read_text())
+    return [l["filename"].removesuffix(".imagestacklayer") for l in meta["layers"]]
 
 
 def appletv_brand():
@@ -368,6 +374,14 @@ def appletv_brand():
             if not f.exists():
                 raise SystemExit(f"FOUT: {f} ontbreekt")
             items[f"{stem}-{sz[0]}x{sz[1]}.png"] = (flatten(Image.open(f)), sz)
+    # Home Screen (Layered): de losse lagen (transparant, behalve de achterste) voor bv. Parallax Previewer
+    for name, stem, scale, sz in (("App Icon - App Store", "app-icon-app-store", 1, (1280, 768)),
+                                  ("App Icon", "app-icon", 2, (800, 480))):
+        layers = stack_layers(name)
+        for i, layer in enumerate(layers):
+            f = BRAND / f"{name}.imagestack/{layer}.imagestacklayer/Content.imageset/{layer.lower()}@{scale}x.png"
+            im = Image.open(f).convert("RGBA")
+            items[f"layers/{stem}-{sz[0]}x{sz[1]}-{i + 1}-{layer.lower()}.png"] = (im if i < len(layers) - 1 else flatten(im), sz)
     return items
 
 
@@ -436,11 +450,12 @@ DEMO_SIZES = {"iphone69": (1320, 2868), "iphone63": (1206, 2622), "ipad13": (206
 
 # ---------------------------------------------------------------- hoofdprogramma
 
-def check(path, size, problems):
+def check(path, size, problems, alpha=False):
+    """Maat controleren; App Store-afbeeldingen zonder alfakanaal (losse Apple TV-lagen mogen transparant zijn)."""
     im = Image.open(path)
     if im.size != tuple(size):
         problems.append(f"{path}: {im.size[0]}×{im.size[1]}, verwacht {size[0]}×{size[1]}")
-    if im.mode not in ("RGB", "L"):
+    if not alpha and im.mode not in ("RGB", "L"):
         problems.append(f"{path}: modus {im.mode} (alfakanaal niet toegestaan)")
 
 
@@ -513,8 +528,9 @@ def main():
     bdir.mkdir(exist_ok=True)
     for name, (im, sz) in appletv_brand().items():
         f = bdir / name
+        f.parent.mkdir(exist_ok=True)
         im.save(f, optimize=True)
-        check(f, sz, problems)
+        check(f, sz, problems, alpha=name.startswith("layers/"))
         written.append((f, sz))
 
     pdir = out / "promo"
