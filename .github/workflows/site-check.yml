@@ -1,0 +1,22 @@
+# Controle van tunr.online zoals een zoekmachine hem ziet (robots.txt, headers, landingspagina's). Met de hand starten.
+name: Site-check
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Controleren
+        run: |
+          for ua in "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" "Mozilla/5.0 (Macintosh) Safari/605" "curl/8"; do
+            for u in https://tunr.online/robots.txt https://tunr.online/ https://tunr.online/radio/nl/ https://tunr.online/sitemap.xml; do
+              r=$(curl -s -o /tmp/b -w "%{http_code} %{content_type} %{size_download}" -A "$ua" -H "Accept-Encoding: gzip" --compressed --max-time 30 "$u")
+              echo "::notice::[$ua] $u -> $r"
+            done
+          done
+          curl -sI -A "Googlebot" https://tunr.online/robots.txt | sed 's/^/robots: /'
+          curl -s -A "Googlebot" --compressed https://tunr.online/robots.txt | head -20
+          curl -sI -A "Googlebot" -H "Accept-Encoding: gzip" https://tunr.online/radio/nl/ | sed 's/^/radio: /'
+          curl -s -A "Googlebot" --compressed https://tunr.online/radio/nl/ | grep -o "<title>[^<]*" | head -2
