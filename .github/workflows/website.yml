@@ -32,7 +32,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: website
@@ -97,6 +97,22 @@ jobs:
               "window.TUNR_MAPKIT_TOKEN = " + repr(tok).replace("'", '"') + ";\n")
           print("Apple Maps-token gemaakt voor", dom)
           PY
+
+      # Landingspagina's voor zoekmachines (/radio/, /radio/<land>/, /radio/<land>/<zender>/) + sitemap.xml en het blok
+      # "Populaire zenders" op de homepage. Niet in git (website/radio/ staat in .gitignore): elke upload vers uit
+      # Radio Browser. Onbereikbaar? Dan de laatste momentopname uit de cache; zonder cache gewoon zonder deze pagina's.
+      - name: Momentopname zenders (cache)
+        uses: actions/cache@v4
+        with:
+          path: .seo-cache.json
+          key: seo-stations-${{ github.run_id }}
+          restore-keys: seo-stations-
+
+      - name: Landingspagina's per land en zender maken
+        working-directory: .
+        run: |
+          python3 tools/make_seo_pages.py || echo "::warning::Landingspagina's niet gemaakt; de site wordt zonder nieuwe /radio/-pagina's geüpload"
+          python3 tools/check_seo.py website || echo "::warning::SEO-controle vond problemen (zie hierboven)"
 
       - name: Domein bepalen
         id: dom
@@ -187,7 +203,13 @@ jobs:
           fi
           TARGET="${TARGET:-.}"
           echo "::notice::Doelmap: $([ -n "${FTP_DIR:-}" ] && echo 'FTP_DIR' || echo 'automatisch bepaald')"
-          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md ./ \"$TARGET\"; bye"
+          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md --exclude '^radio/' ./ \"$TARGET\"; bye"
+          # /radio/ is helemaal gegenereerd (elke run nieuwe bestandsdatums): alleen bestanden met een andere grootte
+          # uploaden, en pagina's van zenders die uit de top vallen weghalen
+          if [ -f radio/index.html ]; then
+            lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --parallel=8 --ignore-time --delete --exclude-glob .DS_Store ./radio \"$TARGET/radio\"; bye"
+            echo "::notice::Landingspagina's geüpload ($(find radio -name index.html | wc -l) pagina's)"
+          fi
           # .htaccess: alleen het blok tussen de markeringen (opnieuw) zetten; inhoud van de hoster blijft staan
           lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; cls -1 -a \"$TARGET/\"; bye" > /tmp/ls-all.txt 2>/dev/null || true
           rm -f /tmp/htaccess.txt; ht_ok=1
@@ -212,15 +234,28 @@ jobs:
                      "Header always set X-Frame-Options \"DENY\"\n"
                      "Header always set Content-Security-Policy \"frame-ancestors 'none'; base-uri 'self'; object-src 'none'\"\n"
                      "</IfModule>\n")
+          # gzip voor tekst (html, css, js, json, svg, xml) en cache: afbeeldingen/audio 30 dagen, css/js 7 dagen
+          # (pagina's verwijzen met ?v=), json 1 dag, html altijd opnieuw controleren
+          deflate = ("<IfModule mod_deflate.c>\n<IfModule mod_filter.c>\n"
+                     "AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/xhtml+xml "
+                     "application/javascript text/javascript application/json application/ld+json application/manifest+json image/svg+xml\n"
+                     "</IfModule>\n</IfModule>\n")
+          expires = ("<IfModule mod_expires.c>\nExpiresActive On\n"
+                     + "".join(f'ExpiresByType {t} "access plus {d}"\n' for t, d in [
+                         ("text/html", "0 seconds"), ("image/png", "30 days"), ("image/jpeg", "30 days"), ("image/webp", "30 days"),
+                         ("image/svg+xml", "30 days"), ("image/x-icon", "30 days"), ("audio/mpeg", "30 days"), ("audio/mp4", "30 days"),
+                         ("text/css", "7 days"), ("application/javascript", "7 days"), ("text/javascript", "7 days"),
+                         ("application/json", "1 day"), ("application/xml", "1 day"), ("text/xml", "1 day")])
+                     + "</IfModule>\n")
           def block(with_redirect):
               return ("# BEGIN tunr-security (gezet door de workflow Website; niet met de hand wijzigen)\n"
-                      + (redirect if with_redirect else "") + headers + "ErrorDocument 404 /404.html\n# END tunr-security\n")
+                      + (redirect if with_redirect else "") + headers + deflate + expires + "ErrorDocument 404 /404.html\n# END tunr-security\n")
           rest = ("\n" + s + "\n") if s else ""
           open(p + ".new", "w", encoding="utf-8", errors="surrogateescape").write(block(True) + rest)
           open(p + ".nossl", "w", encoding="utf-8", errors="surrogateescape").write(block(False) + rest)
           PY
             if lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; put /tmp/htaccess.txt.new -o \"$TARGET/.htaccess\"; chmod 644 \"$TARGET/.htaccess\"; bye" >/dev/null 2>&1; then
-              echo "::notice::.htaccess bijgewerkt (beveiligingsheaders, http → https, 404-pagina)"
+              echo "::notice::.htaccess bijgewerkt (beveiligingsheaders, http → https, gzip, cache, 404-pagina)"
               if [ -n "${DOMAIN:-}" ]; then
                 sleep 3
                 loc=$(curl -s -o /dev/null --max-time 20 -w '%{http_code} %{redirect_url}' "https://$DOMAIN/" || true)

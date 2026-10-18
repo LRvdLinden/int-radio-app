@@ -3,6 +3,9 @@
 // - data-i18n="sleutel"             → innerHTML
 // - data-i18n-attr="alt:sleutel;aria-label:sleutel2" → attributen
 // - data-l="nl" / data-l="en"        → hele blokken per taal (privacy, voorwaarden)
+// - data-en="…" / data-nl="…" (niet-meta) → innerHTML in die taal; de tekst in de HTML is de standaardtaal van de
+//   pagina (gegenereerde zenderpagina's: NL of EN). Idem data-en-alt / data-nl-alt (ook -title, -aria-label).
+// - <meta name="tunr-title-en|tunr-title-nl"> → paginatitel in die taal; meta's met data-en / data-nl idem.
 // Keuze: ?lang=en|nl > localStorage 'tunr.lang' (ook gebruikt door de webspeler) > navigator.language.
 // Ook: het menu voor smalle schermen, de nav die donker wordt bij scrollen en het jaartal.
 (function () {
@@ -15,10 +18,10 @@
 
   var EN = {
     'skip': 'Skip to content',
-    'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Listen now',
+    'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Listen now', 'nav.stations': 'Stations',
     'nav.menu': 'Menu',
     'foot.tag': 'All the world\'s radio and podcasts. On every screen.',
-    'foot.web': 'Web player', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.cookies': 'Cookie settings', 'foot.info': 'Info', 'foot.more': 'More',
+    'foot.web': 'Web player', 'foot.stations': 'Radio stations by country', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.cookies': 'Cookie settings', 'foot.info': 'Info', 'foot.more': 'More',
     'foot.disc': 'Tunr doesn\'t host any radio streams or podcasts: every station and episode plays directly from the broadcaster\'s or creator\'s server. Station data: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community database); podcast data: Apple\'s public podcast directory. Apple, iPhone, iPad, Mac, Apple TV and CarPlay are trademarks of Apple Inc. Android, Android TV, Android Auto, Google TV and Google Play are trademarks of Google LLC, Fire TV of Amazon.com, Inc.',
     'foot.version': 'version'
   };
@@ -74,16 +77,29 @@
       }
     });
     // meta's met een Engelse versie (description, og:…): de NL-tekst staat in de HTML
-    document.querySelectorAll('meta[data-en]').forEach(function (m) { if (m.dataset.nl == null) m.dataset.nl = m.content; m.content = lang === 'en' ? m.dataset.en : m.dataset.nl; });
+    document.querySelectorAll('meta[data-en],meta[data-nl]').forEach(function (m) {
+      if (m.dataset.orig == null) m.dataset.orig = m.content;
+      var v = m.getAttribute('data-' + lang); m.content = v != null ? v : m.dataset.orig;
+    });
+    // elementen met hun tekst per taal in data-en / data-nl (de HTML bevat de standaardtaal)
+    document.querySelectorAll('[data-en]:not(meta),[data-nl]:not(meta)').forEach(function (el) {
+      if (!originals.has(el)) originals.set(el, el.innerHTML);
+      var v = el.getAttribute('data-' + lang); el.innerHTML = v != null ? v : originals.get(el);
+    });
+    ['alt', 'title', 'aria-label'].forEach(function (a) {
+      document.querySelectorAll('[data-en-' + a + '],[data-nl-' + a + ']').forEach(function (el) {
+        var k = 'data-orig-' + a;
+        if (!el.hasAttribute(k)) el.setAttribute(k, el.getAttribute(a) || '');
+        var v = el.getAttribute('data-' + lang + '-' + a); el.setAttribute(a, v != null ? v : el.getAttribute(k));
+      });
+    });
     // FAQPage (JSON-LD) gelijk aan de zichtbare vragen in de gekozen taal
     var ld = document.getElementById('ld-faq');
     if (ld) ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', '@id': (window.TUNR ? window.TUNR.domain : '') + '/#faq', inLanguage: lang,
       mainEntity: Array.prototype.map.call(document.querySelectorAll('#faq details'), function (d) { return { '@type': 'Question', name: d.querySelector('summary').textContent.trim(), acceptedAnswer: { '@type': 'Answer', text: d.querySelector('.a').textContent.trim() } }; }) });
-    var t = document.querySelector('meta[name="tunr-title-en"]');
-    if (t) {
-      if (!document.documentElement.dataset.titleNl) document.documentElement.dataset.titleNl = document.title;
-      document.title = lang === 'en' ? t.content : document.documentElement.dataset.titleNl;
-    }
+    var t = document.querySelector('meta[name="tunr-title-' + lang + '"]');
+    if (document.documentElement.dataset.titleOrig == null) document.documentElement.dataset.titleOrig = document.title;
+    document.title = t ? t.content : document.documentElement.dataset.titleOrig;
     document.querySelectorAll('.lang button').forEach(function (b) {
       var on = b.getAttribute('data-lang') === lang;
       b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');

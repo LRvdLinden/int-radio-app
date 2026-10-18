@@ -851,6 +851,28 @@
           "en": "New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week."
         }
       ]
+    },
+    {
+      "build": 29,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Zenderpagina's: per land de populairste radiozenders, met per zender een eigen pagina om direct online te luisteren in de webspeler.",
+          "en": "Station pages: the most popular radio stations per country, each with its own page to listen online right away in the web player."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Betere vindbaarheid in zoekmachines: nieuwe teksten en veelgestelde vragen, kortere titels, beschrijvingen bij afbeeldingen en een snellere site.",
+          "en": "Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site."
+        }
+      ]
     }
   ]
 }

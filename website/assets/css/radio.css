@@ -1,0 +1,92 @@
+/* Tunr: landingspagina's /radio/ (gemaakt door tools/make_seo_pages.py). Bovenop site.css (sub-page). */
+.radio-page main{padding-top:112px}
+.crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:4px 0;font-size:14px;color:var(--sec);margin-bottom:26px}
+.crumbs li{display:flex;align-items:center;min-width:0}
+.crumbs li+li::before{content:"";width:6px;height:6px;margin:0 10px;border-right:1.6px solid #ffffff55;border-top:1.6px solid #ffffff55;transform:rotate(45deg)}
+.crumbs a{color:var(--sec);text-decoration:none}
+.crumbs a:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.crumbs [aria-current]{color:#e8e8ee;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
+.kicker{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
+.kicker .live{color:#fff;font-size:12px}
+.rhead .sub{max-width:70ch}
+.acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn.big{padding:17px 30px;font-size:18px}
+.h3{font-size:clamp(22px,2.6vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:54px 0 18px}
+.txt{color:#d0d0d8;font-size:17px;line-height:1.65;max-width:70ch}
+.txt+.txt{margin-top:14px}
+.txt a{color:#fff;font-weight:600;text-underline-offset:2px}
+.rmore{margin-top:30px}
+
+/* zenderlijst */
+.slist{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.slist.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.srow{position:relative;min-width:0;display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--stroke);transition:background .15s,border-color .15s}
+.srow:hover{background:var(--elevated);border-color:#ffffff33}
+.srow .rk{width:26px;flex:none;text-align:center;font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--dim)}
+.srow:nth-child(-n+3) .rk{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.srow .nm{flex:1;min-width:0;text-decoration:none}
+.srow .nm::after{content:"";position:absolute;inset:0;border-radius:14px}
+.srow .nm b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .nm small{display:block;font-size:13px;color:var(--sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.srow .play{position:relative;z-index:1;flex:none;display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;background:#ffffff14;box-shadow:inset 0 0 0 1px #ffffff2e;font-size:14px;font-weight:800;text-decoration:none;color:#fff}
+.srow .play:hover{background:var(--btn);box-shadow:none}
+.srow .play svg{width:16px;height:16px}
+
+/* logo / monogram */
+.art{position:relative;flex:none;display:grid;place-items:center;overflow:hidden;color:#fff;font-family:var(--font-head);font-weight:900;box-shadow:inset 0 0 0 1px #ffffff1f}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.art.sm{width:56px;height:56px;border-radius:12px;font-size:18px}
+.art.xl{width:160px;height:160px;border-radius:30px;font-size:52px;box-shadow:inset 0 0 0 1px #ffffff26,0 30px 70px -24px #000,0 0 80px -20px #ff5a1f66}
+
+/* zenderpagina */
+.shero{display:flex;align-items:center;gap:34px;padding:8px 0 6px}
+.shc{min-width:0}
+.shero .ttl{font-size:clamp(34px,5vw,56px)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.gtag{padding:6px 12px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff1f;font-size:13.5px;font-weight:700;color:#e2e2e8}
+.sgrid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:40px;align-items:start}
+.facts{margin-top:54px;padding:22px 24px;border-radius:16px;background:linear-gradient(150deg,#1d1d24 0%,#151518 60%,#1f0e07 100%);border:1px solid #ffffff14}
+.facts .h3{margin:0 0 12px;font-size:20px}
+.facts dl div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid #ffffff12}
+.facts dl div:first-child{border-top:0}
+.facts dt{color:var(--sec);font-size:14.5px;flex:none}
+.facts dd{font-size:14.5px;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.facts dd a{color:#fff}
+.facts .src{margin-top:12px;font-size:13px;color:var(--dim)}
+.facts .src a{color:var(--sec)}
+.more{display:inline-block;margin-top:18px;color:#fff;font-weight:700;text-decoration:none}
+.more:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* landen */
+.cchips{display:flex;flex-wrap:wrap;gap:8px}
+.cchips a{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff1f;color:#e8e8ee;font-size:14.5px;font-weight:700;text-decoration:none}
+.cchips a:hover{background:#ffffff1c;color:#fff}
+.cchips a[aria-current]{background:#fff;color:#0A0A0C;border-color:#fff}
+.cgrid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.cgrid a{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--stroke);text-decoration:none;transition:background .15s,border-color .15s}
+.cgrid a:hover{background:var(--elevated);border-color:#ffffff33}
+.cgrid .fl{font-size:30px;line-height:1}
+.cgrid .t{min-width:0}
+.cgrid b{display:block;font-size:16px;line-height:1.25}
+.cgrid small{display:block;font-size:13px;color:var(--sec)}
+
+@media (max-width:900px){
+  .sgrid{grid-template-columns:minmax(0,1fr);gap:0}
+  .slist.two{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .radio-page main{padding-top:88px}
+  .shero{flex-direction:column;align-items:flex-start;gap:20px}
+  .art.xl{width:112px;height:112px;border-radius:24px;font-size:38px}
+  .acts .btn{width:100%}
+  .srow{gap:10px;padding:8px 10px}
+  .srow .rk{width:20px;font-size:14px}
+  .art.sm{width:46px;height:46px;font-size:15px}
+  .srow .play{padding:9px 11px}
+  .srow .play span{display:none}
+  .h3{margin-top:42px}
+  .cgrid{grid-template-columns:1fr 1fr}
+  .cgrid a{padding:12px;gap:10px}
+  .cgrid .fl{font-size:24px}
+  .facts{padding:18px}
+}

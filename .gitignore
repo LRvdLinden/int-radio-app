@@ -17,3 +17,6 @@ tools/__pycache__/
 .icons-cache.json*
 node_modules/
 website/assets/js/mapkit-token.js
+# SEO-landingspagina's: gemaakt door tools/make_seo_pages.py in de workflow Website, niet in git
+website/radio/
+.seo-cache.json

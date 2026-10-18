@@ -4,6 +4,19 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 29
+_2026-10-18_
+
+**Nieuw**
+
+- Zenderpagina's: per land de populairste radiozenders, met per zender een eigen pagina om direct online te luisteren in de webspeler. _(Website)_  
+  <sub>Station pages: the most popular radio stations per country, each with its own page to listen online right away in the web player.</sub>
+
+**Verbeterd**
+
+- Betere vindbaarheid in zoekmachines: nieuwe teksten en veelgestelde vragen, kortere titels, beschrijvingen bij afbeeldingen en een snellere site. _(Website)_  
+  <sub>Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site.</sub>
+
 ## Build 28
 _2026-10-18_
 

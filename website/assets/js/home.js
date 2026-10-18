@@ -16,7 +16,7 @@
   // de HTML, worden niet live opgehaald en wisselen niet, dus niets flikkert. Zonder lijst: de gegenereerde tegels.
   var LOGOS = (window.TUNR_WALL || []).filter(function (x) { return x && x.i && x.n; });
   function esc(v) { return String(v).replace(/[&<>"']/g, function (ch) { return '&#' + ch.charCodeAt(0) + ';'; }); }
-  function logoImg(x) { return '<img src="assets/img/wall/' + esc(x.i) + '" alt="" width="192" height="192" decoding="async">'; }
+  function logoImg(x) { return '<img src="assets/img/wall/' + esc(x.i) + '" alt="' + esc(x.n) + '" width="192" height="192" decoding="async">'; }
   if (wall) {
     var cols = 11, per = 7, k = 0, li = 0, html = '';
     for (var c = 0; c < cols; c++) {
@@ -25,7 +25,7 @@
         var n = NAMES[(k * 7 + c) % NAMES.length]; k++;
         var isTunr = c === 2 && r === 3;
         var isCard = (c + r) % 5 === 3;
-        if (isTunr) { html += '<div class="tile tunr"><img src="assets/img/icon-rounded.png" alt="Tunr"></div>'; continue; }
+        if (isTunr) { html += '<div class="tile tunr"><img src="assets/img/icon-rounded.png" alt="Tunr" title="Tunr" width="192" height="192"></div>'; continue; }
         var x = LOGOS.length ? LOGOS[li++ % LOGOS.length] : null;
         var p = PAL[hash(n) % PAL.length];
         var bg = 'background:linear-gradient(135deg,' + p[0] + ',' + p[1] + ')';
