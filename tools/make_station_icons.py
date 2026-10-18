@@ -241,9 +241,20 @@ def rb_get(path, servers):
     raise RuntimeError(f'Radio Browser niet bereikbaar: {last}')
 
 
-def popular_stations(n_countries, per_country, n_world):
+def popular_stations(n_countries, per_country, n_world, all_stations=False):
     servers = rb_servers()
     q = lambda **kw: urllib.parse.urlencode(dict(hidebroken='true', order='clickcount', reverse='true', **kw))
+    if all_stations:
+        # alle werkende zenders van alle landen, populairste eerst (in blokken van 10.000); runs gaan verder via de cache
+        out, offset = [], 0
+        while True:
+            part = rb_get('/json/stations/search?' + q(limit=10000, offset=offset), servers)
+            out += part
+            if len(part) < 10000:
+                break
+            offset += 10000
+        print(f'alle zenders: {len(out)}')
+        return out
     out = rb_get('/json/stations/search?' + q(limit=n_world), servers) if n_world else []
     countries = rb_get('/json/countries?order=stationcount&reverse=true&hidebroken=true', servers)
     codes = []
@@ -385,6 +396,7 @@ def main(argv=None):
     ap.add_argument('--countries', type=int, default=60)
     ap.add_argument('--per-country', type=int, default=150)
     ap.add_argument('--world', type=int, default=2000)
+    ap.add_argument('--all', action='store_true', help='alle zenders van alle landen (populairste eerst)')
     ap.add_argument('--delay', type=float, default=3.2)
     ap.add_argument('--no-us-fallback', action='store_true')
     ap.add_argument('--offline', action='store_true')
@@ -395,7 +407,7 @@ def main(argv=None):
     deadline = start + a.budget_min * 60
     cache = load_cache(a.cache)
     print(f'cache: {len(cache)} namen ({sum(1 for e in cache.values() if e.get("u"))} met icoon)')
-    groups = group(popular_stations(a.countries, a.per_country, a.world))
+    groups = group(popular_stations(a.countries, a.per_country, a.world, a.all))
     print(f'{len(groups)} zendernamen')
 
     stop = {'now': False}

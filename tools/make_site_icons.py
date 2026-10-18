@@ -709,6 +709,7 @@ def main(argv=None):
     ap.add_argument('--countries', type=int, default=80)
     ap.add_argument('--per-country', type=int, default=300)
     ap.add_argument('--world', type=int, default=3000)
+    ap.add_argument('--all', action='store_true', help='alle zenders van alle landen (populairste eerst)')
     ap.add_argument('--workers', type=int, default=32)
     ap.add_argument('--store-max', type=int, default=600, help='hooguit zoveel iTunes-lookups (en Play-pagina\'s)')
     ap.add_argument('--play-max', type=int, default=300, help='hooguit zoveel Play-zoekopdrachten')
@@ -732,7 +733,7 @@ def main(argv=None):
     existing = mt.load_dir(a.existing)
     print(f'site-cache: {len(items)} sites ({sum(1 for e in items.values() if e.get("u"))} met icoon); '
           f'play-cache: {len(pcache)} items ({sum(1 for e in pcache.values() if e.get("u"))} met icoon)')
-    groups = ms.group(ms.popular_stations(a.countries, a.per_country, a.world))
+    groups = ms.group(ms.popular_stations(a.countries, a.per_country, a.world, a.all))
     hosts = site_groups(groups)
     print(f'{len(groups)} zendernamen, {len(hosts)} websites')
 
