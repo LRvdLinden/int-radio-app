@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 25
+_2026-10-18_
+
+**Opgelost**
+
+- iPhone: de knoppen "Luister" en "Info" op de uitgelichte zender in Ontdek breken niet meer af. _(iPhone)_  
+  <sub>iPhone: the "Listen" and "Info" buttons on the featured station in Discover no longer break onto two lines.</sub>
+
 ## Build 24
 _2026-10-18_
 

@@ -418,14 +418,18 @@ struct HeroCard: View {
                             Label(isCurrent && player.isPlaying ? L("player.pause") : L("action.listen"),
                                   systemImage: isCurrent && player.isPlaying ? "pause.fill" : "play.fill")
                                 .font(.system(size: tvScaled(14), weight: .bold))
-                                .padding(.horizontal, tvScaled(16))
+                                .lineLimit(1)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .padding(.horizontal, tvScaled(DeviceKind.isPhone ? 13 : 16))
                                 .padding(.vertical, tvScaled(9))
                         }
                         .buttonStyle(AccentButtonStyle())
                         Button { navigate(.station(station)) } label: {
                             Label(L("action.info"), systemImage: "info.circle")
                                 .font(.system(size: tvScaled(14), weight: .bold))
-                                .padding(.horizontal, tvScaled(14))
+                                .lineLimit(1)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .padding(.horizontal, tvScaled(DeviceKind.isPhone ? 12 : 14))
                                 .padding(.vertical, tvScaled(9))
                         }
                         .buttonStyle(SecondaryButtonStyle())
@@ -448,7 +452,7 @@ struct HeroCard: View {
         #elseif os(macOS)
         return 170
         #else
-        return DeviceKind.isPhone ? 118 : 170
+        return DeviceKind.isPhone ? 104 : 170
         #endif
     }
 }
