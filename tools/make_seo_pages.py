@@ -24,6 +24,21 @@ import argparse, datetime, html, json, os, random, re, sys, time, unicodedata, u
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = 'https://tunr.online'
 UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
+
+
+def _presskit_url():
+    """Footer-link PressKit: {stats.url}/functions/v1/presskit (Supabase-URL uit website/assets/js/brand.js)."""
+    try:
+        with open(os.path.join(ROOT, 'website', 'assets', 'js', 'brand.js'), encoding='utf-8') as fh:
+            m = re.search(r"stats:\s*\{\s*url:\s*'(https://[a-z0-9-]+\.supabase\.co)/?'", fh.read())
+        if m:
+            return m.group(1) + '/functions/v1/presskit'
+    except OSError:
+        pass
+    return DOMAIN + '/presskit/Tunr-PressKit.zip'   # zonder backend: direct (niet geteld)
+
+
+PRESSKIT_URL = _presskit_url()
 NL_COUNTRIES = {'NL', 'BE', 'SR'}          # pagina's met Nederlands als standaardtaal
 FORCE = ['NL', 'BE', 'SR']                 # altijd een landpagina, ook buiten de top
 POPULAR = [('NL', 10), ('BE', 2), ('GB', 2), ('US', 2), ('DE', 2)]   # homepage: "Populaire zenders"
@@ -301,7 +316,8 @@ def page(path, dl, title, desc, body, ld, og_image=''):
             + T('Changelog', 'Changelog', ' href="/changelog/"') + '</div>'
             '<div class="fcol">' + tx('h3', 'Info', 'Info', dl) + T('Privacy', 'Privacy', ' href="/privacy/"') + T('Voorwaarden', 'Terms', ' href="/voorwaarden/"')
             + T('Cookie-instellingen', 'Cookie settings', ' href="#" data-consent-link') + '</div>'
-            '<div class="fcol">' + tx('h3', 'Meer', 'More', dl) + '<a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a></div>'
+            '<div class="fcol">' + tx('h3', 'Meer', 'More', dl) + '<a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a>'
+            f'<a href="{esc(PRESSKIT_URL)}" rel="nofollow" download="Tunr-PressKit.zip">PressKit</a></div>'
             '</div></div>'
             + tx('p', 'Tunr host zelf geen radiostreams: elke zender speelt rechtstreeks vanaf de server van de omroep. Zendergegevens: '
                  '<a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (open community-database). Namen en logo\'s van zenders zijn eigendom van de betreffende omroepen.',

@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 31
+_2026-10-18_
+
+**Nieuw**
+
+- Presskit: onderaan elke pagina van de website staat de link PressKit met alle App Store-iconen, screenshots per apparaat, het woordmerk en promo-afbeeldingen in één zip. _(Website)_  
+  <sub>Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip.</sub>
+
 ## Build 30
 _2026-10-18_
 

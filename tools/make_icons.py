@@ -10,7 +10,7 @@ Uitvoer:
 - apple/Shared/Assets.xcassets   AppIcon (iOS 1024 + macOS), App Icon & Top Shelf Image (tvOS), AccentColor
 - android/app/src/main/res       adaptief icoon (voorgrond + verloop-achtergrond), mipmaps, tv_banner
 - website/                       favicon, apple-touch-icon, PWA-iconen, og-image
-- docs/brand/                    icon.png, wordmark.png (README)
+- docs/brand/                    icon.png, wordmark.png (README), wordmark-white.png + wordmark-dark.png (presskit)
 """
 import json, math, pathlib
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -322,6 +322,17 @@ def docs():
     pad = Image.new("RGBA", (wm.size[0] + 80, wm.size[1] + 60), BG + (255,))
     pad.alpha_composite(wm, (40, 30))
     save(pad, root / "docs/brand/wordmark.png")
+    presskit_brand()
+
+
+def presskit_brand():
+    """Woordmerk in hoge resolutie voor de presskit (tools/make_presskit.py): wit op transparant en op donker."""
+    wm = wordmark(480)
+    wm = wm.crop(wm.getbbox())  # strak om het woordmerk (geen lege rand onder de schaal)
+    save(wm, root / "docs/brand/wordmark-white.png")
+    pad = Image.new("RGBA", (wm.size[0] + 320, wm.size[1] + 280), BG + (255,))
+    pad.alpha_composite(wm, (160, 140))
+    save(pad.convert("RGB"), root / "docs/brand/wordmark-dark.png")
 
 
 if __name__ == "__main__":

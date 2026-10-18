@@ -7,6 +7,11 @@ name: Website
 # Benodigde repository-secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
 # Optioneel: FTP_USERNAME_ALT (tweede gebruikersnaam) en FTP_DIR (doelmap, anders automatisch).
 # Het domein staat op één plek: website/assets/js/brand.js (window.TUNR.domain).
+#
+# Presskit (footer-link "PressKit"): bij elke run maakt tools/make_presskit.py website/presskit/Tunr-PressKit.zip +
+# presskit.json uit de App Store-afbeeldingen in de openbare repo tunr-beheer (map appstore/, sparse clone). Niet in
+# git; alleen uploaden als versie of grootte anders is dan online. Clone mislukt? Dan blijft wat op de server staat.
+# Met de hand: invoer presskit_only = alleen de presskit opnieuw maken en uploaden (snel, rest van de site blijft).
 
 on:
   push:
@@ -18,7 +23,11 @@ on:
         description: "Hero-logo's vernieuwen (opnieuw uit Radio Browser halen)"
         type: boolean
         default: false
-  # elke maand opnieuw uploaden, zodat het Apple Maps-token (geldig 180 dagen) altijd vers is
+      presskit_only:
+        description: "Alleen de presskit opnieuw maken en uploaden (rest van de site niet)"
+        type: boolean
+        default: false
+  # elke maand opnieuw uploaden, zodat het Apple Maps-token (geldig 180 dagen) altijd vers is (en de presskit bijwerken)
   schedule:
     - cron: '17 4 1 * *'
 
@@ -45,7 +54,7 @@ jobs:
       # Vaste zenderlogo's voor de hero: alleen maken als ze er nog niet zijn (of op verzoek), dan in de repo zetten.
       # Zo staan ze vast en laadt de site alleen eigen bestanden (geen live ophalen, geen geflikker).
       - name: Hero-logo's (vast)
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && inputs.presskit_only != true
         working-directory: .
         run: |
           if [ -f website/assets/js/wall.js ] && [ "${{ inputs.refresh_wall }}" != "true" ]; then
@@ -61,6 +70,7 @@ jobs:
 
       # De homepage laadt de screenshots als WebP (<picture> met JPG als terugval); hier opnieuw gemaakt zodat ze kloppen.
       - name: WebP van de screenshots maken
+        if: inputs.presskit_only != true
         run: |
           python3 - <<'PY'
           import glob
@@ -76,6 +86,7 @@ jobs:
       # Het token werkt alleen vanaf https://tunr.online (origin-claim) en is 180 dagen geldig; het staat alleen op de
       # server (assets/js/mapkit-token.js, niet in git). Zonder secret valt de kaart terug op Leaflet.
       - name: Apple Maps-token maken
+        if: inputs.presskit_only != true
         env:
           MAPKIT_P8: ${{ secrets.MAPKIT_P8 }}
           MAPKIT_KEY_ID: STP7XLVDL5
@@ -102,6 +113,7 @@ jobs:
       # "Populaire zenders" op de homepage. Niet in git (website/radio/ staat in .gitignore): elke upload vers uit
       # Radio Browser. Onbereikbaar? Dan de laatste momentopname uit de cache; zonder cache gewoon zonder deze pagina's.
       - name: Momentopname zenders (cache)
+        if: inputs.presskit_only != true
         uses: actions/cache@v4
         with:
           path: .seo-cache.json
@@ -109,6 +121,7 @@ jobs:
           restore-keys: seo-stations-
 
       - name: Landingspagina's per land en zender maken
+        if: inputs.presskit_only != true
         working-directory: .
         run: |
           python3 tools/make_seo_pages.py || echo "::warning::Landingspagina's niet gemaakt; de site wordt zonder nieuwe /radio/-pagina's geüpload"
@@ -121,6 +134,36 @@ jobs:
           echo "domain=${D}" >> "$GITHUB_OUTPUT"
           echo "::notice::Domein uit brand.js: ${D:-onbekend}"
 
+      # Presskit uit tunr-beheer/appstore (openbaar, zonder token). De online presskit.json gaat mee als --previous:
+      # gelijke inhoud = zelfde versie en datum (dan geen upload). Mislukt iets, dan geen presskit in deze run en
+      # blijven de bestanden op de server staan (de mirror sluit presskit/ uit en verwijdert niets).
+      - name: Presskit maken
+        id: presskit
+        working-directory: .
+        env:
+          DOMAIN: ${{ steps.dom.outputs.domain }}
+        run: |
+          rm -rf website/presskit /tmp/tb /tmp/presskit-prev.json
+          if [ -n "${DOMAIN:-}" ]; then
+            curl -fsSL --max-time 20 "https://$DOMAIN/presskit/presskit.json" -o /tmp/presskit-prev.json 2>/dev/null || rm -f /tmp/presskit-prev.json
+          fi
+          if ! { git clone -q --depth 1 --filter=blob:none --sparse https://github.com/LRvdLinden/tunr-beheer /tmp/tb \
+                 && git -C /tmp/tb sparse-checkout set appstore; }; then
+            echo "::warning::tunr-beheer/appstore niet opgehaald: presskit niet bijgewerkt (de versie online blijft staan)"; exit 0
+          fi
+          prev=(); [ -s /tmp/presskit-prev.json ] && prev=(--previous /tmp/presskit-prev.json)
+          if ! python3 tools/make_presskit.py --appstore /tmp/tb/appstore --out website/presskit "${prev[@]}"; then
+            rm -rf website/presskit
+            echo "::warning::Presskit niet gemaakt (zie hierboven); de versie online blijft staan"; exit 0
+          fi
+          new=$(python3 -c 'import json; d=json.load(open("website/presskit/presskit.json")); print(d["version"], d["size"])')
+          old=$(python3 -c 'import json; d=json.load(open("/tmp/presskit-prev.json")); print(d.get("version",""), d.get("size",""))' 2>/dev/null || true)
+          if [ "$new" = "$old" ]; then
+            echo "::notice::Presskit ongewijzigd (${new% *}): geen upload"; echo "changed=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Presskit ${new% *} ($(( ${new#* } / 1048576 )) MB) wordt geüpload (online: ${old% *})"; echo "changed=1" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Uploaden via FTPS
         id: upload
         env:
@@ -130,6 +173,8 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_DIR: ${{ secrets.FTP_DIR }}
           DOMAIN: ${{ steps.dom.outputs.domain }}
+          PRESSKIT_ONLY: ${{ inputs.presskit_only == true && '1' || '' }}
+          PRESSKIT_CHANGED: ${{ steps.presskit.outputs.changed }}
         run: |
           set -euo pipefail
           if [ -z "${FTP_SERVER:-}" ] || [ -z "${FTP_PASSWORD:-}" ]; then
@@ -203,7 +248,13 @@ jobs:
           fi
           TARGET="${TARGET:-.}"
           echo "::notice::Doelmap: $([ -n "${FTP_DIR:-}" ] && echo 'FTP_DIR' || echo 'automatisch bepaald')"
-          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md --exclude '^radio/' ./ \"$TARGET\"; bye"
+          # presskit/ (gegenereerd, groot): alleen bij een nieuwe versie, zip eerst (als .part, daarna hernoemd), json als laatste
+          if [ "${PRESSKIT_CHANGED:-}" = 1 ] && [ -f presskit/Tunr-PressKit.zip ] && [ -f presskit/presskit.json ]; then
+            lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mkdir -p -f \"$TARGET/presskit\"; put presskit/Tunr-PressKit.zip -o \"$TARGET/presskit/Tunr-PressKit.zip.part\"; set cmd:fail-exit false; rm \"$TARGET/presskit/Tunr-PressKit.zip\"; set cmd:fail-exit true; mv \"$TARGET/presskit/Tunr-PressKit.zip.part\" \"$TARGET/presskit/Tunr-PressKit.zip\"; put presskit/presskit.json -o \"$TARGET/presskit/presskit.json\"; bye"
+            echo "::notice::Presskit geüpload ($(python3 -c 'import json; print(json.load(open("presskit/presskit.json"))["version"])'))"
+          fi
+          if [ -n "${PRESSKIT_ONLY:-}" ]; then echo "::notice::Alleen de presskit (presskit_only): rest van de site niet geüpload"; exit 0; fi
+          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md --exclude '^radio/' --exclude '^presskit/' ./ \"$TARGET\"; bye"
           # /radio/ is helemaal gegenereerd (elke run nieuwe bestandsdatums): alleen bestanden met een andere grootte
           # uploaden, en pagina's van zenders die uit de top vallen weghalen
           if [ -f radio/index.html ]; then
@@ -233,6 +284,9 @@ jobs:
                      "Header always set Permissions-Policy \"camera=(), microphone=(), geolocation=()\"\n"
                      "Header always set X-Frame-Options \"DENY\"\n"
                      "Header always set Content-Security-Policy \"frame-ancestors 'none'; base-uri 'self'; object-src 'none'\"\n"
+                     # presskit: zip altijd als download, presskit.json altijd vers (de functie presskit leest de versie)
+                     "<FilesMatch \"\\.zip$\">\nHeader set Content-Disposition \"attachment\"\n</FilesMatch>\n"
+                     "<FilesMatch \"^presskit\\.json$\">\nHeader set Cache-Control \"no-cache\"\n</FilesMatch>\n"
                      "</IfModule>\n")
           # gzip voor tekst (html, css, js, json, svg, xml) en cache: afbeeldingen/audio 30 dagen, css/js 7 dagen
           # (pagina's verwijzen met ?v=), json 1 dag, html altijd opnieuw controleren
@@ -272,8 +326,15 @@ jobs:
         if: success() && steps.upload.outputs.skipped != '1' && steps.dom.outputs.domain != ''
         env:
           DOMAIN: ${{ steps.dom.outputs.domain }}
+          PRESSKIT_ONLY: ${{ inputs.presskit_only == true && '1' || '' }}
         run: |
           sleep 5
+          if [ -f presskit/presskit.json ]; then
+            want=$(python3 -c 'import json; print(json.load(open("presskit/presskit.json"))["version"])')
+            live=$(curl -sL --max-time 20 "https://$DOMAIN/presskit/presskit.json?ts=$(date +%s)" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("version",""))' 2>/dev/null || true)
+            [ "$live" = "$want" ] && echo "::notice::Presskit online: $live" || echo "::warning::Presskit online is '${live:-niets}', verwacht '$want'"
+          fi
+          [ -n "${PRESSKIT_ONLY:-}" ] && exit 0
           want=$(grep -o '<span data-build>[^<]*' index.html | sed 's/<span data-build>//' | head -1)
           live=$(curl -sL --max-time 20 "https://$DOMAIN/" | grep -o '<span data-build>[^<]*' | sed 's/<span data-build>//' | head -1 || true)
           if [ -n "$want" ] && [ "$live" != "$want" ]; then

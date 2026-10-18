@@ -887,6 +887,20 @@
           "en": "No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings."
         }
       ]
+    },
+    {
+      "build": 31,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Presskit: onderaan elke pagina van de website staat de link PressKit met alle App Store-iconen, screenshots per apparaat, het woordmerk en promo-afbeeldingen in één zip.",
+          "en": "Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip."
+        }
+      ]
     }
   ]
 }
