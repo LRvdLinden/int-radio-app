@@ -982,6 +982,22 @@
           "en": "Apple TV Top Shelf: the Tunr wordmark now sits in the centre, surrounded by station logos."
         }
       ]
+    },
+    {
+      "build": 36,
+      "version": "1.0.1",
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "android",
+            "androidtv"
+          ],
+          "nl": "Schermafbeeldingsmodus voor de Google Play-afbeeldingen: de app opent dan direct in een gekozen scherm, met Nederland als land en zonder intro.",
+          "en": "Screenshot mode for the Google Play images: the app opens straight into a chosen screen, with the Netherlands as country and no intro."
+        }
+      ]
     }
   ]
 }

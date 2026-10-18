@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 36 · versie 1.0.1
+_2026-10-18_
+
+**Nieuw**
+
+- Schermafbeeldingsmodus voor de Google Play-afbeeldingen: de app opent dan direct in een gekozen scherm, met Nederland als land en zonder intro. _(Android, Android TV)_  
+  <sub>Screenshot mode for the Google Play images: the app opens straight into a chosen screen, with the Netherlands as country and no intro.</sub>
+
 ## Build 35 · versie 1.0.1
 _2026-10-18_
 

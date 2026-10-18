@@ -287,6 +287,16 @@ def top_shelf(w, h):
     return img.convert("RGB")
 
 
+def tv_banner(w, h):
+    """Android TV-banner: verloop met symbool + woordmerk (in de app 320×180, in Google Play 1280×720)."""
+    b = fast_gradient(w, h).convert("RGBA")
+    sym = symbol(int(h * 0.62), scale_bar=False)
+    b.alpha_composite(sym, (int(w * 0.08), (h - sym.size[1]) // 2))
+    wm = wordmark(int(h * 0.36), white_bar=True)
+    b.alpha_composite(wm, (int(w * 0.08) + sym.size[0] + int(w * 0.03), (h - wm.size[1]) // 2 + int(h * 0.0223)))
+    return b.convert("RGB")
+
+
 def android():
     res = root / "android/app/src/main/res"
     dens = {"mdpi": 1, "hdpi": 1.5, "xhdpi": 2, "xxhdpi": 3, "xxxhdpi": 4}
@@ -318,13 +328,7 @@ def android():
 </shape>
 """)
     # Android TV-banner (320x180, drawable-xhdpi)
-    w, h = 320, 180
-    b = fast_gradient(w, h).convert("RGBA")
-    sym = symbol(int(h * 0.62), scale_bar=False)
-    b.alpha_composite(sym, (int(w * 0.08), (h - sym.size[1]) // 2))
-    wm = wordmark(int(h * 0.36), white_bar=True)
-    b.alpha_composite(wm, (int(w * 0.08) + sym.size[0] + int(w * 0.03), (h - wm.size[1]) // 2 + 4))
-    save(b.convert("RGB"), res / "drawable-xhdpi/tv_banner.png")
+    save(tv_banner(320, 180), res / "drawable-xhdpi/tv_banner.png")
     # splash-scherm van Android 12+ gebruikt het icoon; los symbool voor in de app
     save(symbol(288), res / "drawable-nodpi/tunr_symbol.png")
 

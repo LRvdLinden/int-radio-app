@@ -133,7 +133,7 @@ fun SearchField(
 @Composable
 fun SearchScreen() {
     val cc = currentCountryCode()
-    var query by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf(nl.lrvdlinden.tunr.ui.ScreenshotMode.initialSearch) }
     var worldwide by rememberSaveable { mutableStateOf(false) }
     /** 0 = Zenders, 1 = Podcasts (SPEC §8) */
     var segment by rememberSaveable { mutableStateOf(0) }

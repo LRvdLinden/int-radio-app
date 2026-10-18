@@ -214,6 +214,17 @@ object Library {
         write(KEY_COUNTRY, SelectedCountry.serializer(), sel)
     }
 
+    /** Schermafbeeldingsmodus (ui/ScreenshotMode): land alleen in het geheugen, niets opslaan */
+    fun applyScreenshotCountry(code: String, name: String) {
+        _country.value = SelectedCountry(code, name)
+        _region.value = null
+    }
+
+    /** Schermafbeeldingsmodus: favorieten alleen in het geheugen */
+    fun setScreenshotFavorites(list: List<Station>) {
+        _favorites.value = list
+    }
+
     fun setLocalRegion(name: String?) {
         _region.value = name
         prefs.edit().apply { if (name == null) remove(KEY_REGION) else putString(KEY_REGION, name) }.apply()

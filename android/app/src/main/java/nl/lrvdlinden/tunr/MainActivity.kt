@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import nl.lrvdlinden.tunr.data.Stats
 import nl.lrvdlinden.tunr.player.RadioController
 import nl.lrvdlinden.tunr.ui.AppState
+import nl.lrvdlinden.tunr.ui.ScreenshotMode
 import nl.lrvdlinden.tunr.ui.TunrRoot
 import nl.lrvdlinden.tunr.ui.TunrTheme
 
@@ -35,7 +36,11 @@ class MainActivity : ComponentActivity() {
         )
         super.onCreate(savedInstanceState)
         // Nieuwe start (niet na een taalwissel / recreate): weer met de splash beginnen
-        if (savedInstanceState == null) AppState.resetForLaunch()
+        if (savedInstanceState == null) {
+            ScreenshotMode.readIntent(intent)
+            AppState.resetForLaunch()
+            ScreenshotMode.prepare()  // alleen met de extra tunr_screenshot (Play Store-afbeeldingen)
+        }
         RadioController.connect(applicationContext)
         AppState.onReachedMain = { askNotificationPermission() }
 
@@ -49,12 +54,12 @@ class MainActivity : ComponentActivity() {
     /** Bij starten en terugkomen naar de voorgrond: anonieme ping (max. 1× per 12 uur, zie Stats). */
     override fun onResume() {
         super.onResume()
-        Stats.pingIfDue(applicationContext)
+        if (!ScreenshotMode.isActive) Stats.pingIfDue(applicationContext)
     }
 
     /** Android 13+: toestemming voor de mediamelding (één keer vragen, niet op tv). */
     private fun askNotificationPermission() {
-        if (Build.VERSION.SDK_INT < 33 || Device.isTV) return
+        if (Build.VERSION.SDK_INT < 33 || Device.isTV || ScreenshotMode.isActive) return
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
         val prefs = getSharedPreferences("tunr_flags", MODE_PRIVATE)
         if (prefs.getBoolean("asked_notifications", false)) return

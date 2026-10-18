@@ -1,0 +1,150 @@
+name: Play Store media
+
+# Google Play-afbeeldingen (Engels) uit de echte Android-app:
+# 1. bouwt de APK (release, zonder eigen sleutel getekend met de debug-sleutel; alleen voor de opnames);
+# 2. start per toestel een Android-emulator en de app per scène met `--es tunr_screenshot <scène>`
+#    (android/.../ui/ScreenshotMode.kt: land NL, geen splash, ping of meldingenvraag) via tools/playstore_capture.sh:
+#    telefoon (Pixel 6), 7-inch tablet (Nexus 7), 10-inch tablet (Pixel Tablet) en Android TV (1080p);
+# 3. tools/make_playstore_media.py zet ze op maat met kop en rand (+ icoon 512, feature graphic, TV-banner);
+# 4. pusht de map playstore/ als één commit naar de branch playstore-media (geforceerd).
+# Geen artefacten of releases. Daarna gaan de afbeeldingen naar tunr-beheer/playstore/ (bron van de presskit).
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: "Toestellen (kommagescheiden): phone,tablet7,tablet10,tv"
+        default: "phone,tablet7,tablet10,tv"
+      wait:
+        description: "Seconden wachten per scène (gegevens komen live van Radio Browser/iTunes)"
+        default: "18"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: playstore-media
+  cancel-in-progress: true
+
+env:
+  DEVICES: ${{ github.event.inputs.devices || 'phone,tablet7,tablet10,tv' }}
+  WAIT: ${{ github.event.inputs.wait || '18' }}
+  # scènes per soort toestel (gelijk aan DEVICES in tools/make_playstore_media.py)
+  SCENES_PHONE: "discover player map search podcasts library"
+  SCENES_TV: "discover player browse podcasts search"
+
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: APK bouwen
+        working-directory: android
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --no-daemon 2>&1 | tail -20
+          APK=$(ls "$PWD"/app/build/outputs/apk/release/*.apk | head -1)
+          echo "APK=$APK" >> $GITHUB_ENV
+          echo "RAW=$RUNNER_TEMP/raw" >> $GITHUB_ENV
+          ls -la "$APK"
+
+      - name: KVM aanzetten (snelle emulator)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Telefoon (Pixel 6)
+        if: contains(env.DEVICES, 'phone')
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash tools/playstore_capture.sh phone "$APK" "$RAW" "$SCENES_PHONE" "$WAIT"
+
+      - name: 7-inch tablet (Nexus 7)
+        if: contains(env.DEVICES, 'tablet7')
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 7 2013
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash tools/playstore_capture.sh tablet7 "$APK" "$RAW" "$SCENES_PHONE" "$WAIT"
+
+      - name: 10-inch tablet (Pixel Tablet)
+        if: contains(env.DEVICES, 'tablet10')
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_tablet
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash tools/playstore_capture.sh tablet10 "$APK" "$RAW" "$SCENES_PHONE" "$WAIT"
+
+      - name: Android TV (1080p)
+        if: contains(env.DEVICES, 'tv')
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: android-tv
+          arch: x86
+          profile: tv_1080p
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash tools/playstore_capture.sh tv "$APK" "$RAW" "$SCENES_TV" "$WAIT"
+
+      - name: Afbeeldingen opmaken
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q pillow numpy
+          # Inter (OFL) voor de koppen
+          export TUNR_FONT_DIR="$RUNNER_TEMP/fonts"; mkdir -p "$TUNR_FONT_DIR"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/inter.zip" https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip \
+            && unzip -q -o "$RUNNER_TEMP/inter.zip" -d "$TUNR_FONT_DIR" \
+            || echo "::warning::Inter niet opgehaald: terugvalfont"
+          ls -la "$RAW" || true
+          rm -rf playstore
+          "$RUNNER_TEMP/venv/bin/python" tools/make_playstore_media.py --raw "$RAW" --out playstore/tunr/en \
+            --only "$DEVICES" | tee "$RUNNER_TEMP/files.txt"
+          mkdir -p playstore/tunr/en/raw && cp "$RAW"/*.png playstore/tunr/en/raw/ 2>/dev/null || true
+
+      - name: Naar branch playstore-media
+        run: |
+          D="$RUNNER_TEMP/push"; rm -rf "$D"; mkdir -p "$D"
+          cp -R playstore "$D/"
+          cd "$D"
+          git init -q && git checkout -q -b playstore-media
+          git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "Google Play-afbeeldingen (en) van $GITHUB_SHA [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" playstore-media
+
+      - name: Overzicht
+        if: always()
+        run: |
+          {
+            echo "## Google Play-afbeeldingen (en)"
+            echo "Branch \`playstore-media\` → map \`playstore/tunr/en/\`"
+            echo
+            echo '```'
+            grep -E "×" "$RUNNER_TEMP/files.txt" 2>/dev/null || echo "(geen uitvoer)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
