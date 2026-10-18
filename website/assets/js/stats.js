@@ -71,8 +71,9 @@
   }
 
   // pas na een keuze in de cookiemelding (consent.js): "Accepteren" zet shareStats aan, "Alleen noodzakelijk" uit
-  function consented() { return !!(window.TunrConsent && window.TunrConsent.get()); }
-  function enabled() { return consented() && !!(T.store && T.store.shareStats); }
+  // De webspeler heeft geen cookiemelding: alleen pingen als de bezoeker het zelf aanzette (Accepteren op de site,
+  // of de schakelaar in Instellingen van de webspeler). store.shareStats staat standaard uit.
+  function enabled() { return !!(T.store && T.store.shareStats); }
 
   function pingIfDue() {
     var cfg = (window.TUNR && window.TUNR.stats) || {};

@@ -29,7 +29,8 @@
     // build 9: de intromuziek speelt altijd (geen instelling meer)
     get intro() { return true; },
     // anonieme gebruiksstatistieken (standaard aan; zie stats.js)
-    get shareStats() { return read('shareStats', true) !== false; },
+    // standaard uit: aan na "Accepteren" in de cookiemelding op tunr.online of met de schakelaar in Instellingen
+    get shareStats() { return read('shareStats', false) === true; },
     set shareStats(v) { write('shareStats', !!v); emit('shareStats'); },
     get volume() { var v = read('volume', 1); return typeof v === 'number' ? Math.min(1, Math.max(0, v)) : 1; },
     set volume(v) { write('volume', v); },

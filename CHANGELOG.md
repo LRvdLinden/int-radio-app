@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 30
+_2026-10-18_
+
+**Verbeterd**
+
+- Geen cookiemelding meer in de webspeler; anonieme statistieken staan daar uit tot je ze accepteert op de site of zelf aanzet in Instellingen. _(Website)_  
+  <sub>No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings.</sub>
+
 ## Build 29
 _2026-10-18_
 

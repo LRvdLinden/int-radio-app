@@ -873,6 +873,20 @@
           "en": "Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site."
         }
       ]
+    },
+    {
+      "build": 30,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Geen cookiemelding meer in de webspeler; anonieme statistieken staan daar uit tot je ze accepteert op de site of zelf aanzet in Instellingen.",
+          "en": "No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings."
+        }
+      ]
     }
   ]
 }
