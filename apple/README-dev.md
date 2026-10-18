@@ -20,7 +20,7 @@ cd apple
 xcodegen generate
 ```
 
-- Versie blijft `1.0.0` (`MARKETING_VERSION`); alleen `CURRENT_PROJECT_VERSION` gaat omhoog.
+- Versie (`MARKETING_VERSION`) alleen via `python3 tools/set_version.py <versie>`; `CURRENT_PROJECT_VERSION` gaat per build omhoog.
 - Info.plist per platform: `Config/Info-iOS.plist`, `Config/Info-tvOS.plist`, `Config/Info-macOS.plist` (gekozen via `INFOPLIST_FILE[sdk=…]`).
 - Entitlements per platform: `Config/Tunr-iOS.entitlements`, `Config/Tunr-tvOS.entitlements`, `Config/Tunr-macOS.entitlements` (sandbox + netwerk-client). Alle drie gebruiken dezelfde iCloud key-value-store, zodat favorieten en recent tussen apparaten gedeeld worden.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Maakt CHANGELOG.md (Nederlands, met Engelse regel eronder) en website/assets/changelog.json
-uit docs/changelog.json.
+uit docs/changelog.json. Een build zonder veld "version" hoort bij versie 1.0.0.
 
     python3 tools/make_changelog.py
 """
@@ -16,10 +16,10 @@ ALL = set(NAMES)
 TYPES = {"new": "Nieuw", "improved": "Verbeterd", "fixed": "Opgelost"}
 
 lines = ["# Changelog", "",
-         "Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen buildnummer.", "",
+         "Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlopende reeks voor alle platforms.", "",
          "Ook online: de pagina *changelog* op de website.", ""]
 for b in sorted(data["builds"], key=lambda x: -x["build"]):
-    lines += [f"## Build {b['build']}", f"_{b['date']}_", ""]
+    lines += [f"## Build {b['build']} · versie {b.get('version', '1.0.0')}", f"_{b['date']}_", ""]
     for kind in ("new", "improved", "fixed"):
         items = [i for i in b["items"] if i["type"] == kind]
         if not items:

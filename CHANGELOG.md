@@ -1,10 +1,10 @@
 # Changelog
 
-Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen buildnummer.
+Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlopende reeks voor alle platforms.
 
 Ook online: de pagina *changelog* op de website.
 
-## Build 32
+## Build 32 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -12,7 +12,7 @@ _2026-10-18_
 - Nieuw Apple TV-icoon op het Home Screen: drie lagen met parallax, het Tunr-symbool zweeft boven een raster van zenderlogo's. _(Apple TV)_  
   <sub>New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos.</sub>
 
-## Build 31
+## Build 31 · versie 1.0.0
 _2026-10-18_
 
 **Nieuw**
@@ -20,7 +20,7 @@ _2026-10-18_
 - Presskit: onderaan elke pagina van de website staat de link PressKit met alle App Store-iconen, screenshots per apparaat, het woordmerk en promo-afbeeldingen in één zip. _(Website)_  
   <sub>Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip.</sub>
 
-## Build 30
+## Build 30 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -28,7 +28,7 @@ _2026-10-18_
 - Geen cookiemelding meer in de webspeler; anonieme statistieken staan daar uit tot je ze accepteert op de site of zelf aanzet in Instellingen. _(Website)_  
   <sub>No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings.</sub>
 
-## Build 29
+## Build 29 · versie 1.0.0
 _2026-10-18_
 
 **Nieuw**
@@ -41,7 +41,7 @@ _2026-10-18_
 - Betere vindbaarheid in zoekmachines: nieuwe teksten en veelgestelde vragen, kortere titels, beschrijvingen bij afbeeldingen en een snellere site. _(Website)_  
   <sub>Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site.</sub>
 
-## Build 28
+## Build 28 · versie 1.0.0
 _2026-10-18_
 
 **Opgelost**
@@ -49,7 +49,7 @@ _2026-10-18_
 - Nieuwe zendericonen (zoals die van Qmusic, Sky Radio en SLAM!) verschijnen nu binnen enkele uren in plaats van pas na een week. _(Alle apps)_  
   <sub>New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week.</sub>
 
-## Build 27
+## Build 27 · versie 1.0.0
 _2026-10-18_
 
 **Opgelost**
@@ -57,7 +57,7 @@ _2026-10-18_
 - Ondertekenen in Xcode: één App Group (group.nl.lrvdlinden.tunr) voor alle Apple-platforms, zodat automatisch ondertekenen weer werkt. _(iPhone, iPad, Mac, Apple TV)_  
   <sub>Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again.</sub>
 
-## Build 26
+## Build 26 · versie 1.0.0
 _2026-10-18_
 
 **Nieuw**
@@ -65,7 +65,7 @@ _2026-10-18_
 - CarPlay staat aan: Apple heeft Tunr goedgekeurd als CarPlay-audio-app. Favorieten, recent, lokale en populaire zenders en podcasts direct op het scherm in de auto. _(CarPlay)_  
   <sub>CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen.</sub>
 
-## Build 25
+## Build 25 · versie 1.0.0
 _2026-10-18_
 
 **Opgelost**
@@ -73,7 +73,7 @@ _2026-10-18_
 - iPhone: de knoppen "Luister" en "Info" op de uitgelichte zender in Ontdek breken niet meer af. _(iPhone)_  
   <sub>iPhone: the "Listen" and "Info" buttons on the featured station in Discover no longer break onto two lines.</sub>
 
-## Build 24
+## Build 24 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -81,7 +81,7 @@ _2026-10-18_
 - Voorbereiding op de App Store: schermafbeeldingsmodus voor de officiële App Store-afbeeldingen. _(iPhone, iPad, Mac, Apple TV)_  
   <sub>App Store preparation: screenshot mode for the official App Store images.</sub>
 
-## Build 23
+## Build 23 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -89,7 +89,7 @@ _2026-10-18_
 - Geen GitHub-links meer op de website en in de webspeler; vragen en meldingen via info@tunr.online. _(Website)_  
   <sub>No more GitHub links on the website and in the web player; questions and reports via info@tunr.online.</sub>
 
-## Build 22
+## Build 22 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -102,7 +102,7 @@ _2026-10-18_
 - Zenderlogo's zijn niet meer wazig: kleine logo's worden niet meer opgeblazen maar scherp in het midden getoond, op een effen achtergrond in de kleur van het logo (geen regenboogverloop meer). _(Alle apps)_  
   <sub>Station logos are no longer blurry: small logos are no longer stretched but shown sharp in the centre, on a solid background in the logo's colour (no more rainbow gradient).</sub>
 
-## Build 21
+## Build 21 · versie 1.0.0
 _2026-10-17_
 
 **Verbeterd**
@@ -110,7 +110,7 @@ _2026-10-17_
 - Mooiere zenderlogo's: Tunr toont nu eerst het app-icoon van de zender uit de App Store, daarna het grote icoon van de website van de zender, en pas dan het logo uit Radio Browser. _(Alle apps)_  
   <sub>Nicer station logos: Tunr now shows the station's App Store app icon first, then the large icon of the station's website, and only then the Radio Browser logo.</sub>
 
-## Build 20
+## Build 20 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -130,7 +130,7 @@ _2026-10-17_
 - Apple TV: grijze knoppen (favoriet, website, afgespeeld) waren onzichtbaar als ze focus hadden. _(Apple TV)_  
   <sub>Apple TV: grey buttons (favourite, website, played) were invisible when focused.</sub>
 
-## Build 19
+## Build 19 · versie 1.0.0
 _2026-10-17_
 
 **Opgelost**
@@ -138,7 +138,7 @@ _2026-10-17_
 - De zenderlogo's in de hero van de homepage zijn weer zichtbaar. _(Website)_  
   <sub>The station logos in the homepage hero are visible again.</sub>
 
-## Build 18
+## Build 18 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -152,7 +152,7 @@ _2026-10-17_
 - Op iOS 26 verschijnen de widget "Nu speelt" en de Live Activity ook in CarPlay. _(CarPlay)_  
   <sub>On iOS 26 the "Now Playing" widget and the Live Activity also appear in CarPlay.</sub>
 
-## Build 17
+## Build 17 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -165,7 +165,7 @@ _2026-10-17_
 - Delen deelt nu altijd een vaste link naar de zender, podcast of aflevering op tunr.online, die iedereen kan openen in de webspeler, ook zonder de app. _(iPhone, iPad, Mac, Android)_  
   <sub>Sharing now always shares a fixed link to the station, podcast or episode on tunr.online, which anyone can open in the web player, even without the app.</sub>
 
-## Build 16
+## Build 16 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -178,7 +178,7 @@ _2026-10-17_
 - De zenderlogo's in de hero van de homepage staan nu vast en laden direct, zonder geflikker. _(Website)_  
   <sub>The station logos in the homepage hero are now fixed and load instantly, without flickering.</sub>
 
-## Build 15
+## Build 15 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -191,7 +191,7 @@ _2026-10-17_
 - Privacyverklaring en veelgestelde vragen beschrijven de anonieme statistieken. _(Website)_  
   <sub>Privacy policy and FAQ describe the anonymous statistics.</sub>
 
-## Build 14
+## Build 14 · versie 1.0.0
 _2026-10-17_
 
 **Verbeterd**
@@ -199,7 +199,7 @@ _2026-10-17_
 - De tegelwand op de homepage staat nu vol met echte zenderlogo's (alle tegels), met één opvallende tegel van Tunr zelf. _(Website)_  
   <sub>The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile.</sub>
 
-## Build 13
+## Build 13 · versie 1.0.0
 _2026-10-17_
 
 **Verbeterd**
@@ -207,7 +207,7 @@ _2026-10-17_
 - Meer echte zenderlogo's in de tegelwand: de populairste zenders van je eigen land (zoals Qmusic, SLAM! en Radio 538) eerst, daarna wereldwijd; ook logo's die alleen via http staan worden via https geprobeerd. _(Website)_  
   <sub>More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https.</sub>
 
-## Build 12
+## Build 12 · versie 1.0.0
 _2026-10-17_
 
 **Verbeterd**
@@ -215,7 +215,7 @@ _2026-10-17_
 - De tegelwand op de homepage toont nu logo's van populaire zenders (uit je eigen land en wereldwijd), live uit Radio Browser. _(Website)_  
   <sub>The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser.</sub>
 
-## Build 11
+## Build 11 · versie 1.0.0
 _2026-10-17_
 
 **Nieuw**
@@ -225,7 +225,7 @@ _2026-10-17_
 - De laatste vijf kaartzoekopdrachten staan klaar als je het zoekveld opent; op Apple gaan ze via iCloud mee. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
   <sub>Your last five map searches are ready when you open the search field; on Apple they sync via iCloud.</sub>
 
-## Build 10
+## Build 10 · versie 1.0.0
 _2026-10-17_
 
 **Verbeterd**
@@ -233,7 +233,7 @@ _2026-10-17_
 - De wereldkaart in de webspeler gebruikt nu Apple Maps: donker en rustig, met dezelfde gloeiende stippen, clusters en de knop Willekeurig. _(Website)_  
   <sub>The world map in the web player now uses Apple Maps: dark and calm, with the same glowing dots, clusters and Random button.</sub>
 
-## Build 9
+## Build 9 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -243,7 +243,7 @@ _2026-10-16_
 - De Tunr-intro speelt altijd bij het opstarten; de instelling Intromuziek is verdwenen. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
   <sub>The Tunr intro always plays at start-up; the Intro music setting is gone.</sub>
 
-## Build 8
+## Build 8 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -251,7 +251,7 @@ _2026-10-16_
 - Tunr heeft een eigen website: tunr.online. Website, privacy en voorwaarden in de apps verwijzen er nu naar. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
   <sub>Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it.</sub>
 
-## Build 7
+## Build 7 · versie 1.0.0
 _2026-10-16_
 
 **Nieuw**
@@ -272,7 +272,7 @@ _2026-10-16_
 - Website vernieuwd: schermen, Waarom Tunr, Podcasts, Wereldkaart, Zo werkt het, Download (Coming Soon), FAQ en een footer met het buildnummer; sneller laden met WebP. _(Website)_  
   <sub>Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP.</sub>
 
-## Build 6
+## Build 6 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -280,7 +280,7 @@ _2026-10-16_
 - Zenderlogo's vullen nu de hele tegel, zonder extra witte tegel of rand eromheen. Zonder logo blijft het gekleurde vlak met de letters. _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Website)_  
   <sub>Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials.</sub>
 
-## Build 5
+## Build 5 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -290,7 +290,7 @@ _2026-10-16_
 - Apps nog niet te downloaden: App Store, Google Play en de auto staan op Binnenkort; luisteren kan nu al in de browser. _(Website)_  
   <sub>Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser.</sub>
 
-## Build 4
+## Build 4 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -298,7 +298,7 @@ _2026-10-16_
 - Website: de apparaten tonen nu per platform de minimale versie (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus een nieuwe sectie Download per platform. _(Website)_  
   <sub>Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform.</sub>
 
-## Build 3
+## Build 3 · versie 1.0.0
 _2026-10-16_
 
 **Opgelost**
@@ -306,7 +306,7 @@ _2026-10-16_
 - Xcode-project: gedeeld scheme Tunr toegevoegd, zodat je bovenin Xcode iPhone, iPad, Apple TV en Mac (en hun simulators) kunt kiezen in plaats van alleen de Mac. _(iPhone, iPad, Mac, Apple TV, CarPlay)_  
   <sub>Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac.</sub>
 
-## Build 2
+## Build 2 · versie 1.0.0
 _2026-10-16_
 
 **Verbeterd**
@@ -327,7 +327,7 @@ _2026-10-16_
 - Kaart: wisselen tussen je land en Wereld laadt de stippen niet meer dubbel; Apple TV houdt de focus op de lijst. _(iPhone, iPad, Mac, Apple TV)_  
   <sub>Map: switching between your country and World no longer loads the dots twice; Apple TV keeps focus on the list.</sub>
 
-## Build 1
+## Build 1 · versie 1.0.0
 _2026-10-16_
 
 **Nieuw**

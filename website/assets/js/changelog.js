@@ -50,7 +50,7 @@
         }).join('') + '</ul></section>';
       });
       var open = open_[b.build] != null ? open_[b.build] : first;
-      html += '<article class="build' + (open ? ' open' : '') + '" id="build-' + b.build + '"><button class="bh" type="button" aria-expanded="' + open + '" data-b="' + b.build + '"><h2>Build ' + b.build + '</h2><span class="v">1.0.0</span>' + (first ? '<span class="latest">' + esc(L('Nieuwste', 'Latest')) + '</span>' : '') + '<time datetime="' + esc(b.date) + '">' + esc(date(b.date)) + '</time><span class="rsum">' + counts + '</span></button><div class="rbody">' + groups + '</div></article>';
+      html += '<article class="build' + (open ? ' open' : '') + '" id="build-' + b.build + '"><button class="bh" type="button" aria-expanded="' + open + '" data-b="' + b.build + '"><h2>Build ' + b.build + '</h2><span class="v">' + esc(b.version || '1.0.0') + '</span>' + (first ? '<span class="latest">' + esc(L('Nieuwste', 'Latest')) + '</span>' : '') + '<time datetime="' + esc(b.date) + '">' + esc(date(b.date)) + '</time><span class="rsum">' + counts + '</span></button><div class="rbody">' + groups + '</div></article>';
       first = false;
     });
     list.innerHTML = html || '<p class="empty">' + esc(L('Geen wijzigingen voor dit platform.', 'No changes for this platform.')) + '</p>';

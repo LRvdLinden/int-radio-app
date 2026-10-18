@@ -18,7 +18,7 @@ cd android
 
 ## Versie en build
 
-- Versie blijft `1.0.0` (`TUNR_VERSION`), alleen `TUNR_BUILD` in `gradle.properties` gaat omhoog.
+- Versie (`TUNR_VERSION`) alleen via `python3 tools/set_version.py <versie>`; `TUNR_BUILD` in `gradle.properties` gaat per build omhoog.
 - Bij elke build een item in `docs/changelog.json` (zie `CLAUDE.md`).
 
 ## Release-sleutel (optioneel)
