@@ -51,6 +51,10 @@ for s in $SCENES; do
     sleep "$WAIT"
   fi
   adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+  # schermtoetsenbord dicht (tv: het zoekveld krijgt meteen de focus); Terug alleen als het toetsenbord echt open is
+  if adb shell dumpsys input_method | grep -q "mInputShown=true"; then
+    adb shell input keyevent KEYCODE_BACK; sleep 2
+  fi
   # statusbalk opnieuw in demomodus (systemui kan die tussendoor loslaten)
   demo enter; demo clock -e hhmm 0941; demo battery -e level 100 -e plugged false; demo notifications -e visible false
   sleep 1
