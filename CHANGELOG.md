@@ -4,6 +4,14 @@ Alle wijzigingen per build. Versie blijft 1.0.0; elk platform heeft zijn eigen b
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 28
+_2026-10-18_
+
+**Opgelost**
+
+- Nieuwe zendericonen (zoals die van Qmusic, Sky Radio en SLAM!) verschijnen nu binnen enkele uren in plaats van pas na een week. _(Alle apps)_  
+  <sub>New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week.</sub>
+
 ## Build 27
 _2026-10-18_
 

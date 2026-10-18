@@ -361,7 +361,7 @@ enum LogoSources {
 /// zonder netwerk wordt een oudere kopie gebruikt).
 final class IconMap: @unchecked Sendable {
     static let shared = IconMap()
-    static let ttl: TimeInterval = 7 * 24 * 3600
+    static let ttl: TimeInterval = 6 * 3600   // tabellen worden wekelijks of vaker bijgewerkt
     static let base = "https://tunr.online/assets/data/icons/"
 
     private typealias Table = [String: [String: String]]
@@ -433,7 +433,7 @@ final class IconMap: @unchecked Sendable {
 
     private static var diskDir: URL? {
         guard let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
-        let dir = caches.appendingPathComponent("icons", isDirectory: true)
+        let dir = caches.appendingPathComponent("icons2", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }

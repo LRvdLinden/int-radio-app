@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object IconMap {
     private const val BASE = "https://tunr.online/assets/data/icons/"
-    private const val TTL = 7L * 24 * 60 * 60 * 1000
+    private const val TTL = 6L * 60 * 60 * 1000
     private const val RETRY = 10L * 60 * 1000
 
     private val tables = ConcurrentHashMap<String, Map<String, Map<String, String>>>()
@@ -40,7 +40,7 @@ object IconMap {
     private val serializer = MapSerializer(String.serializer(), MapSerializer(String.serializer(), String.serializer()))
 
     fun init(context: Context) {
-        dir = File(context.cacheDir, "icons").apply { mkdirs() }
+        dir = File(context.cacheDir, "icons2").apply { mkdirs() }
     }
 
     /**

@@ -830,6 +830,27 @@
           "en": "Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again."
         }
       ]
+    },
+    {
+      "build": 28,
+      "date": "2026-10-18",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Nieuwe zendericonen (zoals die van Qmusic, Sky Radio en SLAM!) verschijnen nu binnen enkele uren in plaats van pas na een week.",
+          "en": "New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week."
+        }
+      ]
     }
   ]
 }

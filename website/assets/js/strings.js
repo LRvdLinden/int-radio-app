@@ -151,7 +151,7 @@
     try { var cs = document.currentScript; return new URL('../data/icons/', (cs && cs.src) || location.href).href; }
     catch (e) { return '/assets/data/icons/'; }
   })();
-  var ICON_TTL = 7 * 864e5, IK = 'tunr.icons:', iconTabs = {}, iconWait = {}, iconRetry = {}, artReg = {};
+  var ICON_TTL = 6 * 36e5, IK = 'tunr.icons2:', iconTabs = {}, iconWait = {}, iconRetry = {}, artReg = {};
   // naamsleutel, gelijk aan norm_key in tools/make_station_icons.py (en Apple/Android): NFKD, accenten weg,
   // kleine letters, alleen letters en decimale cijfers
   T.iconKey = function (name) {
