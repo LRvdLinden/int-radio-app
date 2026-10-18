@@ -1039,22 +1039,6 @@
           "en": "Map: the map shows regular dark map tiles again, without the \"API key required\" watermark."
         }
       ]
-    },
-    {
-      "build": 38,
-      "version": "1.0.1",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Kaart: de donkere wereldkaart laadt weer zonder watermerk (eigen CARTO-kaartsleutel).",
-          "en": "Map: the dark world map loads again without a watermark (own CARTO map key)."
-        }
-      ]
     }
   ]
 }
