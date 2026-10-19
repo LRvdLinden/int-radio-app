@@ -25,19 +25,50 @@ def get(url, timeout=25):
         return r.read()
 
 
+LEGACY = 'https://itunes.apple.com/nl/rss/toppodcasts/limit=10/json'
+LOOKUP = 'https://itunes.apple.com/lookup?country=nl&id='
+
+
+def top_podcasts():
+    """[(naam, maker, cover-URL)] uit de toplijst; eerst de nieuwe RSS-feed, anders de oude iTunes-feed + lookup."""
+    try:
+        feed = json.loads(get(FEED))
+        rows = [(r.get('name'), r.get('artistName'), (r.get('artworkUrl100') or '').replace('100x100bb', '600x600bb'))
+                for r in (feed.get('feed') or {}).get('results') or []]
+        if rows:
+            return rows
+    except Exception as e:
+        print(f'  toplijst (RSS) niet opgehaald: {e}', file=sys.stderr)
+    feed = json.loads(get(LEGACY))
+    rows = []
+    for en in (feed.get('feed') or {}).get('entry') or []:
+        name = ((en.get('im:name') or {}).get('label') or '').strip()
+        artist = ((en.get('im:artist') or {}).get('label') or '').strip()
+        pid = (((en.get('id') or {}).get('attributes') or {}).get('im:id') or '').strip()
+        art = ''
+        if pid:
+            try:
+                res = json.loads(get(LOOKUP + pid)).get('results') or []
+                art = (res[0].get('artworkUrl600') if res else '') or ''
+            except Exception as e:
+                print(f'  lookup {pid} mislukt: {e}', file=sys.stderr)
+        if not art:
+            imgs = en.get('im:image') or []
+            art = (imgs[-1].get('label') if imgs else '') or ''
+        rows.append((name, artist, art))
+    return rows
+
+
 def main():
-    feed = json.loads(get(FEED))
-    results = (feed.get('feed') or {}).get('results') or []
+    results = top_podcasts()
     pods = []
     os.makedirs(OUT_IMG, exist_ok=True)
-    for r in results:
+    for name, artist, art in results:
         if len(pods) == 3:
             break
-        name, artist = (r.get('name') or '').strip(), (r.get('artistName') or '').strip()
-        art = r.get('artworkUrl100') or ''
+        name, artist = (name or '').strip(), (artist or '').strip()
         if not name or not art:
             continue
-        art = art.replace('100x100bb', '600x600bb')
         try:
             img = Image.open(io.BytesIO(get(art))).convert('RGB')
         except Exception as e:
