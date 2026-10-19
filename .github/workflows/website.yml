@@ -71,6 +71,7 @@ jobs:
       # Podcastvoorbeeld op de homepage: echte top-3-podcasts van Nederland met covers (vast, zoals de hero-logo's)
       - name: Podcastvoorbeeld (vast)
         if: github.event_name != 'pull_request' && inputs.presskit_only != true
+        working-directory: .
         run: |
           if [ -f website/assets/js/showcase.js ] && [ "${{ inputs.refresh_wall }}" != "true" ]; then
             echo "Podcastvoorbeeld staat er al"; exit 0
