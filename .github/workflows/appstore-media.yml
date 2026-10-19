@@ -221,11 +221,23 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install -q pillow
+          set -o pipefail
           "$RUNNER_TEMP/venv/bin/python" tools/make_site_shots.py --raw "$RUNNER_TEMP/raw" | tee "$RUNNER_TEMP/files.txt"
-          git add website/assets/img/nl website/assets/img/en
-          if git diff --cached --quiet; then echo "geen wijzigingen"; exit 0; fi
-          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "Website: schermafbeeldingen uit de echte app (nl + en)"
-          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
+          # alleen de afbeeldingen meenemen: werkmap terug naar de nieuwste main (XcodeGen heeft het project gewijzigd)
+          T="$RUNNER_TEMP/siteimg"; rm -rf "$T"; mkdir -p "$T"
+          cp -R website/assets/img/nl website/assets/img/en "$T/"
+          ok=0
+          for i in 1 2 3; do
+            git reset -q --hard && git clean -qfd apple
+            git fetch -q origin main && git checkout -q --detach origin/main
+            cp -R "$T/nl" "$T/en" website/assets/img/
+            git add website/assets/img/nl website/assets/img/en
+            if git diff --cached --quiet; then echo "geen wijzigingen"; ok=1; break; fi
+            git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "Website: schermafbeeldingen uit de echte app (nl + en)"
+            if git push -q origin HEAD:main; then ok=1; break; fi
+            sleep 5
+          done
+          [ "$ok" = 1 ] || { echo "::error::Schermafbeeldingen niet naar main gepusht"; exit 1; }
           # een push met GITHUB_TOKEN start geen andere workflows: Website zelf starten
           curl -fsS -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/website.yml/dispatches" -d '{"ref":"main"}' \

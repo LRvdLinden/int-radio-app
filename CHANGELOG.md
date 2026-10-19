@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 41 · versie 1.0.1
+_2026-10-19_
+
+**Verbeterd**
+
+- Vernieuwde changelog: filters op apparaat en soort, per build versie en buildnummer, een link per build om te delen en rechts de nieuwste versie per apparaat. _(Website)_  
+  <sub>Redesigned changelog: filter by device and type, version and build number per build, a shareable link per build and the latest version per device on the side.</sub>
+
 ## Build 40 · versie 1.0.1
 _2026-10-19_
 

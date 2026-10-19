@@ -21,43 +21,59 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/css/site.css?v=2">
 <style>
-/* filters: chips per platform */
-.fbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
-.fbar button{height:36px;padding:0 14px;border-radius:999px;background:var(--surface);border:1px solid var(--stroke2);font-weight:700;font-size:14px;color:#d6d6dc;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
-.fbar button:hover{background:var(--elevated)}
-.fbar button[aria-pressed="true"]{background:#fff;color:#0A0A0C;border-color:#fff}
-.fbar svg{width:16px;height:16px}
-/* builds: uitklapbaar, zoals de FAQ van de homepage  */
-.build{position:relative;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;margin-bottom:8px;scroll-margin-top:96px}
-.build.open{border-color:#ffffff33}
-.bh{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:20px 64px 20px 22px;border-radius:12px}
-.bh:hover{background:#ffffff08}
-.bh:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.bh h2{font-weight:800;font-size:21px;letter-spacing:-.015em}
-.bh .v{color:#e5e5e5;font-weight:700;font-size:16px}
-.bh time{color:var(--sec);font-size:14px}
-.bh::after{content:"";position:absolute;right:22px;top:24px;width:20px;height:20px;background:linear-gradient(#fff,#fff) center/20px 2px no-repeat,linear-gradient(#fff,#fff) center/2px 20px no-repeat;transition:transform .2s}
-.build.open .bh::after{transform:rotate(45deg)}
+/* zelfde indeling als de changelog van Bingr: filters, uitklapbare builds, "Nieuwste versie per apparaat" */
+.fbar{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 22px}
+.fsel{display:flex;flex-direction:column;gap:6px;min-width:200px}
+.fsel span{color:var(--sec);font-size:14px;font-weight:600}
+.fsel select{appearance:none;-webkit-appearance:none;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 14px center/16px no-repeat;border:1px solid var(--stroke2);color:#fff;border-radius:10px;padding:11px 42px 11px 14px;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.fsel select:hover{background-color:var(--elevated)}
+.fsel select:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media (max-width:520px){.fsel{flex:1;min-width:0}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:32px;align-items:start}
+.rel{position:relative;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;margin-bottom:8px;scroll-margin-top:96px}
+.rel.open{border-color:#ffffff33}
+.rhead{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:center;padding:20px 190px 20px 22px;border-radius:12px}
+.rhead:hover{background:#ffffff08}
+.rhead:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.rhead::after{content:"";position:absolute;right:22px;top:24px;width:20px;height:20px;background:linear-gradient(#fff,#fff) center/20px 2px no-repeat,linear-gradient(#fff,#fff) center/2px 20px no-repeat;transition:transform .2s}
+.rel.open .rhead::after{transform:rotate(45deg)}
+.cp{position:absolute;z-index:2;top:17px;right:60px;display:inline-flex;align-items:center;gap:6px;background:#ffffff1f;box-shadow:inset 0 0 0 1px #ffffff2e;border:0;color:#fff;border-radius:6px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.cp:hover{background:#ffffff33}.cp svg{width:15px;height:15px}.cp.ok{color:#6ee68a;box-shadow:inset 0 0 0 1px #46d36966}
+.cp:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.rv{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.rv .v{font-weight:800;font-size:21px;letter-spacing:-.015em;color:#fff}.rv .b{color:#e5e5e5;font-weight:700;font-size:16px}.rv .d{color:var(--sec);font-size:14px}
 .latest{background:var(--grad);color:#fff;font-size:12px;font-weight:700;border-radius:4px;padding:2px 8px;align-self:center}
-.rsum{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.rsum{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.rel.open .rsum{display:none}
 .tc{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;border-radius:5px;padding:3px 8px;background:#ffffff0d}
 .tc.new{color:#6ee68a}.tc.improved{color:#8fb8ff}.tc.fixed{color:var(--warn)}.tc .n{color:#fff;opacity:.75}
-.build.open .rsum{display:none}
 .rbody{display:none;padding:18px 22px 24px;border-top:1px solid var(--bg)}
-.build.open .rbody{display:block}
+.rel.open .rbody{display:block}
+.rel.hl{animation:hl 2.4s ease-out}@keyframes hl{0%{box-shadow:0 0 0 2px var(--accent),0 0 30px #ff5a1f66}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.rel.hl{animation:none;box-shadow:0 0 0 2px var(--accent)}}
 .grp{margin-top:16px}.grp:first-child{margin-top:0}
 .grp h3{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin:0 0 4px}
 .grp h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
 .grp.new h3{color:#6ee68a}.grp.improved h3{color:#8fb8ff}.grp.fixed h3{color:var(--warn)}
-.grp ul{list-style:none}
+.grp ul{list-style:none;margin:0;padding:0}
 .grp li{position:relative;padding:6px 0 6px 16px;color:#e2e2e8;font-size:15.5px;line-height:1.55}
 .grp li::before{content:"";position:absolute;left:3px;top:15px;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.3}
-.pls{display:inline}.pls .pi{margin-left:6px;vertical-align:2px}
+.pl{display:inline}.pl .pi{margin-left:6px;vertical-align:2px}.rsum .pl .pi{margin-left:0;margin-right:4px}
 .pi{display:inline-flex;white-space:nowrap;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:5px;padding:2px 6px 2px 4px;background:#ffffff12;color:#d0d0d0}
 .pi svg{width:14px;height:14px}
-.pi.apple{background:#ffffff12;color:#e8e8ee}.pi.and{background:#3ddc841f;color:#8ef0bd}.pi.web{background:#ff5a1f1f;color:#ffb38f}.pi.car{background:#8fb8ff1c;color:#b8d0ff}.pi.all{background:#ffffff0d;color:#a9a9a9}
+.pi.and{background:#3ddc841f;color:#8ef0bd}.pi.car{background:#8fb8ff1c;color:#b8d0ff}.pi.web{background:#ff5a1f1f;color:#ffb38f}.pi.all{background:#ffffff0d;color:#a9a9a9}
 .empty{color:var(--sec);padding:30px 0}
-@media (max-width:600px){.bh{padding:16px 52px 16px 16px}.bh::after{right:16px;top:21px}}
+#cur{position:sticky;top:96px;background:var(--surface);border:1px solid var(--stroke);border-radius:14px;padding:20px 20px 10px}
+#cur h2{font-size:17px;font-weight:800;letter-spacing:-.01em;margin:0 0 8px}
+.cv{text-decoration:none;display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--stroke)}.cv:first-of-type{border-top:0}
+.cv:hover .cn{text-decoration:underline;text-decoration-color:#ffffff60}
+.cv svg{width:20px;height:20px;flex:none;color:#fff;opacity:.9}
+.cv .cn{flex:1;min-width:0;font-weight:700;font-size:14.5px;color:#fff}
+.cv .cb{font-size:13px;color:var(--sec);white-space:nowrap;text-align:right;line-height:1.35}.cv .cb b{color:#fff;font-weight:700}
+@media (max-width:1000px){.layout{grid-template-columns:minmax(0,1fr);gap:0}#cur{order:-1;position:static;margin-bottom:22px;padding:16px 16px 6px}
+ #cur .cvs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));column-gap:18px}.cv:nth-of-type(2){border-top:0}}
+@media (max-width:600px){.cp .t{display:none}.cp{padding:7px 9px;right:52px}.rhead{padding:16px 96px 16px 16px}.rhead::after{right:16px;top:21px}}
+@media (max-width:520px){#cur .cvs{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px}.cv{display:grid;grid-template-columns:20px minmax(0,1fr);column-gap:9px;row-gap:1px;align-items:start}.cv svg{grid-row:span 2;margin-top:2px}.cv .cn{font-size:13px}.cv .cb{font-size:12px;text-align:left;white-space:normal}.cv .cb br,.cv .cb .cd{display:none}}
 </style>
 </head>
 <body class="sub-page">
@@ -81,10 +97,13 @@
   </div>
 </nav>
 <main id="main">
-<div class="wrap narrow">
-  <header class="phead"><h1 class="ttl">Changelog</h1><p class="sub" data-i18n="c.lead">Wat er nieuw, beter en opgelost is, per build. Bij elke build staat de versie; buildnummers lopen door over alle platforms.</p></header>
-  <div class="fbar" id="fbar" role="group" aria-label="Platform"></div>
-  <div id="list" aria-live="polite"><p class="empty" data-i18n="c.loading">Laden…</p></div>
+<div class="wrap">
+  <header class="phead"><h1 class="ttl">Changelog</h1><p class="sub" data-i18n="c.lead">Wat er nieuw, verbeterd en opgelost is in elke versie van Tunr, met per punt de apparaten waarvoor het geldt. De buildnummers lopen door; een apparaat krijgt alleen een nieuwe build als er voor dat apparaat iets verandert.</p></header>
+  <div class="fbar">
+    <label class="fsel"><span data-i18n="c.fPlatform">Apparaat</span><select id="fp"></select></label>
+    <label class="fsel"><span data-i18n="c.fType">Soort</span><select id="ft"></select></label>
+  </div>
+  <div class="layout"><div id="list" aria-live="polite"><p class="empty" data-i18n="c.loading">Laden…</p></div><aside id="cur" aria-labelledby="curTitle"></aside></div>
 </div>
 </main>
 <footer class="foot">
@@ -98,13 +117,13 @@
       </div>
     </div>
     <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.1 · build 40</span></p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.1 · build 41</span></p>
   </div>
 </footer>
-<script>window.TUNR_I18N={en:{"c.lead":"What's new, better and fixed, per build. Each build shows its version; build numbers run on across all platforms.","c.loading":"Loading…"}};</script>
+<script>window.TUNR_I18N={en:{"c.lead":"What's new, improved and fixed in every version of Tunr, with the devices each item applies to. Build numbers run in one sequence; a device only gets a new build when something changes for that device.","c.loading":"Loading…","c.fPlatform":"Device","c.fType":"Type"}};</script>
 <script defer src="../assets/js/brand.js?v=3"></script>
 <script defer src="../assets/js/consent.js?v=1" data-base="../"></script>
 <script defer src="../assets/js/i18n.js?v=4"></script>
-<script defer src="../assets/js/changelog.js?v=2"></script>
+<script defer src="../assets/js/changelog.js?v=3"></script>
 </body>
 </html>

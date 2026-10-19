@@ -1144,6 +1144,21 @@
           "en": "Long podcast and episode descriptions can be read in full via \"More\"."
         }
       ]
+    },
+    {
+      "build": 41,
+      "version": "1.0.1",
+      "date": "2026-10-19",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Vernieuwde changelog: filters op apparaat en soort, per build versie en buildnummer, een link per build om te delen en rechts de nieuwste versie per apparaat.",
+          "en": "Redesigned changelog: filter by device and type, version and build number per build, a shareable link per build and the latest version per device on the side."
+        }
+      ]
     }
   ]
 }
