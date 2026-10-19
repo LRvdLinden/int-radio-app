@@ -5,7 +5,8 @@ import AppKit
 
 /// App Store-schermafbeeldingen (workflow *App Store media*, `.github/workflows/appstore-media.yml`).
 /// Start met `-TunrScreenshot <scène>` (bv. `xcrun simctl launch … nl.lrvdlinden.tunr -TunrScreenshot player`).
-/// Dan: geen intro/tune, Engels, land Nederland zonder landkeuze, geen gebruiksping, geen Live Activity,
+/// Met `-TunrScreenshotLang nl` in het Nederlands (schermafbeeldingen voor tunr.online).
+/// Dan: geen intro/tune, Engels (of de gekozen taal), land Nederland zonder landkeuze, geen gebruiksping, geen Live Activity,
 /// niets naar iCloud of UserDefaults (favorieten alleen in het geheugen) en meteen de gevraagde scène.
 /// Zonder dat argument doet dit niets (ook veilig in een release-build).
 enum ScreenshotMode {
@@ -23,8 +24,15 @@ enum ScreenshotMode {
 
     static var isActive: Bool { scene != nil }
 
+    /// Taal van de opnames: `-TunrScreenshotLang nl` (website) of standaard Engels (App Store)
+    static let language: String = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-TunrScreenshotLang"), i + 1 < args.count else { return "en" }
+        return args[i + 1].lowercased() == "nl" ? "nl" : "en"
+    }()
+
     static let countryCode = "NL"
-    static let countryName = "The Netherlands"
+    static var countryName: String { language == "nl" ? "Nederland" : "The Netherlands" }
     /// Zoekterm voor de scène `search`
     static let searchQuery = "jazz"
     /// Zender voor de scène `player` (eerste treffer in NL; anders de populairste zender)

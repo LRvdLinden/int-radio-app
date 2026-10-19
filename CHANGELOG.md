@@ -4,6 +4,16 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 39 · versie 1.0.1
+_2026-10-19_
+
+**Verbeterd**
+
+- Schermafbeeldingsmodus ook in het Nederlands (voor de schermafbeeldingen op tunr.online). _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Screenshot mode now also in Dutch (for the screenshots on tunr.online).</sub>
+- tunr.online: "Zo ziet Tunr eruit" toont echte schermafbeeldingen uit de app, met de echte zenderlogo's, plus Kaart en Podcasts. _(Website)_  
+  <sub>tunr.online: "See Tunr in action" now shows real screenshots from the app with real station logos, plus Map and Podcasts.</sub>
+
 ## Build 38 · versie 1.0.1
 _2026-10-18_
 

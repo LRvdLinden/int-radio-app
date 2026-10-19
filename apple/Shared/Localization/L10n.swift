@@ -25,8 +25,8 @@ final class Localizer: ObservableObject {
     private var bundle: Bundle
 
     private init() {
-        // App Store-schermafbeeldingen: altijd Engels (niet bewaard)
-        let o = ScreenshotMode.isActive ? "en" : (UserDefaults.standard.string(forKey: Self.key) ?? "")
+        // Schermafbeeldingen: Engels (App Store) of de taal uit -TunrScreenshotLang (website), niet bewaard
+        let o = ScreenshotMode.isActive ? ScreenshotMode.language : (UserDefaults.standard.string(forKey: Self.key) ?? "")
         let lang = Self.resolve(o)
         // via de opslag zelf: `self` mag hier nog niet gebruikt worden (en didSet hoeft niet te lopen)
         _override = Published(initialValue: o)

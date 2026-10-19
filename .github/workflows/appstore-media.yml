@@ -17,9 +17,15 @@ on:
       wait:
         description: "Seconden wachten per scène (gegevens komen live van Radio Browser/iTunes)"
         default: "15"
+      target:
+        description: "appstore = App Store-afbeeldingen (en, branch appstore-media); site = schermafbeeldingen voor tunr.online (nl + en, iPhone + Mac, rechtstreeks in website/assets/img)"
+        type: choice
+        options: [appstore, site]
+        default: appstore
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: appstore-media
@@ -27,11 +33,13 @@ concurrency:
 
 env:
   BUNDLE_ID: nl.lrvdlinden.tunr
-  DEVICES: ${{ github.event.inputs.devices || 'iphone69,iphone63,ipad13,appletv,mac' }}
+  TARGET: ${{ github.event.inputs.target || 'appstore' }}
+  DEVICES: ${{ github.event.inputs.target == 'site' && 'iphone63,mac' || github.event.inputs.devices || 'iphone69,iphone63,ipad13,appletv,mac' }}
+  LANGS: ${{ github.event.inputs.target == 'site' && 'nl en' || 'en' }}
   WAIT: ${{ github.event.inputs.wait || '15' }}
   # scènes per soort toestel (gelijk aan DEVICES in tools/make_appstore_media.py)
-  SCENES_PHONE: "discover player map search podcasts library"
-  SCENES_MAC: "discover player map podcasts library"
+  SCENES_PHONE: ${{ github.event.inputs.target == 'site' && 'discover browse player map podcasts library' || 'discover player map search podcasts library' }}
+  SCENES_MAC: ${{ github.event.inputs.target == 'site' && 'discover' || 'discover player map podcasts library' }}
   SCENES_TV: "discover player browse podcasts search"
 
 jobs:
@@ -113,14 +121,17 @@ jobs:
             # opwarmen: caches (landen, iconentabel, logo's) vullen
             xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -TunrScreenshot discover > /dev/null || true
             sleep 25
+            for lang in $LANGS; do
+            out="$RAW"; [ "$TARGET" = site ] && out="$RAW/$lang" && mkdir -p "$out"
             for s in $scenes; do
-              xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -TunrScreenshot "$s" > /dev/null \
+              xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -TunrScreenshot "$s" -TunrScreenshotLang "$lang" > /dev/null \
                 || echo "::warning::$dev-$s: starten mislukt"
               sleep "$WAIT"
               [ "$s" = "player" ] && sleep 6   # stream + nu-speelt-titel + albumhoes
-              xcrun simctl io "$udid" screenshot --type=png "$RAW/$dev-$s.png" > /dev/null 2>&1 \
-                && python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$RAW/$dev-$s.png" \
+              xcrun simctl io "$udid" screenshot --type=png "$out/$dev-$s.png" > /dev/null 2>&1 \
+                && python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(sys.argv[1].split('/')[-1],*struct.unpack('>II',d[16:24]))" "$out/$dev-$s.png" \
                 || echo "::warning::$dev-$s: geen opname"
+            done
             done
             xcrun simctl terminate "$udid" "$BUNDLE_ID" || true
             xcrun simctl shutdown "$udid" || true
@@ -144,17 +155,19 @@ jobs:
           system_profiler SPDisplaysDataType | grep -E "Resolution|Retina" || true
           swiftc -O tools/macos_window.swift -o "$RUNNER_TEMP/macwin"
           first=1
+          for lang in $LANGS; do
+          O="$RAW"; [ "$TARGET" = site ] && O="$RAW/$lang" && mkdir -p "$O"
           for s in $SCENES_MAC; do
             extra=0; [ $first = 1 ] && extra=15; first=0          # eerste start: caches vullen
             [ "$s" = "player" ] && extra=$((extra + 6))
             delay=$((WAIT + extra))
-            rm -f "$RAW/mac-$s.png" "$RAW/self-$s.png"
+            rm -f "$O/mac-$s.png" "$O/self-$s.png"
             # de app maakt na $delay s zelf een 2×-opname van zijn venster (ScreenshotMode.swift)
-            TUNR_SCREENSHOT_OUT="$RAW/self-$s.png" TUNR_SCREENSHOT_DELAY="$delay" \
-              "$APP/Contents/MacOS/Tunr" -TunrScreenshot "$s" > /dev/null 2>&1 &
+            TUNR_SCREENSHOT_OUT="$O/self-$s.png" TUNR_SCREENSHOT_DELAY="$delay" \
+              "$APP/Contents/MacOS/Tunr" -TunrScreenshot "$s" -TunrScreenshotLang "$lang" > /dev/null 2>&1 &
             pid=$!
             sleep $((delay + 4))
-            shot="$RAW/sc-$s.png"; rm -f "$shot"
+            shot="$O/sc-$s.png"; rm -f "$shot"
             if win=$("$RUNNER_TEMP/macwin" Tunr); then
               read -r id x y w h <<< "$win"
               echo "$s: venster $id ${w}x${h} op $x,$y"
@@ -163,20 +176,22 @@ jobs:
               echo "::warning::mac-$s: geen venster gevonden"
             fi
             # voorkeur: de eigen 2×-opname (scherp, geen toestemming nodig); kaart (MapKit/Metal) via screencapture
-            if [ "$s" != "map" ] && [ -s "$RAW/self-$s.png" ]; then cp "$RAW/self-$s.png" "$RAW/mac-$s.png"
-            elif [ -s "$shot" ]; then cp "$shot" "$RAW/mac-$s.png"
-            elif [ -s "$RAW/self-$s.png" ]; then cp "$RAW/self-$s.png" "$RAW/mac-$s.png"
+            if [ "$s" != "map" ] && [ -s "$O/self-$s.png" ]; then cp "$O/self-$s.png" "$O/mac-$s.png"
+            elif [ -s "$shot" ]; then cp "$shot" "$O/mac-$s.png"
+            elif [ -s "$O/self-$s.png" ]; then cp "$O/self-$s.png" "$O/mac-$s.png"
             else echo "::warning::mac-$s: geen opname"; fi
-            [ -s "$RAW/mac-$s.png" ] && sips -g pixelWidth -g pixelHeight "$RAW/mac-$s.png" | tail -2 | tr '\n' ' ' && echo
+            [ -s "$O/mac-$s.png" ] && sips -g pixelWidth -g pixelHeight "$O/mac-$s.png" | tail -2 | tr '\n' ' ' && echo
             kill "$pid" 2>/dev/null || true
             sleep 2
             kill -9 "$pid" 2>/dev/null || true
           done
+          done
           # tussenbestanden niet meenemen
-          rm -f "$RAW"/self-*.png "$RAW"/sc-*.png
-          ls -la "$RAW"
+          find "$RAW" \( -name 'self-*.png' -o -name 'sc-*.png' \) -delete
+          ls -laR "$RAW"
 
       - name: Afbeeldingen opmaken
+        if: env.TARGET == 'appstore'
         run: |
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install -q pillow
@@ -190,6 +205,7 @@ jobs:
             --only "$DEVICES" | tee "$RUNNER_TEMP/files.txt"
 
       - name: Naar branch appstore-media
+        if: env.TARGET == 'appstore'
         run: |
           D="$RUNNER_TEMP/push"; rm -rf "$D"; mkdir -p "$D"
           cp -R appstore "$D/"
@@ -198,6 +214,22 @@ jobs:
           git add -A
           git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "App Store-afbeeldingen (en) van $GITHUB_SHA [skip ci]"
           git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" appstore-media
+
+      # tunr.online: schermafbeeldingen bij "Zo ziet Tunr eruit" (nl + en), daarna de workflow Website starten
+      - name: Website-schermafbeeldingen (nl + en)
+        if: env.TARGET == 'site'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q pillow
+          "$RUNNER_TEMP/venv/bin/python" tools/make_site_shots.py --raw "$RUNNER_TEMP/raw" | tee "$RUNNER_TEMP/files.txt"
+          git add website/assets/img/nl website/assets/img/en
+          if git diff --cached --quiet; then echo "geen wijzigingen"; exit 0; fi
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "Website: schermafbeeldingen uit de echte app (nl + en)"
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
+          # een push met GITHUB_TOKEN start geen andere workflows: Website zelf starten
+          curl -fsS -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/website.yml/dispatches" -d '{"ref":"main"}' \
+            && echo "Website gestart"
 
       - name: Overzicht
         if: always()
