@@ -404,7 +404,7 @@ struct EpisodeTimeBar: View {
                     }
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.85))
-                    .offset(y: 36)
+                    .offset(y: -42)   // boven de balk: eronder staan de tijden
                 }
             }
             .focusable()

@@ -264,6 +264,9 @@ struct PodcastShelf: View {
                                 ForEach(Array(podcasts.prefix(30).enumerated()), id: \.element.id) { i, p in
                                     PodcastCardButton(podcast: p, rank: ranked ? i + 1 : nil)
                                 }
+                                #if os(tvOS)
+                                if let onAll { TVAllTile(action: onAll) }
+                                #endif
                             }
                         }
                         .padding(.horizontal, Theme.edge)

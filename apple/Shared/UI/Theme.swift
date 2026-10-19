@@ -147,6 +147,30 @@ struct TVLiftStyle: ButtonStyle {
     }
 }
 
+/// Apple TV: knop met alleen tekst ("Alles", "Wissen", "Meer"): bij focus een vlak met witte 3px rand
+/// (alleen schalen + schaduw is op donker niet te zien)
+struct TVTextButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View { TextBody(configuration: configuration) }
+
+    private struct TextBody: View {
+        let configuration: ButtonStyleConfiguration
+        @Environment(\.isFocused) private var focused
+        var body: some View {
+            configuration.label
+                .environment(\.tvFocused, focused)
+                .background {
+                    Capsule(style: .continuous)
+                        .fill(Color.white.opacity(focused ? 0.16 : 0))
+                        .overlay(Capsule(style: .continuous).strokeBorder(.white, lineWidth: focused ? 3 : 0))
+                }
+                .scaleEffect(configuration.isPressed ? 1.02 : (focused ? 1.06 : 1))
+                .shadow(color: .black.opacity(focused ? 0.5 : 0), radius: 14, y: 8)
+                .animation(.spring(response: 0.28, dampingFraction: 0.78), value: focused)
+                .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+        }
+    }
+}
+
 /// Apple TV: lijstrij (landen, regio's, talen) met eigen focusvlak: donker vlak + witte 3px rand + licht schalen,
 /// zodat de witte tekst leesbaar blijft (geen wit systeemvlak). Zet `tvFocused` voor de inhoud.
 struct TVRowButtonStyle: ButtonStyle {
@@ -280,6 +304,15 @@ extension View {
     @ViewBuilder func plainTVButton() -> some View {
         #if os(tvOS)
         self.buttonStyle(TVLiftStyle(scale: 1.05, border: false))
+        #else
+        self.buttonStyle(PressableStyle())
+        #endif
+    }
+
+    /// Knoppen met alleen tekst (kop-acties, "Meer", "Wissen"): tv = vlak met witte rand bij focus, elders licht indrukken
+    @ViewBuilder func textTVButton() -> some View {
+        #if os(tvOS)
+        self.buttonStyle(TVTextButtonStyle())
         #else
         self.buttonStyle(PressableStyle())
         #endif

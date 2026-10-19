@@ -110,6 +110,8 @@
 "map.search.places" = "Places";
 "map.search.prompt" = "Search a country or place";
 "map.search.recent" = "Recent";
+"map.zoomIn" = "Zoom in";
+"map.zoomOut" = "Zoom out";
 "map.world" = "World";
 "menu.playback" = "Playback";
 "pgenre.business" = "Business";
@@ -251,3 +253,4 @@
 "Plays or pauses the radio in Tunr." = "Plays or pauses the radio in Tunr.";
 "Stop Tunr" = "Stop Tunr";
 "Playing" = "Playing";
+"qr.scanHint" = "Scan with your phone to open the page.";

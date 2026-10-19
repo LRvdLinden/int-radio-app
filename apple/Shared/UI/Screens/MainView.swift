@@ -156,6 +156,7 @@ struct SidebarLayout: View {
 /// Apple TV: tabbladen bovenaan, Instellingen als laatste tabblad
 struct TVTabs: View {
     @EnvironmentObject private var app: AppState
+    @EnvironmentObject private var player: RadioPlayer
 
     var body: some View {
         TabView(selection: $app.tab) {
@@ -164,6 +165,11 @@ struct TVTabs: View {
                     .tabItem { Label(tab.title, systemImage: tab.symbol) }
                     .tag(tab)
             }
+        }
+        // Play/Pause op de Siri Remote werkt ook buiten de speler (tvOS stuurt die knop in de voorgrond
+        // niet altijd door naar MPRemoteCommandCenter); niets aan het spelen = laatste zender
+        .onPlayPauseCommand {
+            if player.hasMedia { player.toggle() } else { _ = player.playLastStation() }
         }
     }
 }

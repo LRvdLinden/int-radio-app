@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Instellingen: Land, Taal, Intromuziek, Slaaptimer standaard, Automatisch verder spelen,
+/// Instellingen: Land, Taal, Slaaptimer standaard, Automatisch verder spelen,
 /// Recent/Favorieten wissen (met bevestiging), Anonieme gebruiksstatistieken, Over.
 struct SettingsView: View {
     @EnvironmentObject private var app: AppState
@@ -15,6 +15,9 @@ struct SettingsView: View {
     @State private var confirmRecents = false
     @State private var confirmFavorites = false
     @State private var showCountry = false
+    #if os(tvOS)
+    @State private var qrLink: QRLink?
+    #endif
 
     var body: some View {
         form
@@ -28,6 +31,9 @@ struct SettingsView: View {
                 Button(L("action.clear"), role: .destructive) { library.clearFavorites() }
                 Button(L("action.cancel"), role: .cancel) {}
             }
+            #if os(tvOS)
+            .fullScreenCover(item: $qrLink) { QRLinkSheet(link: $0) }
+            #endif
             #if os(tvOS)
             // Apple TV: schermvullende landkeuze (Menu sluit)
             .fullScreenCover(isPresented: $showCountry) { CountryPickerView() }
@@ -189,12 +195,13 @@ struct SettingsView: View {
 
     @ViewBuilder private func linkRow(_ title: String, symbol: String, url: URL) -> some View {
         #if os(tvOS)
-        // geen browser op Apple TV: alleen het adres tonen (wel focusbaar, anders kun je er niet naartoe scrollen)
-        tvFocusableRow {
+        // geen browser op Apple TV: klikken toont een QR-code om met je telefoon te openen
+        Button { qrLink = QRLink(title: title, url: url) } label: {
             HStack {
                 settingLabel(title, symbol: symbol)
                 Spacer()
-                Text(url.host ?? url.absoluteString).modifier(SecondaryText())
+                Text(QRLink.display(url)).modifier(SecondaryText())
+                Image(systemName: "qrcode").modifier(SecondaryText())
             }
         }
         #else

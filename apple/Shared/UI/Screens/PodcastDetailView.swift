@@ -12,6 +12,9 @@ struct PodcastDetailView: View {
     @State private var episodes: LoadState<[Episode]> = .idle
     @State private var about = ""
     @State private var expanded = false
+    #if os(tvOS)
+    @State private var showFullText = false
+    #endif
     @AppStorage("ui.episodeSort") private var sort: EpisodeSort = .newest
     #if os(tvOS)
     /// Apple TV: het hartje krijgt bij openen als eerste de focus
@@ -216,12 +219,20 @@ struct PodcastDetailView: View {
                 Text(about)
                     .font(Theme.body)
                     .foregroundStyle(Theme.secondary)
+                    #if os(tvOS)
+                    .lineLimit(4)   // volledige tekst via "Meer" (schermvullend, scrollbaar)
+                    #else
                     .lineLimit(expanded ? nil : 4)
+                    #endif
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 if about.count > 180 {
                     Button {
+                        #if os(tvOS)
+                        showFullText = true
+                        #else
                         withAnimation(.easeInOut(duration: 0.25)) { expanded.toggle() }
+                        #endif
                     } label: {
                         Text(expanded ? L("podcast.less") : L("podcast.more"))
                             .font(.system(size: tvScaled(14), weight: .semibold))
@@ -230,7 +241,10 @@ struct PodcastDetailView: View {
                             .padding(.horizontal, 18).padding(.vertical, 8)
                             #endif
                     }
-                    .plainTVButton()
+                    .textTVButton()
+                    #if os(tvOS)
+                    .fullScreenCover(isPresented: $showFullText) { TVLongTextSheet(title: podcast.name, text: about) }
+                    #endif
                 }
             }
         }
@@ -328,6 +342,9 @@ struct EpisodeDetailView: View {
 
     private var isCurrent: Bool { player.episode?.id == episode.id }
     private var wide: Bool { !DeviceKind.isPhone }
+    #if os(tvOS)
+    @State private var showFullText = false
+    #endif
 
     var body: some View {
         ScrollView {
@@ -394,7 +411,7 @@ struct EpisodeDetailView: View {
             .padding(.horizontal, 18).padding(.vertical, 8)
             #endif
         }
-        .plainTVButton()
+        .textTVButton()
 
         Text(episode.displayTitle)
             .font(.rounded(24, .black))
@@ -458,18 +475,34 @@ struct EpisodeDetailView: View {
         }
 
         if !episode.summary.isEmpty {
+            #if os(tvOS)
+            // tv: 5 regels, de rest via "Meer" (schermvullend, elke alinea focusbaar zodat je tot het einde scrolt)
+            Text(episode.summary)
+                .font(Theme.body)
+                .foregroundStyle(Theme.secondary)
+                .lineLimit(5)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if episode.summary.count > 220 {
+                Button { showFullText = true } label: {
+                    Text(L("podcast.more"))
+                        .font(.system(size: tvScaled(14), weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                        .padding(.horizontal, 18).padding(.vertical, 8)
+                }
+                .textTVButton()
+                .fullScreenCover(isPresented: $showFullText) {
+                    TVLongTextSheet(title: episode.displayTitle, text: episode.summary)
+                }
+            }
+            #else
             Text(episode.summary)
                 .font(Theme.body)
                 .foregroundStyle(Theme.secondary)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                #if !os(tvOS)
                 .textSelection(.enabled)
-                #endif
-                #if os(tvOS)
-                // lange tekst op tv: focusbaar zodat je kunt scrollen
-                .focusable()
-                #endif
+            #endif
         }
     }
 

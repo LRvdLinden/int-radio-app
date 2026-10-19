@@ -276,7 +276,8 @@ struct NowPlayingCard: View {
                             .frame(maxWidth: tvScaled(260))
                     }
                     Spacer()
-                    Image(systemName: player.state == .playing ? "pause.circle.fill" : "play.circle.fill")
+                    // klikken opent de speler (geen afspeelknop): neutraal icoon
+                    Image(systemName: "chevron.right.circle.fill")
                         .font(.system(size: tvScaled(36)))
                         .foregroundStyle(Theme.gradient)
                 }
@@ -315,7 +316,8 @@ struct NowPlayingCard: View {
                             .lineLimit(1)
                     }
                     Spacer()
-                    Image(systemName: player.state == .playing ? "pause.circle.fill" : "play.circle.fill")
+                    // klikken opent de speler (geen afspeelknop): neutraal icoon
+                    Image(systemName: "chevron.right.circle.fill")
                         .font(.system(size: tvScaled(36)))
                         .foregroundStyle(Theme.gradient)
                 }

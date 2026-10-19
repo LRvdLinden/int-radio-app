@@ -110,6 +110,8 @@
 "map.search.places" = "Plaatsen";
 "map.search.prompt" = "Zoek een land of plaats";
 "map.search.recent" = "Recent";
+"map.zoomIn" = "Inzoomen";
+"map.zoomOut" = "Uitzoomen";
 "map.world" = "Wereld";
 "menu.playback" = "Afspelen";
 "pgenre.business" = "Zakelijk";
@@ -251,3 +253,4 @@
 "Plays or pauses the radio in Tunr." = "Speelt de radio in Tunr af of pauzeert hem.";
 "Stop Tunr" = "Tunr stoppen";
 "Playing" = "Speelt";
+"qr.scanHint" = "Scan met je telefoon om de pagina te openen.";

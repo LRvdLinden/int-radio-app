@@ -54,6 +54,9 @@ struct BrowseView: View {
                     .padding(.horizontal, Theme.edge)
                     .accessibilityAddTraits(.isHeader)
                 #endif
+                #if os(tvOS)
+                NowPlayingCard()   // terug naar de speler (tv heeft geen miniplayer)
+                #endif
 
                 LazyVGrid(columns: columns, spacing: tvScaled(14)) {
                     ForEach(tiles) { t in

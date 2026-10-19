@@ -26,6 +26,10 @@ struct SearchView: View {
                     .accessibilityAddTraits(.isHeader)
                 #endif
 
+                #if os(tvOS)
+                NowPlayingCard()   // terug naar de speler (tv heeft geen miniplayer)
+                #endif
+
                 kindPicker
                     .padding(.horizontal, Theme.edge)
 

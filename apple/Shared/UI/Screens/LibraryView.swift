@@ -37,6 +37,9 @@ struct LibraryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: tvScaled(14)) {
             header
+            #if os(tvOS)
+            NowPlayingCard()   // terug naar de speler (tv heeft geen miniplayer)
+            #endif
             Picker(L("tab.library"), selection: $segment) {
                 ForEach(Segment.allCases) { Text($0.title).tag($0) }
             }
@@ -98,7 +101,10 @@ struct LibraryView: View {
                 Button(L("action.clear")) { confirmClear = true }
                     .font(.system(size: tvScaled(15), weight: .semibold))
                     .foregroundStyle(Theme.accent)
-                    .plainTVButton()
+                    #if os(tvOS)
+                    .padding(.horizontal, 18).padding(.vertical, 8)
+                    #endif
+                    .textTVButton()
             }
             #if os(iOS)
             Button { app.openSettings() } label: {
@@ -119,6 +125,9 @@ struct LibraryView: View {
             #endif
         }
         .padding(.horizontal, Theme.edge)
+        #if os(tvOS)
+        .focusSection()   // "Wissen" rechtsboven bereikbaar met omhoog vanaf de kiezer
+        #endif
     }
 
     // MARK: Favorieten

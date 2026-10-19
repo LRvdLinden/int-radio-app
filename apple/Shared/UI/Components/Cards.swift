@@ -78,6 +78,29 @@ struct StationCardButton: View {
     }
 }
 
+#if os(tvOS)
+/// Apple TV: tegel "Alles" als laatste in een rij (de knop rechts in de kop is met de afstandsbediening lastig te bereiken)
+struct TVAllTile: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: tvScaled(10)) {
+                Image(systemName: "square.grid.2x2.fill")
+                    .font(.system(size: tvScaled(30), weight: .semibold))
+                    .foregroundStyle(Theme.gradient)
+                Text(L("action.all"))
+                    .font(.rounded(20))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: Theme.cardWidth, height: Theme.cardWidth)
+            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
+        }
+        .cardButton()
+        .accessibilityLabel(L("action.all"))
+    }
+}
+#endif
+
 /// Gedeeld contextmenu voor zenders
 struct StationContextMenu: View {
     let station: Station
@@ -265,7 +288,7 @@ struct SectionHeader: View {
                     .padding(.horizontal, 18).padding(.vertical, 8)
                     #endif
                 }
-                .plainTVButton()
+                .textTVButton()
             }
         }
         .padding(.horizontal, Theme.edge)
@@ -307,6 +330,9 @@ struct StationShelf: View {
                                 ForEach(stations.prefix(30)) { s in
                                     StationCardButton(station: s, queue: stations)
                                 }
+                                #if os(tvOS)
+                                if let allAction { TVAllTile(action: allAction) }
+                                #endif
                             }
                         }
                         .padding(.horizontal, Theme.edge)
@@ -551,7 +577,10 @@ struct InlineError: View {
                 Button(L("action.retry"), action: onRetry)
                     .font(.system(size: tvScaled(14), weight: .bold))
                     .foregroundStyle(Theme.accent)
-                    .plainTVButton()
+                    #if os(tvOS)
+                    .padding(.horizontal, 18).padding(.vertical, 8)
+                    #endif
+                    .textTVButton()
             }
         }
         .padding(tvScaled(14))

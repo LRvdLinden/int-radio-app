@@ -177,6 +177,8 @@ enum MapSuggestion {
 enum MapSearchFocus: Hashable {
     case field
     case recent(String)
+    /// knop "Wissen" boven de recente zoekopdrachten (moet de groep zichtbaar houden)
+    case clearRecents
 }
 
 /// Opgeloste plaats uit MKLocalSearch (Sendable, zodat hij veilig uit de callback komt)
@@ -508,6 +510,10 @@ struct MapExplorerView: View {
                         #endif
                 }
             }
+            #if os(tvOS)
+            // hele hoogte één focussectie: "rechts" vanuit elke rij in de lijst komt bij de knoppen/het kaartje
+            .focusSection()
+            #endif
         }
         #else
         ZStack(alignment: .bottom) {
@@ -701,6 +707,20 @@ struct MapExplorerView: View {
                 .accessibilityHint(L("a11y.mapWorldHint"))
             }
 
+            #if os(tvOS)
+            // de kaart zelf kan op tv niet zoomen: eigen knoppen
+            Button { zoom(by: 0.5) } label: {
+                pillLabel(L("map.zoomIn"), systemImage: "plus.magnifyingglass", iconOnly: true)
+            }
+            .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+            .accessibilityLabel(L("map.zoomIn"))
+            Button { zoom(by: 2) } label: {
+                pillLabel(L("map.zoomOut"), systemImage: "minus.magnifyingglass", iconOnly: true)
+            }
+            .buttonStyle(SecondaryButtonStyle(cornerRadius: tvScaled(20)))
+            .accessibilityLabel(L("map.zoomOut"))
+            #endif
+
             Button { Task { await rollDice() } } label: {
                 pillLabel(L("map.random"), systemImage: "dice.fill", iconOnly: compactButtons)
                     .symbolEffect(.bounce, value: model.rolling)
@@ -876,8 +896,11 @@ struct MapExplorerView: View {
     /// Recente kaartzoekopdrachten (max 5)
     @ViewBuilder private var recentGroup: some View {
         if !library.recentMapSearches.isEmpty {
-            groupHeader(L("map.search.recent"), actionTitle: L("action.clear")) {
+            groupHeader(L("map.search.recent"), actionTitle: L("action.clear"), tvFocus: .clearRecents) {
                 withAnimation { library.clearMapSearches() }
+                #if os(tvOS)
+                searchFocus = .field
+                #endif
             }
             ForEach(library.recentMapSearches) { item in
                 suggestionRow(flag: item.flag, icon: "clock.arrow.circlepath", title: item.displayTitle,
@@ -894,7 +917,7 @@ struct MapExplorerView: View {
     }
 
     private func groupHeader(_ title: String, loading: Bool = false, actionTitle: String? = nil,
-                             action: (() -> Void)? = nil) -> some View {
+                             tvFocus: MapSearchFocus? = nil, action: (() -> Void)? = nil) -> some View {
         HStack(spacing: tvScaled(8)) {
             Text(title.uppercased())
                 .font(.system(size: tvScaled(11), weight: .heavy))
@@ -905,14 +928,23 @@ struct MapExplorerView: View {
             }
             Spacer(minLength: 0)
             if let actionTitle, let action {
+                #if os(tvOS)
+                let button = Button(actionTitle, action: action)
+                    .font(.system(size: tvScaled(12), weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+                    .padding(.horizontal, 14).padding(.vertical, 6)
+                    .buttonStyle(TVTextButtonStyle())
+                if let tvFocus {
+                    button.focused($searchFocus, equals: tvFocus)
+                } else {
+                    button
+                }
+                #else
                 Button(actionTitle, action: action)
                     .font(.system(size: tvScaled(12), weight: .semibold))
                     .foregroundStyle(Theme.accent)
-                    #if os(tvOS)
-                    .buttonStyle(TVLiftStyle(scale: 1.05, border: false))
-                    #else
                     .buttonStyle(.plain)
-                    #endif
+                #endif
             }
         }
         .padding(.horizontal, tvScaled(14))
@@ -1086,7 +1118,18 @@ struct MapExplorerView: View {
                 }
                 #endif
                 ForEach(model.visibleStations) { s in
-                    Button { select(s, recenter: true) } label: {
+                    Button {
+                        #if os(tvOS)
+                        // tv: eerste klik kiest en centreert, tweede klik op dezelfde zender speelt af
+                        if model.selected?.id == s.id {
+                            player.play(s, queue: cardQueue.isEmpty ? [s] : cardQueue)
+                        } else {
+                            select(s, recenter: true)
+                        }
+                        #else
+                        select(s, recenter: true)
+                        #endif
+                    } label: {
                         StationRow(station: s)
                             .padding(.horizontal, tvScaled(10))
                             .background {
@@ -1169,6 +1212,16 @@ struct MapExplorerView: View {
             withAnimation(.easeInOut(duration: 0.6)) {
                 camera = .camera(MapCamera(centerCoordinate: c, distance: min(currentDistance, 250_000)))
             }
+        }
+    }
+
+    /// Apple TV: in-/uitzoomen rond het huidige midden (factor < 1 = inzoomen)
+    private func zoom(by factor: Double) {
+        guard let r = model.region else { return }
+        let span = MKCoordinateSpan(latitudeDelta: min(150, max(0.05, r.span.latitudeDelta * factor)),
+                                    longitudeDelta: min(340, max(0.05, r.span.longitudeDelta * factor)))
+        withAnimation(.easeInOut(duration: 0.5)) {
+            camera = .region(MKCoordinateRegion(center: r.center, span: span))
         }
     }
 

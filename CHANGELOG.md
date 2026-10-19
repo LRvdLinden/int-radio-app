@@ -4,6 +4,36 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 40 · versie 1.0.1
+_2026-10-19_
+
+**Nieuw**
+
+- Kaart: knoppen om in en uit te zoomen. _(Apple TV)_  
+  <sub>Map: zoom in and zoom out buttons.</sub>
+- Instellingen → Over: Website, Privacy en Voorwaarden tonen een QR-code om op je telefoon te openen. _(Apple TV)_  
+  <sub>Settings → About: Website, Privacy and Terms show a QR code to open on your phone.</sub>
+
+**Verbeterd**
+
+- Terug naar de speler vanuit Bladeren, Zoeken en Bibliotheek met de kaart "Nu aan het spelen". _(Apple TV)_  
+  <sub>Get back to the player from Browse, Search and Library via the "Now playing" card.</sub>
+- Tekstknoppen (Alles, Wissen, Meer) tonen duidelijk waar de focus staat; elke rij heeft een tegel "Alles" aan het eind. _(Apple TV)_  
+  <sub>Text buttons (All, Clear, More) clearly show focus; every row ends with an "All" tile.</sub>
+- Lange podcast- en afleveringsomschrijvingen volledig te lezen via "Meer". _(Apple TV)_  
+  <sub>Long podcast and episode descriptions can be read in full via "More".</sub>
+
+**Opgelost**
+
+- Kaart: met "rechts" kom je vanuit elke zender in de lijst bij de knoppen en het kaartje; een tweede klik op dezelfde zender speelt hem af. _(Apple TV)_  
+  <sub>Map: pressing right from any station in the list reaches the buttons and card; clicking the same station again plays it.</sub>
+- Kaart: "Wissen" bij recente zoekopdrachten werkt nu met de afstandsbediening. _(Apple TV)_  
+  <sub>Map: "Clear" for recent searches now works with the remote.</sub>
+- De Play/Pause-knop van de Siri Remote werkt op elk tabblad, niet alleen in de speler. _(Apple TV)_  
+  <sub>The Siri Remote Play/Pause button works on every tab, not just in the player.</sub>
+- Bibliotheek: "Wissen" bij Recent is bereikbaar met de afstandsbediening. _(Apple TV)_  
+  <sub>Library: "Clear" in Recent can be reached with the remote.</sub>
+
 ## Build 39 · versie 1.0.1
 _2026-10-19_
 
