@@ -775,14 +775,14 @@
       "items": [
         {
           "type": "improved",
+          "nl": "Kleine verbeteringen.",
+          "en": "Minor improvements.",
           "platforms": [
             "ios",
             "ipados",
             "macos",
             "tvos"
-          ],
-          "nl": "Voorbereiding op de App Store: schermafbeeldingsmodus voor de officiële App Store-afbeeldingen.",
-          "en": "App Store preparation: screenshot mode for the official App Store images."
+          ]
         }
       ]
     },
@@ -989,13 +989,13 @@
       "date": "2026-10-18",
       "items": [
         {
-          "type": "new",
+          "type": "improved",
           "platforms": [
             "android",
             "androidtv"
           ],
-          "nl": "Schermafbeeldingsmodus voor de Google Play-afbeeldingen: de app opent dan direct in een gekozen scherm, met Nederland als land en zonder intro.",
-          "en": "Screenshot mode for the Google Play images: the app opens straight into a chosen screen, with the Netherlands as country and no intro."
+          "nl": "Kleine verbeteringen en voorbereiding op Google Play.",
+          "en": "Minor improvements and preparation for Google Play."
         }
       ]
     },
@@ -1012,15 +1012,6 @@
           ],
           "nl": "Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel).",
           "en": "Map: CARTO map tiles work again without a watermark once the map key is set (CARTO now requires a key)."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Schermafbeeldingsmodus verbergt de navigatie- en taakbalk.",
-          "en": "Screenshot mode hides the navigation bar and taskbar."
         }
       ]
     },
@@ -1048,21 +1039,21 @@
         {
           "type": "improved",
           "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Schermafbeeldingsmodus ook in het Nederlands (voor de schermafbeeldingen op tunr.online).",
-          "en": "Screenshot mode now also in Dutch (for the screenshots on tunr.online)."
-        },
-        {
-          "type": "improved",
-          "platforms": [
             "web"
           ],
           "nl": "tunr.online: \"Zo ziet Tunr eruit\" toont echte schermafbeeldingen uit de app, met de echte zenderlogo's, plus Kaart en Podcasts.",
           "en": "tunr.online: \"See Tunr in action\" now shows real screenshots from the app with real station logos, plus Map and Podcasts."
+        },
+        {
+          "type": "improved",
+          "nl": "Kleine verbeteringen.",
+          "en": "Minor improvements.",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ]
         }
       ]
     },
@@ -1175,14 +1166,14 @@
         },
         {
           "type": "improved",
+          "nl": "Kleine verbeteringen.",
+          "en": "Minor improvements.",
           "platforms": [
             "ios",
             "ipados",
             "macos",
             "tvos"
-          ],
-          "nl": "Schermafbeeldingsmodus begroet altijd met \"Goedemiddag\", los van de tijd van het toestel.",
-          "en": "Screenshot mode always greets with \"Good afternoon\", regardless of the device time."
+          ]
         }
       ]
     }

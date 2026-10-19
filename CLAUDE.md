@@ -22,7 +22,7 @@ Tunr is een wereldwijde radio-app (werknaam) voor **iPhone, iPad, Mac, Apple TV,
 - CarPlay: de entitlement `com.apple.developer.carplay-audio` (CarPlay Audio App) is door Apple toegekend en staat aan: `apple/project.yml` gebruikt `TUNR_IOS_ENTITLEMENTS: Config/Tunr-CarPlay.entitlements` (App Group + iCloud + CarPlay). Op developer.apple.com moet bij de App ID `nl.lrvdlinden.tunr` onder *Additional Capabilities* "CarPlay Audio App" aan staan (managed capability).
 - Bundle-/application-id: `nl.lrvdlinden.tunr`. Apple Team ID: `EU3UY476T6` (automatisch ondertekenen).
 - Bij elke build:
-  - een item in `docs/changelog.json` (per punt `type` = `new`/`improved`/`fixed`, `platforms` uit `ios`, `ipados`, `macos`, `tvos`, `carplay`, `android`, `androidtv`, `web`, en tekst in `nl` en `en`);
+  - een item in `docs/changelog.json` (alleen wat gebruikers merken: geen interne zaken zoals de schermafbeeldingsmodus, workflows of tools; een build zonder zichtbare wijziging krijgt "Kleine verbeteringen." voor de platforms die hij raakt; per punt `type` = `new`/`improved`/`fixed`, `platforms` uit `ios`, `ipados`, `macos`, `tvos`, `carplay`, `android`, `androidtv`, `web`, en tekst in `nl` en `en`);
   - `python3 tools/make_changelog.py` (maakt `CHANGELOG.md` en `website/assets/changelog.json`);
   - README en screenshots bijwerken als schermen veranderen (`python3 tools/make_screenshots.py`).
 - **Buildpakketten alleen via beheer.tunr.online** (dashboard/app BeheerTunr → tab **Downloads**), **nooit op GitHub** (geen bestanden in de repo, geen GitHub-release, geen artefact). Afspraken staan in `tunr-beheer/docs/CONTRACT.md` (sectie Downloads).

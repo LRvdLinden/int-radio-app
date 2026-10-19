@@ -11,8 +11,8 @@ _2026-10-19_
 
 - tunr.online: het podcastvoorbeeld toont de echte top 3 van Nederland met covers, en het kaartje bij de wereldkaart een echte zender met logo. _(Website)_  
   <sub>tunr.online: the podcast preview shows the real top 3 in the Netherlands with covers, and the world map card shows a real station with its logo.</sub>
-- Schermafbeeldingsmodus begroet altijd met "Goedemiddag", los van de tijd van het toestel. _(iPhone, iPad, Mac, Apple TV)_  
-  <sub>Screenshot mode always greets with "Good afternoon", regardless of the device time.</sub>
+- Kleine verbeteringen. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Minor improvements.</sub>
 
 ## Build 41 · versie 1.0.1
 _2026-10-19_
@@ -57,10 +57,10 @@ _2026-10-19_
 
 **Verbeterd**
 
-- Schermafbeeldingsmodus ook in het Nederlands (voor de schermafbeeldingen op tunr.online). _(iPhone, iPad, Mac, Apple TV)_  
-  <sub>Screenshot mode now also in Dutch (for the screenshots on tunr.online).</sub>
 - tunr.online: "Zo ziet Tunr eruit" toont echte schermafbeeldingen uit de app, met de echte zenderlogo's, plus Kaart en Podcasts. _(Website)_  
   <sub>tunr.online: "See Tunr in action" now shows real screenshots from the app with real station logos, plus Map and Podcasts.</sub>
+- Kleine verbeteringen. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Minor improvements.</sub>
 
 ## Build 38 · versie 1.0.1
 _2026-10-18_
@@ -73,11 +73,6 @@ _2026-10-18_
 ## Build 37 · versie 1.0.1
 _2026-10-18_
 
-**Verbeterd**
-
-- Schermafbeeldingsmodus verbergt de navigatie- en taakbalk. _(Android, Android TV)_  
-  <sub>Screenshot mode hides the navigation bar and taskbar.</sub>
-
 **Opgelost**
 
 - Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel). _(Android, Android TV)_  
@@ -86,10 +81,10 @@ _2026-10-18_
 ## Build 36 · versie 1.0.1
 _2026-10-18_
 
-**Nieuw**
+**Verbeterd**
 
-- Schermafbeeldingsmodus voor de Google Play-afbeeldingen: de app opent dan direct in een gekozen scherm, met Nederland als land en zonder intro. _(Android, Android TV)_  
-  <sub>Screenshot mode for the Google Play images: the app opens straight into a chosen screen, with the Netherlands as country and no intro.</sub>
+- Kleine verbeteringen en voorbereiding op Google Play. _(Android, Android TV)_  
+  <sub>Minor improvements and preparation for Google Play.</sub>
 
 ## Build 35 · versie 1.0.1
 _2026-10-18_
@@ -196,8 +191,8 @@ _2026-10-18_
 
 **Verbeterd**
 
-- Voorbereiding op de App Store: schermafbeeldingsmodus voor de officiële App Store-afbeeldingen. _(iPhone, iPad, Mac, Apple TV)_  
-  <sub>App Store preparation: screenshot mode for the official App Store images.</sub>
+- Kleine verbeteringen. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Minor improvements.</sub>
 
 ## Build 23 · versie 1.0.0
 _2026-10-18_
