@@ -21,6 +21,7 @@
 		21E0E242F7B5065DA33F9936 /* TunrApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */; };
 		23138E297CE7E46D64528A5B /* MapExplorerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE63444F18ADFC5F4564C19B /* MapExplorerView.swift */; };
 		2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2531CF5372B484EEEA39F550 /* RadioPlayer.swift */; };
+		32A9D5F1C74628967AEAB44F /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141C78E104941360CF3E0A1 /* QRCodeView.swift */; };
 		3532C2B2F86FB0D8D15AD038 /* EpisodePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2438D34C1231D4473CB47A3 /* EpisodePlayerView.swift */; };
 		356E3522CCDBF97E063C9925 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D624D6B1ABBC01F25723A8D2 /* BrowseView.swift */; };
 		364319DFAD9E1989FB2F2F4E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78CE97B63986FDACA3E0ECB /* Localizable.strings */; };
@@ -125,6 +126,7 @@
 		A4B478945886F5F7771730D9 /* ArtworkLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLookup.swift; sourceTree = "<group>"; };
 		A52F01A9E6A2FC28F1059B36 /* WidgetSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSync.swift; sourceTree = "<group>"; };
 		B0417683AE134B8ED1591B69 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		B141C78E104941360CF3E0A1 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		B266D3D6DC4574EDAB825310 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		B5B9796F16B12BF4F243AFA5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
@@ -325,6 +327,7 @@
 				0F64632FBA964CF13FE8C366 /* Cards.swift */,
 				0C65277A2F1F06D203FB1EA9 /* MiniPlayer.swift */,
 				B8950762D8116B82EA57B2C2 /* PodcastCards.swift */,
+				B141C78E104941360CF3E0A1 /* QRCodeView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 				1200D4904CE1567CAC3A5921 /* PodcastCards.swift in Sources */,
 				BDC779F5E734081F9E678FDD /* PodcastDetailView.swift in Sources */,
 				1557C582EDFC5D3D3099F759 /* PodcastsHomeView.swift in Sources */,
+				32A9D5F1C74628967AEAB44F /* QRCodeView.swift in Sources */,
 				0386BEE23C644575C4E9444D /* RadioBrowser.swift in Sources */,
 				2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */,
 				A86C9EA1880E4E2AA5C79C14 /* ScreenshotMode.swift in Sources */,
@@ -695,7 +699,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -764,7 +768,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
