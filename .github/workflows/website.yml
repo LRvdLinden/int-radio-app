@@ -68,6 +68,21 @@ jobs:
           for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
           echo "::warning::Hero-logo's niet gepusht (wel geüpload)"
 
+      # Podcastvoorbeeld op de homepage: echte top-3-podcasts van Nederland met covers (vast, zoals de hero-logo's)
+      - name: Podcastvoorbeeld (vast)
+        if: github.event_name != 'pull_request' && inputs.presskit_only != true
+        run: |
+          if [ -f website/assets/js/showcase.js ] && [ "${{ inputs.refresh_wall }}" != "true" ]; then
+            echo "Podcastvoorbeeld staat er al"; exit 0
+          fi
+          python3 tools/make_showcase.py || { echo "::warning::Podcastvoorbeeld niet gemaakt (Apple-toplijst onbereikbaar?)"; exit 0; }
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add website/assets/js/showcase.js website/assets/img/showcase
+          git diff --cached --quiet && exit 0
+          git commit -qm "Homepage: echte podcasts in het podcastvoorbeeld (tools/make_showcase.py) [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && exit 0; sleep 5; done
+          echo "::warning::Podcastvoorbeeld niet gepusht (wel geüpload)"
+
       # De homepage laadt de screenshots als WebP (<picture> met JPG als terugval); hier opnieuw gemaakt zodat ze kloppen.
       - name: WebP van de screenshots maken
         if: inputs.presskit_only != true

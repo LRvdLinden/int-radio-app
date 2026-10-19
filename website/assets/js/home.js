@@ -110,4 +110,26 @@
       probe.src = imgs[0].getAttribute('src');
     }
   }
+
+  // ---- podcastvoorbeeld: echte top-3-podcasts van Nederland met cover (showcase.js, gemaakt door tools/make_showcase.py)
+  var SC = window.TUNR_SHOWCASE, pv = document.querySelector('#podcasts .podviz');
+  if (SC && SC.pods && SC.pods.length >= 3 && pv) {
+    var cover = function (el, p) {
+      if (!el) return;
+      el.textContent = '';
+      var im = new Image(); im.alt = ''; im.decoding = 'async'; im.loading = 'lazy';
+      im.src = 'assets/img/showcase/' + p.i;
+      el.appendChild(im); el.classList.add('has-img');
+    };
+    pv.querySelectorAll('.pv-list li').forEach(function (li, k) {
+      var p = SC.pods[k]; if (!p) return;
+      cover(li.querySelector('.cv'), p);
+      var b = li.querySelector('.t b'), sm = li.querySelector('.t small');
+      if (b) b.textContent = p.n;
+      if (sm) { sm.removeAttribute('data-i18n'); sm.textContent = p.a; }
+    });
+    cover(pv.querySelector('.pv-player .cv'), SC.pods[0]);
+    var ep = pv.querySelector('.pv-np b');
+    if (ep) { ep.removeAttribute('data-i18n'); ep.textContent = SC.pods[0].n; }
+  }
 })();

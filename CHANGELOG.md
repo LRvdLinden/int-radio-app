@@ -4,6 +4,16 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 42 · versie 1.0.1
+_2026-10-19_
+
+**Verbeterd**
+
+- tunr.online: het podcastvoorbeeld toont de echte top 3 van Nederland met covers, en het kaartje bij de wereldkaart een echte zender met logo. _(Website)_  
+  <sub>tunr.online: the podcast preview shows the real top 3 in the Netherlands with covers, and the world map card shows a real station with its logo.</sub>
+- Schermafbeeldingsmodus begroet altijd met "Goedemiddag", los van de tijd van het toestel. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>Screenshot mode always greets with "Good afternoon", regardless of the device time.</sub>
+
 ## Build 41 · versie 1.0.1
 _2026-10-19_
 

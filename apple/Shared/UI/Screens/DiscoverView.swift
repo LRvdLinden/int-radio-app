@@ -249,6 +249,8 @@ struct DiscoverView: View {
     }
 
     static func greeting(date: Date = Date()) -> String {
+        // schermafbeeldingen (App Store, tunr.online): altijd "Goedemiddag", los van de tijd van de simulator
+        if ScreenshotMode.isActive { return L("greeting.afternoon") }
         let h = Calendar.current.component(.hour, from: date)
         switch h {
         case 6..<12: return L("greeting.morning")

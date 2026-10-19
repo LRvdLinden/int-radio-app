@@ -1159,6 +1159,32 @@
           "en": "Redesigned changelog: filter by device and type, version and build number per build, a shareable link per build and the latest version per device on the side."
         }
       ]
+    },
+    {
+      "build": 42,
+      "version": "1.0.1",
+      "date": "2026-10-19",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: het podcastvoorbeeld toont de echte top 3 van Nederland met covers, en het kaartje bij de wereldkaart een echte zender met logo.",
+          "en": "tunr.online: the podcast preview shows the real top 3 in the Netherlands with covers, and the world map card shows a real station with its logo."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Schermafbeeldingsmodus begroet altijd met \"Goedemiddag\", los van de tijd van het toestel.",
+          "en": "Screenshot mode always greets with \"Good afternoon\", regardless of the device time."
+        }
+      ]
     }
   ]
 }
