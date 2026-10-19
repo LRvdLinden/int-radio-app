@@ -1,1222 +1,12 @@
 {
   "builds": [
     {
-      "build": 1,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Eerste versie van Tunr: tienduizenden radiozenders uit meer dan 200 landen via de open community-database Radio Browser.",
-          "en": "First release of Tunr: tens of thousands of radio stations from more than 200 countries via the open community database Radio Browser."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Openingsscherm met frequentieschaal, zoekende naald en de Tunr-tune (uit te zetten in Instellingen → Intromuziek).",
-          "en": "Splash screen with a frequency scale, a seeking needle and the Tunr tune (turn off in Settings → Intro music)."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Landkeuze bij de eerste start, met het land van je toestel als voorstel, vlaggen en het aantal zenders per land.",
-          "en": "Country picker on first launch, suggesting your device's country, with flags and the number of stations per country."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Ontdek: begroeting, carrousel met de top 6, en rijen Verder luisteren, Lokaal, Populair, Trending, Jouw favorieten en genres.",
-          "en": "Discover: greeting, a top 6 carousel, and rows for Continue listening, Local, Popular, Trending, Your favourites and genres."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Bladeren met grote tegels: Lokaal (kies je provincie of staat), Muziek, Nieuws & Talk, Sport, Op taal, Wereldkaart en Top 100 wereldwijd.",
-          "en": "Browse with big tiles: Local (pick your province or state), Music, News & Talk, Sports, By language, World map and the worldwide Top 100."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Kaart: een donkere wereldkaart met gloeiende stippen per zender, clusters, een kaartje met zenders in de buurt en de knop Willekeurig.",
-          "en": "Map: a dark world map with a glowing dot per station, clusters, a card with nearby stations and a Random button."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Speler met LIVE-pil, equalizer, vorige/volgende zender, favoriet, delen, zenderinfo en een slaaptimer (15 tot 90 minuten).",
-          "en": "Player with a LIVE pill, equalizer, previous/next station, favourite, share, station info and a sleep timer (15 to 90 minutes)."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv"
-          ],
-          "nl": "Nu speelt: artiest, titel en albumhoes van het nummer dat draait, als de zender die informatie meestuurt.",
-          "en": "Now Playing: artist, title and album art of the current song when the station sends that information."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Zoeken op naam in je eigen land of wereldwijd, met recente zoekopdrachten, en een Bibliotheek met Favorieten en Recent.",
-          "en": "Search by name in your own country or worldwide, with recent searches, plus a Library with Favourites and Recent."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Favorieten gaan via iCloud mee tussen iPhone, iPad, Mac en Apple TV; de Mac-app heeft een zijbalk en een menu Afspelen met sneltoetsen.",
-          "en": "Favourites sync through iCloud between iPhone, iPad, Mac and Apple TV; the Mac app has a sidebar and a Playback menu with shortcuts."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "carplay",
-            "android"
-          ],
-          "nl": "CarPlay en Android Auto: Favorieten, Recent, Populair en Genres op het scherm van je auto (CarPlay zodra Apple de toestemming geeft).",
-          "en": "CarPlay and Android Auto: Favourites, Recent, Popular and Genres on your car's screen (CarPlay once Apple grants the entitlement)."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Webspeler op de website: alle schermen van de apps in je browser, met HLS-ondersteuning, mediabediening en installeerbaar als app.",
-          "en": "Web player on the website: every screen of the apps in your browser, with HLS support, media controls and installable as an app."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 2,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados"
-          ],
-          "nl": "Meerdere favorieten tegelijk verwijderen in Bibliotheek → Bewerken haalt nu precies de gekozen zenders weg.",
-          "en": "Deleting several favourites at once in Library → Edit now removes exactly the selected stations."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Ontdek en Bladeren laden populair, trending en nieuws & talk betrouwbaarder tegelijk; valt één lijst weg, dan blijven de andere staan.",
-          "en": "Discover and Browse load popular, trending and news & talk more reliably in parallel; if one list fails, the others still show."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Splash: de cirkelgolven verschijnen precies op de klik van de tune.",
-          "en": "Splash: the expanding rings now appear exactly on the click in the tune."
-        },
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Kaart: wisselen tussen je land en Wereld laadt de stippen niet meer dubbel; Apple TV houdt de focus op de lijst.",
-          "en": "Map: switching between your country and World no longer loads the dots twice; Apple TV keeps focus on the list."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "macos"
-          ],
-          "nl": "Mac: AirPlay-knop en menu's in de speler passen beter bij macOS.",
-          "en": "Mac: the AirPlay button and menus in the player fit macOS better."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Kleine verbeteringen in de speler en de navigatie.",
-          "en": "Small improvements to the player and navigation."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 3,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay"
-          ],
-          "nl": "Xcode-project: gedeeld scheme Tunr toegevoegd, zodat je bovenin Xcode iPhone, iPad, Apple TV en Mac (en hun simulators) kunt kiezen in plaats van alleen de Mac.",
-          "en": "Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 4,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Website: de apparaten tonen nu per platform de minimale versie (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus een nieuwe sectie Download per platform.",
-          "en": "Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 5,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Website opnieuw opgebouwd in de Tunr-stijl: Zo ziet Tunr eruit (echte schermen), Waarom Tunr, Wereldkaart, In drie tikken, Download Tunr (Coming Soon) en FAQ.",
-          "en": "Website rebuilt in Tunr's style: See Tunr in action (real screens), Why Tunr, World map, Three taps, Download Tunr (Coming Soon) and FAQ."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Apps nog niet te downloaden: App Store, Google Play en de auto staan op Binnenkort; luisteren kan nu al in de browser.",
-          "en": "Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 6,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Zenderlogo's vullen nu de hele tegel, zonder extra witte tegel of rand eromheen. Zonder logo blijft het gekleurde vlak met de letters.",
-          "en": "Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 7,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Podcasts: toplijst van je land (top 50), genres en zoeken, via Bladeren → Podcasts en Zoeken (Zenders · Podcasts).",
-          "en": "Podcasts: your country's top 50, genres and search, via Browse → Podcasts and Search (Stations · Podcasts)."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Podcastpagina met beschrijving, Volgen en alle afleveringen (Nieuwste/Oudste), en een pagina per aflevering.",
-          "en": "Podcast page with description, Follow and all episodes (Newest/Oldest), plus a page per episode."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Speler voor afleveringen: tijdbalk, 15 s terug en 30 s vooruit, afspeelsnelheid 0,8× tot 2×, slaaptimer tot het einde van de aflevering en verder luisteren waar je was.",
-          "en": "Episode player: time bar, 15 s back and 30 s forward, playback speed 0.8× to 2×, sleep timer until the end of the episode and resume where you left off."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Ontdek toont Populaire podcasts, Nieuwe afleveringen van wat je volgt en Verder luisteren; Bibliotheek heeft nu Favorieten · Podcasts · Recent.",
-          "en": "Discover shows Popular podcasts, New episodes of what you follow and Continue listening; Library now has Favourites · Podcasts · Recent."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "carplay",
-            "android"
-          ],
-          "nl": "Podcasts in CarPlay en Android Auto: gevolgde podcasts en hun afleveringen, met 15/30 s-knoppen.",
-          "en": "Podcasts in CarPlay and Android Auto: followed podcasts and their episodes, with 15/30 s buttons."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Website vernieuwd: schermen, Waarom Tunr, Podcasts, Wereldkaart, Zo werkt het, Download (Coming Soon), FAQ en een footer met het buildnummer; sneller laden met WebP.",
-          "en": "Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 8,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Tunr heeft een eigen website: tunr.online. Website, privacy en voorwaarden in de apps verwijzen er nu naar.",
-          "en": "Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 9,
-      "date": "2026-10-16",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Je instellingen (taal, standaard-slaaptimer en automatisch verder spelen) gaan nu ook via iCloud mee tussen je iPhone, iPad, Mac en Apple TV, net als favorieten en podcasts.",
-          "en": "Your settings (language, default sleep timer and auto-resume) now also sync via iCloud between your iPhone, iPad, Mac and Apple TV, just like favourites and podcasts."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "De Tunr-intro speelt altijd bij het opstarten; de instelling Intromuziek is verdwenen.",
-          "en": "The Tunr intro always plays at start-up; the Intro music setting is gone."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 10,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "De wereldkaart in de webspeler gebruikt nu Apple Maps: donker en rustig, met dezelfde gloeiende stippen, clusters en de knop Willekeurig.",
-          "en": "The world map in the web player now uses Apple Maps: dark and calm, with the same glowing dots, clusters and Random button."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 11,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Zoeken op de kaart: typ een land of plaats en de kaart gaat erheen. Bij een land zie je de zenders van dat land, bij een plaats de zenders in de buurt (binnen 50 km, anders breder) met de dichtstbijzijnde zender in het kaartje.",
-          "en": "Search on the map: type a country or place and the map goes there. A country shows its stations, a place shows nearby stations (within 50 km, otherwise wider) with the nearest station in the card."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "De laatste vijf kaartzoekopdrachten staan klaar als je het zoekveld opent; op Apple gaan ze via iCloud mee.",
-          "en": "Your last five map searches are ready when you open the search field; on Apple they sync via iCloud."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 12,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "De tegelwand op de homepage toont nu logo's van populaire zenders (uit je eigen land en wereldwijd), live uit Radio Browser.",
-          "en": "The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 13,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Meer echte zenderlogo's in de tegelwand: de populairste zenders van je eigen land (zoals Qmusic, SLAM! en Radio 538) eerst, daarna wereldwijd; ook logo's die alleen via http staan worden via https geprobeerd.",
-          "en": "More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 14,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "De tegelwand op de homepage staat nu vol met echte zenderlogo's (alle tegels), met één opvallende tegel van Tunr zelf.",
-          "en": "The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 15,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Anonieme gebruiksstatistieken: alleen type apparaat, app-versie, gekozen land en taal en een willekeurig installatienummer. Geen naam, e-mail of IP-adres. Uit te zetten in Instellingen → Privacy.",
-          "en": "Anonymous usage statistics: only device type, app version, chosen country and language and a random install number. No name, e-mail or IP address. Turn off in Settings → Privacy."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Privacyverklaring en veelgestelde vragen beschrijven de anonieme statistieken.",
-          "en": "Privacy policy and FAQ describe the anonymous statistics."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 16,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Cookiemelding met keuze (Accepteren of Alleen noodzakelijk) en een cookieknop linksonder om je keuze later te wijzigen; ook via Cookie-instellingen onderaan elke pagina.",
-          "en": "Cookie notice with a choice (Accept or Necessary only) and a cookie button in the bottom left to change it later; also via Cookie settings at the bottom of every page."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "De zenderlogo's in de hero van de homepage staan nu vast en laden direct, zonder geflikker.",
-          "en": "The station logos in the homepage hero are now fixed and load instantly, without flickering."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 17,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "android"
-          ],
-          "nl": "Delen deelt nu altijd een vaste link naar de zender, podcast of aflevering op tunr.online, die iedereen kan openen in de webspeler, ook zonder de app.",
-          "en": "Sharing now always shares a fixed link to the station, podcast or episode on tunr.online, which anyone can open in the web player, even without the app."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "android"
-          ],
-          "nl": "Delen-knop in de afleveringsspeler.",
-          "en": "Share button in the episode player."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 18,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos"
-          ],
-          "nl": "Widgets: \"Nu speelt\" (met afspelen/pauze) en \"Favorieten\" (tik op een zender om te luisteren) voor het beginscherm, het toegangsscherm en de Mac.",
-          "en": "Widgets: \"Now Playing\" (with play/pause) and \"Favourites\" (tap a station to listen) for the Home Screen, Lock Screen and Mac."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios"
-          ],
-          "nl": "Live Activity tijdens het luisteren: zender en nummer in de Dynamic Island en op het toegangsscherm, met afspelen/pauze en stop (uit te zetten in Instellingen).",
-          "en": "Live Activity while listening: station and track in the Dynamic Island and on the Lock Screen, with play/pause and stop (can be turned off in Settings)."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "ios"
-          ],
-          "nl": "Knop in het Bedieningspaneel (iOS 18) om Tunr af te spelen of te pauzeren.",
-          "en": "Control Center button (iOS 18) to play or pause Tunr."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "carplay"
-          ],
-          "nl": "Op iOS 26 verschijnen de widget \"Nu speelt\" en de Live Activity ook in CarPlay.",
-          "en": "On iOS 26 the \"Now Playing\" widget and the Live Activity also appear in CarPlay."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 19,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "web"
-          ],
-          "nl": "De zenderlogo's in de hero van de homepage zijn weer zichtbaar.",
-          "en": "The station logos in the homepage hero are visible again."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 20,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Podcasts als favoriet: een hartje bovenaan elke podcast en in de afleveringsspeler; favoriete podcasts staan in je bibliotheek (ook via lang indrukken in de apps).",
-          "en": "Favourite podcasts: a heart at the top of every podcast and in the episode player; favourite podcasts appear in your library (also via long-press in the apps)."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Veel meer zenderlogo's: heeft een zender geen (goed) logo, dan haalt Tunr het icoon van de website van de zender op.",
-          "en": "Many more station logos: if a station has no (usable) logo, Tunr fetches the icon of the station's website."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Apple TV: land kiezen schermvullend met zoeken, alle knoppen en lijsten goed te bedienen met de afstandsbediening, duidelijke focus, bereikbare instellingen en kaartkeuze via de lijst.",
-          "en": "Apple TV: full-screen country picker with search, all buttons and lists work well with the remote, clear focus, reachable settings and map selection via the list."
-        },
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Apple TV: grijze knoppen (favoriet, website, afgespeeld) waren onzichtbaar als ze focus hadden.",
-          "en": "Apple TV: grey buttons (favourite, website, played) were invisible when focused."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 21,
-      "date": "2026-10-17",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Mooiere zenderlogo's: Tunr toont nu eerst het app-icoon van de zender uit de App Store, daarna het grote icoon van de website van de zender, en pas dan het logo uit Radio Browser.",
-          "en": "Nicer station logos: Tunr now shows the station's App Store app icon first, then the large icon of the station's website, and only then the Radio Browser logo."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 22,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Zenderlogo's zijn niet meer wazig: kleine logo's worden niet meer opgeblazen maar scherp in het midden getoond, op een effen achtergrond in de kleur van het logo (geen regenboogverloop meer).",
-          "en": "Station logos are no longer blurry: small logos are no longer stretched but shown sharp in the centre, on a solid background in the logo's colour (no more rainbow gradient)."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Nieuwe logobron: het grote app-icoon van de website van de zender, naast de App Store-iconen.",
-          "en": "New logo source: the large app icon of the station's website, alongside App Store icons."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 23,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Geen GitHub-links meer op de website en in de webspeler; vragen en meldingen via info@tunr.online.",
-          "en": "No more GitHub links on the website and in the web player; questions and reports via info@tunr.online."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 24,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "nl": "Kleine verbeteringen.",
-          "en": "Minor improvements.",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ]
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 25,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios"
-          ],
-          "nl": "iPhone: de knoppen \"Luister\" en \"Info\" op de uitgelichte zender in Ontdek breken niet meer af.",
-          "en": "iPhone: the \"Listen\" and \"Info\" buttons on the featured station in Discover no longer break onto two lines."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 26,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "carplay"
-          ],
-          "nl": "CarPlay staat aan: Apple heeft Tunr goedgekeurd als CarPlay-audio-app. Favorieten, recent, lokale en populaire zenders en podcasts direct op het scherm in de auto.",
-          "en": "CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 27,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ],
-          "nl": "Ondertekenen in Xcode: één App Group (group.nl.lrvdlinden.tunr) voor alle Apple-platforms, zodat automatisch ondertekenen weer werkt.",
-          "en": "Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 28,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Nieuwe zendericonen (zoals die van Qmusic, Sky Radio en SLAM!) verschijnen nu binnen enkele uren in plaats van pas na een week.",
-          "en": "New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 29,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Zenderpagina's: per land de populairste radiozenders, met per zender een eigen pagina om direct online te luisteren in de webspeler.",
-          "en": "Station pages: the most popular radio stations per country, each with its own page to listen online right away in the web player."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Betere vindbaarheid in zoekmachines: nieuwe teksten en veelgestelde vragen, kortere titels, beschrijvingen bij afbeeldingen en een snellere site.",
-          "en": "Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 30,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Geen cookiemelding meer in de webspeler; anonieme statistieken staan daar uit tot je ze accepteert op de site of zelf aanzet in Instellingen.",
-          "en": "No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 31,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "new",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Presskit: onderaan elke pagina van de website staat de link PressKit met alle App Store-iconen, screenshots per apparaat, het woordmerk en promo-afbeeldingen in één zip.",
-          "en": "Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 32,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Nieuw Apple TV-icoon op het Home Screen: drie lagen met parallax, het Tunr-symbool zweeft boven een raster van zenderlogo's.",
-          "en": "New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 33,
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Nieuwe Top Shelf op Apple TV: als je Tunr op het Home Screen selecteert, zie je erachter een schuin raster van zenderlogo's met het Tunr-woordmerk.",
-          "en": "New Top Shelf on Apple TV: when you select Tunr on the Home Screen, a tilted grid of station logos with the Tunr wordmark appears behind it."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Het app-icoon op Apple TV is weer het vertrouwde Tunr-icoon.",
-          "en": "The Apple TV app icon is back to the familiar Tunr icon."
-        }
-      ],
-      "version": "1.0.0"
-    },
-    {
-      "build": 34,
-      "version": "1.0.0",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Top Shelf op Apple TV: het Tunr-woordmerk staat nu binnen het zichtbare deel en is goed leesbaar (tvOS toont het beeld schermvullend).",
-          "en": "Apple TV Top Shelf: the Tunr wordmark now sits inside the visible area and is easy to read (tvOS shows the image full screen)."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos",
-            "carplay",
-            "android",
-            "androidtv",
-            "web"
-          ],
-          "nl": "Versie 1.0.1.",
-          "en": "Version 1.0.1."
-        }
-      ]
-    },
-    {
-      "build": 35,
-      "version": "1.0.0",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Top Shelf op Apple TV: het Tunr-woordmerk staat nu in het midden, met de zenderlogo's eromheen.",
-          "en": "Apple TV Top Shelf: the Tunr wordmark now sits in the centre, surrounded by station logos."
-        }
-      ]
-    },
-    {
-      "build": 36,
-      "version": "1.0.0",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Kleine verbeteringen en voorbereiding op Google Play.",
-          "en": "Minor improvements and preparation for Google Play."
-        }
-      ]
-    },
-    {
-      "build": 37,
-      "version": "1.0.0",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel).",
-          "en": "Map: CARTO map tiles work again without a watermark once the map key is set (CARTO now requires a key)."
-        }
-      ]
-    },
-    {
-      "build": 38,
-      "version": "1.0.0",
-      "date": "2026-10-18",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "android",
-            "androidtv"
-          ],
-          "nl": "Kaart: de kaart toont weer gewone donkere kaarttegels, zonder watermerk \"API key required\".",
-          "en": "Map: the map shows regular dark map tiles again, without the \"API key required\" watermark."
-        }
-      ]
-    },
-    {
-      "build": 39,
-      "version": "1.0.0",
-      "date": "2026-10-19",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "tunr.online: \"Zo ziet Tunr eruit\" toont echte schermafbeeldingen uit de app, met de echte zenderlogo's, plus Kaart en Podcasts.",
-          "en": "tunr.online: \"See Tunr in action\" now shows real screenshots from the app with real station logos, plus Map and Podcasts."
-        },
-        {
-          "type": "improved",
-          "nl": "Kleine verbeteringen.",
-          "en": "Minor improvements.",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ]
-        }
-      ]
-    },
-    {
-      "build": 40,
-      "version": "1.0.0",
-      "date": "2026-10-19",
-      "items": [
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Kaart: met \"rechts\" kom je vanuit elke zender in de lijst bij de knoppen en het kaartje; een tweede klik op dezelfde zender speelt hem af.",
-          "en": "Map: pressing right from any station in the list reaches the buttons and card; clicking the same station again plays it."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Kaart: knoppen om in en uit te zoomen.",
-          "en": "Map: zoom in and zoom out buttons."
-        },
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Kaart: \"Wissen\" bij recente zoekopdrachten werkt nu met de afstandsbediening.",
-          "en": "Map: \"Clear\" for recent searches now works with the remote."
-        },
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "De Play/Pause-knop van de Siri Remote werkt op elk tabblad, niet alleen in de speler.",
-          "en": "The Siri Remote Play/Pause button works on every tab, not just in the player."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Terug naar de speler vanuit Bladeren, Zoeken en Bibliotheek met de kaart \"Nu aan het spelen\".",
-          "en": "Get back to the player from Browse, Search and Library via the \"Now playing\" card."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Tekstknoppen (Alles, Wissen, Meer) tonen duidelijk waar de focus staat; elke rij heeft een tegel \"Alles\" aan het eind.",
-          "en": "Text buttons (All, Clear, More) clearly show focus; every row ends with an \"All\" tile."
-        },
-        {
-          "type": "fixed",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Bibliotheek: \"Wissen\" bij Recent is bereikbaar met de afstandsbediening.",
-          "en": "Library: \"Clear\" in Recent can be reached with the remote."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Instellingen → Over: Website, Privacy en Voorwaarden tonen een QR-code om op je telefoon te openen.",
-          "en": "Settings → About: Website, Privacy and Terms show a QR code to open on your phone."
-        },
-        {
-          "type": "improved",
-          "platforms": [
-            "tvos"
-          ],
-          "nl": "Lange podcast- en afleveringsomschrijvingen volledig te lezen via \"Meer\".",
-          "en": "Long podcast and episode descriptions can be read in full via \"More\"."
-        }
-      ]
-    },
-    {
-      "build": 41,
-      "version": "1.0.0",
-      "date": "2026-10-19",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Vernieuwde changelog: filters op apparaat en soort, per build versie en buildnummer, een link per build om te delen en rechts de nieuwste versie per apparaat.",
-          "en": "Redesigned changelog: filter by device and type, version and build number per build, a shareable link per build and the latest version per device on the side."
-        }
-      ]
-    },
-    {
-      "build": 42,
-      "version": "1.0.0",
-      "date": "2026-10-19",
-      "items": [
-        {
-          "type": "improved",
-          "platforms": [
-            "web"
-          ],
-          "nl": "tunr.online: het podcastvoorbeeld toont de echte top 3 van Nederland met covers, en het kaartje bij de wereldkaart een echte zender met logo.",
-          "en": "tunr.online: the podcast preview shows the real top 3 in the Netherlands with covers, and the world map card shows a real station with its logo."
-        },
-        {
-          "type": "improved",
-          "nl": "Kleine verbeteringen.",
-          "en": "Minor improvements.",
-          "platforms": [
-            "ios",
-            "ipados",
-            "macos",
-            "tvos"
-          ]
-        }
-      ]
-    },
-    {
       "build": 43,
       "version": "1.0.0",
       "date": "2026-10-19",
       "items": [
         {
-          "type": "improved",
+          "type": "new",
           "platforms": [
             "ios",
             "ipados",
@@ -1227,8 +17,128 @@
             "androidtv",
             "web"
           ],
-          "nl": "Klaar voor de eerste release: Tunr 1.0.0 voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en de webspeler.",
-          "en": "Ready for the first release: Tunr 1.0.0 for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV and the web player."
+          "nl": "Eerste release van Tunr: tienduizenden radiozenders uit meer dan 200 landen, live en gratis, zonder account.",
+          "en": "First release of Tunr: tens of thousands of radio stations from more than 200 countries, live and free, no account needed."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Ontdek populaire en trending zenders in je land, blader op genre, regio en taal, of zoek op naam.",
+          "en": "Discover popular and trending stations in your country, browse by genre, region and language, or search by name."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Podcasts: de toplijsten van je land, volgen, verder luisteren waar je was, snelheid en slaaptimer.",
+          "en": "Podcasts: your country's top charts, follow shows, resume where you left off, playback speed and sleep timer."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Wereldkaart met gloeiende stippen voor zenders overal ter wereld, en een dobbelsteen voor een willekeurige zender.",
+          "en": "World map with glowing dots for stations all over the world, plus a dice for a random station."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Echte zenderlogo's bij elke zender waar dat kan.",
+          "en": "Real station logos wherever available."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv"
+          ],
+          "nl": "Artiest, titel en albumhoes van het nummer dat nu speelt.",
+          "en": "Artist, title and album art of the song that's playing."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "Favorieten en gevolgde podcasts op al je Apple-apparaten via iCloud.",
+          "en": "Favourites and followed podcasts on all your Apple devices via iCloud."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "carplay",
+            "android"
+          ],
+          "nl": "CarPlay en Android Auto met je favorieten, recente zenders en podcasts.",
+          "en": "CarPlay and Android Auto with your favourites, recent stations and podcasts."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados"
+          ],
+          "nl": "Widgets, Live Activity en een knop in het Bedieningspaneel.",
+          "en": "Widgets, a Live Activity and a Control Center button."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "tvos",
+            "androidtv"
+          ],
+          "nl": "Echte tv-apps voor Apple TV en Android TV / Google TV, volledig te bedienen met de afstandsbediening.",
+          "en": "Real TV apps for Apple TV and Android TV / Google TV, fully usable with the remote."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "Webspeler op tunr.online/web: luister direct in je browser.",
+          "en": "Web player at tunr.online/web: listen straight in your browser."
         }
       ]
     }
