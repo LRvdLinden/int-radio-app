@@ -1,0 +1,2 @@
+// Gemaakt door tools/make_showcase.py: echte top-3-podcasts van Nederland (Apple Podcasts-toplijst) voor het podcastvoorbeeld op de homepage.
+window.TUNR_SHOWCASE = {"pods":[{"n":"Maarten van Rossem & Tom Jessen","a":"Tom Jessen en Maarten van Rossem","i":"pod1.webp"},{"n":"Fokko, de vermoorde kastelein","a":"Omrop Fryslân","i":"pod2.webp"},{"n":"De Julietbende","a":"BN DeStem","i":"pod3.webp"}]};
