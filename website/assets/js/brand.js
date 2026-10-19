@@ -4,7 +4,7 @@ window.TUNR = {
   name: 'Tunr',
   domain: 'https://tunr.online',
   repo: 'https://github.com/LRvdLinden/int-radio-app',
-  version: '1.0.1',
+  version: '1.0.0',
   radioBrowser: 'https://www.radio-browser.info',
   // App-links: leeg tot de apps in de winkels staan ("Binnenkort").
   appStore: '',

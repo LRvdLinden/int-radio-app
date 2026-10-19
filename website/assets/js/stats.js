@@ -91,7 +91,7 @@
         device: 'Browser',
         model: model(),
         os: '',
-        version: (window.TUNR && window.TUNR.version) || '1.0.1',
+        version: (window.TUNR && window.TUNR.version) || '1.0.0',
         build: Math.min(Math.max(b | 0, 0), 99999),
         country: /^[A-Z]{2}$/.test(c) ? c : '',
         lang: T.store.lang === 'nl' ? 'nl' : 'en',

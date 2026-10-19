@@ -14,7 +14,7 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_IMG = os.path.join(ROOT, 'website', 'assets', 'img', 'showcase')
 OUT_JS = os.path.join(ROOT, 'website', 'assets', 'js', 'showcase.js')
-UA = {'User-Agent': 'Tunr/1.0.1 (+https://tunr.online)'}
+UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
 FEED = 'https://rss.applemarketingtools.com/api/v2/nl/podcasts/top/10/podcasts.json'
 SEARCH = 'https://itunes.apple.com/search?media=podcast&entity=podcast&country=nl&limit=1&term='
 SIZE = 256

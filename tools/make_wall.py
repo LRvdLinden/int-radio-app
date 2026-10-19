@@ -24,7 +24,7 @@ import make_station_icons as icons  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_IMG = os.path.join(ROOT, 'website', 'assets', 'img', 'wall')
 OUT_JS = os.path.join(ROOT, 'website', 'assets', 'js', 'wall.js')
-UA = {'User-Agent': 'Tunr/1.0.1 (+https://tunr.online)'}
+UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
 WANT = int(sys.argv[1]) if len(sys.argv) > 1 else 76
 NL_SHARE = 30
 SIZE = 192

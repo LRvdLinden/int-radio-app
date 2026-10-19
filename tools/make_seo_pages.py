@@ -23,7 +23,7 @@ import argparse, datetime, html, json, os, random, re, sys, time, unicodedata, u
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = 'https://tunr.online'
-UA = {'User-Agent': 'Tunr/1.0.1 (+https://tunr.online)'}
+UA = {'User-Agent': 'Tunr/1.0.0 (+https://tunr.online)'}
 
 
 def _presskit_url():

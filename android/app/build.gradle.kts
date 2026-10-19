@@ -10,7 +10,7 @@ plugins {
 
 // Versie/build: in gradle.properties (versie via tools/set_version.py, TUNR_BUILD per build omhoog)
 val buildNumber = (findProperty("TUNR_BUILD") as String?)?.toIntOrNull() ?: 1
-val marketing = (findProperty("TUNR_VERSION") as String?) ?: "1.0.1"
+val marketing = (findProperty("TUNR_VERSION") as String?) ?: "1.0.0"
 
 // Release-sleutel: uit omgevingsvariabelen (CI) of local.properties; nooit in de repo
 val localProps = Properties().apply {

@@ -164,7 +164,7 @@ jobs:
           (cd "$RUNNER_TEMP/pkg" && zip -qry "$ZIP" Tunr)
           unzip -l "$ZIP" | grep -m1 'Tunr.xcodeproj/project.pbxproj'
           ls -lh "$ZIP"
-          awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
+          awk -v b="Build $B" '/^## /{f=($0 ~ ("^## " b "( |$)"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
           [ -s "$RUNNER_TEMP/notes.md" ] || echo "Compleet Xcode-project voor iPhone, iPad, Mac en Apple TV (+ CarPlay). Uitpakken en Tunr/Tunr.xcodeproj openen." > "$RUNNER_TEMP/notes.md"
           # upload-script uit tunr-beheer (openbaar, anoniem op te halen); ftps.sh alleen als het er is
           TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"

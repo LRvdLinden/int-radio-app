@@ -1,7 +1,8 @@
 name: Android
 
 # Bouwt de Android-app (telefoon, tablet, Android TV en Android Auto in één APK) bij elke push die android/ raakt.
-# Als de build slaagt: de APK (Tunr-<versie>-build<N>.apk) naar beheer.tunr.online (tab Downloads), via
+# Als de build slaagt: de APK (Tunr-<versie>-build<N>.apk) en de AAB voor Google Play (Tunr-<versie>-build<N>.aab)
+# naar beheer.tunr.online (tab Downloads, onderdelen Android en Google Play), via
 # tools/beheer_upload.sh uit tunr-beheer. Nooit op GitHub (geen repo, geen release, geen artefact).
 # Secrets: FTP_SERVER, BEHEER_FTP_USERNAME, BEHEER_FTP_PASSWORD (zonder: overslaan met een waarschuwing).
 # Ondertekening: met de eigen release-sleutel uit de secrets TUNR_KEYSTORE_BASE64, TUNR_KEYSTORE_PASSWORD
@@ -59,13 +60,13 @@ jobs:
             echo "TUNR_KEY_PASSWORD=android" >> $GITHUB_ENV
           fi
 
-      - name: Build (release-APK)
+      - name: Build (release-APK + AAB voor Google Play)
         env:
           TUNR_CARTO_KEY: ${{ secrets.CARTO_KEY }}
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build.log
+          ./gradlew :app:assembleRelease :app:bundleRelease --stacktrace --no-daemon 2>&1 | tee build.log
 
       - name: Foutenoverzicht
         if: failure()
@@ -85,7 +86,7 @@ jobs:
           git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" ci-logs-android
 
       # beheer_upload.sh werkt het manifest bij; dezelfde build wordt vervangen, dus gewoon elke keer uploaden.
-      - name: APK naar beheer.tunr.online (Downloads)
+      - name: APK en AAB naar beheer.tunr.online (Downloads)
         if: github.event_name != 'pull_request'
         working-directory: .
         env:
@@ -102,7 +103,7 @@ jobs:
           SRC=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
           APK="$RUNNER_TEMP/Tunr-$V-build$B.apk"
           cp "$SRC" "$APK"; ls -lh "$APK"
-          awk -v b="Build $B" '/^## /{f=($0 ~ (b "$"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
+          awk -v b="Build $B" '/^## /{f=($0 ~ ("^## " b "( |$)"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
           [ -s "$RUNNER_TEMP/notes.md" ] || echo "Tunr voor Android, Android TV en Android Auto — versie $V, build $B." > "$RUNNER_TEMP/notes.md"
           # upload-script uit tunr-beheer (openbaar, anoniem op te halen); ftps.sh alleen als het er is
           TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"
@@ -112,3 +113,9 @@ jobs:
           chmod +x "$TOOLS"/*.sh
           bash "$TOOLS/beheer_upload.sh" android "$APK" "$V" "$B" "$RUNNER_TEMP/notes.md"
           echo "- APK build $B → beheer.tunr.online (Downloads)" >> $GITHUB_STEP_SUMMARY
+          # Android App Bundle voor de Google Play Console (Play maakt zelf de APK's per toestel) → onderdeel "Google Play"
+          SRC_AAB=$(ls android/app/build/outputs/bundle/release/*.aab | head -1)
+          AAB="$RUNNER_TEMP/Tunr-$V-build$B.aab"
+          cp "$SRC_AAB" "$AAB"; ls -lh "$AAB"
+          bash "$TOOLS/beheer_upload.sh" play "$AAB" "$V" "$B" "$RUNNER_TEMP/notes.md"
+          echo "- AAB build $B → beheer.tunr.online (Downloads, Google Play)" >> $GITHUB_STEP_SUMMARY

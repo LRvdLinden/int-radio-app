@@ -157,7 +157,8 @@
           "nl": "Webspeler op de website: alle schermen van de apps in je browser, met HLS-ondersteuning, mediabediening en installeerbaar als app.",
           "en": "Web player on the website: every screen of the apps in your browser, with HLS support, media controls and installable as an app."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 2,
@@ -222,7 +223,8 @@
           "nl": "Kleine verbeteringen in de speler en de navigatie.",
           "en": "Small improvements to the player and navigation."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 3,
@@ -240,7 +242,8 @@
           "nl": "Xcode-project: gedeeld scheme Tunr toegevoegd, zodat je bovenin Xcode iPhone, iPad, Apple TV en Mac (en hun simulators) kunt kiezen in plaats van alleen de Mac.",
           "en": "Xcode project: added the shared Tunr scheme, so you can pick iPhone, iPad, Apple TV and Mac (and their simulators) at the top of Xcode instead of only the Mac."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 4,
@@ -254,7 +257,8 @@
           "nl": "Website: de apparaten tonen nu per platform de minimale versie (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus een nieuwe sectie Download per platform.",
           "en": "Website: the devices now show the minimum version per platform (iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+, Android 7+), plus a new Download section per platform."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 5,
@@ -276,7 +280,8 @@
           "nl": "Apps nog niet te downloaden: App Store, Google Play en de auto staan op Binnenkort; luisteren kan nu al in de browser.",
           "en": "Apps not downloadable yet: App Store, Google Play and the car show Coming soon; you can already listen in your browser."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 6,
@@ -296,7 +301,8 @@
           "nl": "Zenderlogo's vullen nu de hele tegel, zonder extra witte tegel of rand eromheen. Zonder logo blijft het gekleurde vlak met de letters.",
           "en": "Station logos now fill the whole tile, without an extra white tile or border around them. Stations without a logo keep the coloured tile with their initials."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 7,
@@ -375,7 +381,8 @@
           "nl": "Website vernieuwd: schermen, Waarom Tunr, Podcasts, Wereldkaart, Zo werkt het, Download (Coming Soon), FAQ en een footer met het buildnummer; sneller laden met WebP.",
           "en": "Website refreshed: screens, Why Tunr, Podcasts, World map, How it works, Download (Coming Soon), FAQ and a footer with the build number; faster loading with WebP."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 8,
@@ -395,7 +402,8 @@
           "nl": "Tunr heeft een eigen website: tunr.online. Website, privacy en voorwaarden in de apps verwijzen er nu naar.",
           "en": "Tunr has its own website: tunr.online. Website, privacy and terms in the apps now link to it."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 9,
@@ -426,7 +434,8 @@
           "nl": "De Tunr-intro speelt altijd bij het opstarten; de instelling Intromuziek is verdwenen.",
           "en": "The Tunr intro always plays at start-up; the Intro music setting is gone."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 10,
@@ -440,7 +449,8 @@
           "nl": "De wereldkaart in de webspeler gebruikt nu Apple Maps: donker en rustig, met dezelfde gloeiende stippen, clusters en de knop Willekeurig.",
           "en": "The world map in the web player now uses Apple Maps: dark and calm, with the same glowing dots, clusters and Random button."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 11,
@@ -474,7 +484,8 @@
           "nl": "De laatste vijf kaartzoekopdrachten staan klaar als je het zoekveld opent; op Apple gaan ze via iCloud mee.",
           "en": "Your last five map searches are ready when you open the search field; on Apple they sync via iCloud."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 12,
@@ -488,7 +499,8 @@
           "nl": "De tegelwand op de homepage toont nu logo's van populaire zenders (uit je eigen land en wereldwijd), live uit Radio Browser.",
           "en": "The tile wall on the homepage now shows logos of popular stations (from your own country and worldwide), live from Radio Browser."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 13,
@@ -502,7 +514,8 @@
           "nl": "Meer echte zenderlogo's in de tegelwand: de populairste zenders van je eigen land (zoals Qmusic, SLAM! en Radio 538) eerst, daarna wereldwijd; ook logo's die alleen via http staan worden via https geprobeerd.",
           "en": "More real station logos in the tile wall: the most popular stations in your own country first, then worldwide; logos only listed over http are tried over https."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 14,
@@ -516,7 +529,8 @@
           "nl": "De tegelwand op de homepage staat nu vol met echte zenderlogo's (alle tegels), met één opvallende tegel van Tunr zelf.",
           "en": "The homepage tile wall is now full of real station logos (every tile), with one standout Tunr tile."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 15,
@@ -544,7 +558,8 @@
           "nl": "Privacyverklaring en veelgestelde vragen beschrijven de anonieme statistieken.",
           "en": "Privacy policy and FAQ describe the anonymous statistics."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 16,
@@ -566,7 +581,8 @@
           "nl": "De zenderlogo's in de hero van de homepage staan nu vast en laden direct, zonder geflikker.",
           "en": "The station logos in the homepage hero are now fixed and load instantly, without flickering."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 17,
@@ -591,7 +607,8 @@
           "nl": "Delen-knop in de afleveringsspeler.",
           "en": "Share button in the episode player."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 18,
@@ -631,7 +648,8 @@
           "nl": "Op iOS 26 verschijnen de widget \"Nu speelt\" en de Live Activity ook in CarPlay.",
           "en": "On iOS 26 the \"Now Playing\" widget and the Live Activity also appear in CarPlay."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 19,
@@ -645,7 +663,8 @@
           "nl": "De zenderlogo's in de hero van de homepage zijn weer zichtbaar.",
           "en": "The station logos in the homepage hero are visible again."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 20,
@@ -696,7 +715,8 @@
           "nl": "Apple TV: grijze knoppen (favoriet, website, afgespeeld) waren onzichtbaar als ze focus hadden.",
           "en": "Apple TV: grey buttons (favourite, website, played) were invisible when focused."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 21,
@@ -717,7 +737,8 @@
           "nl": "Mooiere zenderlogo's: Tunr toont nu eerst het app-icoon van de zender uit de App Store, daarna het grote icoon van de website van de zender, en pas dan het logo uit Radio Browser.",
           "en": "Nicer station logos: Tunr now shows the station's App Store app icon first, then the large icon of the station's website, and only then the Radio Browser logo."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 22,
@@ -753,7 +774,8 @@
           "nl": "Nieuwe logobron: het grote app-icoon van de website van de zender, naast de App Store-iconen.",
           "en": "New logo source: the large app icon of the station's website, alongside App Store icons."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 23,
@@ -767,7 +789,8 @@
           "nl": "Geen GitHub-links meer op de website en in de webspeler; vragen en meldingen via info@tunr.online.",
           "en": "No more GitHub links on the website and in the web player; questions and reports via info@tunr.online."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 24,
@@ -784,7 +807,8 @@
             "tvos"
           ]
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 25,
@@ -798,7 +822,8 @@
           "nl": "iPhone: de knoppen \"Luister\" en \"Info\" op de uitgelichte zender in Ontdek breken niet meer af.",
           "en": "iPhone: the \"Listen\" and \"Info\" buttons on the featured station in Discover no longer break onto two lines."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 26,
@@ -812,7 +837,8 @@
           "nl": "CarPlay staat aan: Apple heeft Tunr goedgekeurd als CarPlay-audio-app. Favorieten, recent, lokale en populaire zenders en podcasts direct op het scherm in de auto.",
           "en": "CarPlay is on: Apple approved Tunr as a CarPlay audio app. Favourites, recents, local and popular stations and podcasts right on your car's screen."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 27,
@@ -829,7 +855,8 @@
           "nl": "Ondertekenen in Xcode: één App Group (group.nl.lrvdlinden.tunr) voor alle Apple-platforms, zodat automatisch ondertekenen weer werkt.",
           "en": "Signing in Xcode: one App Group (group.nl.lrvdlinden.tunr) for all Apple platforms, so automatic signing works again."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 28,
@@ -850,7 +877,8 @@
           "nl": "Nieuwe zendericonen (zoals die van Qmusic, Sky Radio en SLAM!) verschijnen nu binnen enkele uren in plaats van pas na een week.",
           "en": "New station icons (such as Qmusic, Sky Radio and SLAM!) now appear within hours instead of after a week."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 29,
@@ -872,7 +900,8 @@
           "nl": "Betere vindbaarheid in zoekmachines: nieuwe teksten en veelgestelde vragen, kortere titels, beschrijvingen bij afbeeldingen en een snellere site.",
           "en": "Better search visibility: new copy and FAQs, shorter titles, image descriptions and a faster site."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 30,
@@ -886,7 +915,8 @@
           "nl": "Geen cookiemelding meer in de webspeler; anonieme statistieken staan daar uit tot je ze accepteert op de site of zelf aanzet in Instellingen.",
           "en": "No more cookie notice in the web player; anonymous statistics stay off there until you accept them on the site or turn them on in Settings."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 31,
@@ -900,7 +930,8 @@
           "nl": "Presskit: onderaan elke pagina van de website staat de link PressKit met alle App Store-iconen, screenshots per apparaat, het woordmerk en promo-afbeeldingen in één zip.",
           "en": "Press kit: every page of the website now has a PressKit link at the bottom with all App Store icons, screenshots per device, the wordmark and promo images in one zip."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 32,
@@ -914,7 +945,8 @@
           "nl": "Nieuw Apple TV-icoon op het Home Screen: drie lagen met parallax, het Tunr-symbool zweeft boven een raster van zenderlogo's.",
           "en": "New Apple TV Home Screen icon: three parallax layers, with the Tunr symbol floating above a grid of station logos."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 33,
@@ -936,11 +968,12 @@
           "nl": "Het app-icoon op Apple TV is weer het vertrouwde Tunr-icoon.",
           "en": "The Apple TV app icon is back to the familiar Tunr icon."
         }
-      ]
+      ],
+      "version": "1.0.0"
     },
     {
       "build": 34,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-18",
       "items": [
         {
@@ -970,7 +1003,7 @@
     },
     {
       "build": 35,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-18",
       "items": [
         {
@@ -985,7 +1018,7 @@
     },
     {
       "build": 36,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-18",
       "items": [
         {
@@ -1001,7 +1034,7 @@
     },
     {
       "build": 37,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-18",
       "items": [
         {
@@ -1017,7 +1050,7 @@
     },
     {
       "build": 38,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-18",
       "items": [
         {
@@ -1033,7 +1066,7 @@
     },
     {
       "build": 39,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-19",
       "items": [
         {
@@ -1059,7 +1092,7 @@
     },
     {
       "build": 40,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-19",
       "items": [
         {
@@ -1138,7 +1171,7 @@
     },
     {
       "build": 41,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-19",
       "items": [
         {
@@ -1153,7 +1186,7 @@
     },
     {
       "build": 42,
-      "version": "1.0.1",
+      "version": "1.0.0",
       "date": "2026-10-19",
       "items": [
         {
@@ -1174,6 +1207,28 @@
             "macos",
             "tvos"
           ]
+        }
+      ]
+    },
+    {
+      "build": 43,
+      "version": "1.0.0",
+      "date": "2026-10-19",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay",
+            "android",
+            "androidtv",
+            "web"
+          ],
+          "nl": "Klaar voor de eerste release: Tunr 1.0.0 voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en de webspeler.",
+          "en": "Ready for the first release: Tunr 1.0.0 for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV and the web player."
         }
       ]
     }

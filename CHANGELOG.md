@@ -4,7 +4,15 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
-## Build 42 · versie 1.0.1
+## Build 43 · versie 1.0.0
+_2026-10-19_
+
+**Verbeterd**
+
+- Klaar voor de eerste release: Tunr 1.0.0 voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en de webspeler. _(Alle apps)_  
+  <sub>Ready for the first release: Tunr 1.0.0 for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV and the web player.</sub>
+
+## Build 42 · versie 1.0.0
 _2026-10-19_
 
 **Verbeterd**
@@ -14,7 +22,7 @@ _2026-10-19_
 - Kleine verbeteringen. _(iPhone, iPad, Mac, Apple TV)_  
   <sub>Minor improvements.</sub>
 
-## Build 41 · versie 1.0.1
+## Build 41 · versie 1.0.0
 _2026-10-19_
 
 **Verbeterd**
@@ -22,7 +30,7 @@ _2026-10-19_
 - Vernieuwde changelog: filters op apparaat en soort, per build versie en buildnummer, een link per build om te delen en rechts de nieuwste versie per apparaat. _(Website)_  
   <sub>Redesigned changelog: filter by device and type, version and build number per build, a shareable link per build and the latest version per device on the side.</sub>
 
-## Build 40 · versie 1.0.1
+## Build 40 · versie 1.0.0
 _2026-10-19_
 
 **Nieuw**
@@ -52,7 +60,7 @@ _2026-10-19_
 - Bibliotheek: "Wissen" bij Recent is bereikbaar met de afstandsbediening. _(Apple TV)_  
   <sub>Library: "Clear" in Recent can be reached with the remote.</sub>
 
-## Build 39 · versie 1.0.1
+## Build 39 · versie 1.0.0
 _2026-10-19_
 
 **Verbeterd**
@@ -62,7 +70,7 @@ _2026-10-19_
 - Kleine verbeteringen. _(iPhone, iPad, Mac, Apple TV)_  
   <sub>Minor improvements.</sub>
 
-## Build 38 · versie 1.0.1
+## Build 38 · versie 1.0.0
 _2026-10-18_
 
 **Opgelost**
@@ -70,7 +78,7 @@ _2026-10-18_
 - Kaart: de kaart toont weer gewone donkere kaarttegels, zonder watermerk "API key required". _(Android, Android TV)_  
   <sub>Map: the map shows regular dark map tiles again, without the "API key required" watermark.</sub>
 
-## Build 37 · versie 1.0.1
+## Build 37 · versie 1.0.0
 _2026-10-18_
 
 **Opgelost**
@@ -78,7 +86,7 @@ _2026-10-18_
 - Kaart: de kaarttegels van CARTO werken weer zonder watermerk zodra de kaartsleutel is ingesteld (CARTO vraagt sinds kort een sleutel). _(Android, Android TV)_  
   <sub>Map: CARTO map tiles work again without a watermark once the map key is set (CARTO now requires a key).</sub>
 
-## Build 36 · versie 1.0.1
+## Build 36 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -86,7 +94,7 @@ _2026-10-18_
 - Kleine verbeteringen en voorbereiding op Google Play. _(Android, Android TV)_  
   <sub>Minor improvements and preparation for Google Play.</sub>
 
-## Build 35 · versie 1.0.1
+## Build 35 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**
@@ -94,7 +102,7 @@ _2026-10-18_
 - Top Shelf op Apple TV: het Tunr-woordmerk staat nu in het midden, met de zenderlogo's eromheen. _(Apple TV)_  
   <sub>Apple TV Top Shelf: the Tunr wordmark now sits in the centre, surrounded by station logos.</sub>
 
-## Build 34 · versie 1.0.1
+## Build 34 · versie 1.0.0
 _2026-10-18_
 
 **Verbeterd**

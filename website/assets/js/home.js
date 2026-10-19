@@ -91,7 +91,7 @@
   if (builds.length && window.fetch) {
     fetch('assets/changelog.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
       var n = d && d.builds && d.builds.reduce(function (m, b) { return Math.max(m, +b.build || 0); }, 0);
-      if (n) builds.forEach(function (el) { var cur = +((el.textContent.match(/build\s*(\d+)/) || [])[1] || 0); if (n > cur) el.textContent = ((window.TUNR && TUNR.version) || '1.0.1') + ' · build ' + n; });
+      if (n) builds.forEach(function (el) { var cur = +((el.textContent.match(/build\s*(\d+)/) || [])[1] || 0); if (n > cur) el.textContent = ((window.TUNR && TUNR.version) || '1.0.0') + ' · build ' + n; });
     }).catch(function () {});
   }
 
