@@ -4,7 +4,7 @@
     python3 tools/set_version.py 1.0.1
 
 Daarna in dezelfde commit: buildnummer(s) omhoog en een item in docs/changelog.json met "version": "<versie>"
-(zie CLAUDE.md). Plekken: Apple (MARKETING_VERSION, Brand.version), Android (TUNR_VERSION), webspeler/website
+(zie CLAUDE.md). Plekken: Apple (MARKETING_VERSION, Brand.version), Android (TUNR_VERSION), website
 (brand.js, footers), User-Agent van de tools en de documentatie.
 """
 import pathlib, re, sys
@@ -16,7 +16,6 @@ RULES = [  # (bestand of glob, patroon, vervanging met {v})
     ("android/gradle.properties", r'TUNR_VERSION=[\d.]+', 'TUNR_VERSION={v}'),
     ("android/app/build.gradle.kts", r'\?: "[\d.]+"', '?: "{v}"'),
     ("website/assets/js/brand.js", r"version: '[\d.]+'", "version: '{v}'"),
-    ("website/assets/js/stats.js", r"\|\| '[\d.]+'", "|| '{v}'"),
     ("website/assets/js/home.js", r"\|\| '[\d.]+'\) \+ ' · build", "|| '{v}') + ' · build"),
     ("website/**/*.html", r'<span data-build>[\d.]+ ·', '<span data-build>{v} ·'),
     ("tools/*.py", r"Tunr/[\d.]+ \(\+https://tunr\.online\)", "Tunr/{v} (+https://tunr.online)"),

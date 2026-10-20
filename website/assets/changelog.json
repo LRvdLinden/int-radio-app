@@ -1,6 +1,21 @@
 {
   "builds": [
     {
+      "build": 44,
+      "version": "1.0.0",
+      "date": "2026-10-20",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: luisteren kan alleen nog in de apps. Gedeelde links tonen de zender of podcast met de weg naar de app.",
+          "en": "tunr.online: listening is now only possible in the apps. Shared links show the station or podcast with the way to the app."
+        }
+      ]
+    },
+    {
       "build": 43,
       "version": "1.0.0",
       "date": "2026-10-19",
@@ -131,14 +146,6 @@
           ],
           "nl": "Echte tv-apps voor Apple TV en Android TV / Google TV, volledig te bedienen met de afstandsbediening.",
           "en": "Real TV apps for Apple TV and Android TV / Google TV, fully usable with the remote."
-        },
-        {
-          "type": "new",
-          "platforms": [
-            "web"
-          ],
-          "nl": "Webspeler op tunr.online/web: luister direct in je browser.",
-          "en": "Web player at tunr.online/web: listen straight in your browser."
         }
       ]
     }

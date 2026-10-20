@@ -101,33 +101,6 @@ jobs:
           print(f"{n} WebP-bestanden gemaakt")
           PY
 
-      # Apple Maps in de webspeler (MapKit JS): token (JWT, ES256) uit de .p8-sleutel in het secret MAPKIT_P8.
-      # Het token werkt alleen vanaf https://tunr.online (origin-claim) en is 180 dagen geldig; het staat alleen op de
-      # server (assets/js/mapkit-token.js, niet in git). Zonder secret valt de kaart terug op Leaflet.
-      - name: Apple Maps-token maken
-        if: inputs.presskit_only != true
-        env:
-          MAPKIT_P8: ${{ secrets.MAPKIT_P8 }}
-          MAPKIT_KEY_ID: STP7XLVDL5
-          APPLE_TEAM_ID: EU3UY476T6
-        run: |
-          if [ -z "${MAPKIT_P8:-}" ]; then echo "::warning::Secret MAPKIT_P8 ontbreekt: de kaart gebruikt Leaflet."; rm -f assets/js/mapkit-token.js; exit 0; fi
-          pip install --quiet --disable-pip-version-check "pyjwt[crypto]==2.9.0"
-          python3 - <<'PY'
-          import os, time, jwt, re
-          key = os.environ["MAPKIT_P8"].strip()
-          if "BEGIN PRIVATE KEY" not in key:   # alleen de base64-inhoud geplakt
-              key = "-----BEGIN PRIVATE KEY-----\n" + re.sub(r"\s+", "", key) + "\n-----END PRIVATE KEY-----\n"
-          dom = re.search(r"domain:\s*'(https?://[^']+)'", open("assets/js/brand.js").read()).group(1).rstrip("/")
-          now = int(time.time())
-          tok = jwt.encode({"iss": os.environ["APPLE_TEAM_ID"], "iat": now, "exp": now + 180 * 86400, "origin": dom},
-                           key, algorithm="ES256", headers={"kid": os.environ["MAPKIT_KEY_ID"], "typ": "JWT"})
-          open("assets/js/mapkit-token.js", "w").write(
-              "// Gemaakt door de workflow Website; alleen geldig op " + dom + ". Niet in git.\n"
-              "window.TUNR_MAPKIT_TOKEN = " + repr(tok).replace("'", '"') + ";\n")
-          print("Apple Maps-token gemaakt voor", dom)
-          PY
-
       # Landingspagina's voor zoekmachines (/radio/, /radio/<land>/, /radio/<land>/<zender>/) + sitemap.xml en het blok
       # "Populaire zenders" op de homepage. Niet in git (website/radio/ staat in .gitignore): elke upload vers uit
       # Radio Browser. Onbereikbaar? Dan de laatste momentopname uit de cache; zonder cache gewoon zonder deze pagina's.
@@ -274,6 +247,11 @@ jobs:
           fi
           if [ -n "${PRESSKIT_ONLY:-}" ]; then echo "::notice::Alleen de presskit (presskit_only): rest van de site niet geüpload"; exit 0; fi
           lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; mirror -R --verbose --parallel=4 --only-newer --exclude-glob .DS_Store --exclude-glob README.md --exclude '^radio/' --exclude '^presskit/' ./ \"$TARGET\"; bye"
+          # webspeler offline (rechten): oude bestanden van de webspeler en het Apple Maps-token van de server halen
+          # (de mirror verwijdert niets; ontbrekende bestanden zijn geen fout)
+          OLD="assets/js/api.js assets/js/audio.js assets/js/map.js assets/js/player.js assets/js/stats.js assets/js/store.js assets/js/strings.js assets/js/ui.js assets/js/views.js assets/js/mapkit-token.js assets/css/player.css"
+          RM=""; for f in $OLD; do RM="$RM rm -f \"$TARGET/$f\";"; done
+          lftp -e "$common; open --env-password -u \"$USER_OK\" \"$HOST\"; set cmd:fail-exit false; $RM bye" >/dev/null 2>&1 || true
           # /radio/ is helemaal gegenereerd (elke run nieuwe bestandsdatums): alleen bestanden met een andere grootte
           # uploaden, en pagina's van zenders die uit de top vallen weghalen
           if [ -f radio/index.html ]; then

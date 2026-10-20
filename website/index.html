@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tunr – Online radio luisteren en podcasts | Gratis radio-app</title>
 <meta name="tunr-title-en" content="Tunr – World radio &amp; podcasts online | Free radio app">
-<meta name="description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Internetradio op iPhone, Mac, Apple TV, CarPlay, Android en in je browser." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, Mac, Apple TV, Android and web.">
+<meta name="description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Gratis radio-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android en Android Auto." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, iPad, Mac, Apple TV, CarPlay, Android and Android Auto.">
 <!-- NL en EN delen één pagina: ?lang=nl en ?lang=en zijn de taalversies, zonder ?lang= volgt hij de browsertaal (x-default).
      De canonical zet assets/js/i18n.js (x-default-URL plus ?lang=), zodat elke taalversie naar zichzelf wijst. -->
 <link rel="alternate" hreflang="nl" href="https://tunr.online/?lang=nl">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tunr">
 <meta property="og:title" content="Tunr – Online radio luisteren en podcasts | Gratis radio-app" data-en="Tunr – World radio &amp; podcasts online | Free radio app">
-<meta property="og:description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Internetradio op iPhone, Mac, Apple TV, CarPlay, Android en in je browser." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, Mac, Apple TV, Android and web.">
+<meta property="og:description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Gratis radio-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android en Android Auto." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, iPad, Mac, Apple TV, CarPlay, Android and Android Auto.">
 <meta property="og:locale" content="nl_NL">
 <meta property="og:locale:alternate" content="en_GB">
 <meta property="og:image" content="https://tunr.online/assets/img/og-image.png">
@@ -24,7 +24,7 @@
 <meta property="og:url" content="https://tunr.online/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tunr – Online radio luisteren en podcasts | Gratis radio-app" data-en="Tunr – World radio &amp; podcasts online | Free radio app">
-<meta name="twitter:description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Internetradio op iPhone, Mac, Apple TV, CarPlay, Android en in je browser." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, Mac, Apple TV, Android and web.">
+<meta name="twitter:description" content="Online radio luisteren, gratis: 50.000+ radiozenders uit 200+ landen en podcasts. Gratis radio-app voor iPhone, iPad, Mac, Apple TV, CarPlay, Android en Android Auto." data-en="Listen to radio online for free: 50,000+ world radio stations from 200+ countries plus podcasts. Free radio app for iPhone, iPad, Mac, Apple TV, CarPlay, Android and Android Auto.">
 <meta name="twitter:image" content="https://tunr.online/assets/img/og-image.png">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="favicon.png">
@@ -243,6 +243,7 @@
 .dl.soon h3,.dl.soon .os,.dl.soon .devs{opacity:.55}
 .dl .badge-soon{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px dashed #ffffff33;color:var(--sec);font-size:15px;font-weight:700;cursor:default}
 .dl.now{border-color:var(--accent)}
+.dls>.dl:last-child:nth-child(odd){grid-column:1/-1}
 .pair{margin-top:18px;color:var(--sec);font-size:15px}
 .pair a{color:#fff;font-weight:600}
 
@@ -332,21 +333,11 @@
       "url": "https://tunr.online/#download",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
       "inLanguage": ["nl", "en"]
-    },
-    {
-      "@type": "WebApplication",
-      "@id": "https://tunr.online/#app-web",
-      "name": "Tunr webspeler",
-      "description": "Luister naar radiozenders uit de hele wereld en naar podcasts, direct in je browser.",
-      "applicationCategory": "MusicApplication",
-      "operatingSystem": "Elke moderne browser",
-      "url": "https://tunr.online/web/",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
     }
   ]
 }
 </script>
-<script type="application/ld+json" id="ld-faq">{"@context":"https://schema.org","@type":"FAQPage","@id":"https://tunr.online/#faq","inLanguage":"nl","mainEntity":[{"@type":"Question","name":"Is Tunr gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Tunr is gratis, zonder account, zonder reclame van ons en zonder abonnement. Sommige zenders en podcasts laten zelf reclame horen; daar hebben wij geen invloed op."}},{"@type":"Question","name":"Hoe kan ik gratis online radio luisteren?","acceptedAnswer":{"@type":"Answer","text":"Open de webspeler in je browser en kies een zender: je hoeft niets te installeren en hebt geen account nodig. Tunr stelt je land voor, zodat je meteen de populaire radiozenders ziet, en met de zoekfunctie vind je elke zender op naam. Liever een app? Tunr komt binnenkort gratis naar iPhone, iPad, Mac, Apple TV en Android."}},{"@type":"Question","name":"Welke radiozenders kan ik luisteren?","acceptedAnswer":{"@type":"Answer","text":"Meer dan 50.000 radiozenders uit ruim 200 landen, waaronder bekende Nederlandse zenders als Radio 538, Qmusic, NPO Radio 2, Sky Radio en Radio 10, Belgische zenders als Studio Brussel en MNM, en internationale omroepen als de BBC. Bekijk het overzicht van radiozenders per land. Het aanbod komt uit de open zenderlijst van Radio Browser en groeit nog elke dag."}},{"@type":"Question","name":"Is Tunr een alternatief voor TuneIn of Radio Garden?","acceptedAnswer":{"@type":"Answer","text":"Tunr is een eigen, onafhankelijke app met hetzelfde doel: radio van over de hele wereld luisteren. Zoals bij Radio Garden ontdek je zenders op een wereldkaart, en zoals bij TuneIn vind je zenders per land en genre, plus podcasts. Tunr is gratis, zonder account en zonder reclame van onszelf, en werkt op Apple-apparaten, Android en in de browser. Welke app het best bij je past, bepaal je zelf. Tunr is niet verbonden aan TuneIn of Radio Garden."}},{"@type":"Question","name":"Is er een podcast-app in Tunr?","acceptedAnswer":{"@type":"Answer","text":"Ja, Tunr is radio-app en podcast-app in één. Je vindt er de populairste podcasts van je land, toplijsten per genre en een zoekfunctie. Volg een podcast en nieuwe afleveringen staan op Ontdek; je luistert verder waar je was, op de snelheid die je wilt (0,8× tot 2×). De podcastgegevens komen uit de openbare podcastgids van Apple; de afleveringen spelen rechtstreeks vanaf de server van de maker. Probeer het in de webspeler."}},{"@type":"Question","name":"Werkt Tunr met CarPlay en Android Auto?","acceptedAnswer":{"@type":"Answer","text":"Ja. De iPhone-app werkt met CarPlay en de Android-app met Android Auto: je favorieten, recente zenders en podcasts staan dan op het scherm van je auto, en je bedient Tunr met het scherm of de knoppen van je auto. De apps verschijnen binnenkort in de App Store en op Google Play; tot die tijd luister je in de webspeler."}},{"@type":"Question","name":"Waar komen de zenders vandaan?","acceptedAnswer":{"@type":"Answer","text":"Uit Radio Browser, een open community-database met tienduizenden radiozenders van over de hele wereld. Tunr host zelf geen streams: elke zender speelt rechtstreeks vanaf de server van de omroep."}},{"@type":"Question","name":"Mijn zender ontbreekt of werkt niet. Wat nu?","acceptedAnswer":{"@type":"Answer","text":"Voeg hem toe of verbeter hem op radio-browser.info. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten. Werkt een zender alleen niet in de browser? Veel zenders gebruiken nog een onbeveiligde verbinding die browsers blokkeren; in de apps speelt hij wel."}},{"@type":"Question","name":"Op welke apparaten werkt Tunr?","acceptedAnswer":{"@type":"Answer","text":"Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. En direct in je browser met de webspeler. De apps verschijnen binnenkort in de App Store en Google Play."}},{"@type":"Question","name":"Zie ik welk nummer er speelt?","acceptedAnswer":{"@type":"Answer","text":"In de apps wel, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Browsers kunnen die gegevens van andere servers niet uitlezen, dus de webspeler toont de zender zelf."}},{"@type":"Question","name":"Wat doet Tunr met mijn gegevens?","acceptedAnswer":{"@type":"Answer","text":"Zo weinig mogelijk: geen account, geen tracking, alleen anonieme gebruiksstatistieken die je in Instellingen kunt uitzetten. Je favorieten, gevolgde podcasts, luisterposities en recente zenders staan alleen op je eigen apparaat. Lees meer in de privacyverklaring."}}]}</script>
+<script type="application/ld+json" id="ld-faq">{"@context":"https://schema.org","@type":"FAQPage","@id":"https://tunr.online/#faq","inLanguage":"nl","mainEntity":[{"@type":"Question","name":"Is Tunr gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Tunr is gratis, zonder account, zonder reclame van ons en zonder abonnement. Sommige zenders en podcasts laten zelf reclame horen; daar hebben wij geen invloed op."}},{"@type":"Question","name":"Hoe kan ik gratis online radio luisteren?","acceptedAnswer":{"@type":"Answer","text":"Met de gratis Tunr-app, zonder account. Tunr stelt je land voor, zodat je meteen de populaire radiozenders ziet, en met de zoekfunctie vind je elke zender op naam. De app komt binnenkort gratis naar iPhone, iPad, Mac, Apple TV en Android."}},{"@type":"Question","name":"Welke radiozenders kan ik luisteren?","acceptedAnswer":{"@type":"Answer","text":"Meer dan 50.000 radiozenders uit ruim 200 landen, waaronder bekende Nederlandse zenders als Radio 538, Qmusic, NPO Radio 2, Sky Radio en Radio 10, Belgische zenders als Studio Brussel en MNM, en internationale omroepen als de BBC. Bekijk het overzicht van radiozenders per land. Het aanbod komt uit de open zenderlijst van Radio Browser en groeit nog elke dag."}},{"@type":"Question","name":"Is Tunr een alternatief voor TuneIn of Radio Garden?","acceptedAnswer":{"@type":"Answer","text":"Tunr is een eigen, onafhankelijke app met hetzelfde doel: radio van over de hele wereld luisteren. Zoals bij Radio Garden ontdek je zenders op een wereldkaart, en zoals bij TuneIn vind je zenders per land en genre, plus podcasts. Tunr is gratis, zonder account en zonder reclame van onszelf, en werkt op Apple-apparaten en Android. Welke app het best bij je past, bepaal je zelf. Tunr is niet verbonden aan TuneIn of Radio Garden."}},{"@type":"Question","name":"Is er een podcast-app in Tunr?","acceptedAnswer":{"@type":"Answer","text":"Ja, Tunr is radio-app en podcast-app in één. Je vindt er de populairste podcasts van je land, toplijsten per genre en een zoekfunctie. Volg een podcast en nieuwe afleveringen staan op Ontdek; je luistert verder waar je was, op de snelheid die je wilt (0,8× tot 2×). De podcastgegevens komen uit de openbare podcastgids van Apple; de afleveringen spelen rechtstreeks vanaf de server van de maker."}},{"@type":"Question","name":"Werkt Tunr met CarPlay en Android Auto?","acceptedAnswer":{"@type":"Answer","text":"Ja. De iPhone-app werkt met CarPlay en de Android-app met Android Auto: je favorieten, recente zenders en podcasts staan dan op het scherm van je auto, en je bedient Tunr met het scherm of de knoppen van je auto. De apps verschijnen binnenkort in de App Store en op Google Play."}},{"@type":"Question","name":"Waar komen de zenders vandaan?","acceptedAnswer":{"@type":"Answer","text":"Uit Radio Browser, een open community-database met tienduizenden radiozenders van over de hele wereld. Tunr host zelf geen streams: elke zender speelt rechtstreeks vanaf de server van de omroep."}},{"@type":"Question","name":"Mijn zender ontbreekt of werkt niet. Wat nu?","acceptedAnswer":{"@type":"Answer","text":"Voeg hem toe of verbeter hem op radio-browser.info. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten."}},{"@type":"Question","name":"Op welke apparaten werkt Tunr?","acceptedAnswer":{"@type":"Answer","text":"Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. De apps verschijnen binnenkort in de App Store en Google Play."}},{"@type":"Question","name":"Zie ik welk nummer er speelt?","acceptedAnswer":{"@type":"Answer","text":"Ja, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Stuurt de zender niets mee, dan zie je het logo van de zender."}},{"@type":"Question","name":"Wat doet Tunr met mijn gegevens?","acceptedAnswer":{"@type":"Answer","text":"Zo weinig mogelijk: geen account, geen tracking, alleen anonieme gebruiksstatistieken die je in Instellingen kunt uitzetten. Je favorieten, gevolgde podcasts, luisterposities en recente zenders staan alleen op je eigen apparaat. Lees meer in de privacyverklaring."}}]}</script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Naar de inhoud</a>
@@ -363,7 +354,7 @@
       <a href="#faq" data-i18n="nav.faq">FAQ</a>
     </div>
     <div class="right">
-      <a class="btn sm navweb" href="web/" data-i18n="nav.web">Luister nu</a>
+      <a class="btn sm navweb" href="#download" data-i18n="cta.app">Download de app</a>
       <div class="lang" role="group" aria-label="Taal / Language"><button type="button" data-lang="nl" class="on">NL</button><button type="button" data-lang="en">EN</button></div>
       <button class="navtoggle" type="button" aria-expanded="false" aria-controls="navlinks" aria-label="Menu" data-i18n-attr="aria-label:nav.menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>
     </div>
@@ -377,10 +368,10 @@
     <div><span class="onair"><span class="live">On Air</span><span class="sep"></span><span data-i18n="hero.badge">Gratis · zonder account · zonder reclame</span></span></div>
     <h1 data-i18n="hero.title">Alle radio van de wereld. <em>Op elk scherm.</em></h1>
     <div class="bar" aria-hidden="true"></div>
-    <p class="lead" data-i18n="hero.lead">Gratis online radio luisteren: Tunr brengt tienduizenden radiozenders uit meer dan 200 landen én de populairste podcasts naar je iPhone, iPad, Mac, Apple TV, auto, Android-toestel, tv en browser. Lokaal, wereldwijd, op genre of gewoon ergens op de kaart.</p>
+    <p class="lead" data-i18n="hero.lead">Gratis online radio luisteren: Tunr brengt tienduizenden radiozenders uit meer dan 200 landen én de populairste podcasts naar je iPhone, iPad, Mac, Apple TV, auto, Android-toestel en tv. Lokaal, wereldwijd, op genre of gewoon ergens op de kaart.</p>
     <div class="cta">
-      <a class="btn" href="web/"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="hero.web">Luister nu in je browser</span></a>
-      <a class="btn ghost" href="web/#/map"><span data-i18n="map.cta">Open de kaart</span></a>
+      <a class="btn" href="#download"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="cta.app">Download de app</span></a>
+      <a class="btn ghost" href="#kaart"><span data-i18n="hero.map">Bekijk de wereldkaart</span></a>
     </div>
     <p class="counter" id="counter" aria-live="polite"><span data-i18n="count.fallback"><b>50.000+</b> zenders · <b>200+</b> landen</span></p>
     <ul class="plats" id="apparaten" aria-label="Apparaten" data-i18n-attr="aria-label:nav.devices">
@@ -392,7 +383,6 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5a7.5 7.5 0 0 1 15 0z"/><path d="M7 7.6 5.4 5M17 7.6 18.6 5"/><circle cx="9" cy="13" r=".7" fill="currentColor"/><circle cx="15" cy="13" r=".7" fill="currentColor"/></svg><span><b>Android</b><small data-i18n="chipos.android">Telefoon en tablet, 7+</small></span></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="m8 2.8 4 4.2 4-4.2"/></svg><span><b>Android TV</b><small data-i18n="chipos.androidtv">Google TV, Fire TV</small></span></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M5.5 17.5v2M18.5 17.5v2"/><circle cx="7.3" cy="14.5" r=".8" fill="currentColor"/><circle cx="16.7" cy="14.5" r=".8" fill="currentColor"/></svg><span><b>Android Auto</b><small data-i18n="chipos.auto">Android 7+</small></span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2M12 2.8C9.4 5.4 8.2 8.4 8.2 12s1.2 6.6 3.8 9.2"/></svg><span><b data-i18n="chip.web">Web</b><small data-i18n="chipos.web">Elke moderne browser</small></span></li>
     </ul>
     <div class="need">
       <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></svg></span>
@@ -465,9 +455,9 @@
     <div class="orgrid">
       <div class="orcopy">
         <h2 class="h2" id="or-h" data-i18n="or.title">Online radio luisteren, gratis en overal</h2>
-        <p class="txt" data-i18n="or.p1">Met Tunr luister je gratis online radio, zonder account. De app en de webspeler bundelen meer dan 50.000 radiozenders uit ruim 200 landen: van de grote Nederlandse radiozenders tot kleine lokale omroepen, en van jazz uit New Orleans tot het nieuws uit Tokio. Internetradio zoals het hoort: één tik en je luistert.</p>
+        <p class="txt" data-i18n="or.p1">Met Tunr luister je gratis online radio, zonder account. De app bundelt meer dan 50.000 radiozenders uit ruim 200 landen: van de grote Nederlandse radiozenders tot kleine lokale omroepen, en van jazz uit New Orleans tot het nieuws uit Tokio. Internetradio zoals het hoort: één tik en je luistert.</p>
         <p class="txt" data-i18n="or.p2">Zin in iets nieuws? Blader per land, genre of taal, of draai aan de wereldkaart en stem af op een willekeurige stip. Houd je van radio ontdekken op een wereldbol, zoals bij Radio Garden? Dan voelt de kaart van Tunr meteen vertrouwd. Je favoriete zenders bewaar je met het hartje.</p>
-        <p class="txt" data-i18n="or.p3">Tunr is ook een podcast-app: volg de populairste podcasts van je land en luister verder waar je was. Alles werkt op iPhone, iPad, Mac en Apple TV, in de auto met CarPlay en Android Auto, op Android en Android TV, en direct in je <a href="web/">browser</a>.</p>
+        <p class="txt" data-i18n="or.p3">Tunr is ook een podcast-app: volg de populairste podcasts van je land en luister verder waar je was. Alles werkt op iPhone, iPad, Mac en Apple TV, in de auto met CarPlay en Android Auto, op Android en Android TV.</p>
       </div>
       <ul class="orfacts">
         <li><b data-i18n="or.f1n">50.000+</b><span data-i18n="or.f1">radiozenders, van landelijke omroepen tot lokale radio</span></li>
@@ -521,7 +511,7 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l3"><b>Verder luisteren</b> waar je was, met een vinkje bij wat je al hebt gehoord.</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="pod.l4"><b>Snelheid</b> van 0,8× tot 2×, 15 seconden terug en 30 vooruit, en een slaaptimer tot het einde van de aflevering.</span></li>
       </ul>
-      <a class="btn ghost" href="web/#/podcasts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg><span data-i18n="pod.cta">Ontdek podcasts</span></a>
+      <a class="btn ghost" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="10" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg><span data-i18n="cta.app">Download de app</span></a>
     </div>
   </div>
 </section>
@@ -536,7 +526,7 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span data-i18n="map.l2"><b>Willekeurig</b>: de dobbelsteen vliegt naar een onverwachte plek en zet de zender meteen aan.</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i18n="map.l3"><b>Tik en luister</b>: een kaartje met logo, plaats en genres, en één knop om af te spelen.</span></li>
       </ul>
-      <a class="btn ghost" href="web/#/map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2M12 2.8C9.4 5.4 8.2 8.4 8.2 12s1.2 6.6 3.8 9.2"/></svg><span data-i18n="map.cta">Open de kaart</span></a>
+      <a class="btn ghost" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2M12 2.8C9.4 5.4 8.2 8.4 8.2 12s1.2 6.6 3.8 9.2"/></svg><span data-i18n="cta.app">Download de app</span></a>
     </div>
     <div class="worldmap" aria-hidden="true">
       <div class="stage">
@@ -573,7 +563,7 @@
     <ol class="steps">
       <li><h3 data-i18n="s1.t">Kies je land</h3><p data-i18n="s1.p">Tunr stelt het land van je toestel voor. Meteen zie je wat daar populair is: zenders, trending, lokaal en de podcast-toplijst.</p></li>
       <li><h3 data-i18n="s2.t">Ontdek, zoek of volg</h3><p data-i18n="s2.p">Blader door genres en regio's, draai aan de wereldkaart, zoek een zender of podcast, en volg de podcasts die je niet wilt missen.</p></li>
-      <li><h3 data-i18n="s3.t">Luister en bewaar</h3><p data-i18n="s3.p">Eén tik en je luistert. Bewaar zenders met het hartje en luister afleveringen verder waar je was. <a href="web/">Open de webspeler</a></p></li>
+      <li><h3 data-i18n="s3.t">Luister en bewaar</h3><p data-i18n="s3.p">Eén tik en je luistert. Bewaar zenders met het hartje en luister afleveringen verder waar je was.</p></li>
     </ol>
   </div>
 </section>
@@ -582,14 +572,8 @@
 <section class="block" id="download" aria-labelledby="dl-h">
   <div class="wrap">
     <h2 class="h2" id="dl-h"><span data-i18n="dl.title">Download Tunr</span><span class="soon-tag">Coming Soon</span></h2>
-    <p class="sub" data-i18n="dl.sub">De apps komen binnenkort in de App Store en op Google Play. Tot die tijd luister je meteen in je browser naar radio en podcasts. <a href="#faq">Veelgestelde vragen</a></p>
+    <p class="sub" data-i18n="dl.sub">De apps komen binnenkort gratis in de App Store en op Google Play, voor je telefoon, tablet, computer, tv en auto. <a href="#faq">Veelgestelde vragen</a></p>
     <div class="dls">
-      <div class="dl now">
-        <div class="devs" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="40" height="34" rx="3"/><path d="M4 16h40"/><path d="M21 23v10l8-5z"/></svg></div>
-        <h3 data-i18n="dl.web.t">In je browser, nu beschikbaar</h3>
-        <p class="os" data-i18n="dl.web.os">Radio en podcasts op je computer, tablet of telefoon, zonder iets te installeren</p>
-        <div class="acts"><a class="btn sm" href="web/" data-i18n="hero.web">Luister nu in je browser</a></div>
-      </div>
       <div class="dl soon">
         <div class="devs" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="20" height="40" rx="5"/><path d="M21 8h6"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="5" width="32" height="38" rx="4"/><circle cx="24" cy="37.5" r="1.2" fill="currentColor"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="9" width="32" height="22" rx="2.5"/><path d="M3 37h42l-3-6H6z"/></svg><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="26" rx="3"/><path d="M17 41h14"/><path d="M21 16v10l8-5z" fill="currentColor"/></svg></div>
         <h3 data-i18n="dl.apple.t">iPhone, iPad, Mac en Apple TV</h3>
@@ -618,15 +602,15 @@
   <div class="wrap faq">
     <h2 class="h2" id="faq-h" data-i18n="faq.title">Veelgestelde vragen</h2>
     <details><summary data-i18n="q1">Is Tunr gratis?</summary><div class="a" data-i18n="a1">Ja. Tunr is gratis, zonder account, zonder reclame van ons en zonder abonnement. Sommige zenders en podcasts laten zelf reclame horen; daar hebben wij geen invloed op.</div></details>
-    <details><summary data-i18n="q8">Hoe kan ik gratis online radio luisteren?</summary><div class="a" data-i18n="a8">Open de <a href="web/">webspeler</a> in je browser en kies een zender: je hoeft niets te installeren en hebt geen account nodig. Tunr stelt je land voor, zodat je meteen de populaire radiozenders ziet, en met de zoekfunctie vind je elke zender op naam. Liever een app? Tunr komt binnenkort gratis naar iPhone, iPad, Mac, Apple TV en Android.</div></details>
+    <details><summary data-i18n="q8">Hoe kan ik gratis online radio luisteren?</summary><div class="a" data-i18n="a8">Met de gratis Tunr-app, zonder account. Tunr stelt je land voor, zodat je meteen de populaire radiozenders ziet, en met de zoekfunctie vind je elke zender op naam. De app komt binnenkort gratis naar iPhone, iPad, Mac, Apple TV en Android.</div></details>
     <details><summary data-i18n="q9">Welke radiozenders kan ik luisteren?</summary><div class="a" data-i18n="a9">Meer dan 50.000 radiozenders uit ruim 200 landen, waaronder bekende Nederlandse zenders als Radio 538, Qmusic, NPO Radio 2, Sky Radio en Radio 10, Belgische zenders als Studio Brussel en MNM, en internationale omroepen als de BBC. Bekijk het overzicht van <a href="radio/">radiozenders per land</a>. Het aanbod komt uit de open zenderlijst van Radio Browser en groeit nog elke dag.</div></details>
-    <details><summary data-i18n="q10">Is Tunr een alternatief voor TuneIn of Radio Garden?</summary><div class="a" data-i18n="a10">Tunr is een eigen, onafhankelijke app met hetzelfde doel: radio van over de hele wereld luisteren. Zoals bij Radio Garden ontdek je zenders op een wereldkaart, en zoals bij TuneIn vind je zenders per land en genre, plus podcasts. Tunr is gratis, zonder account en zonder reclame van onszelf, en werkt op Apple-apparaten, Android en in de browser. Welke app het best bij je past, bepaal je zelf. Tunr is niet verbonden aan TuneIn of Radio Garden.</div></details>
-    <details><summary data-i18n="q7">Is er een podcast-app in Tunr?</summary><div class="a" data-i18n="a7">Ja, Tunr is radio-app en podcast-app in één. Je vindt er de populairste podcasts van je land, toplijsten per genre en een zoekfunctie. Volg een podcast en nieuwe afleveringen staan op Ontdek; je luistert verder waar je was, op de snelheid die je wilt (0,8× tot 2×). De podcastgegevens komen uit de openbare podcastgids van Apple; de afleveringen spelen rechtstreeks vanaf de server van de maker. Probeer het in de <a href="web/#/podcasts">webspeler</a>.</div></details>
-    <details><summary data-i18n="q11">Werkt Tunr met CarPlay en Android Auto?</summary><div class="a" data-i18n="a11">Ja. De iPhone-app werkt met CarPlay en de Android-app met Android Auto: je favorieten, recente zenders en podcasts staan dan op het scherm van je auto, en je bedient Tunr met het scherm of de knoppen van je auto. De apps verschijnen binnenkort in de App Store en op Google Play; tot die tijd luister je in de <a href="web/">webspeler</a>.</div></details>
+    <details><summary data-i18n="q10">Is Tunr een alternatief voor TuneIn of Radio Garden?</summary><div class="a" data-i18n="a10">Tunr is een eigen, onafhankelijke app met hetzelfde doel: radio van over de hele wereld luisteren. Zoals bij Radio Garden ontdek je zenders op een wereldkaart, en zoals bij TuneIn vind je zenders per land en genre, plus podcasts. Tunr is gratis, zonder account en zonder reclame van onszelf, en werkt op Apple-apparaten en Android. Welke app het best bij je past, bepaal je zelf. Tunr is niet verbonden aan TuneIn of Radio Garden.</div></details>
+    <details><summary data-i18n="q7">Is er een podcast-app in Tunr?</summary><div class="a" data-i18n="a7">Ja, Tunr is radio-app en podcast-app in één. Je vindt er de populairste podcasts van je land, toplijsten per genre en een zoekfunctie. Volg een podcast en nieuwe afleveringen staan op Ontdek; je luistert verder waar je was, op de snelheid die je wilt (0,8× tot 2×). De podcastgegevens komen uit de openbare podcastgids van Apple; de afleveringen spelen rechtstreeks vanaf de server van de maker.</div></details>
+    <details><summary data-i18n="q11">Werkt Tunr met CarPlay en Android Auto?</summary><div class="a" data-i18n="a11">Ja. De iPhone-app werkt met CarPlay en de Android-app met Android Auto: je favorieten, recente zenders en podcasts staan dan op het scherm van je auto, en je bedient Tunr met het scherm of de knoppen van je auto. De apps verschijnen binnenkort in de App Store en op Google Play.</div></details>
     <details><summary data-i18n="q2">Waar komen de zenders vandaan?</summary><div class="a" data-i18n="a2">Uit <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a>, een open community-database met tienduizenden radiozenders van over de hele wereld. Tunr host zelf geen streams: elke zender speelt rechtstreeks vanaf de server van de omroep.</div></details>
-    <details><summary data-i18n="q3">Mijn zender ontbreekt of werkt niet. Wat nu?</summary><div class="a" data-i18n="a3">Voeg hem toe of verbeter hem op <a href="https://www.radio-browser.info" rel="noopener">radio-browser.info</a>. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten. Werkt een zender alleen niet in de browser? Veel zenders gebruiken nog een onbeveiligde verbinding die browsers blokkeren; in de apps speelt hij wel.</div></details>
-    <details><summary data-i18n="q4">Op welke apparaten werkt Tunr?</summary><div class="a" data-i18n="a4">Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. En direct in je browser met de <a href="web/">webspeler</a>. De apps verschijnen binnenkort in de App Store en Google Play.</div></details>
-    <details><summary data-i18n="q5">Zie ik welk nummer er speelt?</summary><div class="a" data-i18n="a5">In de apps wel, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Browsers kunnen die gegevens van andere servers niet uitlezen, dus de webspeler toont de zender zelf.</div></details>
+    <details><summary data-i18n="q3">Mijn zender ontbreekt of werkt niet. Wat nu?</summary><div class="a" data-i18n="a3">Voeg hem toe of verbeter hem op <a href="https://www.radio-browser.info" rel="noopener">radio-browser.info</a>. Na controle verschijnt hij vanzelf in Tunr, op al je apparaten.</div></details>
+    <details><summary data-i18n="q4">Op welke apparaten werkt Tunr?</summary><div class="a" data-i18n="a4">Op iPhone en iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) en CarPlay, op Android-telefoons en -tablets (Android 7+), Android TV, Google TV en Fire TV en in Android Auto. De apps verschijnen binnenkort in de App Store en Google Play.</div></details>
+    <details><summary data-i18n="q5">Zie ik welk nummer er speelt?</summary><div class="a" data-i18n="a5">Ja, als de zender die informatie meestuurt: dan zie je artiest, titel en albumhoes. Stuurt de zender niets mee, dan zie je het logo van de zender.</div></details>
     <details><summary data-i18n="q6">Wat doet Tunr met mijn gegevens?</summary><div class="a" data-i18n="a6">Zo weinig mogelijk: geen account, geen tracking, alleen anonieme gebruiksstatistieken die je in Instellingen kunt uitzetten. Je favorieten, gevolgde podcasts, luisterposities en recente zenders staan alleen op je eigen apparaat. Lees meer in de <a href="privacy/">privacyverklaring</a>.</div></details>
   </div>
 </section>
@@ -634,8 +618,8 @@
 <section class="final" aria-labelledby="final-h">
   <div class="wrap">
     <h2 class="h2" id="final-h" data-i18n="final.title">Zet de radio aan. Waar ook ter wereld.</h2>
-    <p data-i18n="final.p">Geen download nodig: de webspeler werkt meteen, met radio en podcasts, op je computer, tablet of telefoon.</p>
-    <div class="cta"><a class="btn" href="web/"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="hero.web">Luister nu in je browser</span></a><a class="btn ghost" href="web/#/podcasts" data-i18n="pod.cta">Ontdek podcasts</a></div>
+    <p data-i18n="final.p">Binnenkort gratis in de App Store en op Google Play: radio en podcasts op je telefoon, tablet, computer, tv en in de auto.</p>
+    <div class="cta"><a class="btn" href="#download"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.3C8.9 4.3 8 4.8 8 5.6z"/></svg><span data-i18n="cta.app">Download de app</span></a></div>
   </div>
 </section>
 </main>
@@ -646,13 +630,13 @@
     <div class="top">
       <div><a href="./" class="logo" aria-label="Tunr"><b>TUNR</b><svg viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 1.5v4.5M15.5 3.5v2.5M27 1.5v4.5M38.5 3.5v2.5M50 1.5v4.5M61.5 3.5v2.5M73 1.5v4.5M84.5 3.5v2.5M96 1.5v4.5" stroke="#ffffff8c" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/><rect x="1" y="8.6" width="98" height="3.4" rx="1.7" fill="url(#tl-g)"/><path d="M58.5 0.5v13" stroke="#FFB020" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></a><p class="tag" data-i18n="foot.tag">Alle radio en podcasts van de wereld. Op elk scherm.</p></div>
       <div class="fcols">
-        <div class="fcol"><h3>Tunr</h3><a href="web/" data-i18n="foot.web">Webspeler</a><a href="radio/" data-i18n="foot.stations">Zenders per land</a><a href="changelog/" data-i18n="foot.changelog">Changelog</a></div>
+        <div class="fcol"><h3>Tunr</h3><a href="radio/" data-i18n="foot.stations">Zenders per land</a><a href="changelog/" data-i18n="foot.changelog">Changelog</a></div>
         <div class="fcol"><h3 data-i18n="foot.info">Info</h3><a href="privacy/" data-i18n="foot.privacy">Privacy</a><a href="voorwaarden/" data-i18n="foot.terms">Voorwaarden</a><a href="#" data-consent-link data-i18n="foot.cookies">Cookie-instellingen</a></div>
         <div class="fcol"><h3 data-i18n="foot.more">Meer</h3><a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a><!-- PressKit: Edge Function presskit (tunr-beheer) telt de download anoniem en stuurt door naar /presskit/Tunr-PressKit.zip; URL = window.TUNR.stats.url --><a href="https://vbhkewgyujzgbukkbtml.supabase.co/functions/v1/presskit" rel="nofollow" download="Tunr-PressKit.zip">PressKit</a></div>
       </div>
     </div>
     <p class="disc" data-i18n="foot.disc">Tunr host zelf geen radiostreams of podcasts: elke zender en aflevering speelt rechtstreeks vanaf de server van de omroep of de maker. Zendergegevens: <a href="https://www.radio-browser.info" rel="noopener">Radio Browser</a> (community-database); podcastgegevens: de openbare podcastgids van Apple. Apple, iPhone, iPad, Mac, Apple TV en CarPlay zijn handelsmerken van Apple Inc. Android, Android TV, Android Auto, Google TV en Google Play zijn handelsmerken van Google LLC, Fire TV van Amazon.com, Inc.</p>
-    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 43</span></p>
+    <p class="copy">© <span data-year>2026</span> Tunr, <span data-i18n="foot.version">versie</span> <span data-build>1.0.0 · build 44</span></p>
   </div>
 </footer>
 
@@ -660,13 +644,12 @@
 window.TUNR_I18N = { en: {
   "hero.badge": "Free · no account · no ads",
   "hero.title": "Every radio station in the world. <em>On every screen.</em>",
-  "hero.lead": "Listen to radio online for free: Tunr brings tens of thousands of radio stations from more than 200 countries and the most popular podcasts to your iPhone, iPad, Mac, Apple TV, car, Android device, TV and browser. Local, worldwide, by genre or simply somewhere on the map.",
-  "hero.web": "Listen now in your browser",
+  "hero.lead": "Listen to radio online for free: Tunr brings tens of thousands of radio stations from more than 200 countries and the most popular podcasts to your iPhone, iPad, Mac, Apple TV, car, Android device and TV. Local, worldwide, by genre or simply somewhere on the map.",
+  "cta.app": "Download the app", "hero.map": "Explore the world map",
   "count.fallback": "<b>50,000+</b> stations · <b>200+</b> countries",
-  "chip.web": "Web",
   "chipos.ios": "iOS 17+", "chipos.ipad": "iPadOS 17+", "chipos.mac": "macOS 14+", "chipos.tvos": "tvOS 17+",
   "chipos.carplay": "iPhone with iOS 17+", "chipos.android": "Phone and tablet, 7+", "chipos.androidtv": "Google TV, Fire TV",
-  "chipos.auto": "Android 7+", "chipos.web": "Any modern browser",
+  "chipos.auto": "Android 7+",
   "need.t": "Free, no account and no ads",
   "need.p": "Tunr plays the stations' own streams, from the open station list of <a href=\"https://www.radio-browser.info\" target=\"_blank\" rel=\"noopener\">Radio Browser</a>. Missing a station? Add it there.",
   "shots.title": "This is what Tunr looks like",
@@ -687,45 +670,43 @@ window.TUNR_I18N = { en: {
   "pod.l2": "<b>Follow</b>: new episodes of your podcasts show up on Discover right away.",
   "pod.l3": "<b>Continue listening</b> where you left off, with a checkmark on what you've already heard.",
   "pod.l4": "<b>Speed</b> from 0.8× to 2×, 15 seconds back and 30 forward, and a sleep timer until the end of the episode.",
-  "pod.cta": "Discover podcasts",
   "map.title": "Discover the world on the map",
   "map.lead": "Spin the globe and listen wherever you like: a jazz station in New Orleans, morning radio in Tokyo or the news from your home town. Every dot is a station.",
   "map.l1": "<b>Glowing dots</b> for thousands of stations, grouped when you zoom out.",
   "map.l2": "<b>Random</b>: the dice flies to an unexpected place and starts the station right away.",
   "map.l3": "<b>Tap and listen</b>: a card with logo, place and genres, and one button to play.",
-  "map.cta": "Open the map", "map.dice": "Random", "map.card": "Netherlands 🇳🇱 · pop, hits",
+  "map.dice": "Random", "map.card": "Netherlands 🇳🇱 · pop, hits",
   "how.title": "How it works", "how.sub": "No account, no subscription: three taps and you're listening to the radio or a podcast.",
   "s1.t": "Choose your country", "s1.p": "Tunr suggests your device's country. You immediately see what's popular there: stations, trending, local and the podcast chart.",
   "s2.t": "Discover, search or follow", "s2.p": "Browse genres and regions, spin the world map, search for a station or podcast, and follow the podcasts you don't want to miss.",
-  "s3.t": "Listen and save", "s3.p": "One tap and you're listening. Save stations with the heart and resume episodes where you left off. <a href=\"web/\">Open the web player</a>",
+  "s3.t": "Listen and save", "s3.p": "One tap and you're listening. Save stations with the heart and resume episodes where you left off.",
   "dl.title": "Download Tunr",
-  "dl.sub": "The apps are coming soon to the App Store and Google Play. Until then, listen to radio and podcasts right away in your browser. <a href=\"#faq\">Frequently asked questions</a>",
-  "dl.web.t": "In your browser, available now", "dl.web.os": "Radio and podcasts on your computer, tablet or phone, nothing to install",
+  "dl.sub": "The apps are coming soon, for free, to the App Store and Google Play, for your phone, tablet, computer, TV and car. <a href=\"#faq\">Frequently asked questions</a>",
   "dl.apple.t": "iPhone, iPad, Mac and Apple TV", "dl.soon.apple": "Coming soon to the App Store",
   "dl.android.t": "Android, Android TV, Google TV and Fire TV", "dl.android.os": "Phones, tablets and TVs with Android 7 or later", "dl.soon.android": "Coming soon on Google Play",
   "dl.car.t": "CarPlay and Android Auto", "dl.car.os": "Radio and your podcasts in the car, via your iPhone (iOS 17+) or Android phone (Android 7+)", "dl.soon.car": "Coming soon, together with the apps",
   "dl.more": "See what's new in every build in the <a href=\"changelog/\">changelog</a>.",
   "or.title": "Listen to radio online, free and everywhere",
-  "or.p1": "With Tunr you listen to radio online for free, without an account. The app and the web player bring together more than 50,000 radio stations from over 200 countries: from the big national broadcasters to small local stations, and from jazz in New Orleans to the news in Tokyo. Internet radio the way it should be: one tap and you're listening.",
+  "or.p1": "With Tunr you listen to radio online for free, without an account. The app brings together more than 50,000 radio stations from over 200 countries: from the big national broadcasters to small local stations, and from jazz in New Orleans to the news in Tokyo. Internet radio the way it should be: one tap and you're listening.",
   "or.p2": "In the mood for something new? Browse by country, genre or language, or spin the world map and tune in to a random dot. Love discovering radio on a globe, like on Radio Garden? Then Tunr's world radio map will feel familiar right away. Save your favourite stations with the heart.",
-  "or.p3": "Tunr is a podcast app too: follow the most popular podcasts in your country and pick up where you left off. Everything works on iPhone, iPad, Mac and Apple TV, in the car with CarPlay and Android Auto, on Android and Android TV, and right in your <a href=\"web/\">browser</a>.",
+  "or.p3": "Tunr is a podcast app too: follow the most popular podcasts in your country and pick up where you left off. Everything works on iPhone, iPad, Mac and Apple TV, in the car with CarPlay and Android Auto, on Android and Android TV.",
   "or.f1n": "50,000+", "or.f1": "radio stations, from national broadcasters to local radio", "or.f2": "countries: radio stations from around the world, in every language",
   "or.f3t": "Map", "or.f3": "discover internet radio by spinning the globe", "or.f4t": "Podcasts", "or.f4": "charts per country, follow and resume",
   "pop.title": "Popular stations", "pop.all": "All radio stations by country →", "pop.countries": "Radio by country",
   "pc.nl": "Netherlands", "pc.be": "Belgium", "pc.de": "Germany", "pc.gb": "United Kingdom", "pc.us": "United States", "pc.fr": "France", "pc.es": "Spain", "pc.sr": "Suriname",
-  "q8": "How can I listen to radio online for free?", "a8": "Open the <a href=\"web/\">web player</a> in your browser and pick a station: there's nothing to install and no account needed. Tunr suggests your country so you see the popular radio stations right away, and search finds any station by name. Prefer an app? Tunr is coming soon, for free, to iPhone, iPad, Mac, Apple TV and Android.",
+  "q8": "How can I listen to radio online for free?", "a8": "With the free Tunr app, no account needed. Tunr suggests your country so you see the popular radio stations right away, and search finds any station by name. The app is coming soon, for free, to iPhone, iPad, Mac, Apple TV and Android.",
   "q9": "Which radio stations can I listen to?", "a9": "More than 50,000 radio stations from over 200 countries, including well-known stations like BBC Radio 1, BBC Radio 2 and Capital in the UK, NPR stations in the US, and Dutch favourites such as Radio 538, Qmusic, NPO Radio 2 and Sky Radio. Browse the overview of <a href=\"radio/\">radio stations by country</a>. The list comes from the open Radio Browser station directory and keeps growing every day.",
-  "q10": "Is Tunr an alternative to TuneIn or Radio Garden?", "a10": "Tunr is its own independent app with the same goal: listening to radio from all over the world. Like Radio Garden, you can discover stations on a world map, and like TuneIn, you can find stations by country and genre, plus podcasts. Tunr is free, with no account and no ads from us, and works on Apple devices, Android and in the browser. Which app suits you best is up to you. Tunr is not affiliated with TuneIn or Radio Garden.",
-  "q11": "Does Tunr work with CarPlay and Android Auto?", "a11": "Yes. The iPhone app works with CarPlay and the Android app with Android Auto: your favourites, recent stations and podcasts appear on your car's screen, and you control Tunr with the screen or your car's buttons. The apps are coming soon to the App Store and Google Play; until then, listen in the <a href=\"web/\">web player</a>.",
+  "q10": "Is Tunr an alternative to TuneIn or Radio Garden?", "a10": "Tunr is its own independent app with the same goal: listening to radio from all over the world. Like Radio Garden, you can discover stations on a world map, and like TuneIn, you can find stations by country and genre, plus podcasts. Tunr is free, with no account and no ads from us, and works on Apple devices and Android. Which app suits you best is up to you. Tunr is not affiliated with TuneIn or Radio Garden.",
+  "q11": "Does Tunr work with CarPlay and Android Auto?", "a11": "Yes. The iPhone app works with CarPlay and the Android app with Android Auto: your favourites, recent stations and podcasts appear on your car's screen, and you control Tunr with the screen or your car's buttons. The apps are coming soon to the App Store and Google Play.",
   "faq.title": "Frequently asked questions",
   "q1": "Is Tunr free?", "a1": "Yes. Tunr is free, with no account, no ads from us and no subscription. Some stations and podcasts play their own ads; we have no control over that.",
-  "q7": "Is there a podcast app in Tunr?", "a7": "Yes, Tunr is a radio app and podcast app in one. It has the most popular podcasts in your country, charts per genre and search. Follow a podcast and new episodes appear on Discover; you resume where you left off, at the speed you like (0.8× to 2×). Podcast data comes from Apple's public podcast directory; episodes play directly from the creator's server. Try it in the <a href=\"web/#/podcasts\">web player</a>.",
+  "q7": "Is there a podcast app in Tunr?", "a7": "Yes, Tunr is a radio app and podcast app in one. It has the most popular podcasts in your country, charts per genre and search. Follow a podcast and new episodes appear on Discover; you resume where you left off, at the speed you like (0.8× to 2×). Podcast data comes from Apple's public podcast directory; episodes play directly from the creator's server.",
   "q2": "Where do the stations come from?", "a2": "From <a href=\"https://www.radio-browser.info\" rel=\"noopener\">Radio Browser</a>, an open community database with tens of thousands of radio stations from all over the world. Tunr doesn't host any streams: every station plays directly from the broadcaster's server.",
-  "q3": "My station is missing or doesn't work. What now?", "a3": "Add or fix it at <a href=\"https://www.radio-browser.info\" rel=\"noopener\">radio-browser.info</a>. Once checked, it appears in Tunr automatically, on all your devices. Does a station only fail in the browser? Many stations still use an unencrypted connection that browsers block; it will play in the apps.",
-  "q4": "Which devices does Tunr work on?", "a4": "iPhone and iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) and CarPlay, Android phones and tablets (Android 7+), Android TV, Google TV and Fire TV, and Android Auto. And right in your browser with the <a href=\"web/\">web player</a>. The apps are coming soon to the App Store and Google Play.",
-  "q5": "Can I see which song is playing?", "a5": "In the apps, yes, when the station sends that information: you'll see artist, title and album art. Browsers can't read that data from other servers, so the web player shows the station itself.",
+  "q3": "My station is missing or doesn't work. What now?", "a3": "Add or fix it at <a href=\"https://www.radio-browser.info\" rel=\"noopener\">radio-browser.info</a>. Once checked, it appears in Tunr automatically, on all your devices.",
+  "q4": "Which devices does Tunr work on?", "a4": "iPhone and iPad (iOS 17+), Mac (macOS 14+), Apple TV (tvOS 17+) and CarPlay, Android phones and tablets (Android 7+), Android TV, Google TV and Fire TV, and Android Auto. The apps are coming soon to the App Store and Google Play.",
+  "q5": "Can I see which song is playing?", "a5": "Yes, when the station sends that information: you'll see artist, title and album art. If the station sends nothing, you'll see the station's logo.",
   "q6": "What does Tunr do with my data?", "a6": "As little as possible: no account, no tracking, only anonymous usage statistics that you can turn off in Settings. Your favourites, followed podcasts, listening positions and recent stations only live on your own device. Read more in the <a href=\"privacy/\">privacy statement</a>.",
-  "final.title": "Turn on the radio. Anywhere in the world.", "final.p": "No download needed: the web player works right away, with radio and podcasts, on your computer, tablet or phone."
+  "final.title": "Turn on the radio. Anywhere in the world.", "final.p": "Coming soon, for free, to the App Store and Google Play: radio and podcasts on your phone, tablet, computer, TV and in the car."
 }};
 </script>
 <script defer src="assets/js/brand.js?v=3"></script>

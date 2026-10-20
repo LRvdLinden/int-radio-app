@@ -1,6 +1,6 @@
 # Tunr — functionele spec en huisstijl
 
-Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (telefoon/tablet), Android TV, Android Auto** en de **webspeler**. Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
+Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (telefoon/tablet), Android TV, Android Auto**. (De webspeler is om rechtenredenen offline; de website speelt niets af.) Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
 
 ---
 
@@ -125,7 +125,7 @@ Open community-database, geen sleutel nodig.
 - **Slaaptimer standaard** (uit/15/30/60)
 - **Automatisch verder spelen bij opstarten** (laatste zender, standaard uit)
 - **Recent wissen**, **Favorieten wissen** (met bevestiging)
-- **Privacy → Anonieme gebruiksstatistieken** (standaard aan, per apparaat, niet via iCloud), met uitleg eronder: geen persoonsgegevens, alleen type apparaat, app-versie, gekozen land/taal en een willekeurig installatienummer. Aan = max. 1× per 12 uur een ping bij starten/terugkomen (contract: `tunr-beheer/docs/CONTRACT.md`); uit = niets. Webspeler idem; de homepage pingt niet.
+- **Privacy → Anonieme gebruiksstatistieken** (standaard aan, per apparaat, niet via iCloud), met uitleg eronder: geen persoonsgegevens, alleen type apparaat, app-versie, gekozen land/taal en een willekeurig installatienummer. Aan = max. 1× per 12 uur een ping bij starten/terugkomen (contract: `tunr-beheer/docs/CONTRACT.md`); uit = niets. De website pingt niet.
 - **Over**: versie + build, link naar de website, privacy, voorwaarden, "Zendergegevens: Radio Browser (community)" met link `https://www.radio-browser.info`.
 
 ## 5. Platform-details
@@ -134,7 +134,7 @@ Open community-database, geen sleutel nodig.
 
 **Android** (`android/`): Kotlin, Compose (Material 3, eigen donker thema met bovenstaande tokens), Media3 ExoPlayer + `MediaSessionService` (melding + vergrendelscherm), HLS-module, OkHttp-datasource, Coil voor afbeeldingen, kotlinx-serialization. minSdk 24, target/compile 35. Eén APK; Android TV via `LEANBACK_LAUNCHER`, `android:banner`, `touchscreen required=false`; als het toestel een tv is (UiModeManager) de tv-indeling met D-pad-focus. `usesCleartextTraffic=true`. ICY-titel via `Player.Listener.onMediaMetadataChanged` (`title`/`station`). Strings in `values/` (en) en `values-nl/`.
 
-**Web** (`website/web/`): zelfde flow (splash licht, met tune als de bezoeker op "Start" tikt — browsers blokkeren autoplay), `<audio>` + hls.js (cdnjs) voor HLS, Media Session API, favorieten in localStorage.
+**Web**: geen webspeler (offline om rechtenredenen). `website/web/` toont alleen gedeelde links uit de apps (zender/podcast/aflevering) met een knop naar de apps en speelt niets af.
 
 ---
 
@@ -185,7 +185,7 @@ Tegels (verloop uit het StationArt-palet, groot icoon, titel):
 
 ---
 
-## 8. Podcasts (alle apps en de webspeler) — nieuw
+## 8. Podcasts (alle apps) — nieuw
 
 Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account, geen sleutels.
 
@@ -221,7 +221,7 @@ Naast radio kun je in Tunr podcasts zoeken, volgen en afluisteren. Geen account,
 
 ---
 
-## 9. Zoeken op de kaart (alle apps en de webspeler) — nieuw
+## 9. Zoeken op de kaart (alle apps) — nieuw
 
 Bovenaan de Kaart een **zoekveld** "Zoek een land of plaats" (EN "Search a country or place"), naast de knoppen {land} · Wereld · Willekeurig (telefoon: zoekveld op een eigen regel erboven).
 

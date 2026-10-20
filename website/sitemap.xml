@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Alleen publieke, indexeerbare pagina's. Per pagina drie URL's: x-default (volgt de browsertaal), ?lang=nl en ?lang=en,
-     met dezelfde hreflang-set als in de <head>. Niet: web/ (de webspeler, een app; noindex) en 404.html.
+     met dezelfde hreflang-set als in de <head>. Niet: web/ (pagina voor gedeelde links; noindex) en 404.html.
      Domein: ook in assets/js/brand.js (window.TUNR.domain), robots.txt en de hreflang-links. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>

@@ -1,6 +1,6 @@
 # tunr.online
-# De webspeler (web/) is een app en heeft zelf <meta name="robots" content="noindex">; hij blijft hier crawlbaar,
-# anders ziet een zoekmachine die noindex niet. De 404-pagina heeft ook noindex.
+# web/ (pagina voor gedeelde links uit de apps, geen webspeler meer) heeft zelf <meta name="robots" content="noindex">;
+# hij blijft hier crawlbaar, anders ziet een zoekmachine die noindex niet. De 404-pagina heeft ook noindex.
 User-agent: *
 Disallow: /404.html
 

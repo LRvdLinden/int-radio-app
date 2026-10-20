@@ -11,7 +11,7 @@ window.TUNR = {
   googlePlay: '',
   // Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
   // ('https://<project-ref>.supabase.co') en publishable key ('sb_publishable_…'). Openbaar, mag in de repo.
-  // Zolang de URL leeg is, stuurt de webspeler geen ping.
+  // Alleen nog voor de PressKit-link in de footer (de website pingt niet).
   stats: { url: 'https://vbhkewgyujzgbukkbtml.supabase.co', key: 'sb_publishable_0Fp86h5uCovv00KReb3Pvg_lTH7TwU6' }
 };
 

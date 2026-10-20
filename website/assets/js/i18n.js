@@ -6,7 +6,7 @@
 // - data-en="…" / data-nl="…" (niet-meta) → innerHTML in die taal; de tekst in de HTML is de standaardtaal van de
 //   pagina (gegenereerde zenderpagina's: NL of EN). Idem data-en-alt / data-nl-alt (ook -title, -aria-label).
 // - <meta name="tunr-title-en|tunr-title-nl"> → paginatitel in die taal; meta's met data-en / data-nl idem.
-// Keuze: ?lang=en|nl > localStorage 'tunr.lang' (ook gebruikt door de webspeler) > navigator.language.
+// Keuze: ?lang=en|nl > localStorage 'tunr.lang'  > navigator.language.
 // Ook: het menu voor smalle schermen, de nav die donker wordt bij scrollen en het jaartal.
 (function () {
   var KEY = 'tunr.lang';
@@ -18,7 +18,7 @@
 
   var EN = {
     'skip': 'Skip to content',
-    'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Listen now', 'nav.stations': 'Stations',
+    'nav.label': 'Main menu', 'nav.features': 'Features', 'nav.podcasts': 'Podcasts', 'nav.map': 'World map', 'nav.devices': 'Devices', 'nav.download': 'Download', 'nav.faq': 'FAQ', 'nav.web': 'Download the app', 'nav.stations': 'Stations',
     'nav.menu': 'Menu',
     'foot.tag': 'All the world\'s radio and podcasts. On every screen.',
     'foot.web': 'Web player', 'foot.stations': 'Radio stations by country', 'foot.changelog': 'Changelog', 'foot.privacy': 'Privacy', 'foot.terms': 'Terms', 'foot.cookies': 'Cookie settings', 'foot.info': 'Info', 'foot.more': 'More',

@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 44 · versie 1.0.0
+_2026-10-20_
+
+**Verbeterd**
+
+- tunr.online: luisteren kan alleen nog in de apps. Gedeelde links tonen de zender of podcast met de weg naar de app. _(Website)_  
+  <sub>tunr.online: listening is now only possible in the apps. Shared links show the station or podcast with the way to the app.</sub>
+
 ## Build 43 · versie 1.0.0
 _2026-10-19_
 
@@ -29,5 +37,3 @@ _2026-10-19_
   <sub>Widgets, a Live Activity and a Control Center button.</sub>
 - Echte tv-apps voor Apple TV en Android TV / Google TV, volledig te bedienen met de afstandsbediening. _(Apple TV, Android TV)_  
   <sub>Real TV apps for Apple TV and Android TV / Google TV, fully usable with the remote.</sub>
-- Webspeler op tunr.online/web: luister direct in je browser. _(Website)_  
-  <sub>Web player at tunr.online/web: listen straight in your browser.</sub>

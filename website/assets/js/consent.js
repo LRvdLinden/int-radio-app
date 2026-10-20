@@ -1,7 +1,6 @@
 // Cookiemelding (AVG/ePrivacy), zoals op bingr.online maar in de Tunr-stijl.
-// Noodzakelijke opslag (taal, land, favorieten en instellingen van de webspeler, deze keuze) staat altijd aan.
-// Met "Accepteren" mag de webspeler anonieme gebruiksstatistieken sturen (zie privacy/#cookies); met "Alleen noodzakelijk"
-// niet. De keuze wordt 12 maanden onthouden (localStorage + cookie). Na een keuze staat er een cookieknop linksonder.
+// De website gebruikt alleen noodzakelijke opslag (je taal en deze keuze) en verstuurt geen statistieken (zie privacy/#cookies);
+// beide knoppen hebben dus hetzelfde effect. De keuze wordt 12 maanden onthouden (localStorage + cookie). Na een keuze staat er een cookieknop linksonder.
 // <script src="…/consent.js" data-base="../" data-bottom="96"> : data-base = pad naar de root, data-bottom = afstand onderaan.
 (function () {
   var KEY = 'tunr.consent', MAX = 365 * 24 * 3600;
@@ -17,8 +16,6 @@
   function save(choice) {
     var v = { choice: choice, at: new Date().toISOString(), v: 1 };
     try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {}
-    // de instelling van de webspeler volgt de keuze (daar later ook los aan/uit te zetten)
-    try { localStorage.setItem('tunr.shareStats', JSON.stringify(choice === 'all')); } catch (e) {}
     document.cookie = 'tunr_consent=' + encodeURIComponent(JSON.stringify(v)) + '; Max-Age=' + MAX + '; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
     try { document.dispatchEvent(new CustomEvent('tunr:consent', { detail: v })); } catch (e) {}
     return v;
@@ -29,8 +26,8 @@
     return (l || navigator.language || 'nl').toLowerCase().indexOf('nl') === 0 ? 'nl' : 'en';
   }
   var TX = {
-    nl: { t: 'Cookies en privacy', p: 'Tunr gebruikt alleen opslag die nodig is: om je taal, land, favorieten en deze keuze te onthouden. Met je toestemming stuurt de webspeler ook anonieme gebruiksstatistieken (geen naam, e-mail of IP-adres). Geen advertenties, geen tracking.', a: 'Accepteren', r: 'Alleen noodzakelijk', m: 'Meer in de privacyverklaring', b: 'Cookie-instellingen' },
-    en: { t: 'Cookies and privacy', p: 'Tunr only uses storage that’s needed: to remember your language, country, favourites and this choice. With your consent the web player also sends anonymous usage statistics (no name, e-mail or IP address). No ads, no tracking.', a: 'Accept', r: 'Necessary only', m: 'More in the privacy policy', b: 'Cookie settings' }
+    nl: { t: 'Cookies en privacy', p: 'Tunr gebruikt op deze website alleen opslag die nodig is: om je taal en deze keuze te onthouden. Geen statistieken, geen advertenties, geen tracking.', a: 'Accepteren', r: 'Alleen noodzakelijk', m: 'Meer in de privacyverklaring', b: 'Cookie-instellingen' },
+    en: { t: 'Cookies and privacy', p: 'On this website Tunr only uses storage that’s needed: to remember your language and this choice. No statistics, no ads, no tracking.', a: 'Accept', r: 'Necessary only', m: 'More in the privacy policy', b: 'Cookie settings' }
   };
   function css() {
     if (document.getElementById('tunr-consent-css')) return;

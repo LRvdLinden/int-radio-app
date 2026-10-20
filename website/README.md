@@ -17,11 +17,11 @@ Op [tunr.online/web](https://tunr.online/web/) luister je zonder iets te install
 - **Media Session**: bediening op het vergrendelscherm en met mediatoetsen; bij afleveringen ook spoelen.
 - **Sneltoetsen**: spatie (afspelen/pauze), ← → (15 s terug / 30 s vooruit bij een aflevering), Esc (speler of venster sluiten).
 - Zenders en afleveringen die alleen via http streamen, blokkeert de browser op een https-pagina; de speler zegt dan dat ze alleen in de app werken.
-- De webspeler is een app: `noindex` en niet in de sitemap.
+- `web/` is geen webspeler meer (offline om rechtenredenen) maar de pagina voor gedeelde links uit de apps: `noindex`, niet in de sitemap.
 
 ## Functies van de site
 
-- **Home** ([tunr.online](https://tunr.online)): uitleg over Tunr, screenshots per apparaat (WebP met JPG als terugval, per taal in `assets/img/nl` en `assets/img/en`), podcasts, de wereldkaart, downloads (nog *Coming Soon*: alleen de webspeler is live) en veelgestelde vragen.
+- **Home** ([tunr.online](https://tunr.online)): uitleg over Tunr, screenshots per apparaat (WebP met JPG als terugval, per taal in `assets/img/nl` en `assets/img/en`), podcasts, de wereldkaart, downloads (nog *Coming Soon*) en veelgestelde vragen.
 - **Changelog** ([/changelog](https://tunr.online/changelog/)): wat er nieuw is per build, uitklapbaar en te filteren per platform. Leest `assets/changelog.json`, gemaakt door `python3 tools/make_changelog.py` uit `docs/changelog.json`.
 - **Privacy** ([/privacy](https://tunr.online/privacy/)) en **Voorwaarden** ([/voorwaarden](https://tunr.online/voorwaarden/)).
 - **404** (`404.html`, alle paden absoluut) voor onbekende adressen.

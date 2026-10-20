@@ -28,13 +28,13 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 |---|---|
 | **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | Alleen via het beheerdashboard **BeheerTunr** ([beheer.tunr.online](https://beheer.tunr.online) of de BeheerTunr-app) → tab **Downloads** (inloggen vereist) → zip uitpakken → `Tunr/Tunr.xcodeproj` openen |
 | **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>.apk` |
-| **Website en webspeler** | [tunr.online](https://tunr.online) · [tunr.online/web](https://tunr.online/web/) |
+| **Website** | [tunr.online](https://tunr.online) (geen webspeler: luisteren kan alleen in de apps) |
 
 Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): de workflows *Apple* en *Android* zetten ze na een geslaagde build via FTPS op beheer.tunr.online.
 
 ## Screenshots
 
-> Previews uit de webspeler (zelfde schermen en indeling als de apps).
+> Previews van de schermen (zelfde indeling als de apps).
 
 | Kies je land | Ontdek | Bladeren | Kaart |
 |:---:|:---:|:---:|:---:|
@@ -70,7 +70,7 @@ Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): 
 - **iPhone/iPad/Mac/Apple TV**: één Xcode-project met één multiplatform-target; favorieten via iCloud gedeeld; Mac met zijbalk en menu *Afspelen* (Spatie, ⌘←/⌘→, ⌘L)
 - **CarPlay**: tabs Favorieten, Recent, Populair en Genres met Nu speelt (zodra Apple de CarPlay-entitlement toekent)
 - **Android/Android TV/Android Auto**: één APK; tv-indeling met D-pad-focus; bladerboom voor Android Auto
-- **Web**: volledige webspeler (zonder track-titels; browsers kunnen die niet uit streams lezen)
+- **Web**: website met uitleg, zenderpagina's per land en downloads; geen webspeler (offline om rechtenredenen)
 
 ## Repo
 
@@ -78,7 +78,7 @@ Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): 
 |---|---|
 | [`apple/`](apple) | SwiftUI-app, `Tunr.xcodeproj` (gemaakt uit `project.yml` met XcodeGen) — zie [`apple/README-dev.md`](apple/README-dev.md) |
 | [`android/`](android) | Kotlin + Jetpack Compose + Media3 — zie [`android/README-dev.md`](android/README-dev.md) |
-| [`website/`](website) | Website (NL/EN) en webspeler |
+| [`website/`](website) | Website (NL/EN) |
 | [`docs/`](docs) | [`SPEC.md`](docs/SPEC.md) (functionele spec en huisstijl), changelog, screenshots |
 | [`tools/`](tools) | Tune, iconen en changelog |
 

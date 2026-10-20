@@ -303,7 +303,7 @@ def page(path, dl, title, desc, body, ld, og_image=''):
            + T('Wereldkaart', 'World map', ' href="/#kaart"') + T('Zenders', 'Stations', ' href="/radio/" aria-current="page"')
            + T('Download', 'Download', ' href="/#download"') + T('FAQ', 'FAQ', ' href="/#faq"') +
            '</div><div class="right">'
-           + tx('a', 'Luister nu', 'Listen now', dl, ' class="btn sm navweb" href="/web/"') +
+           + tx('a', 'Download de app', 'Download the app', dl, ' class="btn sm navweb" href="/#download"') +
            '<div class="lang" role="group" aria-label="Taal / Language"><button type="button" data-lang="nl">NL</button><button type="button" data-lang="en">EN</button></div>'
            '<button class="navtoggle" type="button" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">'
            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>'
@@ -312,7 +312,7 @@ def page(path, dl, title, desc, body, ld, og_image=''):
             f'<div><a href="/" class="logo" aria-label="Tunr"><b>TUNR</b>{NAV_LOGO}</a>'
             + tx('p', 'Alle radio en podcasts van de wereld. Op elk scherm.', 'All the world\'s radio and podcasts. On every screen.', dl, ' class="tag"') +
             '</div><div class="fcols">'
-            '<div class="fcol"><h3>Tunr</h3>' + T('Webspeler', 'Web player', ' href="/web/"') + T('Zenders per land', 'Radio stations by country', ' href="/radio/" aria-current="page"')
+            '<div class="fcol"><h3>Tunr</h3>' + T('Zenders per land', 'Radio stations by country', ' href="/radio/" aria-current="page"')
             + T('Changelog', 'Changelog', ' href="/changelog/"') + '</div>'
             '<div class="fcol">' + tx('h3', 'Info', 'Info', dl) + T('Privacy', 'Privacy', ' href="/privacy/"') + T('Voorwaarden', 'Terms', ' href="/voorwaarden/"')
             + T('Cookie-instellingen', 'Cookie settings', ' href="#" data-consent-link') + '</div>'
@@ -358,8 +358,8 @@ def art(s, cls, size, dl, eager=False):
     return f'<span class="art {cls}" style="background:linear-gradient(135deg,{a},{b})"><b aria-hidden="true">{esc(mono(s["name"]))}</b>{img}</span>'
 
 
-def web_url(s):
-    return '/web/#/station/' + urllib.parse.quote(s['id'])
+# Geen webspeler meer (rechten): luisteren alleen in de apps → knoppen naar de downloadsectie van de homepage
+APP_URL = '/#download'
 
 
 def st_url(s):
@@ -405,8 +405,7 @@ def station_row(s, dl, rank=True):
             + (f'<span class="rk">{s["rank"]}</span>' if rank else '')
             + art(s, 'sm', 56, dl) +
             f'<a class="nm" href="{st_url(s)}"><b>{nm}</b>' + tx('small', esc(sub_line(s, 'nl')), esc(sub_line(s, 'en')), dl) + '</a>'
-            f'<a class="play" href="{web_url(s)}"{ta("aria-label", "Luister naar " + s["name"] + " in de webspeler", "Listen to " + s["name"] + " in the web player", dl)}>'
-            + PLAY + tx('span', 'Luister', 'Listen', dl) + '</a></li>')
+            '</li>')
 
 
 def country_chips(countries, cur, dl):
@@ -444,30 +443,30 @@ def country_page(c, countries):
     top3 = [s['name'] for s in sts[:3]]
     d_nl = fit([(f'Online radio luisteren in {in_nl}: ', False), (f'de {n} populairste radiozenders', False),
                 (f', zoals {join_words(top3, "nl")}', True), ('. Gratis en live, zonder account', False),
-                (', in je browser of de Tunr-app', True), ('.', False)], 140, 158)
+                (', in de gratis Tunr-app', True), ('.', False)], 140, 158)
     d_en = fit([(f'Listen to radio online in {in_en}: ', False), (f'the {n} most popular radio stations', False),
                 (f', including {join_words(top3, "en")}', True), ('. Free and live, no account', False),
-                (', in your browser or the Tunr app', True), ('.', False)], 140, 158)
+                (', in the free Tunr app', True), ('.', False)], 140, 158)
     cr = [('Tunr', 'Tunr', '/'), ('Zenders', 'Stations', '/radio/'), (cn_nl, cn_en, None)]
     rows = ''.join(station_row(s, dl) for s in sts)
-    intro_nl = (f'Luister gratis en live naar radiozenders uit {in_nl}, zonder account en zonder iets te installeren. Hieronder staan de {n} '
+    intro_nl = (f'Luister gratis en live naar radiozenders uit {in_nl}, zonder account, met de app van Tunr. Hieronder staan de {n} '
                 f'populairste zenders, gerangschikt op wat luisteraars in de open zenderlijst van Radio Browser het meest kiezen. Tik op een zender '
-                'voor meer informatie, of luister meteen in de webspeler van Tunr.')
-    intro_en = (f'Listen to radio stations from {in_en} for free and live, with no account and nothing to install. Below are the {n} '
+                'voor meer informatie, en luister in de gratis app van Tunr.')
+    intro_en = (f'Listen to radio stations from {in_en} for free and live, with no account, in the Tunr app. Below are the {n} '
                 'most popular stations, ranked by what listeners choose most in the open Radio Browser station directory. Tap a station '
-                'for more details, or start listening right away in the Tunr web player.')
+                'for more details, and listen in the free Tunr app.')
     more_nl = (f'In totaal vind je in Tunr zo\'n {fmt_n(c["count"], "nl")} zenders uit {in_nl}: landelijke en regionale omroepen, lokale radio, '
-               'nieuws, muziek en sport. Op de <a href="/web/#/map">wereldkaart</a> ontdek je ze per plaats.')
+               'nieuws, muziek en sport. Op de <a href="/#kaart">wereldkaart</a> in de app ontdek je ze per plaats.')
     more_en = (f'Tunr has around {fmt_n(c["count"], "en")} stations from {in_en} in total: national and regional broadcasters, local radio, '
-               'news, music and sports. Discover them by location on the <a href="/web/#/map">world radio map</a>.')
+               'news, music and sports. Discover them by location on the <a href="/#kaart">world radio map</a> in the app.')
     body = (f'<div class="wrap">{crumbs(cr, dl)}'
             '<header class="phead rhead">'
             f'<p class="kicker"><span aria-hidden="true">{flag(cc)}</span> ' + tx('span', 'Radio per land', 'Radio by country', dl) + '</p>'
             + tx('h1', esc(f'Online radio luisteren in {in_nl}'), esc(f'Listen to radio online in {in_en}'), dl, ' class="ttl"')
             + tx('p', esc(intro_nl), esc(intro_en), dl, ' class="sub"') +
             '<div class="acts">'
-            f'<a class="btn" href="{web_url(sts[0])}">{PLAY}' + tx('span', esc(f'Luister {sts[0]["name"]}'), esc(f'Listen to {sts[0]["name"]}'), dl) + '</a>'
-            f'<a class="btn ghost" href="/web/#/map">{GLOBE}' + tx('span', 'Open de wereldkaart', 'Open the world map', dl) + '</a>'
+            f'<a class="btn" href="{APP_URL}">{PLAY}' + tx('span', 'Luister in de app', 'Listen in the app', dl) + '</a>'
+            f'<a class="btn ghost" href="/#kaart">{GLOBE}' + tx('span', 'Bekijk de wereldkaart', 'See the world map', dl) + '</a>'
             '</div></header>'
             '<section aria-labelledby="top-h">'
             + tx('h2', esc(f'Populaire radiozenders in {in_nl}'), esc(f'Popular radio stations in {in_en}'), dl, ' class="h3" id="top-h"')
@@ -506,12 +505,12 @@ def station_page(s, c, countries):
         return name[:52].rstrip() + '… | Tunr'
     g = s['tags'][:3]
     d_nl = fit([(f'Luister {name} gratis online', False), (f': live radio uit {pl_nl}', False),
-                (f' met {join_words(g, "nl")}', True), ('. Zonder account, in de webspeler', False),
-                (' en de Tunr-app voor iPhone, Android en Apple TV', True), (' of de Tunr-app', True), ('.', False),
+                (f' met {join_words(g, "nl")}', True), ('. Zonder account', False),
+                (', in de Tunr-app voor iPhone, Android en Apple TV', True), (', in de Tunr-app', True), ('.', False),
                 (' Ook in de auto.', True)], 140, 158)
     d_en = fit([(f'Listen to {name} online for free', False), (f': live radio from {pl_en}', False),
-                (f' with {join_words(g, "en")}', True), ('. No account needed, in the web player', False),
-                (' and the Tunr app for iPhone, Android and Apple TV', True), (' or the Tunr app', True), ('.', False),
+                (f' with {join_words(g, "en")}', True), ('. No account needed', False),
+                (', in the Tunr app for iPhone, Android and Apple TV', True), (', in the Tunr app', True), ('.', False),
                 (' In the car too.', True)], 140, 158)
     cr = [('Tunr', 'Tunr', '/'), ('Zenders', 'Stations', '/radio/'), (cn_nl, cn_en, f'/radio/{cc.lower()}/'), (name, name, None)]
     nm = esc(name)
@@ -526,9 +525,9 @@ def station_page(s, c, countries):
         about_nl += f' De uitzendingen zijn in het {esc(join_words(s["langs_nl"], "nl"))}.'
         about_en += f' It broadcasts in {esc(join_words(s["langs_en"], "en"))}.'
     about_nl += (' In Tunr luister je gratis en zonder account naar de livestream' + (f' ({esc(stream)})' if stream else '') +
-                 ': in de webspeler, en binnenkort in de apps voor iPhone, iPad, Mac, Apple TV, CarPlay, Android en Android TV.')
+                 ' in de apps voor iPhone, iPad, Mac, Apple TV, CarPlay, Android en Android TV (binnenkort in de App Store en op Google Play).')
     about_en += (' With Tunr you can listen to the live stream' + (f' ({esc(stream)})' if stream else '') +
-                 ' for free and without an account: in the web player, and soon in the apps for iPhone, iPad, Mac, Apple TV, CarPlay, Android and Android TV.')
+                 ' for free and without an account in the apps for iPhone, iPad, Mac, Apple TV, CarPlay, Android and Android TV (coming soon to the App Store and Google Play).')
     facts = [(('Land', 'Country'), (f'{flag(cc)} {esc(cn_nl)}', f'{flag(cc)} {esc(cn_en)}'))]
     if s['state']:
         facts.append((('Plaats of regio', 'City or region'), (esc(s['state']), esc(s['state']))))
@@ -555,14 +554,14 @@ def station_page(s, c, countries):
             + tx('h1', f'{nm} online luisteren', f'Listen to {nm} online', dl, ' class="ttl"')
             + (f'<div class="tags">{chips}</div>' if chips else '') +
             '<div class="acts">'
-            f'<a class="btn big" href="{web_url(s)}">{PLAY}' + tx('span', 'Luister live in de webspeler', 'Listen live in the web player', dl) + '</a>'
+            f'<a class="btn big" href="{APP_URL}">{PLAY}' + tx('span', 'Luister live in de app', 'Listen live in the app', dl) + '</a>'
             + (tx('a', 'Website van de zender', 'Station website', dl, f' class="btn ghost" href="{esc(s["home"])}" rel="nofollow noopener" target="_blank"') if s['home'] else '') +
             '</div></div></header>'
             '<div class="sgrid"><section class="about" aria-labelledby="ab-h">'
             + tx('h2', f'Over {nm}', f'About {nm}', dl, ' class="h3" id="ab-h"')
             + tx('p', about_nl, about_en, dl, ' class="txt"')
-            + tx('p', f'Meer radio uit {esc(c_in(cc, "nl"))}? Bekijk de <a href="/radio/{cc.lower()}/">populairste zenders uit {esc(c_in(cc, "nl"))}</a> of ontdek zenders uit de hele wereld op de <a href="/web/#/map">kaart</a>.',
-                 f'Want more radio from {esc(c_in(cc, "en"))}? See the <a href="/radio/{cc.lower()}/">most popular stations in {esc(c_in(cc, "en"))}</a> or discover stations from around the world on the <a href="/web/#/map">map</a>.',
+            + tx('p', f'Meer radio uit {esc(c_in(cc, "nl"))}? Bekijk de <a href="/radio/{cc.lower()}/">populairste zenders uit {esc(c_in(cc, "nl"))}</a> of ontdek zenders uit de hele wereld op de <a href="/#kaart">kaart</a>.',
+                 f'Want more radio from {esc(c_in(cc, "en"))}? See the <a href="/radio/{cc.lower()}/">most popular stations in {esc(c_in(cc, "en"))}</a> or discover stations from around the world on the <a href="/#kaart">map</a>.',
                  dl, ' class="txt"') +
             '</section><aside class="facts" aria-labelledby="fa-h">'
             + tx('h2', 'Gegevens', 'Details', dl, ' class="h3" id="fa-h"') + f'<dl>{dlh}</dl>'
@@ -600,15 +599,15 @@ def index_page(countries):
                      + tx('small', f'{fmt_n(c["count"], "nl")} zenders', f'{fmt_n(c["count"], "en")} stations', dl) + '</span></a></li>')
     cr = [('Tunr', 'Tunr', '/'), ('Zenders', 'Stations', None)]
     intro_nl = (f'Online radio luisteren uit de hele wereld: kies een land en ontdek de populairste radiozenders, van landelijke omroepen tot lokale '
-                f'radio. Samen goed voor ruim {fmt_n(total, "nl")} zenders uit {len(countries)} landen; in de webspeler en de apps vind je er nog veel meer, uit meer dan 200 landen.')
+                f'radio. Samen goed voor ruim {fmt_n(total, "nl")} zenders uit {len(countries)} landen; in de apps vind je er nog veel meer, uit meer dan 200 landen.')
     intro_en = (f'Listen to radio online from around the world: pick a country and discover its most popular radio stations, from national broadcasters to local '
-                f'radio. Together that\'s over {fmt_n(total, "en")} stations from {len(countries)} countries; the web player and the apps have many more, from over 200 countries.')
+                f'radio. Together that\'s over {fmt_n(total, "en")} stations from {len(countries)} countries; the apps have many more, from over 200 countries.')
     pop = next((c for c in countries if c['cc'] == 'NL'), countries[0])
     body = (f'<div class="wrap">{crumbs(cr, dl)}<header class="phead rhead">'
             + tx('h1', 'Radiozenders per land', 'Radio stations by country', dl, ' class="ttl"')
             + tx('p', esc(intro_nl), esc(intro_en), dl, ' class="sub"') +
-            f'<div class="acts"><a class="btn" href="/web/">{PLAY}' + tx('span', 'Luister nu in je browser', 'Listen now in your browser', dl) + '</a>'
-            f'<a class="btn ghost" href="/web/#/map">{GLOBE}' + tx('span', 'Open de wereldkaart', 'Open the world map', dl) + '</a></div></header>'
+            f'<div class="acts"><a class="btn" href="{APP_URL}">{PLAY}' + tx('span', 'Download de app', 'Download the app', dl) + '</a>'
+            f'<a class="btn ghost" href="/#kaart">{GLOBE}' + tx('span', 'Bekijk de wereldkaart', 'See the world map', dl) + '</a></div></header>'
             '<section aria-labelledby="cl-h">' + tx('h2', 'Kies een land', 'Choose a country', dl, ' class="h3" id="cl-h"')
             + '<ul class="cgrid">' + ''.join(cards) + '</ul></section>'
             '<section aria-labelledby="pp-h">' + tx('h2', esc(f'Populair in {c_in(pop["cc"], "nl")}'), esc(f'Popular in {c_in(pop["cc"], "en")}'), dl, ' class="h3" id="pp-h"')
