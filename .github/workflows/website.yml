@@ -284,6 +284,8 @@ jobs:
                      # presskit: zip altijd als download, presskit.json altijd vers (de functie presskit leest de versie)
                      "<FilesMatch \"\\.zip$\">\nHeader set Content-Disposition \"attachment\"\n</FilesMatch>\n"
                      "<FilesMatch \"^presskit\\.json$\">\nHeader set Cache-Control \"no-cache\"\n</FilesMatch>\n"
+                     # zendericoontabellen (assets/data/icons/<CC>.json): ook op te halen door de Windows-app (andere origin)
+                     "<FilesMatch \"^([A-Z]{2}|_world)\\.json$\">\nHeader set Access-Control-Allow-Origin \"*\"\n</FilesMatch>\n"
                      "</IfModule>\n")
           # gzip voor tekst (html, css, js, json, svg, xml) en cache: afbeeldingen/audio 30 dagen, css/js 7 dagen
           # (pagina's verwijzen met ?v=), json 1 dag, html altijd opnieuw controleren

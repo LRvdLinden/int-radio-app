@@ -1,6 +1,29 @@
 {
   "builds": [
     {
+      "build": 45,
+      "version": "1.0.0",
+      "date": "2026-10-23",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "windows"
+          ],
+          "nl": "Tunr voor Windows: alle radio en podcasts op je Windows-pc of -laptop (Windows 10 en 11), met wereldkaart, favorieten, slaaptimer en de mediatoetsen van je toetsenbord. Installeren met één installatiebestand, zonder beheerdersrechten.",
+          "en": "Tunr for Windows: all radio and podcasts on your Windows PC or laptop (Windows 10 and 11), with the world map, favourites, sleep timer and your keyboard's media keys. Install with a single installer, no administrator rights needed."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: Windows staat nu bij de downloads en apparaten.",
+          "en": "tunr.online: Windows is now listed under downloads and devices."
+        }
+      ]
+    },
+    {
       "build": 44,
       "version": "1.0.0",
       "date": "2026-10-20",

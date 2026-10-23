@@ -15,10 +15,10 @@
 
   var TX = {
     nl: { station: 'Radiozender', podcast: 'Podcast', episode: 'Aflevering', title: 'Luister in de app',
-          leadItem: 'Deze %s luister je met de gratis app van Tunr, op iPhone, iPad, Mac, Apple TV, Android en Android TV. Via de website kun je niet meer luisteren.',
+          leadItem: 'Deze %s luister je met de gratis app van Tunr, op iPhone, iPad, Mac, Apple TV, Android, Android TV en Windows. Via de website kun je niet meer luisteren.',
           kinds: { station: 'zender', podcast: 'podcast', episode: 'aflevering' } },
     en: { station: 'Radio station', podcast: 'Podcast', episode: 'Episode', title: 'Listen in the app',
-          leadItem: 'Listen to this %s in the free Tunr app, on iPhone, iPad, Mac, Apple TV, Android and Android TV. Listening on the website is no longer available.',
+          leadItem: 'Listen to this %s in the free Tunr app, on iPhone, iPad, Mac, Apple TV, Android, Android TV and Windows. Listening on the website is no longer available.',
           kinds: { station: 'station', podcast: 'podcast', episode: 'episode' } }
   };
   function lang() { return (window.TunrI18n && TunrI18n.lang) === 'en' ? 'en' : 'nl'; }

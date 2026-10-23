@@ -1,6 +1,6 @@
 # Tunr — functionele spec en huisstijl
 
-Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (telefoon/tablet), Android TV, Android Auto**. (De webspeler is om rechtenredenen offline; de website speelt niets af.) Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
+Eén product op alle schermen: **iPhone, iPad, Mac, Apple TV, CarPlay, Android (telefoon/tablet), Android TV, Android Auto, Windows**. (De webspeler is om rechtenredenen offline; de website speelt niets af.) Alle platforms hebben dezelfde functies, schermen, volgorde en teksten (NL + EN; standaard de taal van het toestel, Engels als terugval).
 
 ---
 
@@ -133,6 +133,8 @@ Open community-database, geen sleutel nodig.
 **Apple** (`apple/`): SwiftUI, iOS 17+, tvOS 17+, Swift 5.9, XcodeGen. Targets `Tunr` (iOS, device family 1,2) en `TunrTV` (tvOS). Gedeelde code in `apple/Shared`. AVPlayer (HLS en Icecast/Shoutcast mp3/aac werken), ICY-titels via `AVPlayerItemMetadataOutput`. `UIBackgroundModes: [audio]`, `NSAllowsArbitraryLoads: true` (veel zenders zijn http). Lokalisatie in `Localizable.strings` (en, nl). Bundle `nl.lrvdlinden.tunr`, team `EU3UY476T6`.
 
 **Android** (`android/`): Kotlin, Compose (Material 3, eigen donker thema met bovenstaande tokens), Media3 ExoPlayer + `MediaSessionService` (melding + vergrendelscherm), HLS-module, OkHttp-datasource, Coil voor afbeeldingen, kotlinx-serialization. minSdk 24, target/compile 35. Eén APK; Android TV via `LEANBACK_LAUNCHER`, `android:banner`, `touchscreen required=false`; als het toestel een tv is (UiModeManager) de tv-indeling met D-pad-focus. `usesCleartextTraffic=true`. ICY-titel via `Player.Listener.onMediaMetadataChanged` (`title`/`station`). Strings in `values/` (en) en `values-nl/`.
+
+**Windows** (`windows/`): desktop-app met dezelfde flow als de vroegere webspeler, maar zonder tikpoort (splash met tune bij elke start), zijbalk op brede vensters, Leaflet-kaart met CARTO-tegels, mediatoetsen via de Media Session API, links naar buiten in de standaardbrowser, gedeelde links via `https://tunr.online/web/`. Gegevens (favorieten, land, instellingen) lokaal in WebView2.
 
 **Web**: geen webspeler (offline om rechtenredenen). `website/web/` toont alleen gedeelde links uit de apps (zender/podcast/aflevering) met een knop naar de apps en speelt niets af.
 

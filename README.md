@@ -5,7 +5,7 @@
 
 <p align="center">
   <b>Alle radio van de wereld. Op elk scherm.</b><br>
-  iPhone · iPad · Mac · Apple TV · CarPlay · Android · Android TV · Android Auto · Web
+  iPhone · iPad · Mac · Apple TV · CarPlay · Android · Android TV · Android Auto · Windows
 </p>
 
 <p align="center">
@@ -28,6 +28,7 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 |---|---|
 | **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | Alleen via het beheerdashboard **BeheerTunr** ([beheer.tunr.online](https://beheer.tunr.online) of de BeheerTunr-app) → tab **Downloads** (inloggen vereist) → zip uitpakken → `Tunr/Tunr.xcodeproj` openen |
 | **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>.apk` |
+| **Windows-installer** (Windows 10/11, 64-bit) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>-Setup.exe` |
 | **Website** | [tunr.online](https://tunr.online) (geen webspeler: luisteren kan alleen in de apps) |
 
 Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): de workflows *Apple* en *Android* zetten ze na een geslaagde build via FTPS op beheer.tunr.online.
@@ -70,6 +71,7 @@ Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): 
 - **iPhone/iPad/Mac/Apple TV**: één Xcode-project met één multiplatform-target; favorieten via iCloud gedeeld; Mac met zijbalk en menu *Afspelen* (Spatie, ⌘←/⌘→, ⌘L)
 - **CarPlay**: tabs Favorieten, Recent, Populair en Genres met Nu speelt (zodra Apple de CarPlay-entitlement toekent)
 - **Android/Android TV/Android Auto**: één APK; tv-indeling met D-pad-focus; bladerboom voor Android Auto
+- **Windows**: desktop-app (Tauri 2 + WebView2) met dezelfde schermen als de vroegere webspeler: zijbalk, kaart, podcasts, favorieten, slaaptimer, mediatoetsen; installer per gebruiker
 - **Web**: website met uitleg, zenderpagina's per land en downloads; geen webspeler (offline om rechtenredenen)
 
 ## Repo
@@ -78,6 +80,7 @@ Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): 
 |---|---|
 | [`apple/`](apple) | SwiftUI-app, `Tunr.xcodeproj` (gemaakt uit `project.yml` met XcodeGen) — zie [`apple/README-dev.md`](apple/README-dev.md) |
 | [`android/`](android) | Kotlin + Jetpack Compose + Media3 — zie [`android/README-dev.md`](android/README-dev.md) |
+| [`windows/`](windows) | Tunr voor Windows: Tauri 2 (`src-tauri/`) + de speler in HTML/JS (`app/`) |
 | [`website/`](website) | Website (NL/EN) |
 | [`docs/`](docs) | [`SPEC.md`](docs/SPEC.md) (functionele spec en huisstijl), changelog, screenshots |
 | [`tools/`](tools) | Tune, iconen en changelog |

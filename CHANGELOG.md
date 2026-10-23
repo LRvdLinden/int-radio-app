@@ -4,6 +4,19 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 45 · versie 1.0.0
+_2026-10-23_
+
+**Nieuw**
+
+- Tunr voor Windows: alle radio en podcasts op je Windows-pc of -laptop (Windows 10 en 11), met wereldkaart, favorieten, slaaptimer en de mediatoetsen van je toetsenbord. Installeren met één installatiebestand, zonder beheerdersrechten. _(Windows)_  
+  <sub>Tunr for Windows: all radio and podcasts on your Windows PC or laptop (Windows 10 and 11), with the world map, favourites, sleep timer and your keyboard's media keys. Install with a single installer, no administrator rights needed.</sub>
+
+**Verbeterd**
+
+- tunr.online: Windows staat nu bij de downloads en apparaten. _(Website)_  
+  <sub>tunr.online: Windows is now listed under downloads and devices.</sub>
+
 ## Build 44 · versie 1.0.0
 _2026-10-20_
 
