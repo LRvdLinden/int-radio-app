@@ -131,6 +131,17 @@ jobs:
           $p = Start-Process -FilePath $exe.FullName -PassThru
           Start-Sleep 4;  Shot "1-splash"
           Start-Sleep 14; Shot "2-start"
+          # klik op het voorgestelde land (eerste rij onder "Voorgesteld"; scherm 1024×768, venster gemaximaliseerd)
+          Add-Type -Namespace W -Name U -MemberDefinition @'
+          [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+          [DllImport("user32.dll")] public static extern void mouse_event(int f, int x, int y, int d, int e);
+          [DllImport("user32.dll")] public static extern bool ShowWindow(System.IntPtr h, int c);
+          [DllImport("user32.dll")] public static extern bool SetForegroundWindow(System.IntPtr h);
+          '@
+          function Click($x, $y) { [W.U]::SetCursorPos($x, $y) | Out-Null; Start-Sleep -Milliseconds 150; [W.U]::mouse_event(2,0,0,0,0); [W.U]::mouse_event(4,0,0,0,0) }
+          $p.Refresh(); if ($p.MainWindowHandle -ne 0) { [W.U]::ShowWindow($p.MainWindowHandle, 3) | Out-Null; [W.U]::SetForegroundWindow($p.MainWindowHandle) | Out-Null }
+          Start-Sleep 2; Shot "3-max"
+          Click 520 360; Start-Sleep 12; Shot "4-ontdek"
           $alive = -not $p.HasExited
           "commit: $env:GITHUB_SHA`nproces draait na 18 s: $alive" | Out-File "$out\latest.txt" -Encoding utf8
           if ($alive) { Stop-Process -Id $p.Id -Force }

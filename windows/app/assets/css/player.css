@@ -1,3 +1,7 @@
+/* Windows toont geen vlag-emoji's: vlaggen uit het lettertype "Twemoji Country Flags" (alleen voor de vlagtekens,
+   via unicode-range; MIT + CC-BY 4.0 Twemoji, zie assets/fonts/TwemojiCountryFlags-LICENSE.md) */
+@font-face{font-family:"Twemoji Country Flags";src:url(../fonts/TwemojiCountryFlags.woff2) format("woff2");font-display:swap;
+  unicode-range:U+1F1E6-1F1FF,U+1F3F4,U+E0062-E0063,U+E0065,U+E0067,U+E006C,U+E006E,U+E0073-E0074,U+E0077,U+E007F}
 /* Tunr webspeler (/web/). Tokens uit docs/SPEC.md §1; zelfde schermen als de apps (§3, §4 en §6). */
 :root{
   --bg:#0A0A0C;--surface:#16161A;--elevated:#202026;--stroke:#FFFFFF14;--stroke2:#FFFFFF24;
@@ -6,8 +10,8 @@
   --grad:linear-gradient(135deg,var(--accent),var(--accent2));
   --btn:linear-gradient(135deg,#FF5A1F 0%,#FF7417 55%,#FF8E1C 100%);
   --r:14px;--rb:12px;
-  --font:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --head:ui-rounded,"SF Pro Rounded","Inter Display",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font:"Twemoji Country Flags",Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --head:"Twemoji Country Flags",ui-rounded,"SF Pro Rounded","Inter Display",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --side:0px;--safe-b:env(safe-area-inset-bottom,0px);
   --tabh:calc(62px + var(--safe-b));--minih:64px;--g:16px;
 }

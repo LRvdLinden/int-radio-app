@@ -27,3 +27,9 @@ app ook (build 0, kaart met watermerk).
 - links naar buiten (website, privacy, zenderwebsites) openen in de standaardbrowser (`desktop.js`);
 - delen geeft een link naar `https://tunr.online/web/#/…` (pagina voor gedeelde links);
 - gebruiksping met platform `windows`, standaard aan (instelling in Instellingen).
+
+## Vlaggen
+
+Windows heeft geen vlag-emoji's. Daarom gebruikt de app het lettertype *Twemoji Country Flags*
+(`app/assets/fonts/`, uit het npm-pakket `country-flag-emoji-polyfill` 0.1.10; code MIT, vlaggen uit
+[Twemoji](https://github.com/twitter/twemoji) onder CC-BY 4.0), alleen voor de vlagtekens.
