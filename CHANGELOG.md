@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 48 · versie 1.0.0
+_2026-10-23_
+
+**Opgelost**
+
+- tunr.online: Windows staat nu ook bij de apparaten bovenaan de homepage. _(Website)_  
+  <sub>tunr.online: Windows is now also listed with the devices at the top of the homepage.</sub>
+
 ## Build 47 · versie 1.0.0
 _2026-10-23_
 

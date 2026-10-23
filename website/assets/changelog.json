@@ -1,6 +1,21 @@
 {
   "builds": [
     {
+      "build": 48,
+      "version": "1.0.0",
+      "date": "2026-10-23",
+      "items": [
+        {
+          "type": "fixed",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: Windows staat nu ook bij de apparaten bovenaan de homepage.",
+          "en": "tunr.online: Windows is now also listed with the devices at the top of the homepage."
+        }
+      ]
+    },
+    {
       "build": 47,
       "version": "1.0.0",
       "date": "2026-10-23",
