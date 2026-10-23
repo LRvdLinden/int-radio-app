@@ -29,6 +29,7 @@ Wat er nieuw is per build: [CHANGELOG.md](CHANGELOG.md)
 | **Xcode-project** (iPhone, iPad, Mac, Apple TV, CarPlay — iOS 17+, iPadOS 17+, macOS 14+, tvOS 17+) | Alleen via het beheerdashboard **BeheerTunr** ([beheer.tunr.online](https://beheer.tunr.online) of de BeheerTunr-app) → tab **Downloads** (inloggen vereist) → zip uitpakken → `Tunr/Tunr.xcodeproj` openen |
 | **Android-APK** (telefoon, tablet, Android TV, Android Auto — Android 7+) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>.apk` |
 | **Windows-installer** (Windows 10/11, 64-bit) | Alleen via **BeheerTunr** → tab **Downloads** → `Tunr-1.0.0-build<N>-Setup.exe` |
+| **Openbare beta** | [tunr.online/#download](https://tunr.online/#download): Windows-installer, APK en [TestFlight](https://testflight.apple.com/join/Fvr4DAP6) |
 | **Website** | [tunr.online](https://tunr.online) (geen webspeler: luisteren kan alleen in de apps) |
 
 Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): de workflows *Apple* en *Android* zetten ze na een geslaagde build via FTPS op beheer.tunr.online.

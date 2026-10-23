@@ -284,6 +284,9 @@ jobs:
                      # presskit: zip altijd als download, presskit.json altijd vers (de functie presskit leest de versie)
                      "<FilesMatch \"\\.zip$\">\nHeader set Content-Disposition \"attachment\"\n</FilesMatch>\n"
                      "<FilesMatch \"^presskit\\.json$\">\nHeader set Cache-Control \"no-cache\"\n</FilesMatch>\n"
+                     # beta-downloads (downloads/, gezet door tools/site_download.sh): altijd als download, altijd vers
+                     "<FilesMatch \"\\.(exe|apk)$\">\nHeader set Content-Disposition \"attachment\"\nHeader set Cache-Control \"no-cache\"\n</FilesMatch>\n"
+                     "<FilesMatch \"^latest\\.json$\">\nHeader set Cache-Control \"no-cache\"\n</FilesMatch>\n"
                      # zendericoontabellen (assets/data/icons/<CC>.json): ook op te halen door de Windows-app (andere origin)
                      "<FilesMatch \"^([A-Z]{2}|_world)\\.json$\">\nHeader set Access-Control-Allow-Origin \"*\"\n</FilesMatch>\n"
                      "</IfModule>\n")
@@ -302,7 +305,7 @@ jobs:
                      + "</IfModule>\n")
           def block(with_redirect):
               return ("# BEGIN tunr-security (gezet door de workflow Website; niet met de hand wijzigen)\n"
-                      + (redirect if with_redirect else "") + headers + deflate + expires + "ErrorDocument 404 /404.html\n# END tunr-security\n")
+                      + (redirect if with_redirect else "") + headers + deflate + expires + "AddType application/vnd.android.package-archive .apk\nErrorDocument 404 /404.html\n# END tunr-security\n")
           rest = ("\n" + s + "\n") if s else ""
           open(p + ".new", "w", encoding="utf-8", errors="surrogateescape").write(block(True) + rest)
           open(p + ".nossl", "w", encoding="utf-8", errors="surrogateescape").write(block(False) + rest)

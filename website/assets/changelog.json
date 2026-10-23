@@ -1,6 +1,21 @@
 {
   "builds": [
     {
+      "build": 46,
+      "version": "1.0.0",
+      "date": "2026-10-23",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: probeer Tunr nu als beta. Download de app voor Windows of de APK voor Android, of doe mee via TestFlight op iPhone, iPad, Mac en Apple TV.",
+          "en": "tunr.online: try Tunr now as a beta. Download the app for Windows or the APK for Android, or join via TestFlight on iPhone, iPad, Mac and Apple TV."
+        }
+      ]
+    },
+    {
       "build": 45,
       "version": "1.0.0",
       "date": "2026-10-23",

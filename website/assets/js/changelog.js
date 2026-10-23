@@ -29,7 +29,7 @@
     carplay: S('<path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M7 20v-2.5M17 20v-2.5"/>'),
     android: S('<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="5.2" r=".7" fill="currentColor"/>'),
     androidtv: S('<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/>'),
-    windows: S('<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>'),
+    windows: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.6l7.4-1.02v7.07H3zM11.4 4.45L21 3.1v8.55h-9.6zM3 12.6h7.4v7.07L3 18.65zM11.4 12.6H21v8.3l-9.6-1.35z"/></svg>',
     web: S('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'),
     all: S('<rect x="2.5" y="4" width="13" height="9" rx="1.5"/><path d="M6 16h6"/><rect x="16.5" y="8" width="5" height="11" rx="1.3"/>')
   };

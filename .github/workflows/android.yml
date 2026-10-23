@@ -11,7 +11,7 @@ name: Android
 on:
   push:
     branches: [main]
-    paths: ['android/**', '.github/workflows/android.yml']
+    paths: ['android/**', '.github/workflows/android.yml', 'tools/site_download.sh']
   pull_request:
     paths: ['android/**']
   workflow_dispatch:
@@ -119,3 +119,21 @@ jobs:
           cp "$SRC_AAB" "$AAB"; ls -lh "$AAB"
           bash "$TOOLS/beheer_upload.sh" play "$AAB" "$V" "$B" "$RUNNER_TEMP/notes.md"
           echo "- AAB build $B → beheer.tunr.online (Downloads, Google Play)" >> $GITHUB_STEP_SUMMARY
+      # beta: de APK openbaar op tunr.online/downloads/Tunr.apk (knop op de homepage)
+      - name: APK op tunr.online (beta-download)
+        if: github.event_name != 'pull_request'
+        working-directory: .
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_DIR: ${{ secrets.FTP_DIR }}
+        run: |
+          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
+            echo "::warning::Secrets FTP_SERVER/FTP_USERNAME/FTP_PASSWORD ontbreken: geen download op tunr.online."; exit 0
+          fi
+          V=$(grep -m1 '^TUNR_VERSION=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          B=$(grep -m1 '^TUNR_BUILD=' android/gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          SRC=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
+          bash tools/site_download.sh android "$SRC" "$V" "$B"
+          echo "- APK build $B → tunr.online/downloads/Tunr.apk" >> $GITHUB_STEP_SUMMARY

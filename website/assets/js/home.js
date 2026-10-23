@@ -133,3 +133,19 @@
     if (ep) { ep.removeAttribute('data-i18n'); ep.textContent = SC.pods[0].n; }
   }
 })();
+
+// Downloads (beta): versie en build van de bestanden in downloads/ (latest.json, gezet door de workflows Android en
+// Windows via tools/site_download.sh) naast de downloadknoppen.
+(function () {
+  var els = document.querySelectorAll('[data-dlver]');
+  if (!els.length || !window.fetch) return;
+  fetch('downloads/latest.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+    if (!d) return;
+    els.forEach(function (el) {
+      var x = d[el.getAttribute('data-dlver')];
+      if (!x || !x.build) return;
+      var mb = x.size ? ' · ' + (x.size / 1048576).toFixed(0) + ' MB' : '';
+      el.textContent = (x.version || '') + ' · build ' + x.build + mb;
+    });
+  }).catch(function () {});
+})();

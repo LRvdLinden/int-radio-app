@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 46 · versie 1.0.0
+_2026-10-23_
+
+**Nieuw**
+
+- tunr.online: probeer Tunr nu als beta. Download de app voor Windows of de APK voor Android, of doe mee via TestFlight op iPhone, iPad, Mac en Apple TV. _(Website)_  
+  <sub>tunr.online: try Tunr now as a beta. Download the app for Windows or the APK for Android, or join via TestFlight on iPhone, iPad, Mac and Apple TV.</sub>
+
 ## Build 45 · versie 1.0.0
 _2026-10-23_
 

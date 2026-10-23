@@ -1,6 +1,7 @@
 name: Windows
 # Tunr voor Windows (windows/, Tauri 2): installer bouwen en in beheer.tunr.online zetten (tab Downloads, onderdeel
-# Windows) via tools/beheer_upload.sh uit tunr-beheer. Nooit op GitHub (geen repo, geen release, geen artefact).
+# Windows) via tools/beheer_upload.sh uit tunr-beheer, en als beta openbaar op tunr.online/downloads/Tunr-Setup.exe
+# (tools/site_download.sh). Nooit op GitHub (geen repo, geen release, geen artefact).
 #
 # Job build (Ubuntu): kruiscompilatie naar Windows x64 met cargo-xwin + NSIS → Tunr-<versie>-build<N>-Setup.exe
 #   (installeert per gebruiker, zonder beheerdersrechten; WebView2 wordt zo nodig meegeïnstalleerd).
@@ -11,7 +12,7 @@ name: Windows
 on:
   push:
     branches: [main]
-    paths: ['windows/**', '.github/workflows/windows.yml']
+    paths: ['windows/**', '.github/workflows/windows.yml', 'tools/site_download.sh']
   workflow_dispatch:
 
 permissions:
@@ -92,6 +93,19 @@ jobs:
           chmod +x "$TOOLS"/*.sh
           bash "$TOOLS/beheer_upload.sh" windows "$EXE" "$V" "$B" "$RUNNER_TEMP/notes.md"
           echo "- Installer build $B → beheer.tunr.online (Downloads, Windows)" >> $GITHUB_STEP_SUMMARY
+      # beta: dezelfde installer openbaar op tunr.online/downloads/Tunr-Setup.exe (knop op de homepage)
+      - name: Installer op tunr.online (beta-download)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_DIR: ${{ secrets.FTP_DIR }}
+        run: |
+          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
+            echo "::warning::Secrets FTP_SERVER/FTP_USERNAME/FTP_PASSWORD ontbreken: geen download op tunr.online."; exit 0
+          fi
+          bash tools/site_download.sh windows "$RUNNER_TEMP/Tunr-$V-build$B-Setup.exe" "$V" "$B"
+          echo "- Installer build $B → tunr.online/downloads/Tunr-Setup.exe" >> $GITHUB_STEP_SUMMARY
 
   smoke:
     runs-on: windows-latest

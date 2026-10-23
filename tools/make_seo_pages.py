@@ -525,9 +525,9 @@ def station_page(s, c, countries):
         about_nl += f' De uitzendingen zijn in het {esc(join_words(s["langs_nl"], "nl"))}.'
         about_en += f' It broadcasts in {esc(join_words(s["langs_en"], "en"))}.'
     about_nl += (' In Tunr luister je gratis en zonder account naar de livestream' + (f' ({esc(stream)})' if stream else '') +
-                 ' in de apps voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en Windows (binnenkort in de App Store, op Google Play en voor Windows).')
+                 ' in de apps voor iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV en Windows (nu als beta: TestFlight, APK en Windows-installer; binnenkort in de App Store en op Google Play).')
     about_en += (' With Tunr you can listen to the live stream' + (f' ({esc(stream)})' if stream else '') +
-                 ' for free and without an account in the apps for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV and Windows (coming soon to the App Store, Google Play and Windows).')
+                 ' for free and without an account in the apps for iPhone, iPad, Mac, Apple TV, CarPlay, Android, Android TV and Windows (available now as a beta: TestFlight, APK and Windows installer; coming soon to the App Store and Google Play).')
     facts = [(('Land', 'Country'), (f'{flag(cc)} {esc(cn_nl)}', f'{flag(cc)} {esc(cn_en)}'))]
     if s['state']:
         facts.append((('Plaats of regio', 'City or region'), (esc(s['state']), esc(s['state']))))
