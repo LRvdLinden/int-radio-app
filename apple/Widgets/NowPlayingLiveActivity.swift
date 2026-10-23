@@ -16,7 +16,7 @@ struct NowPlayingLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    StationLogoView(station: station(context.attributes), size: 52, fileName: context.attributes.logoFile)
+                    StationLogoView(station: station(context.attributes), size: 52, fileName: context.attributes.logoFile, coverFile: context.state.coverFile)
                         .padding(.leading, 4)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
@@ -49,7 +49,7 @@ struct NowPlayingLiveActivity: Widget {
                     .padding(.horizontal, 6)
                 }
             } compactLeading: {
-                StationLogoView(station: station(context.attributes), size: 24, cornerRadius: 6, fileName: context.attributes.logoFile)
+                StationLogoView(station: station(context.attributes), size: 24, cornerRadius: 6, fileName: context.attributes.logoFile, coverFile: context.state.coverFile)
             } compactTrailing: {
                 EqualizerBars(isPlaying: context.state.isPlaying, height: 14,
                               color: context.state.isPlaying ? WidgetTheme.accent : WidgetTheme.secondary)
@@ -78,7 +78,7 @@ struct LiveLockScreenView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            StationLogoView(station: station(attributes), size: 56, cornerRadius: 14, fileName: attributes.logoFile)
+            StationLogoView(station: station(attributes), size: 56, cornerRadius: 14, fileName: attributes.logoFile, coverFile: state.coverFile)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     EqualizerBars(isPlaying: state.isPlaying, height: 10,

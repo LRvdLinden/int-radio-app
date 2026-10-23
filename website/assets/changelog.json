@@ -1,6 +1,25 @@
 {
   "builds": [
     {
+      "build": 47,
+      "version": "1.0.0",
+      "date": "2026-10-23",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "carplay"
+          ],
+          "nl": "Nu speelt in CarPlay, op het vergrendelscherm, in het Bedieningspaneel, in de widgets en in de Live Activity: bovenaan de zender, daaronder titel en artiest van het nummer, met de albumhoes (anders het logo van de zender).",
+          "en": "Now Playing in CarPlay, on the Lock Screen, in Control Center, in the widgets and in the Live Activity: the station on top, the song title and artist below, with the album cover (or the station logo)."
+        }
+      ]
+    },
+    {
       "build": 46,
       "version": "1.0.0",
       "date": "2026-10-23",

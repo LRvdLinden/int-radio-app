@@ -90,6 +90,8 @@ struct StationLogoView: View {
     var cornerRadius: CGFloat? = nil
     /// Alternatieve bestandsnaam (Live Activity)
     var fileName: String? = nil
+    /// Albumhoes van het huidige nummer (gaat voor het logo)
+    var coverFile: String? = nil
 
     var body: some View {
         let radius = cornerRadius ?? size * 0.22
@@ -120,6 +122,7 @@ struct StationLogoView: View {
     }
 
     private func loadImage() -> CGImage? {
+        if let coverFile, let img = WidgetBridge.logoImage(fileName: coverFile) { return img }
         if let fileName, let img = WidgetBridge.logoImage(fileName: fileName) { return img }
         return WidgetBridge.logoImage(for: station.id)
     }

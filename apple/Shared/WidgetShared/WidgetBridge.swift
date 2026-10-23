@@ -41,12 +41,11 @@ struct WidgetNowPlaying: Codable, Hashable {
     var title: String
     /// Artiest (leeg als onbekend)
     var artist: String
+    /// Albumhoes van het huidige nummer in de App Group ("cover-….png"), nil = het zenderlogo tonen
+    var coverFile: String? = nil
 
-    /// "Artiest – Titel", of alleen de titel
-    var trackLine: String {
-        if !artist.isEmpty, !title.isEmpty { return artist + " – " + title }
-        return title
-    }
+    /// "Titel - Artiest" (zoals de apps van de zenders zelf), of alleen de titel
+    var trackLine: String { WidgetBridge.trackLine(title: title, artist: artist) }
 }
 
 /// Alles wat de widgets tonen
@@ -77,6 +76,12 @@ enum WidgetBridge {
     private static let legacyLogoFolders = ["WidgetLogos"]
 
     static var defaults: UserDefaults? { UserDefaults(suiteName: appGroup) }
+
+    /// Tweede regel in widgets, Live Activity en Nu speelt: "Titel - Artiest", of alleen de titel
+    static func trackLine(title: String, artist: String) -> String {
+        if !artist.isEmpty, !title.isEmpty { return title + " - " + artist }
+        return title
+    }
 
     // MARK: Gegevens
 
@@ -145,6 +150,35 @@ enum WidgetBridge {
     static func writeLogo(_ png: Data, for stationID: String) {
         guard let url = logoFileURL(for: stationID) else { return }
         try? png.write(to: url, options: .atomic)
+    }
+
+    // MARK: Albumhoes (huidige nummer)
+
+    /// Unieke naam per nummer ("cover-<hash>.png"), zodat widgets en Live Activity de nieuwe afbeelding laden
+    static func coverFileName(for key: String) -> String {
+        var h: UInt64 = 1469598103934665603   // FNV-1a, stabiel tussen app en extensie
+        for b in key.utf8 { h = (h ^ UInt64(b)) &* 1099511628211 }
+        return "cover-" + String(h, radix: 16) + ".png"
+    }
+
+    static func hasFile(_ fileName: String) -> Bool {
+        guard let url = logoFileURL(fileName: fileName) else { return false }
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+
+    /// Nieuwe hoes bewaren en de oude hoezen opruimen (er is er hooguit één tegelijk nodig)
+    static func writeCover(_ png: Data, fileName: String) {
+        guard let dir = logosDirectory else { return }
+        try? png.write(to: dir.appendingPathComponent(fileName), options: .atomic)
+        removeCovers(except: fileName)
+    }
+
+    static func removeCovers(except keep: String?) {
+        guard let dir = logosDirectory,
+              let files = try? FileManager.default.contentsOfDirectory(atPath: dir.path) else { return }
+        for f in files where f.hasPrefix("cover-") && f != keep {
+            try? FileManager.default.removeItem(at: dir.appendingPathComponent(f))
+        }
     }
 
     /// Logo's van zenders die niet meer in de widgets staan opruimen

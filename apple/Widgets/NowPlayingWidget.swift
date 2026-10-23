@@ -64,7 +64,7 @@ struct NowPlayingWidgetView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 if let np {
-                    StationLogoView(station: np.station, size: 54)
+                    StationLogoView(station: np.station, size: 54, coverFile: np.isPlaying ? np.coverFile : nil)
                 } else {
                     TunrMark(size: 22, showName: false)
                 }
@@ -94,7 +94,7 @@ struct NowPlayingWidgetView: View {
     private var medium: some View {
         HStack(spacing: 14) {
             if let np {
-                StationLogoView(station: np.station, size: 112, cornerRadius: 20)
+                StationLogoView(station: np.station, size: 112, cornerRadius: 20, coverFile: np.isPlaying ? np.coverFile : nil)
             } else {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20, style: .continuous).fill(WidgetTheme.elevated)

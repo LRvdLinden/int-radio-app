@@ -607,11 +607,16 @@ final class RadioPlayer: ObservableObject {
             return
         }
         guard let s = station else { return }
+        // Zoals de apps van de zenders zelf (CarPlay-dashboard, Nu speelt, vergrendelscherm, Bedieningspaneel):
+        // bovenste regel de zender, daaronder "nummer - artiest"; afbeelding = albumhoes, anders het zenderlogo.
+        // Zonder titel uit de stream: genres (of de app-naam) als tweede regel.
         let parts = ArtworkLookup.split(nowPlaying)
+        let song: String
+        if let parts { song = "\(parts.title) - \(parts.artist)" } else { song = nowPlaying }
         var info: [String: Any] = [
-            MPMediaItemPropertyTitle: parts?.title ?? s.displayName,
-            MPMediaItemPropertyArtist: parts?.artist ?? (s.genreLine.isEmpty ? Brand.name : s.genreLine),
-            MPMediaItemPropertyAlbumTitle: s.displayName,
+            MPMediaItemPropertyTitle: s.displayName,
+            MPMediaItemPropertyArtist: song.isEmpty ? (s.genreLine.isEmpty ? Brand.name : s.genreLine) : song,
+            MPMediaItemPropertyAlbumTitle: song.isEmpty ? Brand.name : s.displayName,
             MPNowPlayingInfoPropertyIsLiveStream: true,
             MPNowPlayingInfoPropertyMediaType: MPNowPlayingInfoMediaType.audio.rawValue,
             MPNowPlayingInfoPropertyPlaybackRate: state == .playing ? 1.0 : 0.0,

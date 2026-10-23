@@ -13,11 +13,11 @@ struct NowPlayingAttributes: ActivityAttributes {
         var isPlaying: Bool
         /// Begin van het luisteren naar deze zender
         var startedAt: Date
+        /// Albumhoes van het huidige nummer in de App Group (zie WidgetBridge), nil = zenderlogo
+        var coverFile: String? = nil
 
-        var trackLine: String {
-            if !artist.isEmpty, !title.isEmpty { return artist + " – " + title }
-            return title
-        }
+        /// "Titel - Artiest", of alleen de titel
+        var trackLine: String { WidgetBridge.trackLine(title: title, artist: artist) }
     }
 
     var stationID: String

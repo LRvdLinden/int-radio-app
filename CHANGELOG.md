@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 47 · versie 1.0.0
+_2026-10-23_
+
+**Verbeterd**
+
+- Nu speelt in CarPlay, op het vergrendelscherm, in het Bedieningspaneel, in de widgets en in de Live Activity: bovenaan de zender, daaronder titel en artiest van het nummer, met de albumhoes (anders het logo van de zender). _(iPhone, iPad, Mac, Apple TV, CarPlay)_  
+  <sub>Now Playing in CarPlay, on the Lock Screen, in Control Center, in the widgets and in the Live Activity: the station on top, the song title and artist below, with the album cover (or the station logo).</sub>
+
 ## Build 46 · versie 1.0.0
 _2026-10-23_
 

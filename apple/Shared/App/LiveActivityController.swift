@@ -30,6 +30,7 @@ final class LiveActivityController {
         let p = RadioPlayer.shared
         Publishers.CombineLatest4(p.$station, p.$state, p.$nowPlaying, p.$episode)
             .map { _ in () }
+            .merge(with: p.$artworkURL.map { _ in () })
             // @Published meldt vóór de wijziging: even wachten, dan staat alles goed
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in Task { @MainActor in self?.sync() } }
@@ -45,10 +46,16 @@ final class LiveActivityController {
         }
         let parts = ArtworkLookup.split(p.nowPlaying)
         let isPlaying = p.isPlaying
+        // albumhoes alleen als hij al in de App Group staat (WidgetSync haalt hem op en roept daarna sync() aan)
+        let cover: String? = {
+            guard isPlaying, !p.nowPlaying.isEmpty, let u = p.artworkURL else { return nil }
+            let name = WidgetBridge.coverFileName(for: u.absoluteString)
+            return WidgetBridge.hasFile(name) ? name : nil
+        }()
 
         if let a = activity, a.attributes.stationID == s.id, a.activityState == .active {
             let content = NowPlayingAttributes.ContentState(title: parts?.title ?? p.nowPlaying, artist: parts?.artist ?? "",
-                                                            isPlaying: isPlaying, startedAt: startedAt)
+                                                            isPlaying: isPlaying, startedAt: startedAt, coverFile: cover)
             guard content != lastContent else { return }
             lastContent = content
             Task { await a.update(ActivityContent(state: content, staleDate: nil)) }
@@ -60,7 +67,7 @@ final class LiveActivityController {
         guard isPlaying, ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         startedAt = Date()
         let content = NowPlayingAttributes.ContentState(title: parts?.title ?? p.nowPlaying, artist: parts?.artist ?? "",
-                                                        isPlaying: isPlaying, startedAt: startedAt)
+                                                        isPlaying: isPlaying, startedAt: startedAt, coverFile: cover)
         let attributes = NowPlayingAttributes(stationID: s.id, stationName: s.displayName, country: s.country,
                                               logoFile: WidgetBridge.logoFileName(for: s.id))
         do {

@@ -22,6 +22,8 @@ final class WidgetSync {
     private var failedLogos = Set<String>()
     /// zender-id → zender, voor de logo-bronnen (App Store-icoon, Google, favicon, DuckDuckGo; zie LogoSources)
     private var logoStations: [String: Station] = [:]
+    /// Albumhoes die nu geladen wordt (URL), zodat dezelfde niet twee keer tegelijk wordt opgehaald
+    private var coverLoading: URL?
 
     private init() {}
 
@@ -34,6 +36,7 @@ final class WidgetSync {
             .map { _ in () }
             .merge(with: Library.shared.changed)
             .merge(with: Localizer.shared.$language.map { _ in () })
+            .merge(with: p.$artworkURL.map { _ in () })
             // @Published meldt vóór de wijziging: even wachten, dan staat alles goed (en wordt het samengevoegd)
             .debounce(for: .milliseconds(400), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in Task { @MainActor in self?.update() } }
@@ -51,12 +54,14 @@ final class WidgetSync {
         if let s = p.station, p.episode == nil {
             let parts = ArtworkLookup.split(p.nowPlaying)
             snap.nowPlaying = WidgetNowPlaying(station: Self.widgetStation(s), isPlaying: p.isPlaying,
-                                              title: parts?.title ?? p.nowPlaying, artist: parts?.artist ?? "")
+                                              title: parts?.title ?? p.nowPlaying, artist: parts?.artist ?? "",
+                                              coverFile: currentCoverFile())
         } else if var np = snap.nowPlaying {
             // gestopt of een aflevering: de laatste zender blijft staan, gepauzeerd
             np.isPlaying = false
             np.title = ""
             np.artist = ""
+            np.coverFile = nil
             snap.nowPlaying = np
         } else if let last = lib.recents.first {
             snap.nowPlaying = WidgetNowPlaying(station: Self.widgetStation(last), isPlaying: false, title: "", artist: "")
@@ -74,6 +79,31 @@ final class WidgetSync {
         WidgetBridge.save(snap)
         scheduleReload()
         refreshLogos(for: snap)
+    }
+
+    // MARK: Albumhoes
+
+    /// Bestandsnaam van de hoes van het huidige nummer als die al in de App Group staat; anders nil en (één keer)
+    /// ophalen. Daarna worden widgets en Live Activity opnieuw bijgewerkt.
+    func currentCoverFile() -> String? {
+        let p = RadioPlayer.shared
+        guard p.episode == nil, !p.nowPlaying.isEmpty, let url = p.artworkURL else { return nil }
+        let name = WidgetBridge.coverFileName(for: url.absoluteString)
+        if WidgetBridge.hasFile(name) { return name }
+        guard coverLoading != url else { return nil }
+        coverLoading = url
+        Task { [weak self] in
+            let png = await WidgetLogoMaker.makeCoverPNG(from: url)
+            guard let self else { return }
+            self.coverLoading = nil
+            guard let png, RadioPlayer.shared.artworkURL == url else { return }
+            WidgetBridge.writeCover(png, fileName: name)
+            self.update()
+            #if os(iOS) && canImport(ActivityKit)
+            LiveActivityController.shared.sync()
+            #endif
+        }
+        return nil
     }
 
     /// Opdracht die een widget achterliet terwijl de app niet draaide (terugval, zie TunrIntents.swift)
@@ -200,6 +230,34 @@ enum WidgetLogoMaker {
         guard let (data, response) = try? await URLSession.shared.data(for: req) else { return nil }
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) { return nil }
         return data
+    }
+
+    /// Albumhoes: vierkant (midden uitgesneden), `side` px, PNG. Geen LogoLook: een hoes vult altijd de tegel.
+    static func makeCoverPNG(from url: URL, side: Int = 240) async -> Data? {
+        guard let data = await download(url),
+              let src = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: side * 2,
+        ]
+        guard let image = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary) else { return nil }
+        let edge = min(image.width, image.height)
+        guard edge > 0, let crop = image.cropping(to: CGRect(x: (image.width - edge) / 2, y: (image.height - edge) / 2,
+                                                             width: edge, height: edge)),
+              let ctx = CGContext(data: nil, width: side, height: side, bitsPerComponent: 8, bytesPerRow: 0,
+                                  space: CGColorSpaceCreateDeviceRGB(),
+                                  bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        ctx.interpolationQuality = .high
+        ctx.draw(crop, in: CGRect(x: 0, y: 0, width: side, height: side))
+        guard let square = ctx.makeImage() else { return nil }
+        let out = NSMutableData()
+        guard let dest = CGImageDestinationCreateWithData(out as CFMutableData, UTType.png.identifier as CFString, 1, nil) else {
+            return nil
+        }
+        CGImageDestinationAddImage(dest, square, nil)
+        guard CGImageDestinationFinalize(dest) else { return nil }
+        return out as Data
     }
 
     /// Breedste afbeelding in de data (pixels; 0 = geen afbeelding)
