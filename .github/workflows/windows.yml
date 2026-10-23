@@ -1,0 +1,145 @@
+name: Windows
+# Tunr voor Windows (windows/, Tauri 2): installer bouwen en in beheer.tunr.online zetten (tab Downloads, onderdeel
+# Windows) via tools/beheer_upload.sh uit tunr-beheer. Nooit op GitHub (geen repo, geen release, geen artefact).
+#
+# Job build (Ubuntu): kruiscompilatie naar Windows x64 met cargo-xwin + NSIS → Tunr-<versie>-build<N>-Setup.exe
+#   (installeert per gebruiker, zonder beheerdersrechten; WebView2 wordt zo nodig meegeïnstalleerd).
+# Job smoke (Windows): dezelfde app native bouwen (zonder installer), starten en schermafbeeldingen maken als
+#   controle dat het venster opent en de zenders laden; rapport + afbeeldingen op de branch ci-logs-windows.
+# Secrets: FTP_SERVER, BEHEER_FTP_USERNAME, BEHEER_FTP_PASSWORD (zonder: upload overslaan met een waarschuwing),
+#   CARTO_KEY (kaarttegels; zonder: watermerk op de kaart).
+on:
+  push:
+    branches: [main]
+    paths: ['windows/**', '.github/workflows/windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TAURI_CLI: '@tauri-apps/cli@2.12.4'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rust + Windows-doel
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: windows/src-tauri -> target
+          key: xwin
+      - name: Gereedschap (NSIS, LLVM, cargo-xwin)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq nsis lld llvm clang >/dev/null
+          command -v cargo-xwin >/dev/null || cargo install --locked cargo-xwin
+      - name: Buildconfiguratie
+        env:
+          CARTO_KEY: ${{ secrets.CARTO_KEY }}
+        run: |
+          B=$(grep -m1 '^TUNR_BUILD=' windows/tunr.properties | cut -d= -f2 | tr -d '[:space:]')
+          python3 - "$B" > windows/app/assets/js/build-config.js <<'PY'
+          import json, os, sys
+          print("// gemaakt door de workflow Windows (niet in git)")
+          print("window.TUNR.build = %d;" % int(sys.argv[1]))
+          print("window.TUNR.cartoKey = %s;" % json.dumps(os.environ.get("CARTO_KEY", "")))
+          PY
+          [ -n "$CARTO_KEY" ] || echo "::warning::Secret CARTO_KEY ontbreekt: kaart met watermerk."
+          echo "B=$B" >> $GITHUB_ENV
+          echo "V=$(python3 -c 'import json;print(json.load(open("windows/src-tauri/tauri.conf.json"))["version"])')" >> $GITHUB_ENV
+      - name: Bouwen (x64, NSIS)
+        working-directory: windows/src-tauri
+        run: npx -y "$TAURI_CLI" build --runner cargo-xwin --target x86_64-pc-windows-msvc 2>&1 | tee "$RUNNER_TEMP/build.log"; test ${PIPESTATUS[0]} -eq 0
+      - name: Installer klaarzetten
+        run: |
+          SRC=$(ls windows/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe | head -1)
+          cp "$SRC" "$RUNNER_TEMP/Tunr-$V-build$B-Setup.exe"
+          ls -lh "$RUNNER_TEMP/Tunr-$V-build$B-Setup.exe"
+          echo "- Installer: Tunr-$V-build$B-Setup.exe ($(du -h "$SRC" | cut -f1))" >> $GITHUB_STEP_SUMMARY
+      - name: Foutenoverzicht
+        if: failure()
+        run: grep -E "error(\[|:)|Error|failed" -A4 "$RUNNER_TEMP/build.log" | head -200 || true
+      - name: Installer naar beheer.tunr.online (Downloads, Windows)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.BEHEER_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.BEHEER_FTP_PASSWORD }}
+        run: |
+          if [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ] || [ -z "$FTP_SERVER" ]; then
+            echo "::warning::Secrets BEHEER_FTP_USERNAME/BEHEER_FTP_PASSWORD (of FTP_SERVER) ontbreken: installer niet geüpload."
+            exit 0
+          fi
+          EXE="$RUNNER_TEMP/Tunr-$V-build$B-Setup.exe"
+          awk -v b="Build $B" '/^## /{f=($0 ~ ("^## " b "( |$)"))?1:0; next} f' CHANGELOG.md 2>/dev/null | head -60 > "$RUNNER_TEMP/notes.md" || true
+          [ -s "$RUNNER_TEMP/notes.md" ] || echo "Tunr voor Windows — versie $V, build $B." > "$RUNNER_TEMP/notes.md"
+          TOOLS="$RUNNER_TEMP/beheer-tools"; rm -rf "$TOOLS"; mkdir -p "$TOOLS"
+          RAW="https://raw.githubusercontent.com/LRvdLinden/tunr-beheer/main/tools"
+          curl -fsSL --retry 3 "$RAW/beheer_upload.sh" -o "$TOOLS/beheer_upload.sh"
+          curl -fsSL --retry 3 "$RAW/ftps.sh" -o "$TOOLS/ftps.sh" || rm -f "$TOOLS/ftps.sh"
+          chmod +x "$TOOLS"/*.sh
+          bash "$TOOLS/beheer_upload.sh" windows "$EXE" "$V" "$B" "$RUNNER_TEMP/notes.md"
+          echo "- Installer build $B → beheer.tunr.online (Downloads, Windows)" >> $GITHUB_STEP_SUMMARY
+
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: windows/src-tauri -> target
+          key: native
+      - name: Buildconfiguratie
+        shell: bash
+        env:
+          CARTO_KEY: ${{ secrets.CARTO_KEY }}
+        run: |
+          B=$(grep -m1 '^TUNR_BUILD=' windows/tunr.properties | cut -d= -f2 | tr -d '[:space:]')
+          { echo "window.TUNR.build = $B;"; printf 'window.TUNR.cartoKey = "%s";\n' "$CARTO_KEY"; } > windows/app/assets/js/build-config.js
+      - name: Native bouwen (zonder installer)
+        shell: bash
+        working-directory: windows/src-tauri
+        run: npx -y "$TAURI_CLI" build --no-bundle 2>&1 | tail -40
+      - name: Starten en schermafbeeldingen maken
+        shell: pwsh
+        run: |
+          $out = "$env:RUNNER_TEMP\shots"; New-Item -ItemType Directory -Force $out | Out-Null
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          function Shot($name) {
+            $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+            $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+            $g = [System.Drawing.Graphics]::FromImage($bmp); $g.CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+            $bmp.Save("$out\$name.png", [System.Drawing.Imaging.ImageFormat]::Png); $g.Dispose(); $bmp.Dispose()
+          }
+          $exe = Get-ChildItem windows\src-tauri\target\release\*.exe | Where-Object { $_.Name -like 'tunr*.exe' } | Select-Object -First 1
+          $p = Start-Process -FilePath $exe.FullName -PassThru
+          Start-Sleep 4;  Shot "1-splash"
+          Start-Sleep 14; Shot "2-start"
+          $alive = -not $p.HasExited
+          "commit: $env:GITHUB_SHA`nproces draait na 18 s: $alive" | Out-File "$out\latest.txt" -Encoding utf8
+          if ($alive) { Stop-Process -Id $p.Id -Force }
+          if (-not $alive) { Write-Error "Tunr is afgesloten tijdens de rooktest"; exit 1 }
+      - name: Rapport op branch ci-logs-windows
+        if: always()
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/shots" 2>/dev/null || exit 0
+          git init -q && git checkout -q -b ci-logs-windows && git add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "windows $GITHUB_SHA [skip ci]"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" ci-logs-windows

@@ -396,6 +396,20 @@ def presskit_brand():
     save(pad.convert("RGB"), root / "docs/brand/wordmark-dark.png")
 
 
+def windows():
+    """Windows-app (windows/src-tauri/icons): afgeronde tegel zoals Android/web, PNG's voor Tauri + icon.ico (16-256)."""
+    out = root / "windows/src-tauri/icons"
+    for name, s in (("32x32.png", 32), ("128x128.png", 128), ("128x128@2x.png", 256), ("icon.png", 512)):
+        save(app_icon(s, rounded=True), out / name)
+    big = app_icon(256, rounded=True)
+    out.mkdir(parents=True, exist_ok=True)
+    big.save(out / "icon.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+
+
 if __name__ == "__main__":
-    apple(); android(); web(); docs()
+    import sys
+    if sys.argv[1:] == ["windows"]:
+        windows()
+    else:
+        apple(); android(); web(); docs(); windows()
     print("ok")

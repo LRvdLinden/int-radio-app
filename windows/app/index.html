@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tunr</title>
+<!-- Tunr voor Windows (Tauri, windows/src-tauri): dezelfde speler als de vroegere webspeler, nu alleen als app. -->
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="assets/img/icon-512.png">
+<link rel="preconnect" href="https://all.api.radio-browser.info" crossorigin>
+<link rel="stylesheet" href="assets/css/player.css">
+</head>
+<body class="solo">
+
+<!-- 2. splash (SPEC §3.1) -->
+<div id="splash" hidden aria-hidden="true">
+  <div class="stage">
+    <div class="word"><span>T</span><span>U</span><span>N</span><span>R</span></div>
+    <div class="scale">
+      <div class="ticks"></div><div class="ticks major"></div>
+      <div class="nums"><span>88</span><span>92</span><span>96</span><span>100</span><span>104</span><span>108</span></div>
+      <div class="bar"></div>
+      <div class="needle"></div>
+      <div class="waves"><i></i><i></i><i></i></div>
+    </div>
+  </div>
+  <button class="skip" type="button" data-t="splash.skip">Overslaan</button>
+</div>
+
+<div id="app">
+  <aside class="side" aria-label="Hoofdmenu">
+    <a href="#/discover" id="side-logo" aria-label="Tunr"></a>
+    <nav id="side-nav"></nav>
+    <div class="foot" id="side-foot"></div>
+  </aside>
+  <main id="view" tabindex="-1"></main>
+  <nav class="tabs" id="tabs" aria-label="Hoofdmenu"></nav>
+  <div id="mini" hidden></div>
+</div>
+
+<section id="full" aria-hidden="true" aria-label="Speler" role="dialog" aria-modal="true"></section>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/brand.js"></script>
+<script src="assets/js/build-config.js" onerror="void 0"></script>
+<script src="assets/js/desktop.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/strings.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/audio.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/views.js"></script>
+<script src="assets/js/map.js"></script>
+<script src="assets/js/player.js"></script>
+<script src="assets/js/stats.js"></script>
+</body>
+</html>
