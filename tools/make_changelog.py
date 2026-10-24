@@ -11,8 +11,8 @@ src = root / "docs/changelog.json"
 data = json.loads(src.read_text())
 
 NAMES = {"ios": "iPhone", "ipados": "iPad", "macos": "Mac", "tvos": "Apple TV", "carplay": "CarPlay",
-         "android": "Android", "androidtv": "Android TV", "windows": "Windows", "web": "Website"}
-ALL = set(NAMES) - {"windows"}  # Windows (sinds build 45) is niet verplicht voor "Alle apps"
+         "android": "Android", "androidtv": "Android TV", "windows": "Windows", "watchos": "Apple Watch", "web": "Website"}
+ALL = set(NAMES) - {"windows", "watchos"}  # Windows (build 45) en Apple Watch (build 49) zijn niet verplicht voor "Alle apps"
 TYPES = {"new": "Nieuw", "improved": "Verbeterd", "fixed": "Opgelost"}
 
 lines = ["# Changelog", "",

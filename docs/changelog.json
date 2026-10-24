@@ -1,6 +1,37 @@
 {
   "builds": [
     {
+      "build": 49,
+      "version": "1.0.0",
+      "date": "2026-10-24",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "watchos"
+          ],
+          "nl": "Tunr voor Apple Watch: bedien de radio op je iPhone vanaf je pols, of luister op de Watch zelf met AirPods of een Bluetooth-koptelefoon. Met je favorieten en recente zenders van de iPhone, populaire zenders in je land, zoeken, en het volume met de Digital Crown.",
+          "en": "Tunr for Apple Watch: control the radio on your iPhone from your wrist, or listen on the Watch itself with AirPods or Bluetooth headphones. With your favorites and recent stations from the iPhone, popular stations in your country, search, and volume on the Digital Crown."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "ios"
+          ],
+          "nl": "De iPhone-app stuurt je favorieten, recente zenders en wat er speelt naar de Apple Watch.",
+          "en": "The iPhone app sends your favorites, recent stations and what's playing to your Apple Watch."
+        },
+        {
+          "type": "improved",
+          "platforms": [
+            "web"
+          ],
+          "nl": "tunr.online: Apple Watch staat bij de apparaten en downloads.",
+          "en": "tunr.online: Apple Watch is listed with the devices and downloads."
+        }
+      ]
+    },
+    {
       "build": 48,
       "version": "1.0.0",
       "date": "2026-10-23",

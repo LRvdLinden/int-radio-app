@@ -4,6 +4,21 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 49 · versie 1.0.0
+_2026-10-24_
+
+**Nieuw**
+
+- Tunr voor Apple Watch: bedien de radio op je iPhone vanaf je pols, of luister op de Watch zelf met AirPods of een Bluetooth-koptelefoon. Met je favorieten en recente zenders van de iPhone, populaire zenders in je land, zoeken, en het volume met de Digital Crown. _(Apple Watch)_  
+  <sub>Tunr for Apple Watch: control the radio on your iPhone from your wrist, or listen on the Watch itself with AirPods or Bluetooth headphones. With your favorites and recent stations from the iPhone, popular stations in your country, search, and volume on the Digital Crown.</sub>
+
+**Verbeterd**
+
+- De iPhone-app stuurt je favorieten, recente zenders en wat er speelt naar de Apple Watch. _(iPhone)_  
+  <sub>The iPhone app sends your favorites, recent stations and what's playing to your Apple Watch.</sub>
+- tunr.online: Apple Watch staat bij de apparaten en downloads. _(Website)_  
+  <sub>tunr.online: Apple Watch is listed with the devices and downloads.</sub>
+
 ## Build 48 · versie 1.0.0
 _2026-10-23_
 

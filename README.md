@@ -5,7 +5,7 @@
 
 <p align="center">
   <b>Alle radio van de wereld. Op elk scherm.</b><br>
-  iPhone · iPad · Mac · Apple TV · CarPlay · Android · Android TV · Android Auto · Windows
+  iPhone · iPad · Mac · Apple TV · Apple Watch · CarPlay · Android · Android TV · Android Auto · Windows
 </p>
 
 <p align="center">
@@ -72,6 +72,7 @@ Buildpakketten staan niet op GitHub (geen releases, geen bestanden in de repo): 
 - **iPhone/iPad/Mac/Apple TV**: één Xcode-project met één multiplatform-target; favorieten via iCloud gedeeld; Mac met zijbalk en menu *Afspelen* (Spatie, ⌘←/⌘→, ⌘L)
 - **CarPlay**: tabs Favorieten, Recent, Populair en Genres met Nu speelt (zodra Apple de CarPlay-entitlement toekent)
 - **Android/Android TV/Android Auto**: één APK; tv-indeling met D-pad-focus; bladerboom voor Android Auto
+- **Apple Watch**: afstandsbediening voor de iPhone of zelf afspelen met AirPods; favorieten, recent, populair in je land, zoeken, volume met de Digital Crown
 - **Windows**: desktop-app (Tauri 2 + WebView2) met dezelfde schermen als de vroegere webspeler: zijbalk, kaart, podcasts, favorieten, slaaptimer, mediatoetsen; installer per gebruiker
 - **Web**: website met uitleg, zenderpagina's per land en downloads; geen webspeler (offline om rechtenredenen)
 

@@ -26,6 +26,7 @@
     ipados: S('<rect x="4.5" y="2.5" width="15" height="19" rx="2"/><circle cx="12" cy="18.5" r=".6" fill="currentColor"/>'),
     macos: S('<rect x="4.5" y="5" width="15" height="10.5" rx="1.5"/><path d="M2 19h20l-1.5-3.5h-17z"/>'),
     tvos: S('<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 20.5h7"/><path d="M9.5 9.5h5M12 9.5v4"/>'),
+    watchos: S('<rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3"/>'),
     carplay: S('<path d="M5 11.5 6.8 6.4A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4l1.8 5.1"/><rect x="3" y="11.5" width="18" height="6" rx="1.8"/><path d="M7 20v-2.5M17 20v-2.5"/>'),
     android: S('<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="5.2" r=".7" fill="currentColor"/>'),
     androidtv: S('<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/>'),
@@ -34,9 +35,9 @@
     all: S('<rect x="2.5" y="4" width="13" height="9" rx="1.5"/><path d="M6 16h6"/><rect x="16.5" y="8" width="5" height="11" rx="1.3"/>')
   };
   // [sleutel, naam, kleurklasse]
-  var P = [['ios', 'iPhone', ''], ['ipados', 'iPad', ''], ['macos', 'Mac', ''], ['tvos', 'Apple TV', ''], ['carplay', 'CarPlay', 'car'],
+  var P = [['ios', 'iPhone', ''], ['ipados', 'iPad', ''], ['macos', 'Mac', ''], ['tvos', 'Apple TV', ''], ['watchos', 'Apple Watch', ''], ['carplay', 'CarPlay', 'car'],
            ['android', 'Android', 'and'], ['androidtv', 'Android TV', 'and'], ['windows', 'Windows', 'win'], ['web', 'Website', 'web']];
-  // "Alle apps" = alle apps (CarPlay en Windows tellen mee als ze erbij staan, maar zijn niet verplicht; zelfde regel als make_changelog.py)
+  // "Alle apps" = alle apps (CarPlay, Apple Watch en Windows tellen mee als ze erbij staan, maar zijn niet verplicht; zelfde regel als make_changelog.py)
   var APPS = ['ios', 'ipados', 'macos', 'tvos', 'android', 'androidtv', 'web'];
 
   var q = new URLSearchParams(location.search);
