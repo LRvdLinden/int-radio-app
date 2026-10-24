@@ -29,6 +29,10 @@ struct TunrApp: App {
         // Live Activity "Nu speelt" (Dynamic Island, vergrendelscherm)
         if !screenshot { LiveActivityController.shared.start() }
         #endif
+        #if os(iOS) && canImport(WatchConnectivity)
+        // Apple Watch-app: afstandsbediening + favorieten/recent (zie WatchLink.swift)
+        if !screenshot { WatchLink.shared.start() }
+        #endif
     }
 
     var body: some Scene {

@@ -82,6 +82,16 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > tvos.log 2>&1; rc=$?
           tail -n 30 tvos.log; exit $rc
 
+      - name: Build watchOS (simulator)
+        id: watchos
+        continue-on-error: true
+        run: |
+          set +e
+          xcodebuild build -project Tunr.xcodeproj -scheme TunrWatch \
+            -destination 'generic/platform=watchOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > watchos.log 2>&1; rc=$?
+          tail -n 30 watchos.log; exit $rc
+
       - name: Build macOS
         id: macos
         continue-on-error: true
@@ -96,7 +106,7 @@ jobs:
       # beheer_upload.sh werkt het manifest bij; dezelfde build wordt vervangen, dus gewoon elke keer uploaden.
       - name: Klaar voor de Xcode-zip?
         id: ok
-        if: github.event_name != 'pull_request' && steps.ios.outcome == 'success' && steps.tvos.outcome == 'success' && steps.macos.outcome == 'success'
+        if: github.event_name != 'pull_request' && steps.ios.outcome == 'success' && steps.tvos.outcome == 'success' && steps.macos.outcome == 'success' && steps.watchos.outcome == 'success'
         run: echo "ok=true" >> "$GITHUB_OUTPUT"
 
       # Log op de branch ci-logs (latest.txt), zodat fouten en bestemmingen ook buiten GitHub te lezen zijn
@@ -107,9 +117,9 @@ jobs:
           mkdir -p "$RUNNER_TEMP/rep"
           {
             echo "commit: $GITHUB_SHA"
-            echo "ios: ${{ steps.ios.outcome }}  tvos: ${{ steps.tvos.outcome }}  macos: ${{ steps.macos.outcome }}"
+            echo "ios: ${{ steps.ios.outcome }}  tvos: ${{ steps.tvos.outcome }}  macos: ${{ steps.macos.outcome }}  watchos: ${{ steps.watchos.outcome }}"
             echo; echo "=== bestemmingen ==="; cat apple/destinations.txt 2>/dev/null | head -80
-            for f in ios tvos macos; do echo; echo "=== $f errors ==="; grep -E "error:" apple/$f.log 2>/dev/null | sort -u | head -150; done
+            for f in ios tvos macos watchos; do echo; echo "=== $f errors ==="; grep -E "error:" apple/$f.log 2>/dev/null | sort -u | head -150; done
           } > "$RUNNER_TEMP/rep/latest.txt"
           cd "$RUNNER_TEMP/rep"
           git init -q && git checkout -q -b ci-logs
@@ -123,13 +133,14 @@ jobs:
           echo "- iOS/iPadOS: ${{ steps.ios.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- tvOS: ${{ steps.tvos.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- macOS: ${{ steps.macos.outcome }}" >> $GITHUB_STEP_SUMMARY
-          for f in ios tvos macos; do
+          echo "- watchOS: ${{ steps.watchos.outcome }}" >> $GITHUB_STEP_SUMMARY
+          for f in ios tvos macos watchos; do
             echo "=== $f errors ==="
             grep -E "error:" $f.log | sort -u | head -200 || true
           done
 
       - name: Status
-        if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success' || steps.macos.outcome != 'success'
+        if: steps.ios.outcome != 'success' || steps.tvos.outcome != 'success' || steps.macos.outcome != 'success' || steps.watchos.outcome != 'success'
         run: exit 1
 
   # Xcode-zip uploaden vanaf Ubuntu (FTPS vanaf macOS-runners lukt niet). De zip is de map apple/ met het

@@ -29,6 +29,8 @@ enum Brand {
         return "tvOS"
         #elseif os(macOS)
         return "macOS"
+        #elseif os(watchOS)
+        return "watchOS"
         #else
         return "iOS"
         #endif

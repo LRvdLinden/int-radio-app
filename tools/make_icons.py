@@ -396,6 +396,18 @@ def presskit_brand():
     save(pad.convert("RGB"), root / "docs/brand/wordmark-dark.png")
 
 
+def watch():
+    """Apple Watch (apple/Watch/Assets.xcassets): één icoon van 1024 px, vierkant zonder transparantie (watchOS maakt
+    het zelf rond), plus AccentColor."""
+    cat = root / "apple/Watch/Assets.xcassets"
+    save(app_icon(1024).convert("RGB"), cat / "AppIcon.appiconset/icon-1024.png")
+    write_json(cat / "AppIcon.appiconset/Contents.json", {
+        "images": [{"filename": "icon-1024.png", "idiom": "universal", "platform": "watchos", "size": "1024x1024"}],
+        "info": {"author": "xcode", "version": 1}})
+    accent_color(cat)
+    write_json(cat / "Contents.json", {"info": {"author": "xcode", "version": 1}})
+
+
 def windows():
     """Windows-app (windows/src-tauri/icons): afgeronde tegel zoals Android/web, PNG's voor Tauri + icon.ico (16-256)."""
     out = root / "windows/src-tauri/icons"
@@ -410,6 +422,8 @@ if __name__ == "__main__":
     import sys
     if sys.argv[1:] == ["windows"]:
         windows()
+    elif sys.argv[1:] == ["watch"]:
+        watch()
     else:
-        apple(); android(); web(); docs(); windows()
+        apple(); android(); web(); docs(); windows(); watch()
     print("ok")
