@@ -18,16 +18,21 @@
 		1996F80AC404DA7C9DF005E2 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98909271F23444F204D273E4 /* SearchView.swift */; };
 		1BA09D5D33F63FC85183DED4 /* NowPlayingAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 367852E68C3C8BCCAC075169 /* NowPlayingAttributes.swift */; };
 		1CE2FDD7299E040DF2450D6D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12C2BB7D4B1328705F8EC9 /* Models.swift */; };
+		1CE8E8DB988B213ED68CF84F /* WatchStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5AF018BE4681336DD8DB93D /* WatchStats.swift */; };
 		21E0E242F7B5065DA33F9936 /* TunrApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */; };
 		23138E297CE7E46D64528A5B /* MapExplorerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE63444F18ADFC5F4564C19B /* MapExplorerView.swift */; };
+		294DA36D97FB378494A5A249 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC7D94EB9DEE0430875637B2 /* Assets.xcassets */; };
 		2EE3F4C71E6EA809AD0C0AD2 /* RadioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2531CF5372B484EEEA39F550 /* RadioPlayer.swift */; };
 		32A9D5F1C74628967AEAB44F /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141C78E104941360CF3E0A1 /* QRCodeView.swift */; };
 		3532C2B2F86FB0D8D15AD038 /* EpisodePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2438D34C1231D4473CB47A3 /* EpisodePlayerView.swift */; };
 		356E3522CCDBF97E063C9925 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D624D6B1ABBC01F25723A8D2 /* BrowseView.swift */; };
 		364319DFAD9E1989FB2F2F4E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78CE97B63986FDACA3E0ECB /* Localizable.strings */; };
 		3E1CC6E67A72766170E1300D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DB967363971F3909749AC /* Theme.swift */; };
+		3F83A59CD80F8DEB0FAF71EC /* WatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067386A0F5C97E4D573B3802 /* WatchStore.swift */; };
+		4802924BA216D4891E9B8282 /* TunrWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D4398920AE18D81F0EC11926 /* TunrWatch.app */; platformFilters = (ios, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4B847ECF284DDBAA43106B90 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0417683AE134B8ED1591B69 /* MainView.swift */; };
 		4C5AB8858CDDBCA6B87B48BD /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */; };
+		4C93DC65D815E010DE973236 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 06F74548BD5AC482ADCAC7EE /* Localizable.strings */; };
 		540B5380D90F3AE40A9CEA04 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6633117DC4DABCDCCE1A0EB9 /* Library.swift */; };
 		5E0E39675B284C7602BE65FB /* TunrWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A1AA9F85043404B2F436D /* TunrWidgetBundle.swift */; };
 		6078071F87F48ABB9E8238AA /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12316BDC6994B0379BAF42A /* SplashView.swift */; };
@@ -38,6 +43,8 @@
 		74ED7EF33B5D5DB9797AC033 /* Podcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE890D28699C84C7A14DDDB /* Podcast.swift */; };
 		797C62E80297BCEC0E818F8F /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D64B323FDD30D2AF76430 /* WidgetBridge.swift */; };
 		7BB0A823B222D8778BB62DE0 /* PlaybackControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C8E0DDAAB7A45093B956FF /* PlaybackControl.swift */; };
+		8571BCBE527EC303C880EEED /* TunrWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27220D90929A29E3442E367C /* TunrWatchApp.swift */; };
+		8BA9A42E14BBE3628282B5FB /* WatchLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = E823F5A762922DE990A98E4E /* WatchLink.swift */; };
 		8E1682C9B5F83565E506EEFA /* PodcastAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383372F34C74D40469B52BC3 /* PodcastAPI.swift */; };
 		9918C1D760C6BB6839770EB5 /* StationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE64CF4E4D061989FC68CB6F /* StationDetailView.swift */; };
 		99504E8B202215A6B93ADDF8 /* TunrIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83FC208B040F32B011D32D17 /* TunrIntents.swift */; };
@@ -52,7 +59,11 @@
 		B08869B6D2E13B95CD05AE96 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08AFD0AC63492179E7D66BFB /* CarPlaySceneDelegate.swift */; };
 		B1FB7EA6D2D96F1D1A7B4084 /* NowPlayingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC12E5690936CC217EE90A /* NowPlayingWidget.swift */; };
 		BA155AAB7179D6990D355F70 /* CountryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB13927D9EE43267041CD5FE /* CountryPickerView.swift */; };
+		BAFA7A205F83AD821E41E030 /* WatchPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7E8AEE20D78632C49DDC4C /* WatchPlayer.swift */; };
+		BBA4547F7E05D4962AA70AE2 /* WatchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF51F9702A06A1DEE33AAEB /* WatchAPI.swift */; };
+		BBE05A5B91374BFA4F58AC44 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54F7378D3EBD43AC96C4909 /* WatchViews.swift */; };
 		BDC779F5E734081F9E678FDD /* PodcastDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF2335BEB7E807E50D53AD3 /* PodcastDetailView.swift */; };
+		C2DA75BE92282469E9B7F4CC /* WatchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287A14C5A02FA4D69C8F0C3F /* WatchModels.swift */; };
 		C451C2D1EFFCB174E217D597 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79E0256409132D32C5B7892 /* AppState.swift */; };
 		C9DAAE4E7AE6384E469D4196 /* TunrWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8300F335F90192411B005449 /* TunrWidgets.appex */; platformFilters = (ios, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF5DF131EF37E06DB474F303 /* PlatformSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */; };
@@ -61,13 +72,22 @@
 		D22D3C214344163E731434AF /* NowPlayingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C85A17E55C440775658A4E /* NowPlayingLiveActivity.swift */; };
 		D8E672F9BE45670A9CCA1EC8 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9D64B323FDD30D2AF76430 /* WidgetBridge.swift */; };
 		E0057F93AFAE528DBD2DFDAE /* StationGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3ED6468D250284C1CF511 /* StationGridView.swift */; };
+		E07670642D317AF07FCCBC95 /* PhoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E439F32DB313969F3F8954 /* PhoneLink.swift */; };
 		E27D4F085335BAB37B66B2D7 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */; };
 		E4D6933D544BEC091A8D0607 /* MiniPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C65277A2F1F06D203FB1EA9 /* MiniPlayer.swift */; };
+		F47394D41AB9520A23B02126 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */; };
 		F7C1A1A80B370CF91FEF689C /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6788A06D49C9BA821AD10708 /* PlayerView.swift */; };
 		FF720463E58BEC2FD315BC0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2A68AD31D54D3A89DC4BE8E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B9597902C8D9D7549E300F5A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 455328A0D56CDDCCF7E7C765;
+			remoteInfo = TunrWatch;
+		};
 		AD537322F1CCEE6CF5E15061 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B9597902C8D9D7549E300F5A /* Project object */;
@@ -89,9 +109,21 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		47F5CD038A8F99B8B5E6BF86 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				4802924BA216D4891E9B8282 /* TunrWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		067386A0F5C97E4D573B3802 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
 		08AFD0AC63492179E7D66BFB /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
 		0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B0C88F96E6C5E43B9347B83 /* PlatformSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformSupport.swift; sourceTree = "<group>"; };
@@ -99,16 +131,20 @@
 		0F64632FBA964CF13FE8C366 /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
 		164A240C07605C0B5378E68C /* SettingsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSync.swift; sourceTree = "<group>"; };
 		2531CF5372B484EEEA39F550 /* RadioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlayer.swift; sourceTree = "<group>"; };
+		27220D90929A29E3442E367C /* TunrWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunrWatchApp.swift; sourceTree = "<group>"; };
+		287A14C5A02FA4D69C8F0C3F /* WatchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchModels.swift; sourceTree = "<group>"; };
 		32B8AC08C664824F797D1EF2 /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
 		34C85A17E55C440775658A4E /* NowPlayingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingLiveActivity.swift; sourceTree = "<group>"; };
 		367852E68C3C8BCCAC075169 /* NowPlayingAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingAttributes.swift; sourceTree = "<group>"; };
 		383372F34C74D40469B52BC3 /* PodcastAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastAPI.swift; sourceTree = "<group>"; };
 		3C12C2BB7D4B1328705F8EC9 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		3C8D21438B5D29439B567890 /* FavoritesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidget.swift; sourceTree = "<group>"; };
+		3F7E8AEE20D78632C49DDC4C /* WatchPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPlayer.swift; sourceTree = "<group>"; };
 		4818CB644743420120C40C6E /* ShareLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLinks.swift; sourceTree = "<group>"; };
 		4B211D0140C7CDBADAB4AA48 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		4DF2335BEB7E807E50D53AD3 /* PodcastDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastDetailView.swift; sourceTree = "<group>"; };
 		548DB967363971F3909749AC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		58E439F32DB313969F3F8954 /* PhoneLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLink.swift; sourceTree = "<group>"; };
 		6633117DC4DABCDCCE1A0EB9 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
 		6788A06D49C9BA821AD10708 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		6A9D64B323FDD30D2AF76430 /* WidgetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
@@ -117,6 +153,7 @@
 		7809581C1976C9B30006FA17 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		78A06EB56A8369D95923B4DD /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		79C3ED6468D250284C1CF511 /* StationGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationGridView.swift; sourceTree = "<group>"; };
+		7CF51F9702A06A1DEE33AAEB /* WatchAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchAPI.swift; sourceTree = "<group>"; };
 		8300F335F90192411B005449 /* TunrWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TunrWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		83FC208B040F32B011D32D17 /* TunrIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunrIntents.swift; sourceTree = "<group>"; };
 		92C8E0DDAAB7A45093B956FF /* PlaybackControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackControl.swift; sourceTree = "<group>"; };
@@ -125,20 +162,27 @@
 		A2438D34C1231D4473CB47A3 /* EpisodePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodePlayerView.swift; sourceTree = "<group>"; };
 		A4B478945886F5F7771730D9 /* ArtworkLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLookup.swift; sourceTree = "<group>"; };
 		A52F01A9E6A2FC28F1059B36 /* WidgetSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSync.swift; sourceTree = "<group>"; };
+		AC7D94EB9DEE0430875637B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B0417683AE134B8ED1591B69 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		B141C78E104941360CF3E0A1 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		B266D3D6DC4574EDAB825310 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
+		B54F7378D3EBD43AC96C4909 /* WatchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViews.swift; sourceTree = "<group>"; };
 		B5B9796F16B12BF4F243AFA5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		B8950762D8116B82EA57B2C2 /* PodcastCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCards.swift; sourceTree = "<group>"; };
+		BA5CC31A1AA9A61C6F50FC33 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CB13927D9EE43267041CD5FE /* CountryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerView.swift; sourceTree = "<group>"; };
 		CDFDCB95D7CE47DBF4973A53 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D12316BDC6994B0379BAF42A /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		D4398920AE18D81F0EC11926 /* TunrWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TunrWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
 		D624D6B1ABBC01F25723A8D2 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		D6FC12E5690936CC217EE90A /* NowPlayingWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingWidget.swift; sourceTree = "<group>"; };
 		D786DE7682E4DC6FD102BB25 /* ScreenshotMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMode.swift; sourceTree = "<group>"; };
 		E412B5FCD06FF41EFC8F350A /* Tunr.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tunr.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5AF018BE4681336DD8DB93D /* WatchStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStats.swift; sourceTree = "<group>"; };
+		E823F5A762922DE990A98E4E /* WatchLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchLink.swift; sourceTree = "<group>"; };
+		EA0F952A4859A171243743E6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EA696855F97CEC76514DBDAC /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunrApp.swift; sourceTree = "<group>"; };
 		EE64CF4E4D061989FC68CB6F /* StationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationDetailView.swift; sourceTree = "<group>"; };
@@ -199,6 +243,14 @@
 			path = Screens;
 			sourceTree = "<group>";
 		};
+		282535CC52622923C7857B09 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				06F74548BD5AC482ADCAC7EE /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		2C69CF74D48D1ADEB455123E /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -209,6 +261,7 @@
 				D786DE7682E4DC6FD102BB25 /* ScreenshotMode.swift */,
 				4818CB644743420120C40C6E /* ShareLinks.swift */,
 				EBCE85ECFA71A654BBEBAA89 /* TunrApp.swift */,
+				E823F5A762922DE990A98E4E /* WatchLink.swift */,
 				A52F01A9E6A2FC28F1059B36 /* WidgetSync.swift */,
 			);
 			path = App;
@@ -227,6 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				F90FB031777B004EF9152AAA /* Shared */,
+				6C2640B1C3D373503CCBBB53 /* Watch */,
 				1A0514A076674EF3EA4F3017 /* Widgets */,
 				B2E8863E7754954AA433E324 /* Products */,
 			);
@@ -255,6 +309,23 @@
 				94DDA8047176F9CBAD0FD06F /* Localizable.strings */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		6C2640B1C3D373503CCBBB53 /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				AC7D94EB9DEE0430875637B2 /* Assets.xcassets */,
+				58E439F32DB313969F3F8954 /* PhoneLink.swift */,
+				27220D90929A29E3442E367C /* TunrWatchApp.swift */,
+				7CF51F9702A06A1DEE33AAEB /* WatchAPI.swift */,
+				287A14C5A02FA4D69C8F0C3F /* WatchModels.swift */,
+				3F7E8AEE20D78632C49DDC4C /* WatchPlayer.swift */,
+				E5AF018BE4681336DD8DB93D /* WatchStats.swift */,
+				067386A0F5C97E4D573B3802 /* WatchStore.swift */,
+				B54F7378D3EBD43AC96C4909 /* WatchViews.swift */,
+				282535CC52622923C7857B09 /* Resources */,
+			);
+			path = Watch;
 			sourceTree = "<group>";
 		};
 		7897DF021FFE5C7CB138EAC9 /* Storage */ = {
@@ -289,6 +360,7 @@
 			isa = PBXGroup;
 			children = (
 				E412B5FCD06FF41EFC8F350A /* Tunr.app */,
+				D4398920AE18D81F0EC11926 /* TunrWatch.app */,
 				8300F335F90192411B005449 /* TunrWidgets.appex */,
 			);
 			name = Products;
@@ -361,11 +433,13 @@
 				78A88ECF9473543783CAC584 /* Sources */,
 				05BD0151F5808234995FFC82 /* Resources */,
 				1CF9845BBB8A8199B8E0C200 /* Embed Foundation Extensions */,
+				47F5CD038A8F99B8B5E6BF86 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				8858DD217FA653F6C7312062 /* PBXTargetDependency */,
+				E9F18AAA9BC34D6DDB169772 /* PBXTargetDependency */,
 			);
 			name = Tunr;
 			packageProductDependencies = (
@@ -392,6 +466,24 @@
 			productReference = 8300F335F90192411B005449 /* TunrWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		455328A0D56CDDCCF7E7C765 /* TunrWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22711A5991B8A09DC2A26619 /* Build configuration list for PBXNativeTarget "TunrWatch" */;
+			buildPhases = (
+				BE352817D6C2129715E585DD /* Sources */,
+				83258287E9158982ACC925EB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TunrWatch;
+			packageProductDependencies = (
+			);
+			productName = TunrWatch;
+			productReference = D4398920AE18D81F0EC11926 /* TunrWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -406,6 +498,10 @@
 						ProvisioningStyle = Automatic;
 					};
 					342F28AE5432B5140CAE4C51 = {
+						DevelopmentTeam = EU3UY476T6;
+						ProvisioningStyle = Automatic;
+					};
+					455328A0D56CDDCCF7E7C765 = {
 						DevelopmentTeam = EU3UY476T6;
 						ProvisioningStyle = Automatic;
 					};
@@ -428,6 +524,7 @@
 			targets = (
 				248D730FC33D46BA32335F18 /* Tunr */,
 				342F28AE5432B5140CAE4C51 /* TunrWidgets */,
+				455328A0D56CDDCCF7E7C765 /* TunrWatch */,
 			);
 		};
 /* End PBXProject section */
@@ -448,6 +545,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				364319DFAD9E1989FB2F2F4E /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83258287E9158982ACC925EB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				294DA36D97FB378494A5A249 /* Assets.xcassets in Resources */,
+				4C93DC65D815E010DE973236 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,8 +622,25 @@
 				3E1CC6E67A72766170E1300D /* Theme.swift in Sources */,
 				21E0E242F7B5065DA33F9936 /* TunrApp.swift in Sources */,
 				191F3B70D221DB9C1AEFBF58 /* TunrIntents.swift in Sources */,
+				8BA9A42E14BBE3628282B5FB /* WatchLink.swift in Sources */,
 				D8E672F9BE45670A9CCA1EC8 /* WidgetBridge.swift in Sources */,
 				01491CFB9B43FC8D1A45818C /* WidgetSync.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE352817D6C2129715E585DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F47394D41AB9520A23B02126 /* Brand.swift in Sources */,
+				E07670642D317AF07FCCBC95 /* PhoneLink.swift in Sources */,
+				8571BCBE527EC303C880EEED /* TunrWatchApp.swift in Sources */,
+				BBA4547F7E05D4962AA70AE2 /* WatchAPI.swift in Sources */,
+				C2DA75BE92282469E9B7F4CC /* WatchModels.swift in Sources */,
+				BAFA7A205F83AD821E41E030 /* WatchPlayer.swift in Sources */,
+				1CE8E8DB988B213ED68CF84F /* WatchStats.swift in Sources */,
+				3F83A59CD80F8DEB0FAF71EC /* WatchStore.swift in Sources */,
+				BBE05A5B91374BFA4F58AC44 /* WatchViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,9 +656,26 @@
 			target = 342F28AE5432B5140CAE4C51 /* TunrWidgets */;
 			targetProxy = AD537322F1CCEE6CF5E15061 /* PBXContainerItemProxy */;
 		};
+		E9F18AAA9BC34D6DDB169772 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+			);
+			target = 455328A0D56CDDCCF7E7C765 /* TunrWatch */;
+			targetProxy = 2A68AD31D54D3A89DC4BE8E4 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		06F74548BD5AC482ADCAC7EE /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EA0F952A4859A171243743E6 /* en */,
+				BA5CC31A1AA9A61C6F50FC33 /* nl */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		94DDA8047176F9CBAD0FD06F /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -664,6 +804,42 @@
 			};
 			name = Debug;
 		};
+		5E5B7865BD00E8F9E3603DBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/TunrWatch.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Info-Watch.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = nl.lrvdlinden.tunr.watchkitapp;
+				PRODUCT_NAME = TunrWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		607EBEE636199B75FB79743E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/TunrWatch.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Info-Watch.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = nl.lrvdlinden.tunr.watchkitapp;
+				PRODUCT_NAME = TunrWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
 		77BD342CDCBBB1F25D2D8DA7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -699,7 +875,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 49;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -725,11 +901,11 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -768,7 +944,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 49;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -787,11 +963,11 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
 				TVOS_DEPLOYMENT_TARGET = 17.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -857,6 +1033,15 @@
 			buildConfigurations = (
 				DE68F692EFC2B491586C25FE /* Debug */,
 				2148D7F5AA60365096D7C578 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		22711A5991B8A09DC2A26619 /* Build configuration list for PBXNativeTarget "TunrWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				607EBEE636199B75FB79743E /* Debug */,
+				5E5B7865BD00E8F9E3603DBB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
