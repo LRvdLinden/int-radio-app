@@ -17,7 +17,7 @@ Op [tunr.online/web](https://tunr.online/web/) luister je zonder iets te install
 - **Media Session**: bediening op het vergrendelscherm en met mediatoetsen; bij afleveringen ook spoelen.
 - **Sneltoetsen**: spatie (afspelen/pauze), ← → (15 s terug / 30 s vooruit bij een aflevering), Esc (speler of venster sluiten).
 - Zenders en afleveringen die alleen via http streamen, blokkeert de browser op een https-pagina; de speler zegt dan dat ze alleen in de app werken.
-- `web/` is geen webspeler meer (offline om rechtenredenen) maar de pagina voor gedeelde links uit de apps: `noindex`, niet in de sitemap.
+- `web/` is de verborgen webspeler: geen links ernaartoe op de site, niet in de changelog, `noindex`, niet in de sitemap.
 
 ## Functies van de site
 
