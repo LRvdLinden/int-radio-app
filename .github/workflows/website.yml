@@ -365,6 +365,13 @@ jobs:
             echo "::error::$DOMAIN toont '${live:-niets}', verwacht '$want': de upload is niet op de juiste plek aangekomen (klopt FTP_DIR en het domein in brand.js?)."; exit 1
           fi
           echo "::notice::https://$DOMAIN/ is live (${live:-zonder buildnummer})"
+          # verborgen webspeler: /web/ moet de speler zijn (player.js) en player.js moet bereikbaar zijn
+          if ! curl -sL --max-time 20 "https://$DOMAIN/web/?ts=$(date +%s)" | grep -q 'assets/js/player.js'; then
+            echo "::error::https://$DOMAIN/web/ is niet de webspeler."; exit 1
+          fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://$DOMAIN/assets/js/player.js")
+          [ "$code" = 200 ] || { echo "::error::assets/js/player.js geeft $code."; exit 1; }
+          echo "::notice::Webspeler op https://$DOMAIN/web/ is live"
           curl -s -o /dev/null -D /tmp/h.txt --max-time 20 "https://$DOMAIN/" || true
           for h in 'strict-transport-security' 'x-content-type-options: nosniff' 'x-frame-options: deny'; do
             tr -d '\r' < /tmp/h.txt | grep -qiF "$h" || echo "::warning::Header ontbreekt op https://$DOMAIN/: $h"
