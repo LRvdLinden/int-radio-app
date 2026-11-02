@@ -1,0 +1,25 @@
+commit: 32c7e2fb0b938e6eb51d3a83b21cac7c7bc06616
+ios: success  tvos: success  macos: success  watchos: success
+
+=== bestemmingen ===
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -showdestinations -project Tunr.xcodeproj -scheme Tunr
+
+
+
+	Available destinations for the "Tunr" scheme:
+		{ platform:macOS, arch:arm64, id:bcebde40cfbcff8e3169a07d8a2659f261ac6f5a, name:My Mac }
+		{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+		{ platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+		{ platform:macOS, name:Any Mac }
+		{ platform:tvOS, id:dvtdevice-DVTiOSDevicePlaceholder-appletvos:placeholder, name:Any tvOS Device }
+		{ platform:tvOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-appletvsimulator:placeholder, name:Any tvOS Simulator Device }
+
+=== ios errors ===
+2026-11-02 08:03:55.849 appintentsnltrainingprocessor[3988:15322] error: Unable to parse extract.actionsdata
+
+=== tvos errors ===
+
+=== macos errors ===
+
+=== watchos errors ===
