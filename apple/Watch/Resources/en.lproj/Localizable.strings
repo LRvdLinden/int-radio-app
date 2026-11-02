@@ -32,3 +32,6 @@
 "watch.connected" = "Connected";
 "watch.notConnected" = "Not connected";
 "watch.settings" = "Settings";
+"watch.moreApps" = "More apps from the developer";
+"watch.moreAppsSub" = "Apps for iPhone, iPad, Apple TV and Homey";
+"watch.view" = "View";

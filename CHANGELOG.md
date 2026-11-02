@@ -4,6 +4,19 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 51 · versie 1.0.0
+_2026-11-02_
+
+**Nieuw**
+
+- Instellingen op de Apple Watch: kaart "Meer apps van de ontwikkelaar" (lrvdlinden.app). _(Apple Watch)_  
+  <sub>Settings on Apple Watch: "More apps from the developer" card (lrvdlinden.app).</sub>
+
+**Verbeterd**
+
+- De kaart "Meer apps van de ontwikkelaar" in Instellingen heeft nu de huisstijl van lrvdlinden.app, met het LR-logo. _(iPhone, iPad, Mac, Apple TV)_  
+  <sub>The "More apps from the developer" card in Settings now has the lrvdlinden.app look, with the LR logo.</sub>
+
 ## Build 50 · versie 1.0.0
 _2026-11-02_
 

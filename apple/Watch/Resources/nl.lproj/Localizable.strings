@@ -32,3 +32,6 @@
 "watch.connected" = "Verbonden";
 "watch.notConnected" = "Niet verbonden";
 "watch.settings" = "Instellingen";
+"watch.moreApps" = "Meer apps van de ontwikkelaar";
+"watch.moreAppsSub" = "Apps voor iPhone, iPad, Apple TV en Homey";
+"watch.view" = "Bekijk";

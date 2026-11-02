@@ -1,6 +1,32 @@
 {
   "builds": [
     {
+      "build": 51,
+      "version": "1.0.0",
+      "date": "2026-11-02",
+      "items": [
+        {
+          "type": "improved",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos"
+          ],
+          "nl": "De kaart \"Meer apps van de ontwikkelaar\" in Instellingen heeft nu de huisstijl van lrvdlinden.app, met het LR-logo.",
+          "en": "The \"More apps from the developer\" card in Settings now has the lrvdlinden.app look, with the LR logo."
+        },
+        {
+          "type": "new",
+          "platforms": [
+            "watchos"
+          ],
+          "nl": "Instellingen op de Apple Watch: kaart \"Meer apps van de ontwikkelaar\" (lrvdlinden.app).",
+          "en": "Settings on Apple Watch: \"More apps from the developer\" card (lrvdlinden.app)."
+        }
+      ]
+    },
+    {
       "build": 50,
       "version": "1.0.0",
       "date": "2026-11-02",

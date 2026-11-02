@@ -363,6 +363,12 @@ struct SettingsPage: View {
                 Text("watch.stats.hint")
             }
             Section {
+                MoreAppsCard(title: String(localized: "watch.moreApps"), subtitle: String(localized: "watch.moreAppsSub"),
+                             actionTitle: String(localized: "watch.view"), compact: true)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+            }
+            Section {
                 HStack {
                     Text("Tunr")
                     Spacer()
