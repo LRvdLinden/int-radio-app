@@ -58,6 +58,7 @@
 		AD2F83CB53DFE1812CF24278 /* SettingsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164A240C07605C0B5378E68C /* SettingsSync.swift */; };
 		B08869B6D2E13B95CD05AE96 /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08AFD0AC63492179E7D66BFB /* CarPlaySceneDelegate.swift */; };
 		B1FB7EA6D2D96F1D1A7B4084 /* NowPlayingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC12E5690936CC217EE90A /* NowPlayingWidget.swift */; };
+		B6169A842844FBAB08129784 /* MoreAppsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AB48287C791B639F300C64 /* MoreAppsCard.swift */; };
 		BA155AAB7179D6990D355F70 /* CountryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB13927D9EE43267041CD5FE /* CountryPickerView.swift */; };
 		BAFA7A205F83AD821E41E030 /* WatchPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7E8AEE20D78632C49DDC4C /* WatchPlayer.swift */; };
 		BBA4547F7E05D4962AA70AE2 /* WatchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF51F9702A06A1DEE33AAEB /* WatchAPI.swift */; };
@@ -77,6 +78,7 @@
 		E4D6933D544BEC091A8D0607 /* MiniPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C65277A2F1F06D203FB1EA9 /* MiniPlayer.swift */; };
 		F47394D41AB9520A23B02126 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = D478AA52FCA3BCA9DBEA5C6F /* Brand.swift */; };
 		F7C1A1A80B370CF91FEF689C /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6788A06D49C9BA821AD10708 /* PlayerView.swift */; };
+		FDB58698AD6171E4091F25F1 /* MoreAppsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AB48287C791B639F300C64 /* MoreAppsCard.swift */; };
 		FF720463E58BEC2FD315BC0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A87ED9B4DC69EB691BA8628 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -171,6 +173,7 @@
 		B85D6FAB5DBB0123AA4E6E29 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		B8950762D8116B82EA57B2C2 /* PodcastCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCards.swift; sourceTree = "<group>"; };
 		BA5CC31A1AA9A61C6F50FC33 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C5AB48287C791B639F300C64 /* MoreAppsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreAppsCard.swift; sourceTree = "<group>"; };
 		CB13927D9EE43267041CD5FE /* CountryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerView.swift; sourceTree = "<group>"; };
 		CDFDCB95D7CE47DBF4973A53 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D12316BDC6994B0379BAF42A /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -398,6 +401,7 @@
 				76AF8FE9CC0562561750ACB2 /* Brand+Art.swift */,
 				0F64632FBA964CF13FE8C366 /* Cards.swift */,
 				0C65277A2F1F06D203FB1EA9 /* MiniPlayer.swift */,
+				C5AB48287C791B639F300C64 /* MoreAppsCard.swift */,
 				B8950762D8116B82EA57B2C2 /* PodcastCards.swift */,
 				B141C78E104941360CF3E0A1 /* QRCodeView.swift */,
 			);
@@ -598,6 +602,7 @@
 				23138E297CE7E46D64528A5B /* MapExplorerView.swift in Sources */,
 				E4D6933D544BEC091A8D0607 /* MiniPlayer.swift in Sources */,
 				1CE2FDD7299E040DF2450D6D /* Models.swift in Sources */,
+				FDB58698AD6171E4091F25F1 /* MoreAppsCard.swift in Sources */,
 				A6AFCE55135200F1A8BE0862 /* Navigation.swift in Sources */,
 				1BA09D5D33F63FC85183DED4 /* NowPlayingAttributes.swift in Sources */,
 				CF5DF131EF37E06DB474F303 /* PlatformSupport.swift in Sources */,
@@ -633,6 +638,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F47394D41AB9520A23B02126 /* Brand.swift in Sources */,
+				B6169A842844FBAB08129784 /* MoreAppsCard.swift in Sources */,
 				E07670642D317AF07FCCBC95 /* PhoneLink.swift in Sources */,
 				8571BCBE527EC303C880EEED /* TunrWatchApp.swift in Sources */,
 				BBA4547F7E05D4962AA70AE2 /* WatchAPI.swift in Sources */,
@@ -875,7 +881,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -944,7 +950,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = EU3UY476T6;
 				ENABLE_NS_ASSERTIONS = NO;
