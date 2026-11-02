@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -123,6 +125,11 @@ fun SettingsScreen(onClose: (() -> Unit)?) {
                 }
             }
             item {
+                Group(stringResource(R.string.discover_more)) {
+                    MoreAppsCard { if (!Device.isTV) openUrl(context, Brand.DEVELOPER_APPS) }
+                }
+            }
+            item {
                 Column(Modifier.fillMaxWidth().padding(top = 28.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     TunrLogo(20.sp)
                     Spacer(Modifier.height(8.dp))
@@ -178,6 +185,41 @@ private fun Group(title: String, content: @Composable () -> Unit) {
         Text(title.uppercase(), color = T.secondary, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp))
         Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(T.surface)) { content() }
+    }
+}
+
+/** Kaart naar lrvdlinden.app in de Tunr-kleuren (tv: alleen het adres, want geen browser) */
+@Composable
+private fun MoreAppsCard(onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth()
+            .tvClickable(RoundedCornerShape(12.dp), scale = 1.02f, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            Modifier.size(56.dp).clip(RoundedCornerShape(14.dp))
+                .background(Brush.linearGradient(listOf(T.accent, T.accent2))),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                repeat(2) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                        repeat(2) { Box(Modifier.size(10.dp).clip(RoundedCornerShape(3.dp)).background(Color.White)) }
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.more_apps), color = T.accent, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.more_apps_sub), color = T.secondary, fontSize = 13.sp, lineHeight = 17.sp)
+        }
+        Spacer(Modifier.width(8.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            if (!Device.isTV) Text(stringResource(R.string.view), color = T.accent2, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text("lrvdlinden.app", color = T.secondary, fontSize = 11.sp)
+        }
     }
 }
 

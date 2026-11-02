@@ -647,6 +647,13 @@
         '<a href="' + window.TUNR.domain + '/privacy/"><span class="lab">' + esc(t('set.privacy')) + '</span>' + I('chev', 'chev') + '</a>' +
         '<a href="' + window.TUNR.domain + '/voorwaarden/"><span class="lab">' + esc(t('set.terms')) + '</span>' + I('chev', 'chev') + '</a>' +
         '<a href="https://www.radio-browser.info" target="_blank" rel="noopener"><span class="rico" style="--a:#10B981;--b:#84CC16">' + I('wave') + '</span><span class="lab">' + esc(t('set.credit')) + '<small>' + esc(t('set.credit.p')) + '</small></span>' + I('ext', 'chev') + '</a>' +
+        '</div></section>' +
+        // Meer apps van de ontwikkelaar (lrvdlinden.app), in de Tunr-kleuren
+        '<section class="sec"><div class="sech"><h2>' + esc(t('set.discover')) + '</h2></div><div class="rows">' +
+        '<a class="moreapps" href="https://lrvdlinden.app" target="_blank" rel="noopener">' +
+        '<span class="mi" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
+        '<span class="lab"><b>' + esc(t('set.moreApps')) + '</b><small>' + esc(t('set.moreAppsSub')) + '</small></span>' +
+        '<span class="go"><b>' + esc(t('set.view')) + '</b><small>lrvdlinden.app</small></span></a>' +
         '</div></section></div>';
     }
     el.onclick = function (e) {

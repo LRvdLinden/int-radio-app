@@ -148,6 +148,12 @@ struct SettingsView: View {
                 linkRow(L("about.source"), symbol: "antenna.radiowaves.left.and.right", url: Brand.radioBrowser)
             } header: {
                 Text(L("settings.about"))
+            }
+
+            Section {
+                moreAppsCard
+            } header: {
+                Text(L("settings.discover"))
             } footer: {
                 VStack(spacing: tvScaled(10)) {
                     TunrLogo(size: tvScaled(18))
@@ -162,6 +168,65 @@ struct SettingsView: View {
         #endif
         .hiddenListBackground()
         .screenBackground()
+    }
+
+    // MARK: Meer apps van de ontwikkelaar
+
+    /// Kaart naar lrvdlinden.app in de Tunr-kleuren (Apple TV: QR-code, want geen browser)
+    @ViewBuilder private var moreAppsCard: some View {
+        #if os(tvOS)
+        Button { qrLink = QRLink(title: L("settings.moreApps"), url: Brand.developerApps) } label: {
+            HStack(spacing: tvScaled(16)) {
+                moreAppsIcon
+                VStack(alignment: .leading, spacing: tvScaled(4)) {
+                    Text(L("settings.moreApps")).font(.system(size: tvScaled(17), weight: .bold))
+                    Text(L("settings.moreAppsSub")).modifier(SecondaryText())
+                }
+                Spacer()
+                Text(QRLink.display(Brand.developerApps)).modifier(SecondaryText())
+                Image(systemName: "qrcode").modifier(SecondaryText())
+            }
+        }
+        #else
+        Button { openURL(Brand.developerApps) } label: {
+            HStack(spacing: 14) {
+                moreAppsIcon
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L("settings.moreApps"))
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.accent)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(L("settings.moreAppsSub"))
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                VStack(spacing: 2) {
+                    Text(L("settings.view"))
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.accent2)
+                    Text("lrvdlinden.app")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Theme.secondary)
+                }
+            }
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(Text("lrvdlinden.app"))
+        #endif
+    }
+
+    private var moreAppsIcon: some View {
+        Image(systemName: "square.grid.2x2.fill")
+            .font(.system(size: tvScaled(22), weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: tvScaled(56), height: tvScaled(56))
+            .background(Theme.gradient, in: RoundedRectangle(cornerRadius: tvScaled(14), style: .continuous))
+            .accessibilityHidden(true)
     }
 
     private func settingLabel(_ title: String, symbol: String, tint: Color? = nil) -> some View {

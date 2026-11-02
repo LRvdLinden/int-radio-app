@@ -735,3 +735,12 @@ body.has-mini #mapwrap{bottom:calc(var(--tabh) + var(--minih) + 16px)}
 .mclu.mk{cursor:pointer}
 #mapwrap.apple .mk-controls-container .mk-zoom-control,#mapwrap.apple .mk-controls-container .mk-map-type-control{margin-top:72px}
 @media (max-width:899px){#mapwrap.apple .mk-controls-container .mk-zoom-control{display:none}}
+
+/* Instellingen: kaart "Meer apps van de ontwikkelaar" (lrvdlinden.app) in de Tunr-kleuren */
+.rows>a.moreapps{gap:14px;padding:16px}
+.moreapps .mi{flex:none;width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;grid-template-columns:repeat(2,13px);grid-template-rows:repeat(2,13px);gap:4px;place-content:center}
+.moreapps .mi i{background:#fff;border-radius:4px}
+.moreapps .lab b{display:block;color:var(--accent);font-size:16px;font-weight:800;line-height:1.25}
+.moreapps .go{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+.moreapps .go b{color:var(--accent2);font-size:15px;font-weight:800}
+.moreapps .go small{color:var(--sec);font-size:11.5px}

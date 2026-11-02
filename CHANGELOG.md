@@ -4,6 +4,14 @@ Alle wijzigingen per build, met de versie erbij. Buildnummers zijn één doorlop
 
 Ook online: de pagina *changelog* op de website.
 
+## Build 50 · versie 1.0.0
+_2026-11-02_
+
+**Nieuw**
+
+- Instellingen: onderaan staat nu "Meer apps van de ontwikkelaar", met een link naar lrvdlinden.app (op Apple TV met een QR-code). _(iPhone, iPad, Mac, Apple TV, Android, Android TV, Windows)_  
+  <sub>Settings: at the bottom you'll now find "More apps from the developer", with a link to lrvdlinden.app (on Apple TV with a QR code).</sub>
+
 ## Build 49 · versie 1.0.0
 _2026-10-24_
 

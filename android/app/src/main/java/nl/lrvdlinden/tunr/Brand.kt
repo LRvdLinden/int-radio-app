@@ -14,6 +14,8 @@ object Brand {
     const val PRIVACY = "https://tunr.online/privacy/"
     const val TERMS = "https://tunr.online/voorwaarden/"
     const val RADIO_BROWSER = "https://www.radio-browser.info"
+    /** Andere apps van de ontwikkelaar (kaart "Meer apps van de ontwikkelaar" onder in Instellingen) */
+    const val DEVELOPER_APPS = "https://lrvdlinden.app"
 
     /**
      * Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL

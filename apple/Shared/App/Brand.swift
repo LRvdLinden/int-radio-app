@@ -16,6 +16,8 @@ enum Brand {
     static let privacy = URL(string: "https://tunr.online/privacy/")!
     static let terms = URL(string: "https://tunr.online/voorwaarden/")!
     static let radioBrowser = URL(string: "https://www.radio-browser.info")!
+    /// Andere apps van de ontwikkelaar (kaart "Meer apps van de ontwikkelaar" onder in Instellingen)
+    static let developerApps = URL(string: "https://lrvdlinden.app")!
 
     /// Anonieme gebruiksstatistieken (BeheerTunr, zie tunr-beheer/docs/CONTRACT.md): Supabase-URL
     /// (`https://<project-ref>.supabase.co`) en publishable key (`sb_publishable_…`). Openbaar, mag in de repo.

@@ -221,6 +221,10 @@
 "settings.language" = "Taal";
 "settings.languageSystem" = "Systeem";
 "settings.madeWith" = "Gemaakt met ♥ in Nederland";
+"settings.discover" = "Ontdekken";
+"settings.moreApps" = "Meer apps van de ontwikkelaar";
+"settings.moreAppsSub" = "Apps voor iPhone, iPad, Apple TV en Homey";
+"settings.view" = "Bekijk";
 "settings.playback" = "Afspelen";
 "settings.privacy" = "Privacy";
 "settings.terms" = "Voorwaarden";

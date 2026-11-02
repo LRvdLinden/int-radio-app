@@ -1,6 +1,27 @@
 {
   "builds": [
     {
+      "build": 50,
+      "version": "1.0.0",
+      "date": "2026-11-02",
+      "items": [
+        {
+          "type": "new",
+          "platforms": [
+            "ios",
+            "ipados",
+            "macos",
+            "tvos",
+            "android",
+            "androidtv",
+            "windows"
+          ],
+          "nl": "Instellingen: onderaan staat nu \"Meer apps van de ontwikkelaar\", met een link naar lrvdlinden.app (op Apple TV met een QR-code).",
+          "en": "Settings: at the bottom you'll now find \"More apps from the developer\", with a link to lrvdlinden.app (on Apple TV with a QR code)."
+        }
+      ]
+    },
+    {
       "build": 49,
       "version": "1.0.0",
       "date": "2026-10-24",

@@ -222,4 +222,8 @@
     <string name="pgenre_technology">Technologie</string>
     <string name="pgenre_kids">Kinderen &amp; gezin</string>
     <string name="pgenre_music">Muziek</string>
+    <string name="discover_more">Ontdekken</string>
+    <string name="more_apps">Meer apps van de ontwikkelaar</string>
+    <string name="more_apps_sub">Apps voor iPhone, iPad, Apple TV en Homey</string>
+    <string name="view">Bekijk</string>
 </resources>

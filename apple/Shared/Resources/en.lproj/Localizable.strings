@@ -221,6 +221,10 @@
 "settings.language" = "Language";
 "settings.languageSystem" = "System";
 "settings.madeWith" = "Made with ♥ in the Netherlands";
+"settings.discover" = "Discover";
+"settings.moreApps" = "More apps from the developer";
+"settings.moreAppsSub" = "Apps for iPhone, iPad, Apple TV and Homey";
+"settings.view" = "View";
 "settings.playback" = "Playback";
 "settings.privacy" = "Privacy";
 "settings.terms" = "Terms";
